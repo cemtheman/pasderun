@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/schema/geometry_plan/0.1",
+  "title": "Pas de Run Procedural Geometry Plan v0.1",
+  "type": "object",
+  "required": ["schema_version", "source_movement_demands", "compiled_time_range", "timebase", "geometry_calibration_status", "gap_calibration", "geometry_vocabulary", "events", "surface_plan"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "geometry_calibration_status": {"const": "prototype_controller_based"},
+    "timebase": {
+      "type": "object",
+      "required": ["canonical_unit", "run_speed_world_units_per_second", "conversion"],
+      "properties": {
+        "canonical_unit": {"const": "seconds"},
+        "run_speed_world_units_per_second": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_time", "source_class", "source_confidence", "world", "geometry", "preparation", "recovery", "branch", "suppressed_inferences", "explanation"],
+        "properties": {
+          "source_time": {"type": "number", "minimum": 0, "maximum": 30},
+          "source_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "world": {
+            "type": "object",
+            "required": ["event_x"],
+            "properties": {"event_x": {"type": "number"}}
+          },
+          "geometry": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {"enum": ["RUNWAY", "LOW_PASSAGE", "SMALL_GAP", "MEDIUM_GAP", "LARGE_GAP", "BALANCE_PASSAGE", "ACCENT_ZONE", "RECOVERY_RUNWAY", "ROUTE_FORK", "MERGE"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}

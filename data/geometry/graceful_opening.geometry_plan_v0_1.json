@@ -1,0 +1,447 @@
+{
+  "schema_version": "0.1",
+  "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
+  "compiled_time_range": {
+    "start": 0.0,
+    "end": 30.0
+  },
+  "playable_world_extent": {
+    "start_x": -4.0,
+    "end_x": 128.0
+  },
+  "timebase": {
+    "canonical_unit": "seconds",
+    "run_speed_world_units_per_second": 4.0,
+    "conversion": "event_x = source_time * run_speed_world_units_per_second"
+  },
+  "geometry_calibration_status": "prototype_controller_based",
+  "controller_calibration": {
+    "jump_velocity": 6.0,
+    "gravity": 18.0,
+    "same_height_airtime_seconds": 0.6667,
+    "same_height_horizontal_range": 2.6667,
+    "note": "Gap lengths retain margin below the controller's ideal same-height ballistic range; humanoid/root-motion calibration is deferred."
+  },
+  "gap_calibration": {
+    "SMALL_GAP": {
+      "length": 1.2,
+      "preparation": 6.0,
+      "landing": 4.0
+    },
+    "MEDIUM_GAP": {
+      "length": 1.7,
+      "preparation": 8.0,
+      "landing": 6.0
+    },
+    "LARGE_GAP": {
+      "length": 2.2,
+      "preparation": 10.0,
+      "landing": 8.0
+    }
+  },
+  "geometry_vocabulary": [
+    "RUNWAY",
+    "LOW_PASSAGE",
+    "SMALL_GAP",
+    "MEDIUM_GAP",
+    "LARGE_GAP",
+    "BALANCE_PASSAGE",
+    "ACCENT_ZONE",
+    "RECOVERY_RUNWAY",
+    "ROUTE_FORK",
+    "MERGE"
+  ],
+  "events": [
+    {
+      "source_time": 2.5,
+      "source_class": "SUSTAINED_BALANCE",
+      "source_confidence": 0.6483,
+      "world": {
+        "event_x": 10.0
+      },
+      "geometry": {
+        "type": "BALANCE_PASSAGE",
+        "start_x": 7.0,
+        "end_x": 13.0,
+        "length": 6.0,
+        "width": 0.8,
+        "area_width": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.5088,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.4705,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.4362,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from SUSTAINED_BALANCE demand",
+        "event centered on music time 2.500",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 7.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7989,
+      "world": {
+        "event_x": 29.0
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 27.9,
+        "end_x": 30.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "TRAVEL",
+          "confidence": 0.7089,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6344,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.6245,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5972,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.5897,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4549,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.441,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 7.250",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 11.5,
+      "source_class": "MEDIUM_JUMP",
+      "source_confidence": 0.7617,
+      "world": {
+        "event_x": 46.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 38.0,
+        "end_x": 52.0
+      },
+      "preparation": {
+        "runway_length": 8.0
+      },
+      "recovery": {
+        "runway_length": 6.0
+      },
+      "branch": {
+        "selection": "optional vertical jump; no-jump remains on safe runway",
+        "safe_route": {
+          "type": "RUNWAY",
+          "start_x": 38.0,
+          "end_x": 52.0,
+          "y": 0.0
+        },
+        "technical_route": {
+          "type": "MEDIUM_GAP",
+          "takeoff_x": 45.15,
+          "landing_x": 46.85,
+          "landing_platform_end_x": 52.0,
+          "landing_surface_y": 0.5
+        },
+        "merge_x": 52.0
+      },
+      "suppressed_inferences": [
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.7341,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7059,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6817,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6182,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4872,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4081,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from MEDIUM_JUMP demand",
+        "event centered on music time 11.500",
+        "world X derived by source_time × 4.0",
+        "high branchability and multiple viable classes generated optional SAFE/TECHNICAL routes"
+      ]
+    },
+    {
+      "source_time": 22.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.8361,
+      "world": {
+        "event_x": 89.0
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 87.9,
+        "end_x": 90.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "TRAVEL",
+          "confidence": 0.7499,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7127,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.694,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5829,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.482,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.4358,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3653,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 22.250",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 25.263,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7772,
+      "world": {
+        "event_x": 101.052
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 100.452,
+        "end_x": 101.652,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7431,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6381,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4696,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3739,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3735,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3499,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 25.263",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 28.05,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7571,
+      "world": {
+        "event_x": 112.2
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 111.6,
+        "end_x": 112.8,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7448,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6126,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4712,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4008,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3719,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3566,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 28.050",
+        "world X derived by source_time × 4.0"
+      ]
+    }
+  ],
+  "surface_plan": {
+    "runway_intervals": [
+      {
+        "start_x": -4.0,
+        "end_x": 7.0
+      },
+      {
+        "start_x": 13.0,
+        "end_x": 27.9
+      },
+      {
+        "start_x": 30.1,
+        "end_x": 87.9
+      },
+      {
+        "start_x": 90.1,
+        "end_x": 128.0
+      }
+    ],
+    "balance_intervals": [
+      {
+        "start_x": 7.0,
+        "end_x": 13.0
+      }
+    ]
+  }
+}
