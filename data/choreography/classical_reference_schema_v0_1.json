@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.dev/schema/classical_reference_v0_1.json",
+  "title": "Pas de Run Classical Choreography Calibration Dataset v0.1",
+  "type": "object",
+  "required": ["schema_version", "dataset_id", "annotation_policy", "controlled_vocabulary", "examples", "intentional_exclusions"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "annotation_policy": {"type": "object"},
+    "controlled_vocabulary": {"type": "object"},
+    "examples": {
+      "type": "array",
+      "minItems": 10,
+      "items": {"$ref": "#/$defs/example"}
+    },
+    "intentional_exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason"],
+        "properties": {"id": {"type": "string"}, "reason": {"type": "string"}},
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "normalized": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "example": {
+      "type": "object",
+      "required": ["id", "dataset_split", "work", "composer", "choreographic_lineage", "segment", "provenance", "music_alignment", "movement_function", "movement_quality", "movement_demand", "movement_class", "repeat_structure", "branching_relevance", "annotation_confidence"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "dataset_split": {"enum": ["gold", "holdout"]},
+        "work": {"type": "string"},
+        "composer": {"type": "string"},
+        "choreographic_lineage": {"type": "string"},
+        "segment": {"type": "string"},
+        "provenance": {
+          "type": "object",
+          "required": ["source_type", "source_title", "source_url", "confidence", "notes"],
+          "properties": {
+            "source_type": {"enum": ["historical_notation", "scholarly_source", "archival_catalog"]},
+            "source_title": {"type": "string", "minLength": 1},
+            "source_url": {"type": "string", "format": "uri"},
+            "confidence": {"enum": ["high", "medium"]},
+            "notes": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        "music_alignment": {
+          "type": "object",
+          "required": ["measure_based", "audio_reference", "feature_status", "audio_features"],
+          "properties": {
+            "measure_based": {"type": "boolean"},
+            "audio_reference": {"type": ["string", "null"]},
+            "feature_status": {"enum": ["not_extracted", "extracted"]},
+            "audio_features": {"type": ["object", "null"]}
+          },
+          "additionalProperties": false
+        },
+        "movement_function": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["PREPARE", "TRAVEL", "ACCENT", "RISE", "SUSTAIN", "BALANCE", "CONNECT", "CONTINUE", "RELEASE", "CLIMAX"]}
+        },
+        "movement_quality": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["light", "sharp", "floating", "controlled", "sustained", "energetic", "repeated"]}
+        },
+        "movement_demand": {
+          "type": "object",
+          "required": ["travel", "verticality", "sustain", "balance", "rotation", "movement_scale", "technicality"],
+          "properties": {
+            "travel": {"$ref": "#/$defs/normalized"},
+            "verticality": {"$ref": "#/$defs/normalized"},
+            "sustain": {"$ref": "#/$defs/normalized"},
+            "balance": {"$ref": "#/$defs/normalized"},
+            "rotation": {"$ref": "#/$defs/normalized"},
+            "movement_scale": {"$ref": "#/$defs/normalized"},
+            "technicality": {"$ref": "#/$defs/normalized"}
+          },
+          "additionalProperties": false
+        },
+        "movement_class": {"enum": ["TRAVEL", "ACCENT_ACTION", "SMALL_JUMP", "MEDIUM_JUMP", "LARGE_TRAVELLING_LEAP", "SUSTAINED_BALANCE", "TURN", "CONTROLLED_TRANSITION", "RECOVERY"]},
+        "repeat_structure": {"type": "string"},
+        "branching_relevance": {"type": "string"},
+        "annotation_confidence": {"$ref": "#/$defs/normalized"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -20,3 +20,14 @@ Focused tests:
 ```sh
 python -m unittest discover -s tools/music_analyzer -p 'test_*.py'
 ```
+
+Local segment extraction reuses the same analyzer definitions (and therefore
+does not create a second feature system):
+
+```sh
+python tools/music_analyzer/extract_segment_features.py reference_audio.wav \
+  --start 12.0 --end 20.0 --output segment.features.json
+```
+
+`librosa` is not required by this path; local environments may use it for
+upstream audio preparation without changing the JSON feature vocabulary.
