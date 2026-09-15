@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://blf6l5vi6n1lp"]
+
+[ext_resource type="Script" uid="uid://mpnd2c2foaq1" path="res://scenes/gameplay/dancer.gd" id="1_047b5"]
+[ext_resource type="Script" uid="uid://cs0r3obsyp76v" path="res://scenes/gameplay/camera_rig.gd" id="1_x0ne6"]
+[ext_resource type="Script" uid="uid://6ctk7t1cikmi" path="res://scenes/gameplay/balance_area.gd" id="2_tmuey"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_r308u"]
+size = Vector3(30, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vtibc"]
+size = Vector3(30, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4eqfm"]
+size = Vector3(6, 0.5, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_b742v"]
+size = Vector3(6, 0.5, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r308u"]
+size = Vector3(6, 2, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dpqqq"]
+size = Vector3(0.6, 1, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cqf83"]
+size = Vector3(0.6, 1, 4)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_r308u"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x0ne6"]
+
+[node name="VerticalSlice01" type="Node3D" unique_id=759959970]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1718983342]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1165235564]
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=519988061 node_paths=PackedStringArray("target")]
+script = ExtResource("1_x0ne6")
+target = NodePath("../Dancer")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=1609043327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 8)
+projection = 1
+current = true
+size = 5.5
+
+[node name="Level" type="Node3D" parent="." unique_id=12764827]
+
+[node name="Ground" type="StaticBody3D" parent="Level" unique_id=1912064778]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Ground" unique_id=1201142937]
+mesh = SubResource("BoxMesh_r308u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Ground" unique_id=406814271]
+shape = SubResource("BoxShape3D_vtibc")
+
+[node name="GroundB" type="StaticBody3D" parent="Level" unique_id=2119955404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/GroundB" unique_id=968368268]
+mesh = SubResource("BoxMesh_r308u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/GroundB" unique_id=950266492]
+shape = SubResource("BoxShape3D_vtibc")
+
+[node name="BalanceBeam" type="StaticBody3D" parent="Level" unique_id=2005984790]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.5, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/BalanceBeam" unique_id=1867055299]
+mesh = SubResource("BoxMesh_4eqfm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BalanceBeam" unique_id=249972688]
+shape = SubResource("BoxShape3D_b742v")
+
+[node name="BalanceArea" type="Area3D" parent="Level/BalanceBeam" unique_id=267688488]
+script = ExtResource("2_tmuey")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BalanceBeam/BalanceArea" unique_id=984386232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_r308u")
+
+[node name="GroundC" type="StaticBody3D" parent="Level" unique_id=1401909455]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.5, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/GroundC" unique_id=1381640295]
+mesh = SubResource("BoxMesh_r308u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/GroundC" unique_id=1493109196]
+shape = SubResource("BoxShape3D_vtibc")
+
+[node name="LowGate" type="StaticBody3D" parent="Level" unique_id=260640863]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.65, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/LowGate" unique_id=791392235]
+mesh = SubResource("BoxMesh_dpqqq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/LowGate" unique_id=637010879]
+shape = SubResource("BoxShape3D_cqf83")
+
+[node name="Dancer" type="CharacterBody3D" parent="." unique_id=801482917 node_paths=PackedStringArray("input_debug_label")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("1_047b5")
+input_debug_label = NodePath("../DebugHUD/InputDebug")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Dancer" unique_id=1478805147]
+mesh = SubResource("CapsuleMesh_r308u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer" unique_id=142319349]
+shape = SubResource("CapsuleShape3D_x0ne6")
+
+[node name="DebugHUD" type="CanvasLayer" parent="." unique_id=853914189]
+
+[node name="InputDebug" type="Label" parent="DebugHUD" unique_id=1575322214]
+offset_left = 57.0
+offset_top = 40.0
+offset_right = 97.0
+offset_bottom = 63.0
+text = "—"
