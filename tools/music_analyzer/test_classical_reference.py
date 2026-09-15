@@ -59,6 +59,32 @@ class ClassicalReferenceDatasetTests(unittest.TestCase):
         self.assertTrue(all(example["work"] == "Paquita" for example in holdout))
         self.assertTrue(all(example["id"] not in gold_ids for example in holdout))
 
+    def test_gold_jump_scale_coverage_and_ordering(self) -> None:
+        gold = [example for example in self.examples if example["dataset_split"] == "gold"]
+        jump_classes = ("SMALL_JUMP", "MEDIUM_JUMP", "LARGE_TRAVELLING_LEAP")
+        grouped = {
+            movement_class: [
+                example for example in gold if example["movement_class"] == movement_class
+            ]
+            for movement_class in jump_classes
+        }
+        self.assertTrue(all(grouped.values()))
+        self.assertGreaterEqual(len(grouped["MEDIUM_JUMP"]), 2)
+
+        def mean_demand(movement_class: str, demand: str) -> float:
+            values = [example["movement_demand"][demand] for example in grouped[movement_class]]
+            return sum(values) / len(values)
+
+        small_scale = mean_demand("SMALL_JUMP", "movement_scale")
+        medium_scale = mean_demand("MEDIUM_JUMP", "movement_scale")
+        large_scale = mean_demand("LARGE_TRAVELLING_LEAP", "movement_scale")
+        self.assertGreater(large_scale, medium_scale)
+        self.assertGreater(medium_scale, small_scale)
+        self.assertGreater(
+            mean_demand("LARGE_TRAVELLING_LEAP", "travel"),
+            mean_demand("SMALL_JUMP", "travel"),
+        )
+
     def test_all_numeric_values_are_finite(self) -> None:
         def walk(value: object) -> None:
             if isinstance(value, float):
