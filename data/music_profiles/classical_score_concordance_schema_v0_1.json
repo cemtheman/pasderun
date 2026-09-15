@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/schema/classical_score_concordance/0.1",
+  "title": "Pas de Run Classical Score Concordance v0.1",
+  "type": "object",
+  "required": ["schema_version", "dataset_id", "scope", "status_vocabulary", "records"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "dataset_id": {"const": "pas_de_run.classical_score_concordance"},
+    "scope": {"type": "string"},
+    "status_vocabulary": {
+      "const": ["confirmed", "probable", "unresolved"]
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["choreography_example_id", "movement_class", "work", "segment", "score_source", "score_location", "mapping_evidence", "status"],
+        "properties": {
+          "choreography_example_id": {"type": "string", "minLength": 1},
+          "movement_class": {"type": "string", "minLength": 1},
+          "work": {"type": "string", "minLength": 1},
+          "segment": {"type": "string", "minLength": 1},
+          "status": {"enum": ["confirmed", "probable", "unresolved"]},
+          "score_source": {
+            "type": "object",
+            "required": ["edition_title", "editor", "publisher", "publication_year", "source_url", "rights_status", "source_identifier", "checksum_sha256"]
+          },
+          "score_location": {
+            "type": "object",
+            "required": ["act", "number", "variation", "pdf_page_start", "pdf_page_end", "printed_page_start", "printed_page_end", "measure_start", "measure_end"]
+          },
+          "mapping_evidence": {
+            "type": "object",
+            "required": ["basis", "mapping_confidence", "notes"],
+            "properties": {
+              "basis": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+              "mapping_confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+              "notes": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "schema_version": "0.1",
+  "dataset_id": "pas_de_run.classical_score_concordance",
+  "scope": "Evidence-only links between selected choreography calibration examples and pinned score editions. This file contains no extracted musical features.",
+  "status_vocabulary": [
+    "confirmed",
+    "probable",
+    "unresolved"
+  ],
+  "records": [
+    {
+      "choreography_example_id": "giselle_act1_hops_01",
+      "movement_class": "SMALL_JUMP",
+      "work": "Giselle",
+      "segment": "Act I: thirty hops on the left pointe with repeated right-leg rond action",
+      "score_source": {
+        "edition_title": "Giselle — complete autograph orchestral score",
+        "editor": null,
+        "publisher": "Holograph manuscript",
+        "publication_year": "1841",
+        "source_url": "https://imslp.org/wiki/Giselle_(Adam,_Adolphe)",
+        "rights_status": "Public domain",
+        "source_identifier": "IMSLP #706467; Bibliothèque nationale de France MS-2644",
+        "checksum_sha256": null
+      },
+      "score_location": {
+        "act": "Act I",
+        "number": null,
+        "variation": "Late-nineteenth-century Giselle solo documented in the Stepanov source",
+        "pdf_page_start": null,
+        "pdf_page_end": null,
+        "printed_page_start": null,
+        "printed_page_end": null,
+        "measure_start": null,
+        "measure_end": null
+      },
+      "mapping_evidence": {
+        "basis": ["historical_notation", "score_edition_comparison"],
+        "mapping_confidence": 0.25,
+        "notes": "The choreography is supported by the circa-1903 Stepanov record, but the cited scholarship identifies Giselle's Act I solo as a later insertion. The 1841 Adam autograph therefore cannot safely supply its passage or measures without a separately pinned insertion score."
+      },
+      "status": "unresolved"
+    },
+    {
+      "choreography_example_id": "giselle_myrtha_sauts_de_basque_01",
+      "movement_class": "MEDIUM_JUMP",
+      "work": "Giselle",
+      "segment": "Myrtha: travelling and turning sauts de basque vocabulary",
+      "score_source": {
+        "edition_title": "Giselle — complete autograph orchestral score",
+        "editor": null,
+        "publisher": "Holograph manuscript",
+        "publication_year": "1841",
+        "source_url": "https://imslp.org/wiki/Giselle_(Adam,_Adolphe)",
+        "rights_status": "Public domain",
+        "source_identifier": "IMSLP #706467; Bibliothèque nationale de France MS-2644",
+        "checksum_sha256": null
+      },
+      "score_location": {
+        "act": "Act II",
+        "number": null,
+        "variation": "Myrtha dance material",
+        "pdf_page_start": null,
+        "pdf_page_end": null,
+        "printed_page_start": null,
+        "printed_page_end": null,
+        "measure_start": null,
+        "measure_end": null
+      },
+      "mapping_evidence": {
+        "basis": ["historical_notation", "scholarly_concordance"],
+        "mapping_confidence": 0.35,
+        "notes": "The circa-1899 Stepanov source supports the movement vocabulary, but the available evidence does not identify which Myrtha musical passage contains this particular vocabulary. Act II alone is not an extraction-safe concordance."
+      },
+      "status": "unresolved"
+    },
+    {
+      "choreography_example_id": "giselle_myrtha_grands_jetes_01",
+      "movement_class": "LARGE_TRAVELLING_LEAP",
+      "work": "Giselle",
+      "segment": "Myrtha: grands jetés within documented travelling jump vocabulary",
+      "score_source": {
+        "edition_title": "Giselle — complete autograph orchestral score",
+        "editor": null,
+        "publisher": "Holograph manuscript",
+        "publication_year": "1841",
+        "source_url": "https://imslp.org/wiki/Giselle_(Adam,_Adolphe)",
+        "rights_status": "Public domain",
+        "source_identifier": "IMSLP #706467; Bibliothèque nationale de France MS-2644",
+        "checksum_sha256": null
+      },
+      "score_location": {
+        "act": "Act II",
+        "number": null,
+        "variation": "Myrtha dance material",
+        "pdf_page_start": null,
+        "pdf_page_end": null,
+        "printed_page_start": null,
+        "printed_page_end": null,
+        "measure_start": null,
+        "measure_end": null
+      },
+      "mapping_evidence": {
+        "basis": ["historical_notation", "scholarly_concordance"],
+        "mapping_confidence": 0.35,
+        "notes": "The circa-1899 Stepanov source supports grands jetés in Myrtha's dances, but it does not by itself establish the exact score number, phrase, or measures for this calibration row."
+      },
+      "status": "unresolved"
+    },
+    {
+      "choreography_example_id": "giselle_act1_glissade_pirouette_01",
+      "movement_class": "TURN",
+      "work": "Giselle",
+      "segment": "Act I: glissade into pirouettes in both directions",
+      "score_source": {
+        "edition_title": "Giselle — complete autograph orchestral score",
+        "editor": null,
+        "publisher": "Holograph manuscript",
+        "publication_year": "1841",
+        "source_url": "https://imslp.org/wiki/Giselle_(Adam,_Adolphe)",
+        "rights_status": "Public domain",
+        "source_identifier": "IMSLP #706467; Bibliothèque nationale de France MS-2644",
+        "checksum_sha256": null
+      },
+      "score_location": {
+        "act": "Act I",
+        "number": null,
+        "variation": "Late-nineteenth-century Giselle solo documented in the Stepanov source",
+        "pdf_page_start": null,
+        "pdf_page_end": null,
+        "printed_page_start": null,
+        "printed_page_end": null,
+        "measure_start": null,
+        "measure_end": null
+      },
+      "mapping_evidence": {
+        "basis": ["historical_notation", "score_edition_comparison"],
+        "mapping_confidence": 0.25,
+        "notes": "The turn phrase belongs to the same documented later Act I solo as the hops anchor. It must not be assigned measures in Adam's 1841 autograph without the correct insertion score and edition concordance."
+      },
+      "status": "unresolved"
+    },
+    {
+      "choreography_example_id": "sleeping_beauty_rose_adagio_balance_01",
+      "movement_class": "SUSTAINED_BALANCE",
+      "work": "The Sleeping Beauty",
+      "segment": "Rose Adagio: prolonged supported balance sequence",
+      "score_source": {
+        "edition_title": "The Sleeping Beauty, Op. 66 — full orchestral score, 2 volumes",
+        "editor": null,
+        "publisher": "D. Rahter",
+        "publication_year": "1890",
+        "source_url": "https://imslp.org/wiki/The_Sleeping_Beauty_(ballet),_Op.66_(Tchaikovsky,_Pyotr)",
+        "rights_status": "Public domain",
+        "source_identifier": "IMSLP work page IPT 109; Rahter lithograph from copyist's manuscript, 705 pages",
+        "checksum_sha256": null
+      },
+      "score_location": {
+        "act": "Act I",
+        "number": "No. 8a, Pas d'action",
+        "variation": "Adagio (Rose Adagio)",
+        "pdf_page_start": null,
+        "pdf_page_end": null,
+        "printed_page_start": null,
+        "printed_page_end": null,
+        "measure_start": null,
+        "measure_end": null
+      },
+      "mapping_evidence": {
+        "basis": ["historical_notation", "score_numbering", "scholarly_concordance"],
+        "mapping_confidence": 0.78,
+        "notes": "The work, Act I number, and Rose Adagio identity agree across the score catalog and independent work catalog. The choreography row describes a phrase within No. 8a, not necessarily all 82 bars; exact pages and measures are withheld pending direct edition-to-notation alignment."
+      },
+      "status": "probable"
+    },
+    {
+      "choreography_example_id": "nutcracker_sugar_plum_accent_travel_01",
+      "movement_class": "ACCENT_ACTION",
+      "work": "The Nutcracker",
+      "segment": "Sugar Plum Fairy variation: articulated travelling and accent phrase",
+      "score_source": {
+        "edition_title": "The Nutcracker, Op. 71 — first-edition full orchestral score",
+        "editor": null,
+        "publisher": "P. Jurgenson",
+        "publication_year": "1892",
+        "source_url": "https://imslp.org/wiki/The_Nutcracker_(ballet),_Op.71_(Tchaikovsky,_Pyotr)",
+        "rights_status": "Public domain",
+        "source_identifier": "Plate 17668; IMSLP first-edition full-score record",
+        "checksum_sha256": null
+      },
+      "score_location": {
+        "act": "Act II",
+        "number": "No. 14, Pas de deux",
+        "variation": "Variation II, Andante ma non troppo (Dance of the Sugar Plum Fairy)",
+        "pdf_page_start": null,
+        "pdf_page_end": null,
+        "printed_page_start": null,
+        "printed_page_end": null,
+        "measure_start": null,
+        "measure_end": null
+      },
+      "mapping_evidence": {
+        "basis": ["archival_catalog", "score_numbering"],
+        "mapping_confidence": 0.72,
+        "notes": "The archival choreography catalog and first-edition score numbering support the whole Sugar Plum Fairy variation. The calibration row is a conceptual phrase inside the 84-bar variation; no notation-to-score evidence yet isolates its exact measures."
+      },
+      "status": "probable"
+    }
+  ]
+}
