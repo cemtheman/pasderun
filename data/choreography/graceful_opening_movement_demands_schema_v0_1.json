@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/schema/movement_demands/0.1",
+  "title": "Pas de Run Music-to-Movement Demands v0.1",
+  "type": "object",
+  "required": ["schema_version", "source_analysis", "duration_seconds", "method", "movement_classes", "events"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "source_analysis": {"type": "string"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "movement_classes": {
+      "type": "array",
+      "items": {
+        "enum": ["TRAVEL", "ACCENT_ACTION", "SMALL_JUMP", "MEDIUM_JUMP", "LARGE_TRAVELLING_LEAP", "SUSTAINED_BALANCE", "TURN", "CONTROLLED_TRANSITION", "RECOVERY"]
+      },
+      "uniqueItems": true
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "window_start", "window_end", "musical_context", "movement_demand", "candidate_classes", "branchability", "explanation"],
+        "properties": {
+          "time": {"type": "number", "minimum": 0},
+          "window_start": {"type": "number", "minimum": 0},
+          "window_end": {"type": "number", "minimum": 0},
+          "branchability": {"type": "number", "minimum": 0, "maximum": 1},
+          "movement_demand": {
+            "type": "object",
+            "required": ["travel", "verticality", "sustain", "balance", "rotation", "movement_scale", "technicality"],
+            "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+          },
+          "candidate_classes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["class", "confidence"],
+              "properties": {
+                "class": {"type": "string"},
+                "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+              }
+            }
+          },
+          "explanation": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}
