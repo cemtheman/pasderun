@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="Script" path="res://scenes/gameplay/balance_area.gd" id="1_balance"]
 
@@ -15,45 +15,63 @@ size = Vector3(14.9000, 0.5000, 4.0000)
 size = Vector3(14.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_3"]
-size = Vector3(57.8000, 0.5000, 4.0000)
+size = Vector3(7.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_3"]
-size = Vector3(57.8000, 0.5000, 4.0000)
+size = Vector3(7.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_4"]
-size = Vector3(37.9000, 0.5000, 4.0000)
+size = Vector3(35.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_4"]
-size = Vector3(37.9000, 0.5000, 4.0000)
+size = Vector3(35.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_5"]
-size = Vector3(6.0000, 0.5000, 0.8000)
+size = Vector3(37.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_5"]
-size = Vector3(6.0000, 0.5000, 0.8000)
+size = Vector3(37.9000, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_6"]
-size = Vector3(6.0000, 2.0000, 1.2000)
+size = Vector3(6.0000, 0.5000, 0.8000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_6"]
-size = Vector3(6.0000, 2.0000, 1.2000)
+size = Vector3(6.0000, 0.5000, 0.8000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_7"]
-size = Vector3(5.1500, 0.5000, 4.0000)
+size = Vector3(6.0000, 2.0000, 1.2000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_7"]
-size = Vector3(5.1500, 0.5000, 4.0000)
+size = Vector3(6.0000, 2.0000, 1.2000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_8"]
-size = Vector3(1.2000, 2.0000, 4.0000)
+size = Vector3(14.0000, 0.5000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_8"]
-size = Vector3(1.2000, 2.0000, 4.0000)
+size = Vector3(14.0000, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_9"]
-size = Vector3(1.2000, 2.0000, 4.0000)
+size = Vector3(4.8189, 0.5000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_9"]
+size = Vector3(4.8189, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_10"]
+size = Vector3(2.4189, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_10"]
+size = Vector3(2.4189, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_11"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_11"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_12"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_12"]
 size = Vector3(1.2000, 2.0000, 4.0000)
 
 [node name="GracefulOpening0030" type="Node3D"]
@@ -77,68 +95,89 @@ mesh = SubResource("BoxMesh_2")
 shape = SubResource("BoxShape_2")
 
 [node name="Runway03" type="StaticBody3D" parent="Level"]
-position = Vector3(59.0000, -0.2500, 0)
+position = Vector3(34.0500, -0.2500, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway03"]
 mesh = SubResource("BoxMesh_3")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway03"]
 shape = SubResource("BoxShape_3")
 
 [node name="Runway04" type="StaticBody3D" parent="Level"]
-position = Vector3(109.0500, -0.2500, 0)
+position = Vector3(69.9500, -3.0500, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway04"]
 mesh = SubResource("BoxMesh_4")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway04"]
 shape = SubResource("BoxShape_4")
 
+[node name="Runway05" type="StaticBody3D" parent="Level"]
+position = Vector3(109.0500, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway05"]
+mesh = SubResource("BoxMesh_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway05"]
+shape = SubResource("BoxShape_5")
+
 [node name="BalancePassage01" type="StaticBody3D" parent="Level"]
 position = Vector3(10.0000, -0.2500, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/BalancePassage01"]
-mesh = SubResource("BoxMesh_5")
+mesh = SubResource("BoxMesh_6")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BalancePassage01"]
-shape = SubResource("BoxShape_5")
+shape = SubResource("BoxShape_6")
 
 [node name="BalanceArea" type="Area3D" parent="Level/BalancePassage01"]
 position = Vector3(0, 1, 0)
 script = ExtResource("1_balance")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BalancePassage01/BalanceArea"]
-shape = SubResource("BoxShape_6")
-
-[node name="Event01_SUSTAINED_BALANCE" type="Marker3D" parent="Events"]
-position = Vector3(10.0000, 0, 0)
-
-[node name="Event02_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
-position = Vector3(29.0000, 0, 0)
-
-[node name="TechnicalLanding03" type="StaticBody3D" parent="Level"]
-position = Vector3(49.4250, 0.2500, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalLanding03"]
-mesh = SubResource("BoxMesh_7")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalLanding03"]
 shape = SubResource("BoxShape_7")
 
-[node name="ForkStart03" type="Marker3D" parent="Level"]
-position = Vector3(38.0000, 0, 0)
-[node name="ForkMerge03" type="Marker3D" parent="Level"]
-position = Vector3(52.0000, 0, 0)
+[node name="Event01_SUSTAINED_BALANCE" type="Marker3D" parent="Events"]
+position = Vector3(10.0000, 0.0000, 0)
 
-[node name="Event03_MEDIUM_JUMP" type="Marker3D" parent="Events"]
-position = Vector3(46.0000, 0, 0)
+[node name="Event02_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(29.0000, 0.0000, 0)
 
-[node name="Event04_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
-position = Vector3(89.0000, 0, 0)
-
-[node name="AccentZone05" type="Area3D" parent="Level"]
-position = Vector3(101.0520, 1, 0)
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone05"]
+[node name="SafeLowerRoute03" type="StaticBody3D" parent="Level"]
+position = Vector3(45.0000, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute03"]
+mesh = SubResource("BoxMesh_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute03"]
 shape = SubResource("BoxShape_8")
 
-[node name="Event05_ACCENT_ACTION" type="Marker3D" parent="Events"]
-position = Vector3(101.0520, 0, 0)
-
-[node name="AccentZone06" type="Area3D" parent="Level"]
-position = Vector3(112.2000, 1, 0)
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone06"]
+[node name="TechnicalRoute03_01" type="StaticBody3D" parent="Level"]
+position = Vector3(42.7405, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute03_01"]
+mesh = SubResource("BoxMesh_9")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute03_01"]
 shape = SubResource("BoxShape_9")
 
+[node name="TechnicalRoute03_02" type="StaticBody3D" parent="Level"]
+position = Vector3(48.0594, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute03_02"]
+mesh = SubResource("BoxMesh_10")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute03_02"]
+shape = SubResource("BoxShape_10")
+
+[node name="ForkStart03" type="Marker3D" parent="Level"]
+position = Vector3(38.0000, 0.0000, 0)
+[node name="ForkMerge03" type="Marker3D" parent="Level"]
+position = Vector3(52.0000, -2.8000, 0)
+
+[node name="Event03_MEDIUM_JUMP" type="Marker3D" parent="Events"]
+position = Vector3(46.0000, 0.0000, 0)
+
+[node name="Event04_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(89.0000, -2.8000, 0)
+
+[node name="AccentZone05" type="Area3D" parent="Level"]
+position = Vector3(101.0520, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone05"]
+shape = SubResource("BoxShape_11")
+
+[node name="Event05_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(101.0520, -2.8000, 0)
+
+[node name="AccentZone06" type="Area3D" parent="Level"]
+position = Vector3(112.2000, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone06"]
+shape = SubResource("BoxShape_12")
+
 [node name="Event06_ACCENT_ACTION" type="Marker3D" parent="Events"]
-position = Vector3(112.2000, 0, 0)
+position = Vector3(112.2000, -2.8000, 0)

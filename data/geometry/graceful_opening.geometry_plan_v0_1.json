@@ -20,6 +20,9 @@
     "gravity": 18.0,
     "same_height_airtime_seconds": 0.6667,
     "same_height_horizontal_range": 2.6667,
+    "capsule_height": 2.0,
+    "capsule_radius": 0.5,
+    "fall_limit_y": -3.0,
     "note": "Gap lengths retain margin below the controller's ideal same-height ballistic range; humanoid/root-motion calibration is deferred."
   },
   "gap_calibration": {
@@ -57,7 +60,8 @@
       "source_class": "SUSTAINED_BALANCE",
       "source_confidence": 0.6483,
       "world": {
-        "event_x": 10.0
+        "event_x": 10.0,
+        "surface_y": 0.0
       },
       "geometry": {
         "type": "BALANCE_PASSAGE",
@@ -102,7 +106,8 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7989,
       "world": {
-        "event_x": 29.0
+        "event_x": 29.0,
+        "surface_y": 0.0
       },
       "geometry": {
         "type": "LARGE_GAP",
@@ -167,7 +172,8 @@
       "source_class": "MEDIUM_JUMP",
       "source_confidence": 0.7617,
       "world": {
-        "event_x": 46.0
+        "event_x": 46.0,
+        "surface_y": 0.0
       },
       "geometry": {
         "type": "ROUTE_FORK",
@@ -181,21 +187,103 @@
         "runway_length": 6.0
       },
       "branch": {
-        "selection": "optional vertical jump; no-jump remains on safe runway",
-        "safe_route": {
-          "type": "RUNWAY",
-          "start_x": 38.0,
-          "end_x": 52.0,
-          "y": 0.0
+        "selection": "no jump drops to LOWER SAFE; jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 38.0,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
         },
-        "technical_route": {
-          "type": "MEDIUM_GAP",
-          "takeoff_x": 45.15,
-          "landing_x": 46.85,
-          "landing_platform_end_x": 52.0,
-          "landing_surface_y": 0.5
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 38.0,
+                "end_x": 52.0,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 38.0,
+              "landing_x": 40.2311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "ENTRY_GAP",
+                "start_x": 38.0,
+                "end_x": 40.3311,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 40.3311,
+                "end_x": 45.15,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "MEDIUM_GAP",
+                "start_x": 45.15,
+                "end_x": 46.85,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 46.85,
+                "end_x": 49.2689,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 49.2689,
+                "end_x": 52.0,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
         },
-        "merge_x": 52.0
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 49.2689,
+          "x": 52.0,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
       },
       "suppressed_inferences": [
         {
@@ -241,7 +329,8 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.8361,
       "world": {
-        "event_x": 89.0
+        "event_x": 89.0,
+        "surface_y": -2.8
       },
       "geometry": {
         "type": "LARGE_GAP",
@@ -306,7 +395,8 @@
       "source_class": "ACCENT_ACTION",
       "source_confidence": 0.7772,
       "world": {
-        "event_x": 101.052
+        "event_x": 101.052,
+        "surface_y": -2.8
       },
       "geometry": {
         "type": "ACCENT_ZONE",
@@ -364,7 +454,8 @@
       "source_class": "ACCENT_ACTION",
       "source_confidence": 0.7571,
       "world": {
-        "event_x": 112.2
+        "event_x": 112.2,
+        "surface_y": -2.8
       },
       "geometry": {
         "type": "ACCENT_ZONE",
@@ -422,25 +513,35 @@
     "runway_intervals": [
       {
         "start_x": -4.0,
-        "end_x": 7.0
+        "end_x": 7.0,
+        "surface_y": 0.0
       },
       {
         "start_x": 13.0,
-        "end_x": 27.9
+        "end_x": 27.9,
+        "surface_y": 0.0
       },
       {
         "start_x": 30.1,
-        "end_x": 87.9
+        "end_x": 38.0,
+        "surface_y": 0.0
+      },
+      {
+        "start_x": 52.0,
+        "end_x": 87.9,
+        "surface_y": -2.8
       },
       {
         "start_x": 90.1,
-        "end_x": 128.0
+        "end_x": 128.0,
+        "surface_y": -2.8
       }
     ],
     "balance_intervals": [
       {
         "start_x": 7.0,
-        "end_x": 13.0
+        "end_x": 13.0,
+        "surface_y": 0.0
       }
     ]
   }

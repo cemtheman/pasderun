@@ -31,6 +31,8 @@ size = Vector3(0.6, 1, 4)
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_r308u"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x0ne6"]
+radius = 0.5
+height = 2.0
 
 [node name="VerticalSlice01" type="Node3D" unique_id=759959970]
 

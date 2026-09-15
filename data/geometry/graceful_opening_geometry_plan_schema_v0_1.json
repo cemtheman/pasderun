@@ -25,8 +25,11 @@
           "source_confidence": {"type": "number", "minimum": 0, "maximum": 1},
           "world": {
             "type": "object",
-            "required": ["event_x"],
-            "properties": {"event_x": {"type": "number"}}
+            "required": ["event_x", "surface_y"],
+            "properties": {
+              "event_x": {"type": "number"},
+              "surface_y": {"type": "number"}
+            }
           },
           "geometry": {
             "type": "object",
@@ -34,6 +37,43 @@
             "properties": {
               "type": {"enum": ["RUNWAY", "LOW_PASSAGE", "SMALL_GAP", "MEDIUM_GAP", "LARGE_GAP", "BALANCE_PASSAGE", "ACCENT_ZONE", "RECOVERY_RUNWAY", "ROUTE_FORK", "MERGE"]}
             }
+          },
+          "branch": {
+            "oneOf": [
+              {"type": "null"},
+              {
+                "type": "object",
+                "required": ["selection", "split", "routes", "clearance", "merge"],
+                "properties": {
+                  "split": {
+                    "type": "object",
+                    "required": ["x", "shared_surface_y", "no_jump_destination", "jump_destination"]
+                  },
+                  "routes": {
+                    "type": "object",
+                    "required": ["safe", "technical"],
+                    "properties": {
+                      "safe": {
+                        "type": "object",
+                        "required": ["elevation", "collision_geometry", "segments", "descent"]
+                      },
+                      "technical": {
+                        "type": "object",
+                        "required": ["elevation", "collision_geometry", "segments"]
+                      }
+                    }
+                  },
+                  "clearance": {
+                    "type": "object",
+                    "required": ["capsule_height", "platform_thickness", "safety_margin", "technical_underside_y", "safe_dancer_top_y", "valid"]
+                  },
+                  "merge": {
+                    "type": "object",
+                    "required": ["type", "drop_start_x", "x", "surface_y", "shared_runway_continues"]
+                  }
+                }
+              }
+            ]
           }
         }
       }

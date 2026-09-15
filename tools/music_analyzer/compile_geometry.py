@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,15 @@ CONTEXT_SECONDS = 2.5
 FORK_THRESHOLD = 0.90
 FORK_CLASS_MARGIN = 0.12
 MIN_FORK_DURATION_SECONDS = 2.5
+DANCER_CAPSULE_HEIGHT = 2.0
+DANCER_CAPSULE_RADIUS = 0.5
+SAFE_HEAD_CLEARANCE = 0.25
+CLEARANCE_EPSILON = 0.05
+FALL_LIMIT_Y = -3.0
+GRAVITY = 18.0
+JUMP_VELOCITY = 6.0
+TECHNICAL_ENTRY_CLEARANCE_MARGIN = 0.1
+MERGE_LANDING_MARGIN = 0.5
 
 GAP_CALIBRATION = {
     "SMALL_GAP": {"length": 1.2, "preparation": 6.0, "landing": 4.0},
@@ -66,7 +76,21 @@ def _has_viable_fork(event: dict[str, Any], next_time: float | None) -> bool:
     return candidates[0]["class"] in {"SMALL_JUMP", "MEDIUM_JUMP", "LARGE_TRAVELLING_LEAP"}
 
 
-def _compile_event(event: dict[str, Any], next_time: float | None) -> dict[str, Any]:
+def _safe_surface_y(technical_surface_y: float) -> float:
+    technical_underside = technical_surface_y - GROUND_HEIGHT
+    return _round(
+        technical_underside
+        - SAFE_HEAD_CLEARANCE
+        - DANCER_CAPSULE_HEIGHT
+        - CLEARANCE_EPSILON
+    )
+
+
+def _compile_event(
+    event: dict[str, Any],
+    next_time: float | None,
+    current_surface_y: float,
+) -> dict[str, Any]:
     source_time = float(event["time"])
     event_x = time_to_x(source_time)
     source_class = event["candidate_classes"][0]["class"]
@@ -80,7 +104,7 @@ def _compile_event(event: dict[str, Any], next_time: float | None) -> dict[str, 
         "source_time": source_time,
         "source_class": source_class,
         "source_confidence": confidence,
-        "world": {"event_x": event_x},
+        "world": {"event_x": event_x, "surface_y": _round(current_surface_y)},
         "geometry": {"type": geometry_type},
         "preparation": {"runway_length": _round(CONTEXT_SECONDS * RUN_SPEED)},
         "recovery": {"runway_length": _round(CONTEXT_SECONDS * RUN_SPEED)},
@@ -138,27 +162,121 @@ def _compile_event(event: dict[str, Any], next_time: float | None) -> dict[str, 
             event_x + calibration["landing"],
             time_to_x(next_time) - 2.0 if next_time is not None else LEVEL_END_X,
         )
+        safe_surface_y = _safe_surface_y(current_surface_y)
+        technical_underside_y = _round(current_surface_y - GROUND_HEIGHT)
+        safe_dancer_top_y = _round(safe_surface_y + DANCER_CAPSULE_HEIGHT)
+        safe_standing_root_y = _round(safe_surface_y + DANCER_CAPSULE_HEIGHT / 2.0)
+        drop_height = current_surface_y - safe_surface_y
+        drop_seconds = math.sqrt(2.0 * drop_height / GRAVITY)
+        drop_distance = RUN_SPEED * drop_seconds
+        technical_drop_x = fork_end - drop_distance - MERGE_LANDING_MARGIN
+        entry_landing_x = fork_start + drop_distance + TECHNICAL_ENTRY_CLEARANCE_MARGIN
+        if technical_drop_x <= gap_end:
+            raise ValueError("fork duration cannot contain technical landing and physical merge")
+        if safe_standing_root_y <= FALL_LIMIT_Y:
+            raise ValueError("derived SAFE elevation conflicts with dancer fall limit")
+
         output["geometry"] = {
             "type": "ROUTE_FORK",
             "start_x": _round(fork_start),
             "end_x": _round(fork_end),
         }
         output["branch"] = {
-            "selection": "optional vertical jump; no-jump remains on safe runway",
-            "safe_route": {
-                "type": "RUNWAY",
-                "start_x": _round(fork_start),
-                "end_x": _round(fork_end),
-                "y": 0.0,
+            "selection": "no jump drops to LOWER SAFE; jump reaches UPPER TECHNICAL",
+            "split": {
+                "x": _round(fork_start),
+                "shared_surface_y": _round(current_surface_y),
+                "no_jump_destination": "SAFE",
+                "jump_destination": "TECHNICAL",
             },
-            "technical_route": {
-                "type": technical_type,
-                "takeoff_x": _round(gap_start),
-                "landing_x": _round(gap_end),
-                "landing_platform_end_x": _round(fork_end),
-                "landing_surface_y": 0.5,
+            "routes": {
+                "safe": {
+                    "elevation": safe_surface_y,
+                    "collision_geometry": {
+                        "shape": "BOX",
+                        "width": GROUND_WIDTH,
+                        "thickness": GROUND_HEIGHT,
+                    },
+                    "segments": [{
+                        "type": "LOWER_RUNWAY",
+                        "start_x": _round(fork_start),
+                        "end_x": _round(fork_end),
+                        "surface_y": safe_surface_y,
+                        "collision": True,
+                    }],
+                    "descent": {
+                        "type": "GRAVITY_DROP",
+                        "start_x": _round(fork_start),
+                        "landing_x": _round(fork_start + drop_distance),
+                        "drop_height": _round(drop_height),
+                        "drop_seconds": _round(drop_seconds),
+                        "standing_root_y": safe_standing_root_y,
+                        "fall_limit_y": FALL_LIMIT_Y,
+                    },
+                },
+                "technical": {
+                    "elevation": _round(current_surface_y),
+                    "collision_geometry": {
+                        "shape": "BOX",
+                        "width": GROUND_WIDTH,
+                        "thickness": GROUND_HEIGHT,
+                    },
+                    "segments": [
+                        {
+                            "type": "ENTRY_GAP",
+                            "start_x": _round(fork_start),
+                            "end_x": _round(entry_landing_x),
+                            "surface_y": _round(current_surface_y),
+                            "collision": False,
+                        },
+                        {
+                            "type": "RUNWAY",
+                            "start_x": _round(entry_landing_x),
+                            "end_x": _round(gap_start),
+                            "surface_y": _round(current_surface_y),
+                            "collision": True,
+                        },
+                        {
+                            "type": technical_type,
+                            "start_x": _round(gap_start),
+                            "end_x": _round(gap_end),
+                            "surface_y": _round(current_surface_y),
+                            "collision": False,
+                        },
+                        {
+                            "type": "RUNWAY",
+                            "start_x": _round(gap_end),
+                            "end_x": _round(technical_drop_x),
+                            "surface_y": _round(current_surface_y),
+                            "collision": True,
+                        },
+                        {
+                            "type": "DROP_MERGE",
+                            "start_x": _round(technical_drop_x),
+                            "end_x": _round(fork_end),
+                            "from_y": _round(current_surface_y),
+                            "to_y": safe_surface_y,
+                            "collision": False,
+                        },
+                    ],
+                },
             },
-            "merge_x": _round(fork_end),
+            "clearance": {
+                "capsule_height": DANCER_CAPSULE_HEIGHT,
+                "capsule_radius": DANCER_CAPSULE_RADIUS,
+                "platform_thickness": GROUND_HEIGHT,
+                "safety_margin": SAFE_HEAD_CLEARANCE,
+                "technical_underside_y": technical_underside_y,
+                "safe_dancer_top_y": safe_dancer_top_y,
+                "valid": safe_dancer_top_y < technical_underside_y - SAFE_HEAD_CLEARANCE,
+            },
+            "merge": {
+                "type": "TECHNICAL_DROP_TO_SAFE",
+                "drop_start_x": _round(technical_drop_x),
+                "x": _round(fork_end),
+                "surface_y": safe_surface_y,
+                "shared_runway_continues": True,
+            },
         }
         output["explanation"].append("high branchability and multiple viable classes generated optional SAFE/TECHNICAL routes")
 
@@ -183,12 +301,17 @@ def _subtract_intervals(base: list[tuple[float, float]], cuts: list[tuple[float,
 
 def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
     source_events = [event for event in movement_demands["events"] if float(event["time"]) <= COMPILE_END_SECONDS]
-    events = [
-        _compile_event(event, float(source_events[index + 1]["time"]) if index + 1 < len(source_events) else None)
-        for index, event in enumerate(source_events)
-    ]
+    events: list[dict[str, Any]] = []
+    current_surface_y = 0.0
+    for index, source_event in enumerate(source_events):
+        next_time = float(source_events[index + 1]["time"]) if index + 1 < len(source_events) else None
+        event = _compile_event(source_event, next_time, current_surface_y)
+        events.append(event)
+        if event["branch"] is not None:
+            current_surface_y = float(event["branch"]["merge"]["surface_y"])
+
     mandatory_cuts: list[tuple[float, float]] = []
-    balance_intervals: list[tuple[float, float]] = []
+    balance_intervals: list[tuple[float, float, float]] = []
     for event in events:
         geometry = event["geometry"]
         if geometry["type"] in {"SMALL_GAP", "MEDIUM_GAP", "LARGE_GAP"}:
@@ -196,9 +319,19 @@ def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
         elif geometry["type"] == "BALANCE_PASSAGE":
             interval = (geometry["start_x"], geometry["end_x"])
             mandatory_cuts.append(interval)
-            balance_intervals.append(interval)
+            balance_intervals.append((*interval, event["world"]["surface_y"]))
+        elif geometry["type"] == "ROUTE_FORK":
+            mandatory_cuts.append((geometry["start_x"], geometry["end_x"]))
 
     runway_intervals = _subtract_intervals([(LEVEL_START_X, LEVEL_END_X)], mandatory_cuts)
+
+    def surface_at(start_x: float) -> float:
+        surface_y = 0.0
+        for event in events:
+            if event["branch"] is not None and start_x >= event["branch"]["merge"]["x"]:
+                surface_y = event["branch"]["merge"]["surface_y"]
+        return surface_y
+
     return {
         "schema_version": SCHEMA_VERSION,
         "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
@@ -211,10 +344,13 @@ def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
         },
         "geometry_calibration_status": "prototype_controller_based",
         "controller_calibration": {
-            "jump_velocity": 6.0,
-            "gravity": 18.0,
+            "jump_velocity": JUMP_VELOCITY,
+            "gravity": GRAVITY,
             "same_height_airtime_seconds": 0.6667,
             "same_height_horizontal_range": 2.6667,
+            "capsule_height": DANCER_CAPSULE_HEIGHT,
+            "capsule_radius": DANCER_CAPSULE_RADIUS,
+            "fall_limit_y": FALL_LIMIT_Y,
             "note": "Gap lengths retain margin below the controller's ideal same-height ballistic range; humanoid/root-motion calibration is deferred.",
         },
         "gap_calibration": GAP_CALIBRATION,
@@ -224,8 +360,14 @@ def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
         ],
         "events": events,
         "surface_plan": {
-            "runway_intervals": [{"start_x": _round(start), "end_x": _round(end)} for start, end in runway_intervals],
-            "balance_intervals": [{"start_x": _round(start), "end_x": _round(end)} for start, end in balance_intervals],
+            "runway_intervals": [
+                {"start_x": _round(start), "end_x": _round(end), "surface_y": _round(surface_at(start))}
+                for start, end in runway_intervals
+            ],
+            "balance_intervals": [
+                {"start_x": _round(start), "end_x": _round(end), "surface_y": _round(surface_y)}
+                for start, end, surface_y in balance_intervals
+            ],
         },
     }
 
@@ -261,13 +403,29 @@ def render_scene(plan: dict[str, Any]) -> str:
     resources: list[str] = []
     nodes: list[str] = []
     for index, interval in enumerate(plan["surface_plan"]["runway_intervals"], start=1):
-        _static_box(nodes, resources, f"Runway{index:02d}", interval["start_x"], interval["end_x"])
+        _static_box(
+            nodes,
+            resources,
+            f"Runway{index:02d}",
+            interval["start_x"],
+            interval["end_x"],
+            center_y=interval["surface_y"] - GROUND_HEIGHT / 2.0,
+        )
 
     for index, event in enumerate(plan["events"], start=1):
         geometry = event["geometry"]
         if geometry["type"] == "BALANCE_PASSAGE":
             name = f"BalancePassage{index:02d}"
-            _static_box(nodes, resources, name, geometry["start_x"], geometry["end_x"], BEAM_WIDTH)
+            surface_y = event["world"]["surface_y"]
+            _static_box(
+                nodes,
+                resources,
+                name,
+                geometry["start_x"],
+                geometry["end_x"],
+                BEAM_WIDTH,
+                surface_y - GROUND_HEIGHT / 2.0,
+            )
             _, area_shape = _box_resources(resources, (geometry["length"], 2.0, BALANCE_AREA_WIDTH))
             nodes.append(
                 f'[node name="BalanceArea" type="Area3D" parent="Level/{name}"]\n'
@@ -279,26 +437,45 @@ def render_scene(plan: dict[str, Any]) -> str:
             _, shape_id = _box_resources(resources, (geometry["length"], 2.0, GROUND_WIDTH))
             nodes.append(
                 f'[node name="AccentZone{index:02d}" type="Area3D" parent="Level"]\n'
-                f'position = Vector3({event["world"]["event_x"]:.4f}, 1, 0)\n'
+                f'position = Vector3({event["world"]["event_x"]:.4f}, {event["world"]["surface_y"] + 1.0:.4f}, 0)\n'
                 f'[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone{index:02d}"]\n'
                 f'shape = SubResource("{shape_id}")\n'
             )
         elif geometry["type"] == "ROUTE_FORK":
-            technical = event["branch"]["technical_route"]
-            landing_start = technical["landing_x"]
-            landing_end = technical["landing_platform_end_x"]
-            if landing_end > landing_start:
-                _static_box(nodes, resources, f"TechnicalLanding{index:02d}", landing_start, landing_end, GROUND_WIDTH, 0.25)
+            branch = event["branch"]
+            safe = branch["routes"]["safe"]
+            technical = branch["routes"]["technical"]
+            safe_segment = safe["segments"][0]
+            _static_box(
+                nodes,
+                resources,
+                f"SafeLowerRoute{index:02d}",
+                safe_segment["start_x"],
+                safe_segment["end_x"],
+                GROUND_WIDTH,
+                safe["elevation"] - GROUND_HEIGHT / 2.0,
+            )
+            technical_runways = [segment for segment in technical["segments"] if segment["collision"]]
+            for segment_index, segment in enumerate(technical_runways, start=1):
+                _static_box(
+                    nodes,
+                    resources,
+                    f"TechnicalRoute{index:02d}_{segment_index:02d}",
+                    segment["start_x"],
+                    segment["end_x"],
+                    GROUND_WIDTH,
+                    technical["elevation"] - GROUND_HEIGHT / 2.0,
+                )
             nodes.append(
                 f'[node name="ForkStart{index:02d}" type="Marker3D" parent="Level"]\n'
-                f'position = Vector3({geometry["start_x"]:.4f}, 0, 0)\n'
+                f'position = Vector3({geometry["start_x"]:.4f}, {branch["split"]["shared_surface_y"]:.4f}, 0)\n'
                 f'[node name="ForkMerge{index:02d}" type="Marker3D" parent="Level"]\n'
-                f'position = Vector3({event["branch"]["merge_x"]:.4f}, 0, 0)\n'
+                f'position = Vector3({branch["merge"]["x"]:.4f}, {branch["merge"]["surface_y"]:.4f}, 0)\n'
             )
 
         nodes.append(
             f'[node name="Event{index:02d}_{event["source_class"]}" type="Marker3D" parent="Events"]\n'
-            f'position = Vector3({event["world"]["event_x"]:.4f}, 0, 0)\n'
+            f'position = Vector3({event["world"]["event_x"]:.4f}, {event["world"]["surface_y"]:.4f}, 0)\n'
         )
 
     header = (
