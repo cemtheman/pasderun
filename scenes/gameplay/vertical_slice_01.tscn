@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://blf6l5vi6n1lp"]
+[gd_scene load_steps=14 format=3 uid="uid://blf6l5vi6n1lp"]
 
 [ext_resource type="Script" uid="uid://mpnd2c2foaq1" path="res://scenes/gameplay/dancer.gd" id="1_047b5"]
 [ext_resource type="Script" uid="uid://cs0r3obsyp76v" path="res://scenes/gameplay/camera_rig.gd" id="1_x0ne6"]
 [ext_resource type="Script" uid="uid://6ctk7t1cikmi" path="res://scenes/gameplay/balance_area.gd" id="2_tmuey"]
 [ext_resource type="AudioStream" path="res://assets/audio/graceful_opening.mp3" id="4_music"]
 [ext_resource type="Script" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
+[ext_resource type="Script" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_r308u"]
 size = Vector3(30, 0.5, 4)
@@ -92,6 +93,30 @@ mesh = SubResource("BoxMesh_r308u")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/GroundC" unique_id=1493109196]
 shape = SubResource("BoxShape3D_vtibc")
 
+[node name="OpeningRhythmBoundary" type="Marker3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 0, 0)
+
+[node name="RhythmRunwayA" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.5, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/RhythmRunwayA"]
+mesh = SubResource("BoxMesh_r308u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RhythmRunwayA"]
+shape = SubResource("BoxShape3D_vtibc")
+
+[node name="RhythmRunwayB" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.5, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/RhythmRunwayB"]
+mesh = SubResource("BoxMesh_r308u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RhythmRunwayB"]
+shape = SubResource("BoxShape3D_vtibc")
+
+[node name="RhythmConnectionBoundary" type="Marker3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120, 0, 0)
+
 [node name="LowGate" type="StaticBody3D" parent="Level" unique_id=260640863]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.65, 0)
 
@@ -111,6 +136,12 @@ autoplay = true
 script = ExtResource("5_timeline")
 audio_player = NodePath("../AudioStreamPlayer")
 debug_label = NodePath("../../DebugHUD/MusicDebug")
+
+[node name="Musicality" type="Node" parent="Music" node_paths=PackedStringArray("music_timeline", "dancer", "debug_label")]
+script = ExtResource("6_musicality")
+music_timeline = NodePath("../MusicTimeline")
+dancer = NodePath("../../Dancer")
+debug_label = NodePath("../../DebugHUD/AccentDebug")
 
 [node name="Dancer" type="CharacterBody3D" parent="." unique_id=801482917 node_paths=PackedStringArray("input_debug_label")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
@@ -138,3 +169,10 @@ offset_top = 70.0
 offset_right = 330.0
 offset_bottom = 116.0
 text = "MUSIC: 00:00.0 / 00:00.0\nSECTION: OPENING"
+
+[node name="AccentDebug" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 124.0
+offset_right = 330.0
+offset_bottom = 147.0
+text = "ACCENT: —"

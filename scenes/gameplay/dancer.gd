@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+signal tap_detected
+
 # PAS DE RUN — DANCER CONTROLLER v0.4
 #
 # Working:
@@ -390,6 +392,7 @@ func _end_press(position: Vector2) -> void:
 
 	if elapsed <= tap_max_ms:
 		_show_input("TAP")
+		tap_detected.emit()
 
 
 func _jump() -> void:
