@@ -62,7 +62,7 @@ class FlowTrackerTests(unittest.TestCase):
         self.assertGreater(good, 0.0)
         retained = constant(self.flow, "MISS_RETAINED_FRACTION")
         self.assertEqual(retained, 0.60)
-        self.assertIn("flow_value * MISS_RETAINED_FRACTION", self.flow)
+        self.assertIn("previous * MISS_RETAINED_FRACTION", self.flow)
 
     def test_musicality_emits_its_actual_classification(self) -> None:
         self.assertIn("signal accent_evaluated", self.musicality)
@@ -106,9 +106,48 @@ class FlowTrackerTests(unittest.TestCase):
         self.assertIsNotNone(callback)
         source = callback.group(0)
         self.assertIn('if classification == &"MISS":', source)
-        self.assertIn('_set_flow(flow_value * MISS_RETAINED_FRACTION, "MISS ACCENT")', source)
+        self.assertIn("last_miss_after = clampf(previous * MISS_RETAINED_FRACTION, 0.0, 1.0)", source)
+        self.assertIn("_set_flow(last_miss_after, reason)", source)
         self.assertNotIn("call_deferred", source)
         self.assertNotIn("await", source)
+
+    def test_miss_result_cannot_be_replaced_before_hud_draw(self) -> None:
+        callback = re.search(
+            r"func _on_accent_evaluated\(.*?(?=\n\nfunc )",
+            self.flow,
+            re.DOTALL,
+        ).group(0)
+        physics = re.search(
+            r"func _physics_process\(.*?(?=\n\nfunc )",
+            self.flow,
+            re.DOTALL,
+        ).group(0)
+        self.assertIn("Engine.get_process_frames() + 1", callback)
+        self.assertIn("Engine.get_process_frames() <= _miss_visible_through_process_frame", physics)
+        self.assertLess(
+            physics.index("SERIOUS INTERRUPTION: FALL"),
+            physics.index("_miss_visible_through_process_frame"),
+        )
+
+    def test_all_other_flow_tuning_values_remain_locked(self) -> None:
+        expected_contributions = {
+            "JUMP": 0.14,
+            "BALANCE": 0.14,
+            "SAFE_ROUTE": 0.08,
+            "TECHNICAL_ROUTE": 0.14,
+            "PERFECT": 0.16,
+            "GOOD": 0.11,
+            "EARLY": 0.04,
+            "LATE": 0.04,
+        }
+        for name, expected in expected_contributions.items():
+            actual = float(re.search(rf'&"{name}": ([0-9.]+)', self.flow).group(1))
+            self.assertEqual(actual, expected)
+        self.assertEqual(constant(self.flow, "DECAY_GRACE_SECONDS"), 6.0)
+        self.assertEqual(constant(self.flow, "DECAY_PER_SECOND"), 0.01)
+        for state, expected in (("BUILDING", 0.05), ("FLOWING", 0.45), ("STRONG_FLOW", 0.75)):
+            actual = float(re.search(rf'&"{state}": ([0-9.]+)', self.flow).group(1))
+            self.assertEqual(actual, expected)
 
     def test_safe_and_technical_routes_are_both_valid_with_technical_upside(self) -> None:
         safe = float(re.search(r'&"SAFE_ROUTE": ([0-9.]+)', self.flow).group(1))

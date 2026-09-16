@@ -48,6 +48,9 @@ var _balance_was_active := false
 var _balance_hold_seconds := 0.0
 var _jump_events: Array[Dictionary] = []
 var _fork_events: Array[Dictionary] = []
+var _miss_visible_through_process_frame := -1
+var last_miss_before := 0.0
+var last_miss_after := 0.0
 
 
 func _ready() -> void:
@@ -79,6 +82,11 @@ func _physics_process(delta: float) -> void:
 		_reset_flow("SERIOUS INTERRUPTION: FALL")
 	_fall_was_active = has_fallen
 	if has_fallen:
+		return
+	# accent_evaluated is emitted synchronously from input handling. Without
+	# this one-frame presentation guard, a landing/route outcome later in the
+	# same rendered frame can replace the MISS value before the HUD is drawn.
+	if Engine.get_process_frames() <= _miss_visible_through_process_frame:
 		return
 
 	_track_balance(delta, playback_time)
@@ -220,8 +228,12 @@ func _track_forks(playback_time: float) -> void:
 func _on_accent_evaluated(classification: StringName, delta: float, _marker_time: float) -> void:
 	if classification == &"MISS":
 		var previous := flow_value
-		_set_flow(flow_value * MISS_RETAINED_FRACTION, "MISS ACCENT")
-		flow_changed.emit(flow_value, flow_value - previous, "MISS ACCENT")
+		last_miss_before = previous
+		last_miss_after = clampf(previous * MISS_RETAINED_FRACTION, 0.0, 1.0)
+		_miss_visible_through_process_frame = Engine.get_process_frames() + 1
+		var reason := "MISS ACCENT %.3f → %.3f" % [last_miss_before, last_miss_after]
+		_set_flow(last_miss_after, reason)
+		flow_changed.emit(flow_value, flow_value - previous, reason)
 		return
 	if not CONTRIBUTIONS.has(classification):
 		return
@@ -265,6 +277,9 @@ func _reset_flow(reason: String) -> void:
 	_last_success_time = -INF
 	_balance_was_active = false
 	_balance_hold_seconds = 0.0
+	_miss_visible_through_process_frame = -1
+	last_miss_before = 0.0
+	last_miss_after = 0.0
 	_set_flow(0.0, reason)
 
 
