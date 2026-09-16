@@ -49,9 +49,10 @@ class AccentRuntimeTraceTests(unittest.TestCase):
 
     def test_trace_covers_every_requested_runtime_value(self) -> None:
         for field in (
-            "TAP t=",
+            "EVAL t=",
             "MARKER=",
             "DELTA=",
+            "INPUT=",
             "CLASS=",
             "SIGNAL=",
             "FLOW BEFORE=",
@@ -78,6 +79,7 @@ class AccentRuntimeTraceTests(unittest.TestCase):
             re.DOTALL,
         ).group(0)
         self.assertIn("accent_evaluation_started.emit", handler)
+        self.assertIn('&"TAP"', handler)
         self.assertIn('accent_evaluated.emit(&"MISS"', handler)
         self.assertIn("accent_evaluated.emit(classification", handler)
 

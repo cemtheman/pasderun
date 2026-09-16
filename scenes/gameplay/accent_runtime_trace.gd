@@ -9,6 +9,7 @@ var _trace_serial := 0
 var _tap_time := 0.0
 var _marker_time := -1.0
 var _tap_delta := 0.0
+var _input_source := &"NONE"
 var _classification := &"PENDING"
 var _signal_status := "PENDING"
 var _flow_before := 0.0
@@ -52,11 +53,17 @@ func _physics_process(_delta: float) -> void:
 	print("ACCENT RUNTIME TRACE\n", trace_label.text)
 
 
-func _on_accent_evaluation_started(playback_time: float, marker_time: float, delta: float) -> void:
+func _on_accent_evaluation_started(
+	playback_time: float,
+	marker_time: float,
+	delta: float,
+	input_source: StringName
+) -> void:
 	_trace_serial += 1
 	_tap_time = playback_time
 	_marker_time = marker_time
 	_tap_delta = delta
+	_input_source = input_source
 	_classification = &"PENDING"
 	_signal_status = "PENDING"
 	_flow_before = _current_flow()
@@ -118,9 +125,10 @@ func _update_trace() -> void:
 	var handler_text := "—" if not _handler_captured else "%.3f" % _flow_handler
 	var next_text := "—" if not _next_physics_captured else "%.3f" % _flow_next_physics
 	trace_label.text = (
-		"TAP t=%.3f\n"
+		"EVAL t=%.3f\n"
 		+ "MARKER=%s\n"
 		+ "DELTA=%+.3f\n"
+		+ "INPUT=%s\n"
 		+ "CLASS=%s\n"
 		+ "SIGNAL=%s\n"
 		+ "FLOW BEFORE=%.3f\n"
@@ -131,6 +139,7 @@ func _update_trace() -> void:
 		_tap_time,
 		marker_text,
 		_tap_delta,
+		_input_source,
 		_classification,
 		_signal_status,
 		_flow_before,
