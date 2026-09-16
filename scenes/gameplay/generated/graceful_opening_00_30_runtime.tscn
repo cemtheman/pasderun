@@ -1,71 +1,69 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene format=3 uid="uid://wrse8kqkd211"]
 
-[ext_resource type="Script" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
-[ext_resource type="Script" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
-[ext_resource type="Script" path="res://scenes/gameplay/dancer.gd" id="3_dancer"]
-[ext_resource type="AudioStream" path="res://assets/audio/graceful_opening.mp3" id="4_music"]
-[ext_resource type="Script" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
-[ext_resource type="Script" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
+[ext_resource type="Script" uid="uid://cs0r3obsyp76v" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
+[ext_resource type="Script" uid="uid://bh4crynrhk21a" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
+[ext_resource type="Script" uid="uid://mpnd2c2foaq1" path="res://scenes/gameplay/dancer.gd" id="3_dancer"]
+[ext_resource type="AudioStream" uid="uid://cw8xnn6efuv64" path="res://assets/audio/graceful_opening.mp3" id="4_music"]
+[ext_resource type="Script" uid="uid://dvruxwtwohbex" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
+[ext_resource type="Script" uid="uid://lqlq71arr06n" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn" id="7_generated"]
-[ext_resource type="Script" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
-[ext_resource type="Script" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
-[ext_resource type="Script" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]
-[ext_resource type="Script" path="res://scenes/gameplay/accent_runtime_trace.gd" id="11_trace"]
-[ext_resource type="Script" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
+[ext_resource type="Script" uid="uid://hphxx5asu33q" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
+[ext_resource type="Script" uid="uid://d31d3vxeg31l7" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
+[ext_resource type="Script" uid="uid://bagrec1bocuaq" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]
+[ext_resource type="Script" uid="uid://croawgsco8b5c" path="res://scenes/gameplay/accent_runtime_trace.gd" id="11_trace"]
+[ext_resource type="Script" uid="uid://cw63t1pduqsu6" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_runtime"]
-radius = 0.5
-height = 2.0
 
-[node name="GracefulOpening0030Runtime" type="Node3D"]
+[node name="GracefulOpening0030Runtime" type="Node3D" unique_id=717052963]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=342073125]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1777819294]
 
-[node name="GeneratedLevel" parent="." instance=ExtResource("7_generated")]
+[node name="GeneratedLevel" parent="." unique_id=771723095 instance=ExtResource("7_generated")]
 
-[node name="ForkDebugVisualization" type="Node3D" parent="." node_paths=PackedStringArray("generated_level")]
+[node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]
 script = ExtResource("8_debug")
 generated_level = NodePath("../GeneratedLevel")
 
-[node name="CameraRig" type="Node3D" parent="." node_paths=PackedStringArray("target")]
+[node name="CameraRig" type="Node3D" parent="." unique_id=970329606 node_paths=PackedStringArray("target")]
 script = ExtResource("1_camera")
 target = NodePath("../Dancer")
 
-[node name="Camera3D" type="Camera3D" parent="CameraRig"]
-position = Vector3(0, 2.2, 8)
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=2128843652]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 8)
 projection = 1
 current = true
 size = 5.5
 
-[node name="ForkFraming" type="Node" parent="CameraRig" node_paths=PackedStringArray("camera_rig", "camera", "target", "generated_level")]
+[node name="ForkFraming" type="Node" parent="CameraRig" unique_id=1406707815 node_paths=PackedStringArray("camera_rig", "camera", "target", "generated_level")]
 script = ExtResource("2_framing")
 camera_rig = NodePath("..")
 camera = NodePath("../Camera3D")
 target = NodePath("../../Dancer")
 generated_level = NodePath("../../GeneratedLevel")
 
-[node name="Music" type="Node" parent="."]
+[node name="Music" type="Node" parent="." unique_id=2088412974]
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music"]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music" unique_id=32499196]
 stream = ExtResource("4_music")
 autoplay = true
 
-[node name="MusicTimeline" type="Node" parent="Music" node_paths=PackedStringArray("audio_player", "debug_label")]
+[node name="MusicTimeline" type="Node" parent="Music" unique_id=1206020740 node_paths=PackedStringArray("audio_player", "debug_label")]
 script = ExtResource("5_timeline")
 audio_player = NodePath("../AudioStreamPlayer")
 debug_label = NodePath("../../DebugHUD/MusicDebug")
 
-[node name="Musicality" type="Node" parent="Music" node_paths=PackedStringArray("music_timeline", "dancer", "debug_label")]
+[node name="Musicality" type="Node" parent="Music" unique_id=1008573966 node_paths=PackedStringArray("music_timeline", "dancer", "debug_label")]
 script = ExtResource("6_musicality")
 music_timeline = NodePath("../MusicTimeline")
 dancer = NodePath("../../Dancer")
 debug_label = NodePath("../../DebugHUD/AccentDebug")
 
-[node name="FlowTracker" type="Node" parent="." node_paths=PackedStringArray("dancer", "music_timeline", "musicality", "generated_level", "debug_label")]
+[node name="FlowTracker" type="Node" parent="." unique_id=87562896 node_paths=PackedStringArray("dancer", "music_timeline", "musicality", "generated_level", "debug_label")]
 script = ExtResource("9_flow")
 dancer = NodePath("../Dancer")
 music_timeline = NodePath("../Music/MusicTimeline")
@@ -73,71 +71,86 @@ musicality = NodePath("../Music/Musicality")
 generated_level = NodePath("../GeneratedLevel")
 debug_label = NodePath("../DebugHUD/FlowDebug")
 
-[node name="TapTimingDebug" type="Node" parent="." node_paths=PackedStringArray("musicality", "music_timeline", "debug_label")]
+[node name="TapTimingDebug" type="Node" parent="." unique_id=600502133 node_paths=PackedStringArray("musicality", "music_timeline", "debug_label")]
 script = ExtResource("10_tap_debug")
 musicality = NodePath("../Music/Musicality")
 music_timeline = NodePath("../Music/MusicTimeline")
 debug_label = NodePath("../DebugHUD/TapTimingDebug")
 
-[node name="AccentRuntimeTrace" type="Node" parent="." node_paths=PackedStringArray("musicality", "flow_tracker", "flow_debug_label", "trace_label")]
+[node name="AccentRuntimeTrace" type="Node" parent="." unique_id=1394950077 node_paths=PackedStringArray("musicality", "flow_tracker", "flow_debug_label", "trace_label")]
 script = ExtResource("11_trace")
 musicality = NodePath("../Music/Musicality")
 flow_tracker = NodePath("../FlowTracker")
 flow_debug_label = NodePath("../DebugHUD/FlowDebug")
 trace_label = NodePath("../DebugHUD/AccentRuntimeTrace")
 
-[node name="Dancer" type="CharacterBody3D" parent="." node_paths=PackedStringArray("input_debug_label")]
-position = Vector3(0, 1.5, 0)
+[node name="Dancer" type="CharacterBody3D" parent="." unique_id=681487939 node_paths=PackedStringArray("input_debug_label")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("3_dancer")
 input_debug_label = NodePath("../DebugHUD/InputDebug")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Dancer"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Dancer" unique_id=520819232]
 mesh = SubResource("CapsuleMesh_runtime")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer" unique_id=761921886]
 shape = SubResource("CapsuleShape_runtime")
 
-[node name="DebugHUD" type="CanvasLayer" parent="."]
+[node name="DebugHUD" type="CanvasLayer" parent="." unique_id=1243432770]
 script = ExtResource("12_ascii_hud")
 
-[node name="InputDebug" type="Label" parent="DebugHUD"]
+[node name="InputDebug" type="Label" parent="DebugHUD" unique_id=94899940]
 offset_left = 57.0
 offset_top = 40.0
 offset_right = 330.0
 offset_bottom = 63.0
 text = "INPUT: -"
 
-[node name="MusicDebug" type="Label" parent="DebugHUD"]
+[node name="MusicDebug" type="Label" parent="DebugHUD" unique_id=605584545]
 offset_left = 57.0
 offset_top = 70.0
 offset_right = 330.0
 offset_bottom = 116.0
-text = "MUSIC: 00:00.0 / 00:00.0\nSECTION: OPENING"
+text = "MUSIC: 00:00.0 / 00:00.0
+SECTION: OPENING"
 
-[node name="AccentDebug" type="Label" parent="DebugHUD"]
+[node name="AccentDebug" type="Label" parent="DebugHUD" unique_id=1366275914]
 offset_left = 57.0
 offset_top = 124.0
 offset_right = 330.0
 offset_bottom = 147.0
 text = "ACCENT: -"
 
-[node name="FlowDebug" type="Label" parent="DebugHUD"]
+[node name="FlowDebug" type="Label" parent="DebugHUD" unique_id=260352153]
 offset_left = 57.0
 offset_top = 154.0
 offset_right = 390.0
 offset_bottom = 200.0
-text = "FLOW: EMPTY 0.00\nLAST: -"
+text = "FLOW: EMPTY 0.00
+LAST: -"
 
-[node name="TapTimingDebug" type="Label" parent="DebugHUD"]
+[node name="TapTimingDebug" type="Label" parent="DebugHUD" unique_id=460186433]
 offset_left = 57.0
 offset_top = 210.0
 offset_right = 440.0
 offset_bottom = 305.0
-text = "NEXT TAP: -\nAPPROACH\nEARLY      PERFECT      LATE\n--------------o--------------\nLAST ACCENT: -"
+text = "NEXT TAP: -
+APPROACH
+EARLY      PERFECT      LATE
+--------------o--------------
+LAST ACCENT: -"
 
-[node name="AccentRuntimeTrace" type="Label" parent="DebugHUD"]
+[node name="AccentRuntimeTrace" type="Label" parent="DebugHUD" unique_id=1128025895]
 offset_left = 470.0
 offset_top = 40.0
 offset_right = 820.0
 offset_bottom = 250.0
-text = "EVAL t=0.000\nMARKER=NONE\nDELTA=+0.000\nINPUT=NONE\nCLASS=PENDING\nSIGNAL=PENDING\nFLOW BEFORE=0.000\nFLOW HANDLER=-\nFLOW NEXT PHYSICS=-\nHUD FLOW=0.000"
+text = "EVAL t=0.000
+MARKER=NONE
+DELTA=+0.000
+INPUT=NONE
+CLASS=PENDING
+SIGNAL=PENDING
+FLOW BEFORE=0.000
+FLOW HANDLER=-
+FLOW NEXT PHYSICS=-
+HUD FLOW=0.000"

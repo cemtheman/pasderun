@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Pas de Run"
-run/main_scene="res://scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
+run/main_scene="uid://wrse8kqkd211"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
