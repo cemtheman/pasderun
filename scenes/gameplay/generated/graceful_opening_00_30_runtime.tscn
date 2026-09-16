@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
 [ext_resource type="Script" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn" id="7_generated"]
 [ext_resource type="Script" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
 [ext_resource type="Script" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
+[ext_resource type="Script" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -70,6 +71,12 @@ musicality = NodePath("../Music/Musicality")
 generated_level = NodePath("../GeneratedLevel")
 debug_label = NodePath("../DebugHUD/FlowDebug")
 
+[node name="TapTimingDebug" type="Node" parent="." node_paths=PackedStringArray("musicality", "music_timeline", "debug_label")]
+script = ExtResource("10_tap_debug")
+musicality = NodePath("../Music/Musicality")
+music_timeline = NodePath("../Music/MusicTimeline")
+debug_label = NodePath("../DebugHUD/TapTimingDebug")
+
 [node name="Dancer" type="CharacterBody3D" parent="." node_paths=PackedStringArray("input_debug_label")]
 position = Vector3(0, 1.5, 0)
 script = ExtResource("3_dancer")
@@ -110,3 +117,10 @@ offset_top = 154.0
 offset_right = 390.0
 offset_bottom = 200.0
 text = "FLOW: EMPTY 0.00\nLAST: —"
+
+[node name="TapTimingDebug" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 210.0
+offset_right = 440.0
+offset_bottom = 305.0
+text = "NEXT TAP: —\nAPPROACH\nEARLY      PERFECT      LATE\n──────────────●──────────────\nLAST ACCENT: —"

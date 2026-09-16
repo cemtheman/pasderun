@@ -77,6 +77,29 @@ func _nearest_available_accent(playback_time: float) -> int:
 	return nearest_index
 
 
+func get_next_accent_opportunity(playback_time: float = -1.0) -> Dictionary:
+	var time := _playback_time() if playback_time < 0.0 else playback_time
+	for index in ACCENT_MARKERS.size():
+		if _consumed_accents.has(index):
+			continue
+		var marker_time := ACCENT_MARKERS[index]
+		if time <= marker_time + EARLY_LATE_WINDOW:
+			return {
+				"index": index,
+				"time": marker_time,
+				"delta": time - marker_time,
+			}
+	return {}
+
+
+func get_timing_windows() -> Dictionary:
+	return {
+		"perfect": PERFECT_WINDOW,
+		"good": GOOD_WINDOW,
+		"early_late": EARLY_LATE_WINDOW,
+	}
+
+
 func _classify_delta(delta: float) -> StringName:
 	var absolute_delta := absf(delta)
 	if absolute_delta <= PERFECT_WINDOW:
