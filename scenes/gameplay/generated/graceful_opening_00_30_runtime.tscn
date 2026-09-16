@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://croawgsco8b5c" path="res://scenes/gameplay/accent_runtime_trace.gd" id="11_trace"]
 [ext_resource type="Script" uid="uid://cw63t1pduqsu6" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
 [ext_resource type="Script" path="res://scenes/gameplay/runtime_start_gate.gd" id="13_start_gate"]
+[ext_resource type="Script" path="res://scenes/gameplay/spatial_stall_probe.gd" id="14_stall_probe"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -94,6 +95,13 @@ tap_timing_debug = NodePath("../TapTimingDebug")
 accent_runtime_trace = NodePath("../AccentRuntimeTrace")
 overlay = NodePath("../StartGateOverlay")
 
+[node name="SpatialStallProbe" type="Node" parent="." node_paths=PackedStringArray("start_gate", "fork_camera_framing", "fork_debug_visualization", "debug_label")]
+script = ExtResource("14_stall_probe")
+start_gate = NodePath("../RuntimeStartGate")
+fork_camera_framing = NodePath("../CameraRig/ForkFraming")
+fork_debug_visualization = NodePath("../ForkDebugVisualization")
+debug_label = NodePath("../DebugHUD/SpatialStallProbe")
+
 [node name="Dancer" type="CharacterBody3D" parent="." unique_id=681487939 node_paths=PackedStringArray("input_debug_label")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("3_dancer")
@@ -164,6 +172,13 @@ FLOW BEFORE=0.000
 FLOW HANDLER=-
 FLOW NEXT PHYSICS=-
 HUD FLOW=0.000"
+
+[node name="SpatialStallProbe" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 315.0
+offset_right = 440.0
+offset_bottom = 338.0
+text = "STALL PROBE FRAMING:ON VISUALS:ON"
 
 [node name="StartGateOverlay" type="CanvasLayer" parent="."]
 layer = 100
