@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://bagrec1bocuaq" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]
 [ext_resource type="Script" uid="uid://croawgsco8b5c" path="res://scenes/gameplay/accent_runtime_trace.gd" id="11_trace"]
 [ext_resource type="Script" uid="uid://cw63t1pduqsu6" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
+[ext_resource type="Script" path="res://scenes/gameplay/runtime_start_gate.gd" id="13_start_gate"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -50,7 +51,6 @@ generated_level = NodePath("../../GeneratedLevel")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music" unique_id=32499196]
 stream = ExtResource("4_music")
-autoplay = true
 
 [node name="MusicTimeline" type="Node" parent="Music" unique_id=1206020740 node_paths=PackedStringArray("audio_player", "debug_label")]
 script = ExtResource("5_timeline")
@@ -83,6 +83,16 @@ musicality = NodePath("../Music/Musicality")
 flow_tracker = NodePath("../FlowTracker")
 flow_debug_label = NodePath("../DebugHUD/FlowDebug")
 trace_label = NodePath("../DebugHUD/AccentRuntimeTrace")
+
+[node name="RuntimeStartGate" type="Node" parent="." node_paths=PackedStringArray("dancer", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "overlay")]
+script = ExtResource("13_start_gate")
+dancer = NodePath("../Dancer")
+music_root = NodePath("../Music")
+audio_player = NodePath("../Music/AudioStreamPlayer")
+flow_tracker = NodePath("../FlowTracker")
+tap_timing_debug = NodePath("../TapTimingDebug")
+accent_runtime_trace = NodePath("../AccentRuntimeTrace")
+overlay = NodePath("../StartGateOverlay")
 
 [node name="Dancer" type="CharacterBody3D" parent="." unique_id=681487939 node_paths=PackedStringArray("input_debug_label")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
@@ -154,3 +164,31 @@ FLOW BEFORE=0.000
 FLOW HANDLER=-
 FLOW NEXT PHYSICS=-
 HUD FLOW=0.000"
+
+[node name="StartGateOverlay" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="Dimmer" type="ColorRect" parent="StartGateOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Prompt" type="Label" parent="StartGateOverlay"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -22.0
+offset_right = 110.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "TAP TO START"
+horizontal_alignment = 1
+vertical_alignment = 1

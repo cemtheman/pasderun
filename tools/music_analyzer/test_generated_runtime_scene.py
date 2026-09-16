@@ -32,7 +32,10 @@ class GeneratedRuntimeSceneTests(unittest.TestCase):
 
     def test_runtime_instances_generated_geometry_without_legacy_level(self) -> None:
         self.assertIn('path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn"', self.scene)
-        self.assertIn('name="GeneratedLevel" parent="." instance=', self.scene)
+        self.assertRegex(
+            self.scene,
+            r'\[node name="GeneratedLevel" parent="\."[^\]]*instance=',
+        )
         self.assertNotIn('[node name="Level"', self.scene)
         self.assertNotIn('vertical_slice_01.tscn', self.scene)
 

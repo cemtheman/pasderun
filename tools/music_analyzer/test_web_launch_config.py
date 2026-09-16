@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -20,7 +21,12 @@ EXPECTED_MAIN_SCENE = (
 class WebLaunchConfigTests(unittest.TestCase):
     def test_project_launches_generated_runtime_scene(self) -> None:
         project = PROJECT.read_text(encoding="utf-8")
-        self.assertIn(EXPECTED_MAIN_SCENE, project)
+        runtime_header = RUNTIME_SCENE.read_text(encoding="utf-8").splitlines()[0]
+        runtime_uid = re.search(r'uid="([^"]+)"', runtime_header).group(1)
+        self.assertTrue(
+            EXPECTED_MAIN_SCENE in project
+            or f'run/main_scene="{runtime_uid}"' in project
+        )
         self.assertNotIn('run/main_scene="uid://blf6l5vi6n1lp"', project)
         self.assertTrue(RUNTIME_SCENE.is_file())
 
