@@ -7,7 +7,7 @@ const INDICATOR_WIDTH := 29
 @export var debug_label: Label
 
 var _last_playback_time := 0.0
-var _last_classification := "—"
+var _last_classification := "-"
 
 
 func _ready() -> void:
@@ -28,7 +28,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	var playback_time := _playback_time()
 	if playback_time + 0.05 < _last_playback_time:
-		_last_classification = "—"
+		_last_classification = "-"
 	_last_playback_time = playback_time
 	_update_cue(playback_time)
 
@@ -36,7 +36,7 @@ func _process(_delta: float) -> void:
 func _update_cue(playback_time: float) -> void:
 	var opportunity: Dictionary = musicality.call("get_next_accent_opportunity", playback_time)
 	if opportunity.is_empty():
-		debug_label.text = "NEXT TAP: —\nNO UPCOMING TAP OPPORTUNITY\nLAST ACCENT: %s" % _last_classification
+		debug_label.text = "NEXT TAP: -\nNO UPCOMING TAP OPPORTUNITY\nLAST ACCENT: %s" % _last_classification
 		return
 
 	var windows: Dictionary = musicality.call("get_timing_windows")
@@ -46,7 +46,7 @@ func _update_cue(playback_time: float) -> void:
 	var absolute_delta := absf(delta)
 	var cue_state := "APPROACH"
 	if absolute_delta <= float(windows["early_late"]):
-		cue_state = ">>> TAP NOW — %s <<<" % _window_region(delta, windows)
+		cue_state = ">>> TAP NOW - %s <<<" % _window_region(delta, windows)
 
 	debug_label.text = "NEXT TAP: %+.2fs\n%s\n%s\nLAST ACCENT: %s" % [
 		seconds_until,
@@ -82,15 +82,15 @@ func _timing_indicator(delta: float, windows: Dictionary) -> String:
 			float(index) / float(INDICATOR_WIDTH - 1)
 		)
 		var distance := absf(sample_delta)
-		var character := "─"
+		var character := "-"
 		if distance <= good_window:
-			character = "━"
+			character = "="
 		if distance <= perfect_window:
-			character = "═"
+			character = "#"
 		if index == center:
-			character = "│"
+			character = "|"
 		if index == marker_position:
-			character = "●"
+			character = "o"
 		characters.append(character)
 	return "EARLY      PERFECT      LATE\n%s" % "".join(characters)
 

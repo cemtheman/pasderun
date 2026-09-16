@@ -122,8 +122,8 @@ func _read_hud_flow() -> float:
 
 func _update_trace() -> void:
 	var marker_text := "NONE" if _marker_time < 0.0 else "%.3f" % _marker_time
-	var handler_text := "—" if not _handler_captured else "%.3f" % _flow_handler
-	var next_text := "—" if not _next_physics_captured else "%.3f" % _flow_next_physics
+	var handler_text := "-" if not _handler_captured else "%.3f" % _flow_handler
+	var next_text := "-" if not _next_physics_captured else "%.3f" % _flow_next_physics
 	trace_label.text = (
 		"EVAL t=%.3f\n"
 		+ "MARKER=%s\n"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
 [ext_resource type="Script" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
 [ext_resource type="Script" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]
 [ext_resource type="Script" path="res://scenes/gameplay/accent_runtime_trace.gd" id="11_trace"]
+[ext_resource type="Script" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -97,13 +98,14 @@ mesh = SubResource("CapsuleMesh_runtime")
 shape = SubResource("CapsuleShape_runtime")
 
 [node name="DebugHUD" type="CanvasLayer" parent="."]
+script = ExtResource("12_ascii_hud")
 
 [node name="InputDebug" type="Label" parent="DebugHUD"]
 offset_left = 57.0
 offset_top = 40.0
 offset_right = 330.0
 offset_bottom = 63.0
-text = "INPUT: —"
+text = "INPUT: -"
 
 [node name="MusicDebug" type="Label" parent="DebugHUD"]
 offset_left = 57.0
@@ -117,25 +119,25 @@ offset_left = 57.0
 offset_top = 124.0
 offset_right = 330.0
 offset_bottom = 147.0
-text = "ACCENT: —"
+text = "ACCENT: -"
 
 [node name="FlowDebug" type="Label" parent="DebugHUD"]
 offset_left = 57.0
 offset_top = 154.0
 offset_right = 390.0
 offset_bottom = 200.0
-text = "FLOW: EMPTY 0.00\nLAST: —"
+text = "FLOW: EMPTY 0.00\nLAST: -"
 
 [node name="TapTimingDebug" type="Label" parent="DebugHUD"]
 offset_left = 57.0
 offset_top = 210.0
 offset_right = 440.0
 offset_bottom = 305.0
-text = "NEXT TAP: —\nAPPROACH\nEARLY      PERFECT      LATE\n──────────────●──────────────\nLAST ACCENT: —"
+text = "NEXT TAP: -\nAPPROACH\nEARLY      PERFECT      LATE\n--------------o--------------\nLAST ACCENT: -"
 
 [node name="AccentRuntimeTrace" type="Label" parent="DebugHUD"]
 offset_left = 470.0
 offset_top = 40.0
 offset_right = 820.0
 offset_bottom = 250.0
-text = "EVAL t=0.000\nMARKER=NONE\nDELTA=+0.000\nINPUT=NONE\nCLASS=PENDING\nSIGNAL=PENDING\nFLOW BEFORE=0.000\nFLOW HANDLER=—\nFLOW NEXT PHYSICS=—\nHUD FLOW=0.000"
+text = "EVAL t=0.000\nMARKER=NONE\nDELTA=+0.000\nINPUT=NONE\nCLASS=PENDING\nSIGNAL=PENDING\nFLOW BEFORE=0.000\nFLOW HANDLER=-\nFLOW NEXT PHYSICS=-\nHUD FLOW=0.000"

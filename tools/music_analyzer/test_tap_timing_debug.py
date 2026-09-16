@@ -66,7 +66,7 @@ class TapTimingDebugTests(unittest.TestCase):
     def test_seek_restart_resets_feedback_and_musicality_consumption(self) -> None:
         rewind_guard = "playback_time + 0.05 < _last_playback_time"
         self.assertIn(rewind_guard, self.assist)
-        self.assertIn('_last_classification = "—"', self.assist)
+        self.assertIn('_last_classification = "-"', self.assist)
         self.assertIn(rewind_guard, self.musicality)
         self.assertIn("_consumed_accents.clear()", self.musicality)
 
