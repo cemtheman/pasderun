@@ -9,8 +9,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROBE = ROOT / "scenes/gameplay/spatial_stall_probe.gd"
+PARALLAX = ROOT / "scenes/gameplay/parallax_presentation.gd"
 RUNTIME = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
-BACKGROUND = ROOT / "assets/visuals/graceful_opening_background_v0_1.png"
+PARALLAX_ASSETS = {
+    ROOT / "assets/visuals/parallax/graceful_opening_far_city_v0_1.png":
+        "7c298cff10d00f1ef18ddf41959fd4589618fc7e52b4ba7214eea29ef20322f5",
+    ROOT / "assets/visuals/parallax/graceful_opening_mid_palace_frame_v0_1.png":
+        "0b3db9717e79ff2c00573e15ba23385d414bcab24d324ad30e457e3015fa759d",
+    ROOT / "assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png":
+        "91a02340f465bb537c71ac980b7d5f6a056103fca62383db064037eafc99feb8",
+}
 START_GATE = ROOT / "scenes/gameplay/runtime_start_gate.gd"
 FRAMING = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
 VISUALS = ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
@@ -36,6 +44,7 @@ class SpatialStallProbeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.probe = PROBE.read_text(encoding="utf-8")
+        cls.parallax = PARALLAX.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_probe_is_wired_to_only_runtime_diagnostic_nodes(self) -> None:
@@ -44,7 +53,7 @@ class SpatialStallProbeTests(unittest.TestCase):
             '../RuntimeStartGate',
             '../CameraRig/ForkFraming',
             '../ForkDebugVisualization',
-            '../CameraRig/Camera3D/TemporaryBackground',
+            '../CameraRig/Camera3D/ParallaxPresentation',
             '../DebugHUD/SpatialStallProbe',
         ):
             self.assertIn(f'NodePath("{path}")', self.runtime)
@@ -91,30 +100,53 @@ class SpatialStallProbeTests(unittest.TestCase):
         self.assertIn(expected, self.runtime)
         self.assertTrue(all(ord(character) < 128 for character in expected))
 
-    def test_background_is_static_presentation_only_quad(self) -> None:
-        self.assertTrue(BACKGROUND.is_file())
-        self.assertEqual(BACKGROUND.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
-        width, height = struct.unpack(">II", BACKGROUND.read_bytes()[16:24])
-        self.assertEqual((width, height), (1672, 941))
+    def test_parallax_assets_are_exact_png_sources(self) -> None:
+        for asset, expected_hash in PARALLAX_ASSETS.items():
+            data = asset.read_bytes()
+            self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+            self.assertEqual(struct.unpack(">II", data[16:24]), (1672, 941))
+            self.assertEqual(data[25], 6, f"RGBA required: {asset}")
+            self.assertEqual(digest(asset), expected_hash, asset)
+
+    def test_runtime_has_three_collision_free_parallax_quads(self) -> None:
+        expected_paths = (
+            "graceful_opening_far_city_v0_1.png",
+            "graceful_opening_mid_palace_frame_v0_1.png",
+            "graceful_opening_foreground_stage_v0_1.png",
+        )
+        for filename in expected_paths:
+            self.assertIn(f'path="res://assets/visuals/parallax/{filename}"', self.runtime)
+        self.assertNotIn("graceful_opening_background_v0_1.png", self.runtime)
         self.assertIn(
-            'path="res://assets/visuals/graceful_opening_background_v0_1.png"',
+            '[node name="ParallaxPresentation" type="Node3D" '
+            'parent="CameraRig/Camera3D"',
             self.runtime,
         )
-        self.assertIn('[sub_resource type="QuadMesh" id="QuadMesh_background"]', self.runtime)
-        self.assertIn("size = Vector2(15, 8.44)", self.runtime)
+        for layer, z_value in (("FarCity", -24), ("MidPalace", -23), ("ForegroundStage", -22)):
+            node = re.search(
+                rf'\[node name="{layer}".*?(?=\n\[node )',
+                self.runtime,
+                re.DOTALL,
+            ).group(0)
+            self.assertIn('type="MeshInstance3D"', node)
+            self.assertIn(f"0, 0, {z_value}", node)
+            self.assertNotIn("Collision", node)
+            self.assertNotIn("script =", node)
+        self.assertEqual(self.runtime.count("size = Vector2(17.5, 9.85)"), 3)
+        self.assertEqual(self.runtime.count("transparency = 1"), 2)
+
+    def test_parallax_uses_horizontal_gameplay_progress_only(self) -> None:
         self.assertIn(
-            '[node name="TemporaryBackground" type="MeshInstance3D" '
-            'parent="CameraRig/Camera3D"]',
-            self.runtime,
+            "progress_source.global_position.x - _initial_world_x",
+            self.parallax,
         )
-        background_node = re.search(
-            r'\[node name="TemporaryBackground".*?(?=\n\[node )',
-            self.runtime,
-            re.DOTALL,
-        ).group(0)
-        self.assertIn("0, 0, -20", background_node)
-        self.assertNotIn("script =", background_node)
-        self.assertNotIn("Collision", background_node)
+        self.assertIn("far_factor: float = 0.005", self.parallax)
+        self.assertIn("mid_factor: float = 0.010", self.parallax)
+        self.assertIn("foreground_factor: float = 0.018", self.parallax)
+        self.assertNotIn("position.y", self.parallax)
+        self.assertNotIn("global_position =", self.parallax)
+        self.assertNotIn("camera", self.parallax.lower())
+        self.assertNotIn("timer", self.parallax.lower())
 
     def test_background_toggle_only_changes_visibility(self) -> None:
         handler = re.search(
@@ -122,7 +154,7 @@ class SpatialStallProbeTests(unittest.TestCase):
             self.probe,
             re.DOTALL,
         ).group(0)
-        self.assertIn("temporary_background.visible = enabled", handler)
+        self.assertIn("parallax_presentation.visible = enabled", handler)
         self.assertNotIn("load(", handler)
         self.assertNotIn("preload(", handler)
         self.assertNotIn("process_mode", handler)

@@ -3,7 +3,7 @@ extends Node
 @export var start_gate: Node
 @export var fork_camera_framing: Node
 @export var fork_debug_visualization: Node3D
-@export var temporary_background: MeshInstance3D
+@export var parallax_presentation: Node3D
 @export var debug_label: Label
 
 var _framing_enabled := true
@@ -17,7 +17,7 @@ func _ready() -> void:
 		start_gate == null
 		or fork_camera_framing == null
 		or fork_debug_visualization == null
-		or temporary_background == null
+		or parallax_presentation == null
 		or debug_label == null
 		or not start_gate.has_signal("runtime_started")
 	):
@@ -69,7 +69,7 @@ func _set_visuals_enabled(enabled: bool) -> void:
 
 func _set_background_enabled(enabled: bool) -> void:
 	_background_enabled = enabled
-	temporary_background.visible = enabled
+	parallax_presentation.visible = enabled
 	_update_debug_label()
 
 

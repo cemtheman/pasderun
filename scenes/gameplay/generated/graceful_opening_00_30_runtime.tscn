@@ -14,16 +14,36 @@
 [ext_resource type="Script" uid="uid://cw63t1pduqsu6" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
 [ext_resource type="Script" path="res://scenes/gameplay/runtime_start_gate.gd" id="13_start_gate"]
 [ext_resource type="Script" path="res://scenes/gameplay/spatial_stall_probe.gd" id="14_stall_probe"]
-[ext_resource type="Texture2D" path="res://assets/visuals/graceful_opening_background_v0_1.png" id="15_background"]
+[ext_resource type="Script" path="res://scenes/gameplay/parallax_presentation.gd" id="15_parallax"]
+[ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_far_city_v0_1.png" id="16_far"]
+[ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_mid_palace_frame_v0_1.png" id="17_mid"]
+[ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png" id="18_foreground"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_background"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
-albedo_color = Color(0.78, 0.78, 0.78, 1)
-albedo_texture = ExtResource("15_background")
+albedo_texture = ExtResource("16_far")
 
-[sub_resource type="QuadMesh" id="QuadMesh_background"]
-material = SubResource("StandardMaterial3D_background")
-size = Vector2(15, 8.44)
+[sub_resource type="QuadMesh" id="QuadMesh_far"]
+material = SubResource("StandardMaterial3D_far")
+size = Vector2(17.5, 9.85)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mid"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("17_mid")
+
+[sub_resource type="QuadMesh" id="QuadMesh_mid"]
+material = SubResource("StandardMaterial3D_mid")
+size = Vector2(17.5, 9.85)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_foreground"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("18_foreground")
+
+[sub_resource type="QuadMesh" id="QuadMesh_foreground"]
+material = SubResource("StandardMaterial3D_foreground")
+size = Vector2(17.5, 9.85)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -51,10 +71,27 @@ projection = 1
 current = true
 size = 5.5
 
-[node name="TemporaryBackground" type="MeshInstance3D" parent="CameraRig/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+[node name="ParallaxPresentation" type="Node3D" parent="CameraRig/Camera3D" node_paths=PackedStringArray("progress_source", "far_layer", "mid_layer", "foreground_layer")]
+script = ExtResource("15_parallax")
+progress_source = NodePath("../../../Dancer")
+far_layer = NodePath("FarCity")
+mid_layer = NodePath("MidPalace")
+foreground_layer = NodePath("ForegroundStage")
+
+[node name="FarCity" type="MeshInstance3D" parent="CameraRig/Camera3D/ParallaxPresentation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24)
 cast_shadow = 0
-mesh = SubResource("QuadMesh_background")
+mesh = SubResource("QuadMesh_far")
+
+[node name="MidPalace" type="MeshInstance3D" parent="CameraRig/Camera3D/ParallaxPresentation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -23)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_mid")
+
+[node name="ForegroundStage" type="MeshInstance3D" parent="CameraRig/Camera3D/ParallaxPresentation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_foreground")
 
 [node name="ForkFraming" type="Node" parent="CameraRig" unique_id=1406707815 node_paths=PackedStringArray("camera_rig", "camera", "target", "generated_level")]
 script = ExtResource("2_framing")
@@ -110,12 +147,12 @@ tap_timing_debug = NodePath("../TapTimingDebug")
 accent_runtime_trace = NodePath("../AccentRuntimeTrace")
 overlay = NodePath("../StartGateOverlay")
 
-[node name="SpatialStallProbe" type="Node" parent="." node_paths=PackedStringArray("start_gate", "fork_camera_framing", "fork_debug_visualization", "temporary_background", "debug_label")]
+[node name="SpatialStallProbe" type="Node" parent="." node_paths=PackedStringArray("start_gate", "fork_camera_framing", "fork_debug_visualization", "parallax_presentation", "debug_label")]
 script = ExtResource("14_stall_probe")
 start_gate = NodePath("../RuntimeStartGate")
 fork_camera_framing = NodePath("../CameraRig/ForkFraming")
 fork_debug_visualization = NodePath("../ForkDebugVisualization")
-temporary_background = NodePath("../CameraRig/Camera3D/TemporaryBackground")
+parallax_presentation = NodePath("../CameraRig/Camera3D/ParallaxPresentation")
 debug_label = NodePath("../DebugHUD/SpatialStallProbe")
 
 [node name="Dancer" type="CharacterBody3D" parent="." unique_id=681487939 node_paths=PackedStringArray("input_debug_label")]
