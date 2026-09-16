@@ -1,5 +1,6 @@
 extends Node
 
+signal accent_evaluation_started(playback_time: float, marker_time: float, delta: float)
 signal accent_evaluated(classification: StringName, delta: float, marker_time: float)
 
 const ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]
@@ -46,11 +47,13 @@ func _on_tap_detected() -> void:
 	var playback_time := _playback_time()
 	var accent_index := _nearest_available_accent(playback_time)
 	if accent_index < 0:
+		accent_evaluation_started.emit(playback_time, -1.0, 0.0)
 		_show_feedback("MISS")
 		accent_evaluated.emit(&"MISS", 0.0, -1.0)
 		return
 
 	var delta := playback_time - ACCENT_MARKERS[accent_index]
+	accent_evaluation_started.emit(playback_time, ACCENT_MARKERS[accent_index], delta)
 	var absolute_delta := absf(delta)
 	if absolute_delta > EARLY_LATE_WINDOW:
 		_show_feedback("MISS")
