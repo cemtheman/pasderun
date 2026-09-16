@@ -61,8 +61,7 @@ class FlowTrackerTests(unittest.TestCase):
         self.assertGreater(perfect, good)
         self.assertGreater(good, 0.0)
         retained = constant(self.flow, "MISS_RETAINED_FRACTION")
-        self.assertGreater(retained, 0.0)
-        self.assertLess(retained, 1.0)
+        self.assertEqual(retained, 0.60)
         self.assertIn("flow_value * MISS_RETAINED_FRACTION", self.flow)
 
     def test_musicality_emits_its_actual_classification(self) -> None:
@@ -94,8 +93,22 @@ class FlowTrackerTests(unittest.TestCase):
         retained = constant(self.flow, "MISS_RETAINED_FRACTION")
         established_flow = 0.60
         after_miss = established_flow * retained
+        self.assertAlmostEqual(after_miss, 0.36)
         self.assertGreater(after_miss, 0.0)
         self.assertLess(after_miss, established_flow)
+
+    def test_miss_reduction_is_applied_synchronously_in_signal_callback(self) -> None:
+        callback = re.search(
+            r"func _on_accent_evaluated\(.*?(?=\n\nfunc )",
+            self.flow,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(callback)
+        source = callback.group(0)
+        self.assertIn('if classification == &"MISS":', source)
+        self.assertIn('_set_flow(flow_value * MISS_RETAINED_FRACTION, "MISS ACCENT")', source)
+        self.assertNotIn("call_deferred", source)
+        self.assertNotIn("await", source)
 
     def test_safe_and_technical_routes_are_both_valid_with_technical_upside(self) -> None:
         safe = float(re.search(r'&"SAFE_ROUTE": ([0-9.]+)', self.flow).group(1))

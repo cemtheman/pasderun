@@ -18,7 +18,7 @@ GENERATED = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 COMPILER = ROOT / "tools/music_analyzer/compile_geometry.py"
 
 TRUSTED = {
-    FLOW: "55f7fc3df51fb387eeac6b57d66073adad23b34df668e30ab083a2a356853cbe",
+    FLOW: "9da666a578ae0f96060e8a57930b6aa1883063e20d4eb0f66e2aba355dadfac0",
     DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
     TIMELINE: "605e9605c5a53ec84b862d4ce0b3893802fdfeb36f20dc09b3c67e3a5a183f68",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
