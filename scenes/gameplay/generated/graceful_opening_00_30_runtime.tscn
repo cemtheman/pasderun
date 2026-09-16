@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
 [ext_resource type="Script" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn" id="7_generated"]
 [ext_resource type="Script" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
+[ext_resource type="Script" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -61,6 +62,14 @@ music_timeline = NodePath("../MusicTimeline")
 dancer = NodePath("../../Dancer")
 debug_label = NodePath("../../DebugHUD/AccentDebug")
 
+[node name="FlowTracker" type="Node" parent="." node_paths=PackedStringArray("dancer", "music_timeline", "musicality", "generated_level", "debug_label")]
+script = ExtResource("9_flow")
+dancer = NodePath("../Dancer")
+music_timeline = NodePath("../Music/MusicTimeline")
+musicality = NodePath("../Music/Musicality")
+generated_level = NodePath("../GeneratedLevel")
+debug_label = NodePath("../DebugHUD/FlowDebug")
+
 [node name="Dancer" type="CharacterBody3D" parent="." node_paths=PackedStringArray("input_debug_label")]
 position = Vector3(0, 1.5, 0)
 script = ExtResource("3_dancer")
@@ -94,3 +103,10 @@ offset_top = 124.0
 offset_right = 330.0
 offset_bottom = 147.0
 text = "ACCENT: —"
+
+[node name="FlowDebug" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 154.0
+offset_right = 390.0
+offset_bottom = 200.0
+text = "FLOW: EMPTY 0.00\nLAST: —"
