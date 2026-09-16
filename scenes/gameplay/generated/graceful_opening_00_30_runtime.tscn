@@ -1,0 +1,91 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
+[ext_resource type="Script" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
+[ext_resource type="Script" path="res://scenes/gameplay/dancer.gd" id="3_dancer"]
+[ext_resource type="AudioStream" path="res://assets/audio/graceful_opening.mp3" id="4_music"]
+[ext_resource type="Script" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
+[ext_resource type="Script" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn" id="7_generated"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_runtime"]
+radius = 0.5
+height = 2.0
+
+[node name="GracefulOpening0030Runtime" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+
+[node name="GeneratedLevel" parent="." instance=ExtResource("7_generated")]
+
+[node name="CameraRig" type="Node3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("1_camera")
+target = NodePath("../Dancer")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+position = Vector3(0, 2.2, 8)
+projection = 1
+current = true
+size = 5.5
+
+[node name="ForkFraming" type="Node" parent="CameraRig" node_paths=PackedStringArray("camera_rig", "camera", "target", "generated_level")]
+script = ExtResource("2_framing")
+camera_rig = NodePath("..")
+camera = NodePath("../Camera3D")
+target = NodePath("../../Dancer")
+generated_level = NodePath("../../GeneratedLevel")
+
+[node name="Music" type="Node" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource("4_music")
+autoplay = true
+
+[node name="MusicTimeline" type="Node" parent="Music" node_paths=PackedStringArray("audio_player", "debug_label")]
+script = ExtResource("5_timeline")
+audio_player = NodePath("../AudioStreamPlayer")
+debug_label = NodePath("../../DebugHUD/MusicDebug")
+
+[node name="Musicality" type="Node" parent="Music" node_paths=PackedStringArray("music_timeline", "dancer", "debug_label")]
+script = ExtResource("6_musicality")
+music_timeline = NodePath("../MusicTimeline")
+dancer = NodePath("../../Dancer")
+debug_label = NodePath("../../DebugHUD/AccentDebug")
+
+[node name="Dancer" type="CharacterBody3D" parent="." node_paths=PackedStringArray("input_debug_label")]
+position = Vector3(0, 1.5, 0)
+script = ExtResource("3_dancer")
+input_debug_label = NodePath("../DebugHUD/InputDebug")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Dancer"]
+mesh = SubResource("CapsuleMesh_runtime")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer"]
+shape = SubResource("CapsuleShape_runtime")
+
+[node name="DebugHUD" type="CanvasLayer" parent="."]
+
+[node name="InputDebug" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 40.0
+offset_right = 330.0
+offset_bottom = 63.0
+text = "INPUT: —"
+
+[node name="MusicDebug" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 70.0
+offset_right = 330.0
+offset_bottom = 116.0
+text = "MUSIC: 00:00.0 / 00:00.0\nSECTION: OPENING"
+
+[node name="AccentDebug" type="Label" parent="DebugHUD"]
+offset_left = 57.0
+offset_top = 124.0
+offset_right = 330.0
+offset_bottom = 147.0
+text = "ACCENT: —"
