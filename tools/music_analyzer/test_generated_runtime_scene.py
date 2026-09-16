@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 RUNTIME_SCENE = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
 GENERATED_SCENE = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 CAMERA_HELPER = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
+DEBUG_HELPER = ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
 DANCER = ROOT / "scenes/gameplay/dancer.gd"
 PLAN = ROOT / "data/geometry/graceful_opening.geometry_plan_v0_1.json"
 
@@ -27,6 +28,7 @@ class GeneratedRuntimeSceneTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.scene = RUNTIME_SCENE.read_text(encoding="utf-8")
         cls.helper = CAMERA_HELPER.read_text(encoding="utf-8")
+        cls.debug_helper = DEBUG_HELPER.read_text(encoding="utf-8")
 
     def test_runtime_instances_generated_geometry_without_legacy_level(self) -> None:
         self.assertIn('path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn"', self.scene)
@@ -63,6 +65,16 @@ class GeneratedRuntimeSceneTests(unittest.TestCase):
         self.assertIn('ForkMerge', self.helper)
         self.assertNotIn('11.5', self.helper)
         self.assertNotIn('46.0', self.helper)
+
+    def test_runtime_only_fork_debug_visualization_is_scene_derived(self) -> None:
+        self.assertIn('name="ForkDebugVisualization"', self.scene)
+        self.assertIn('SafeLowerRoute', self.debug_helper)
+        self.assertIn('TechnicalRoute', self.debug_helper)
+        self.assertIn('ForkStart', self.debug_helper)
+        self.assertIn('ForkMerge', self.debug_helper)
+        self.assertIn('material_override', self.debug_helper)
+        self.assertIn('Label3D.new()', self.debug_helper)
+        self.assertNotIn('CollisionShape3D', self.debug_helper)
 
     def test_trusted_controller_plan_and_generated_geometry_are_unchanged(self) -> None:
         self.assertEqual(sha256(DANCER), TRUSTED_DANCER_SHA256)

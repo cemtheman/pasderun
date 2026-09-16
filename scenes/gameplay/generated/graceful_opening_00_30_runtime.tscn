@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
 [ext_resource type="Script" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
 [ext_resource type="Script" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_30.tscn" id="7_generated"]
+[ext_resource type="Script" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
@@ -21,6 +22,10 @@ height = 2.0
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
 [node name="GeneratedLevel" parent="." instance=ExtResource("7_generated")]
+
+[node name="ForkDebugVisualization" type="Node3D" parent="." node_paths=PackedStringArray("generated_level")]
+script = ExtResource("8_debug")
+generated_level = NodePath("../GeneratedLevel")
 
 [node name="CameraRig" type="Node3D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("1_camera")
