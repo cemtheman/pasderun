@@ -3,10 +3,12 @@ extends Node
 @export var start_gate: Node
 @export var fork_camera_framing: Node
 @export var fork_debug_visualization: Node3D
+@export var temporary_background: MeshInstance3D
 @export var debug_label: Label
 
 var _framing_enabled := true
 var _visuals_enabled := true
+var _background_enabled := true
 
 
 func _ready() -> void:
@@ -15,6 +17,7 @@ func _ready() -> void:
 		start_gate == null
 		or fork_camera_framing == null
 		or fork_debug_visualization == null
+		or temporary_background == null
 		or debug_label == null
 		or not start_gate.has_signal("runtime_started")
 	):
@@ -42,6 +45,9 @@ func _input(event: InputEvent) -> void:
 	elif key_event.keycode == KEY_V:
 		get_viewport().set_input_as_handled()
 		_set_visuals_enabled(not _visuals_enabled)
+	elif key_event.keycode == KEY_B:
+		get_viewport().set_input_as_handled()
+		_set_background_enabled(not _background_enabled)
 
 
 func _set_framing_enabled(enabled: bool) -> void:
@@ -61,8 +67,15 @@ func _set_visuals_enabled(enabled: bool) -> void:
 	_update_debug_label()
 
 
+func _set_background_enabled(enabled: bool) -> void:
+	_background_enabled = enabled
+	temporary_background.visible = enabled
+	_update_debug_label()
+
+
 func _update_debug_label() -> void:
-	debug_label.text = "STALL PROBE FRAMING:%s VISUALS:%s" % [
+	debug_label.text = "STALL PROBE FRAMING:%s VISUALS:%s BG:%s" % [
 		"ON" if _framing_enabled else "OFF",
 		"ON" if _visuals_enabled else "OFF",
+		"ON" if _background_enabled else "OFF",
 	]

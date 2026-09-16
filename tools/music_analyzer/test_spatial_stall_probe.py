@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import struct
 import unittest
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PROBE = ROOT / "scenes/gameplay/spatial_stall_probe.gd"
 RUNTIME = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
+BACKGROUND = ROOT / "assets/visuals/graceful_opening_background_v0_1.png"
 START_GATE = ROOT / "scenes/gameplay/runtime_start_gate.gd"
 FRAMING = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
 VISUALS = ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
@@ -42,6 +44,7 @@ class SpatialStallProbeTests(unittest.TestCase):
             '../RuntimeStartGate',
             '../CameraRig/ForkFraming',
             '../ForkDebugVisualization',
+            '../CameraRig/Camera3D/TemporaryBackground',
             '../DebugHUD/SpatialStallProbe',
         ):
             self.assertIn(f'NodePath("{path}")', self.runtime)
@@ -55,12 +58,13 @@ class SpatialStallProbeTests(unittest.TestCase):
     def test_diagnostic_keys_are_consumed(self) -> None:
         self.assertIn("key_event.keycode == KEY_F", self.probe)
         self.assertIn("key_event.keycode == KEY_V", self.probe)
+        self.assertIn("key_event.keycode == KEY_B", self.probe)
         handler = re.search(
             r"func _input\(.*?(?=\n\nfunc )",
             self.probe,
             re.DOTALL,
         ).group(0)
-        self.assertEqual(handler.count("set_input_as_handled()"), 2)
+        self.assertEqual(handler.count("set_input_as_handled()"), 3)
 
     def test_framing_toggle_only_changes_framing_processing(self) -> None:
         handler = re.search(
@@ -83,9 +87,47 @@ class SpatialStallProbeTests(unittest.TestCase):
         self.assertNotIn("fork_camera_framing", handler)
 
     def test_hud_is_ascii_safe(self) -> None:
-        expected = "STALL PROBE FRAMING:ON VISUALS:ON"
+        expected = "STALL PROBE FRAMING:ON VISUALS:ON BG:ON"
         self.assertIn(expected, self.runtime)
         self.assertTrue(all(ord(character) < 128 for character in expected))
+
+    def test_background_is_static_presentation_only_quad(self) -> None:
+        self.assertTrue(BACKGROUND.is_file())
+        self.assertEqual(BACKGROUND.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
+        width, height = struct.unpack(">II", BACKGROUND.read_bytes()[16:24])
+        self.assertEqual((width, height), (1672, 941))
+        self.assertIn(
+            'path="res://assets/visuals/graceful_opening_background_v0_1.png"',
+            self.runtime,
+        )
+        self.assertIn('[sub_resource type="QuadMesh" id="QuadMesh_background"]', self.runtime)
+        self.assertIn("size = Vector2(15, 8.44)", self.runtime)
+        self.assertIn(
+            '[node name="TemporaryBackground" type="MeshInstance3D" '
+            'parent="CameraRig/Camera3D"]',
+            self.runtime,
+        )
+        background_node = re.search(
+            r'\[node name="TemporaryBackground".*?(?=\n\[node )',
+            self.runtime,
+            re.DOTALL,
+        ).group(0)
+        self.assertIn("0, 0, -20", background_node)
+        self.assertNotIn("script =", background_node)
+        self.assertNotIn("Collision", background_node)
+
+    def test_background_toggle_only_changes_visibility(self) -> None:
+        handler = re.search(
+            r"func _set_background_enabled\(.*?(?=\n\nfunc )",
+            self.probe,
+            re.DOTALL,
+        ).group(0)
+        self.assertIn("temporary_background.visible = enabled", handler)
+        self.assertNotIn("load(", handler)
+        self.assertNotIn("preload(", handler)
+        self.assertNotIn("process_mode", handler)
+        self.assertNotIn("fork_camera_framing", handler)
+        self.assertNotIn("fork_debug_visualization", handler)
 
     def test_gameplay_geometry_and_existing_helpers_are_unchanged(self) -> None:
         for path, expected in TRUSTED.items():
