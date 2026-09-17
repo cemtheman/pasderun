@@ -15,7 +15,7 @@ BOOTSTRAP = ROOT / "scenes/gameplay/dancer_visual_bootstrap.gd"
 class Phase7MotionTuningTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.run = RUN.read_text(encoding="utf-8")
+        cls.run_source = RUN.read_text(encoding="utf-8")
         cls.polish = POLISH.read_text(encoding="utf-8")
         cls.final = FINAL.read_text(encoding="utf-8")
         cls.low = LOW.read_text(encoding="utf-8")
@@ -23,11 +23,11 @@ class Phase7MotionTuningTests(unittest.TestCase):
         cls.bootstrap = BOOTSTRAP.read_text(encoding="utf-8")
 
     def test_motion_layers_are_visual_only(self) -> None:
-        self.assertIn('extends "res://scenes/gameplay/dancer_visual.gd"', self.run)
+        self.assertIn('extends "res://scenes/gameplay/dancer_visual.gd"', self.run_source)
         self.assertIn('extends "res://scenes/gameplay/dancer_visual_motion_v2.gd"', self.polish)
         self.assertIn('extends "res://scenes/gameplay/dancer_visual_motion_v3.gd"', self.final)
         self.assertIn('extends "res://scenes/gameplay/dancer_visual_motion_v4.gd"', self.low)
-        for source in (self.run, self.polish, self.final, self.low):
+        for source in (self.run_source, self.polish, self.final, self.low):
             for forbidden in ('velocity =', 'global_position =', 'move_and_slide()', 'move_and_collide('):
                 self.assertNotIn(forbidden, source)
 
@@ -40,9 +40,9 @@ class Phase7MotionTuningTests(unittest.TestCase):
             'func _front_brush_pose()',
             'func _front_flight_pose()',
         ):
-            self.assertIn(pose, self.run)
-        self.assertIn('RUN_CYCLE_DURATION := 0.56', self.run)
-        self.assertIn('RUN_FLIGHT_LIFT := 0.048', self.run)
+            self.assertIn(pose, self.run_source)
+        self.assertIn('RUN_CYCLE_DURATION := 0.56', self.run_source)
+        self.assertIn('RUN_FLIGHT_LIFT := 0.048', self.run_source)
 
     def test_landing_continues_into_next_running_step(self) -> None:
         self.assertIn('func _landing_animation()', self.final)
@@ -79,8 +79,9 @@ class Phase7MotionTuningTests(unittest.TestCase):
     def test_tap_response_is_presentation_only_and_web_has_no_3d_pulse(self) -> None:
         self.assertIn('tap_detected', self.tap)
         self.assertIn('OS.has_feature("web")', self.tap)
-        self.assertIn('WEB_PULSE_DURATION := 0.12', self.tap)
-        self.assertIn('WEB_SCALE_AMOUNT := 0.018', self.tap)
+        self.assertIn('WEB_PULSE_DURATION := 0.14', self.tap)
+        self.assertIn('WEB_SCALE_XZ_AMOUNT := 0.035', self.tap)
+        self.assertIn('WEB_SCALE_Y_AMOUNT := 0.075', self.tap)
         self.assertIn('_web_visual.scale', self.tap)
         self.assertIn('if _web_mode:', self.tap)
         self.assertIn('else:\n\t\t_build_ring()', self.tap)
