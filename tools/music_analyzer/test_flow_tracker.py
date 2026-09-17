@@ -20,7 +20,6 @@ TRUSTED = {
     DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
     TIMELINE: "605e9605c5a53ec84b862d4ce0b3893802fdfeb36f20dc09b3c67e3a5a183f68",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
-    GENERATED: "2483eb3de87da79b2ad2ae3ccb734ca868898b3009e5861787be1853162ec7d4",
 }
 
 
@@ -64,6 +63,15 @@ class FlowTrackerTests(unittest.TestCase):
         self.assertEqual(retained, 0.60)
         self.assertIn("previous * MISS_RETAINED_FRACTION", self.flow)
 
+    def test_small_timing_errors_reduce_flow_and_break_continuity(self) -> None:
+        contributions = re.search(r"const CONTRIBUTIONS := \{(.*?)\n\}", self.flow, re.DOTALL).group(1)
+        reductions = re.search(r"const REDUCTIONS := \{(.*?)\n\}", self.flow, re.DOTALL).group(1)
+        self.assertNotIn('&"EARLY"', contributions)
+        self.assertNotIn('&"LATE"', contributions)
+        self.assertIn('&"EARLY": 0.03', reductions)
+        self.assertIn('&"LATE": 0.03', reductions)
+        self.assertIn("_continuity_links = 0", self.flow)
+
     def test_musicality_emits_its_actual_classification(self) -> None:
         self.assertIn("signal accent_evaluated", self.musicality)
         self.assertIn("accent_evaluated.emit(classification, delta", self.musicality)
@@ -78,6 +86,13 @@ class FlowTrackerTests(unittest.TestCase):
         self.assertIn("SAFE ROUTE COMPLETE", self.flow)
         self.assertNotIn("tap_detected", self.flow)
         self.assertNotIn("Input.", self.flow)
+
+    def test_failed_semantic_outcomes_reduce_flow(self) -> None:
+        self.assertIn('REDUCTIONS[&"POOR_LANDING"]', self.flow)
+        self.assertIn('REDUCTIONS[&"PHRASE_BREAK"]', self.flow)
+        self.assertIn("BALANCE PHRASE BREAK", self.flow)
+        self.assertIn("ROUTE PHRASE BREAK", self.flow)
+        self.assertIn("func _apply_reduction", self.flow)
 
     def test_continuity_rewards_sequences_not_input_spam(self) -> None:
         bonus = constant(self.flow, "CONTINUITY_BONUS_PER_LINK")
@@ -137,11 +152,19 @@ class FlowTrackerTests(unittest.TestCase):
             "TECHNICAL_ROUTE": 0.14,
             "PERFECT": 0.16,
             "GOOD": 0.11,
-            "EARLY": 0.04,
-            "LATE": 0.04,
         }
         for name, expected in expected_contributions.items():
             actual = float(re.search(rf'&"{name}": ([0-9.]+)', self.flow).group(1))
+            self.assertEqual(actual, expected)
+        expected_reductions = {
+            "EARLY": 0.03,
+            "LATE": 0.03,
+            "POOR_LANDING": 0.08,
+            "PHRASE_BREAK": 0.06,
+        }
+        reductions = re.search(r"const REDUCTIONS := \{(.*?)\n\}", self.flow, re.DOTALL).group(1)
+        for name, expected in expected_reductions.items():
+            actual = float(re.search(rf'&"{name}": ([0-9.]+)', reductions).group(1))
             self.assertEqual(actual, expected)
         self.assertEqual(constant(self.flow, "DECAY_GRACE_SECONDS"), 6.0)
         self.assertEqual(constant(self.flow, "DECAY_PER_SECOND"), 0.01)

@@ -25,7 +25,7 @@ func _ready() -> void:
 	if hud_root == null or start_gate == null or not start_gate.has_signal("runtime_started"):
 		push_error("DebugHUD requires HUDRoot and RuntimeStartGate references.")
 		return
-	hud_root.visible = true
+	hud_root.visible = false
 	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
 	_sanitize_labels(self)
 

@@ -1,102 +1,121 @@
-[gd_scene format=3]
+[gd_scene load_steps=38 format=3]
+
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform.tres" id="1_palace"]
 
 [sub_resource type="BoxMesh" id="Mesh_ramp"]
+material = ExtResource("1_palace")
 size = Vector3(14.4935, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_ramp"]
 size = Vector3(14.4935, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_15"]
+material = ExtResource("1_palace")
 size = Vector3(15, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_15"]
 size = Vector3(15, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_7_5"]
+material = ExtResource("1_palace")
 size = Vector3(7.5, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_7_5"]
 size = Vector3(7.5, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_9"]
+material = ExtResource("1_palace")
 size = Vector3(9, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_9"]
 size = Vector3(9, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_8_5"]
+material = ExtResource("1_palace")
 size = Vector3(8.5, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_8_5"]
 size = Vector3(8.5, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_8_2"]
+material = ExtResource("1_palace")
 size = Vector3(8.2, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_8_2"]
 size = Vector3(8.2, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_11_5"]
+material = ExtResource("1_palace")
 size = Vector3(11.5, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_11_5"]
 size = Vector3(11.5, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_14"]
+material = ExtResource("1_palace")
 size = Vector3(14, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_14"]
 size = Vector3(14, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_22"]
+material = ExtResource("1_palace")
 size = Vector3(22, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_22"]
 size = Vector3(22, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_19_5"]
+material = ExtResource("1_palace")
 size = Vector3(19.5, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_19_5"]
 size = Vector3(19.5, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_23_5"]
+material = ExtResource("1_palace")
 size = Vector3(23.5, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_23_5"]
 size = Vector3(23.5, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_12"]
+material = ExtResource("1_palace")
 size = Vector3(12, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_12"]
 size = Vector3(12, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_descent_14_5"]
+material = ExtResource("1_palace")
 size = Vector3(14.509, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_descent_14_5"]
 size = Vector3(14.509, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_neutral_33"]
+material = ExtResource("1_palace")
 size = Vector3(33, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_neutral_33"]
 size = Vector3(33, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_neutral_8"]
+material = ExtResource("1_palace")
 size = Vector3(8, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_neutral_8"]
 size = Vector3(8, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_neutral_9"]
+material = ExtResource("1_palace")
 size = Vector3(9, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_neutral_9"]
 size = Vector3(9, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_neutral_close"]
+material = ExtResource("1_palace")
 size = Vector3(17, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_neutral_close"]

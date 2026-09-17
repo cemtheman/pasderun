@@ -16,8 +16,13 @@ const CONTRIBUTIONS := {
 	&"TECHNICAL_ROUTE": 0.14,
 	&"PERFECT": 0.16,
 	&"GOOD": 0.11,
-	&"EARLY": 0.04,
-	&"LATE": 0.04,
+}
+
+const REDUCTIONS := {
+	&"EARLY": 0.03,
+	&"LATE": 0.03,
+	&"POOR_LANDING": 0.08,
+	&"PHRASE_BREAK": 0.06,
 }
 
 const MISS_RETAINED_FRACTION := 0.60
@@ -169,6 +174,8 @@ func _track_balance(delta: float, playback_time: float) -> void:
 	elif _balance_was_active:
 		if _balance_hold_seconds >= MEANINGFUL_HOLD_SECONDS:
 			_apply_success(float(CONTRIBUTIONS[&"BALANCE"]), "BALANCE SUCCESS", playback_time)
+		else:
+			_apply_reduction(float(REDUCTIONS[&"PHRASE_BREAK"]), "BALANCE PHRASE BREAK")
 		_balance_was_active = false
 		_balance_hold_seconds = 0.0
 
@@ -188,6 +195,7 @@ func _track_jump_events(playback_time: float) -> void:
 			_apply_success(float(CONTRIBUTIONS[&"JUMP"]), "%s SUCCESS" % event["movement_class"], playback_time)
 		elif world_x > end_x + LANDING_SEARCH_X:
 			event["resolved"] = true
+			_apply_reduction(float(REDUCTIONS[&"POOR_LANDING"]), "%s POOR LANDING" % event["movement_class"])
 
 
 func _track_forks(playback_time: float) -> void:
@@ -219,8 +227,10 @@ func _track_forks(playback_time: float) -> void:
 			event["resolved"] = true
 			if event["route"] == &"TECHNICAL" and event["gap_landed"]:
 				_apply_success(float(CONTRIBUTIONS[&"TECHNICAL_ROUTE"]), "TECHNICAL ROUTE COMPLETE", playback_time)
-			else:
+			elif event["route"] == &"SAFE":
 				_apply_success(float(CONTRIBUTIONS[&"SAFE_ROUTE"]), "SAFE ROUTE COMPLETE", playback_time)
+			else:
+				_apply_reduction(float(REDUCTIONS[&"PHRASE_BREAK"]), "ROUTE PHRASE BREAK")
 		elif world_x > float(event["merge_x"]) + LANDING_SEARCH_X:
 			event["resolved"] = true
 
@@ -235,10 +245,15 @@ func _on_accent_evaluated(classification: StringName, delta: float, _marker_time
 		_set_flow(last_miss_after, reason)
 		flow_changed.emit(flow_value, flow_value - previous, reason)
 		return
+	if REDUCTIONS.has(classification):
+		_apply_reduction(
+			float(REDUCTIONS[classification]),
+			"%s ACCENT (%+.2fs)" % [classification, delta]
+		)
+		return
 	if not CONTRIBUTIONS.has(classification):
 		return
-	var direction := "" if classification in [&"PERFECT", &"GOOD"] else " (%+.2fs)" % delta
-	_apply_success(float(CONTRIBUTIONS[classification]), "%s ACCENT%s" % [classification, direction], _playback_time())
+	_apply_success(float(CONTRIBUTIONS[classification]), "%s ACCENT" % classification, _playback_time())
 
 
 func _apply_success(base_amount: float, reason: String, playback_time: float) -> void:
@@ -251,6 +266,14 @@ func _apply_success(base_amount: float, reason: String, playback_time: float) ->
 	_set_flow(flow_value + amount, reason)
 	_last_success_time = playback_time
 	flow_changed.emit(flow_value, flow_value - previous, reason)
+
+
+func _apply_reduction(amount: float, reason: String) -> void:
+	var previous := flow_value
+	_continuity_links = 0
+	_set_flow(flow_value - amount, reason)
+	if not is_equal_approx(previous, flow_value):
+		flow_changed.emit(flow_value, flow_value - previous, reason)
 
 
 func _apply_gentle_decay(delta: float, playback_time: float) -> void:

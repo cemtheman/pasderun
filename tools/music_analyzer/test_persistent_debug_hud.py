@@ -36,8 +36,8 @@ class PersistentDebugHudTests(unittest.TestCase):
         self.assertIn("key_event.keycode != KEY_H", self.hud)
         self.assertIn("get_viewport().set_input_as_handled()", self.hud)
 
-    def test_hud_defaults_on_and_toggles_one_common_root(self) -> None:
-        self.assertIn("hud_root.visible = true", self.hud)
+    def test_hud_defaults_off_and_toggles_one_common_root(self) -> None:
+        self.assertIn("hud_root.visible = false", self.hud)
         self.assertIn("hud_root.visible = not hud_root.visible", self.hud)
         input_handler = re.search(
             r"func _input\(.*?(?=\n\nfunc )",
