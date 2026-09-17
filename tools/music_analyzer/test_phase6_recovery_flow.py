@@ -16,6 +16,7 @@ PROBE = ROOT / "scenes/gameplay/spatial_stall_probe.gd"
 HUD = ROOT / "scenes/gameplay/ascii_debug_hud.gd"
 FORK_DEBUG = ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
 DEMANDS = ROOT / "data/choreography/graceful_opening.movement_demands_v0_1.json"
+RUNTIME_SCENE = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
 
 
 def function(source: str, name: str) -> str:
@@ -62,18 +63,33 @@ class Phase6RecoveryFlowTests(unittest.TestCase):
         self.assertIn("normal.x < -0.55", outcome)
         self.assertIn('_trigger_stumble(&"PLATFORM_EDGE")', outcome)
 
-    def test_small_step_uses_clearance_test_and_forward_traversal(self) -> None:
+    def test_small_step_uses_wall_safe_clearance_probe_and_forward_traversal(self) -> None:
         step = function(self.dancer, "_attempt_small_step")
         self.assertIn("MAX_TRAVERSABLE_STEP_HEIGHT", step)
+        self.assertIn("STEP_PROBE_BACKOFF", step)
+        self.assertIn("probe_transform.origin.x -= STEP_PROBE_BACKOFF", step)
         self.assertGreaterEqual(step.count("test_move("), 2)
         self.assertIn("move_and_collide(forward_motion)", step)
         self.assertIn("STEP_FORWARD_CLEARANCE", step)
 
-    def test_recovery_preserves_nonzero_forward_motion(self) -> None:
-        self.assertRegex(self.dancer, r"const STUMBLE_SPEED_MULTIPLIER := 0\.[1-9]")
-        self.assertRegex(self.dancer, r"const RECOVERY_SPEED_MULTIPLIER := 0\.[1-9]")
+    def test_recovery_is_observable_and_catches_up_without_course_music_drift(self) -> None:
+        stumble_duration = float(re.search(r"const STUMBLE_DURATION := ([0-9.]+)", self.dancer).group(1))
+        recovery_duration = float(re.search(r"const RECOVERY_DURATION := ([0-9.]+)", self.dancer).group(1))
+        stumble_multiplier = float(re.search(r"const STUMBLE_SPEED_MULTIPLIER := ([0-9.]+)", self.dancer).group(1))
+        recovery_multiplier = float(re.search(r"const RECOVERY_SPEED_MULTIPLIER := ([0-9.]+)", self.dancer).group(1))
+        weighted_multiplier = (
+            stumble_duration * stumble_multiplier + recovery_duration * recovery_multiplier
+        ) / (stumble_duration + recovery_duration)
+        self.assertGreater(stumble_multiplier, 0.0)
+        self.assertLess(stumble_multiplier, 1.0)
+        self.assertGreater(recovery_multiplier, 1.0)
+        self.assertAlmostEqual(weighted_multiplier, 1.0, delta=0.01)
         physics = function(self.dancer, "_physics_process")
+        visual = function(self.dancer, "_update_locomotion_visual")
         self.assertIn("run_speed * _locomotion_speed_multiplier()", physics)
+        self.assertIn("_update_locomotion_visual(delta)", physics)
+        self.assertIn("STUMBLE_VISUAL_TILT_RADIANS", visual)
+        self.assertIn("body_mesh.rotation.z", visual)
 
     def test_one_stumble_has_one_existing_phrase_break_consequence(self) -> None:
         callback = function(self.flow, "_on_stumble_started")
@@ -120,6 +136,16 @@ class Phase6RecoveryFlowTests(unittest.TestCase):
         gaps = [later - earlier for earlier, later in zip(times, times[1:])]
         self.assertGreaterEqual(times[-1], 135.0)
         self.assertLess(max(gaps), 10.0)
+
+
+    def test_full_course_tap_markers_are_wired_into_live_runtime_scene(self) -> None:
+        runtime = RUNTIME_SCENE.read_text(encoding="utf-8")
+        self.assertIn('path="res://scenes/gameplay/musicality.gd"', runtime)
+        self.assertIn('[node name="Musicality" type="Node" parent="Music"', runtime)
+        self.assertIn('music_timeline = NodePath("../MusicTimeline")', runtime)
+        self.assertIn('dancer = NodePath("../../Dancer")', runtime)
+        tap_debug = (ROOT / "scenes/gameplay/tap_timing_debug.gd").read_text(encoding="utf-8")
+        self.assertIn('musicality.call("get_next_accent_opportunity", playback_time)', tap_debug)
 
     def test_timing_windows_and_flow_tuning_are_unchanged(self) -> None:
         for line in (

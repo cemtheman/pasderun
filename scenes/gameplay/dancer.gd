@@ -13,10 +13,14 @@ enum LocomotionState {
 const STUMBLE_DURATION := 0.24
 const RECOVERY_DURATION := 0.62
 const STUMBLE_SPEED_MULTIPLIER := 0.45
-const RECOVERY_SPEED_MULTIPLIER := 0.78
+const RECOVERY_SPEED_MULTIPLIER := 1.21
 const VALID_DROP_MINIMUM := 0.60
 const MAX_TRAVERSABLE_STEP_HEIGHT := 0.45
 const STEP_FORWARD_CLEARANCE := 0.16
+const STEP_PROBE_BACKOFF := 0.08
+const STUMBLE_VISUAL_TILT_RADIANS := 0.30
+const STUMBLE_VISUAL_TILT_SPEED := 2.4
+const RECOVERY_VISUAL_RETURN_SPEED := 0.65
 
 # PAS DE RUN — DANCER CONTROLLER v0.4
 #
@@ -98,6 +102,7 @@ var normal_collider_y: float = 0.0
 
 var normal_mesh_scale: Vector3 = Vector3.ONE
 var normal_mesh_y: float = 0.0
+var normal_mesh_rotation_z: float = 0.0
 
 
 # ---------------------------------------------------------
@@ -154,6 +159,7 @@ func _ready() -> void:
 
 	normal_mesh_scale = body_mesh.scale
 	normal_mesh_y = body_mesh.position.y
+	normal_mesh_rotation_z = body_mesh.rotation.z
 
 
 func _physics_process(delta: float) -> void:
@@ -182,6 +188,7 @@ func _physics_process(delta: float) -> void:
 	# ---------------------------------------------------------
 
 	_update_locomotion_state(delta)
+	_update_locomotion_visual(delta)
 	velocity.x = run_speed * _locomotion_speed_multiplier()
 
 
@@ -452,6 +459,7 @@ func reset_locomotion_state() -> void:
 	_locomotion_timer = 0.0
 	_jump_in_progress = false
 	_airborne_origin_y = global_position.y
+	body_mesh.rotation.z = normal_mesh_rotation_z
 	locomotion_state_changed.emit(&"NORMAL", &"RESET")
 
 
@@ -470,6 +478,20 @@ func _update_locomotion_state(delta: float) -> void:
 		locomotion_state = LocomotionState.NORMAL
 		_locomotion_timer = 0.0
 		locomotion_state_changed.emit(&"NORMAL", last_stumble_reason)
+		_show_input("NORMAL")
+
+
+func _update_locomotion_visual(delta: float) -> void:
+	var target_rotation_z := normal_mesh_rotation_z
+	var rotation_speed := RECOVERY_VISUAL_RETURN_SPEED
+	if locomotion_state == LocomotionState.STUMBLE:
+		target_rotation_z = normal_mesh_rotation_z - STUMBLE_VISUAL_TILT_RADIANS
+		rotation_speed = STUMBLE_VISUAL_TILT_SPEED
+	body_mesh.rotation.z = move_toward(
+		body_mesh.rotation.z,
+		target_rotation_z,
+		rotation_speed * delta
+	)
 
 
 func _locomotion_speed_multiplier() -> float:
@@ -510,10 +532,12 @@ func _handle_motion_outcome(
 
 
 func _attempt_small_step(delta: float) -> bool:
-	var raised_transform := global_transform
+	var probe_transform := global_transform
+	probe_transform.origin.x -= STEP_PROBE_BACKOFF
 	var upward_motion := Vector3.UP * MAX_TRAVERSABLE_STEP_HEIGHT
-	if test_move(global_transform, upward_motion):
+	if test_move(probe_transform, upward_motion):
 		return false
+	var raised_transform := global_transform
 	raised_transform.origin.y += MAX_TRAVERSABLE_STEP_HEIGHT
 	var forward_motion := Vector3(
 		maxf(run_speed * delta, STEP_FORWARD_CLEARANCE),
