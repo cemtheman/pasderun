@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pas de Run Spatial Score v0.1",
+  "type": "object",
+  "required": ["schema_version", "source_visual_score", "source_geometry_plan", "time_range", "world_range", "policy", "action_locks", "segments"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "source_visual_score": {"type": "string"},
+    "source_geometry_plan": {"type": "string"},
+    "time_range": {
+      "type": "object",
+      "required": ["start", "end"]
+    },
+    "world_range": {
+      "type": "object",
+      "required": ["start_x", "end_x"]
+    },
+    "policy": {
+      "type": "object",
+      "required": ["type", "event_geometry_preserved", "new_required_actions", "new_gaps", "max_passive_delta_y", "max_adjacent_passive_step", "controller_max_traversable_step_height", "reaction_lead_seconds"]
+    },
+    "action_locks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "action", "start_time", "end_time", "start_x", "end_x"]
+      }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["start_x", "end_x", "length", "base_surface_y", "surface_y", "delta_y", "pattern", "source_window_index", "source_time", "musical_intent", "interaction_lock"],
+        "properties": {
+          "pattern": {
+            "enum": ["ACTION_LOCK", "LIFTED_TERRACE", "TURNING_TERRACE", "LEGATO_SPAN", "RISING_TERRACE", "FALLING_TERRACE", "PULSE_STEPS", "FLOWING_SPAN"]
+          }
+        }
+      }
+    }
+  }
+}
