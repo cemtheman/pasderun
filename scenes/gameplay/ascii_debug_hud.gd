@@ -1,5 +1,8 @@
 extends CanvasLayer
 
+@export var hud_root: Control
+@export var start_gate: Node
+
 # Presentation-only compatibility filter for debug labels in Web/mobile builds.
 # Code points keep the source itself ASCII-safe while preserving gameplay sources.
 const ASCII_REPLACEMENTS := {
@@ -18,7 +21,27 @@ const ASCII_REPLACEMENTS := {
 
 func _ready() -> void:
 	process_priority = 1000
+	set_process_input(false)
+	if hud_root == null or start_gate == null or not start_gate.has_signal("runtime_started"):
+		push_error("DebugHUD requires HUDRoot and RuntimeStartGate references.")
+		return
+	hud_root.visible = true
+	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
 	_sanitize_labels(self)
+
+
+func _on_runtime_started() -> void:
+	set_process_input(true)
+
+
+func _input(event: InputEvent) -> void:
+	if not event is InputEventKey:
+		return
+	var key_event := event as InputEventKey
+	if not key_event.pressed or key_event.echo or key_event.keycode != KEY_H:
+		return
+	get_viewport().set_input_as_handled()
+	hud_root.visible = not hud_root.visible
 
 
 func _process(_delta: float) -> void:

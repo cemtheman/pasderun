@@ -54,7 +54,7 @@ class SpatialStallProbeTests(unittest.TestCase):
             '../CameraRig/ForkFraming',
             '../ForkDebugVisualization',
             '../CameraRig/Camera3D/ParallaxPresentation',
-            '../DebugHUD/SpatialStallProbe',
+            '../DebugHUD/HUDRoot/BottomStatusPanel/SpatialStallProbe',
         ):
             self.assertIn(f'NodePath("{path}")', self.runtime)
 
