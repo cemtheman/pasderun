@@ -81,6 +81,8 @@ def _action_locks(
         if not bool(interaction["required"]):
             continue
         time = float(anchor["time"])
+        if time >= end_seconds:
+            continue
         occupancy = float(interaction["occupancy_seconds"])
         lock_start_time = max(start_seconds, time - reaction_lead)
         lock_end_time = min(end_seconds, time + occupancy)

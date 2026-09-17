@@ -79,6 +79,13 @@ class Phase9SpatialScoreTests(unittest.TestCase):
 
     def test_required_action_reaction_and_occupancy_zones_are_flat_locked(self) -> None:
         self.assertEqual(len(self.spatial["action_locks"]), 9)
+        self.assertTrue(
+            all(float(lock["time"]) < DEFAULT_END_SECONDS for lock in self.spatial["action_locks"])
+        )
+        self.assertNotIn(
+            60.604,
+            [float(lock["time"]) for lock in self.spatial["action_locks"]],
+        )
         locked_segments = [
             segment for segment in self.spatial["segments"]
             if segment["interaction_lock"] is not None
