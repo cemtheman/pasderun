@@ -22,6 +22,7 @@ var _route_original_materials: Array = []
 var _route_debug_materials: Array = []
 var _marker_meshes: Array[MeshInstance3D] = []
 var _marker_labels: Array[Label3D] = []
+var _web_labels_disabled := OS.has_feature("web")
 
 
 func _ready() -> void:
@@ -86,6 +87,11 @@ func _add_marker(
 	marker_root.add_child(marker_mesh)
 	_marker_meshes.append(marker_mesh)
 
+	# Billboard Label3D rendering is disabled at its creation boundary on Web.
+	# Fresh Web A/B runs isolate this developer-only path as the stall trigger.
+	if _web_labels_disabled:
+		return
+
 	var label := Label3D.new()
 	label.text = marker_text
 	label.position = Vector3(0, 0.55, 0)
@@ -126,4 +132,10 @@ func set_diagnostic_mode(mode: int) -> void:
 
 
 func get_diagnostic_mode_name() -> String:
-	return MODE_NAMES[_diagnostic_mode]
+	var mode_name: String = MODE_NAMES[_diagnostic_mode]
+	if _web_labels_disabled and (
+		_diagnostic_mode == DiagnosticMode.LABELS
+		or _diagnostic_mode == DiagnosticMode.ALL
+	):
+		return "%s (WEB LABELS OFF)" % mode_name
+	return mode_name

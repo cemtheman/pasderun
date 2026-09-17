@@ -106,6 +106,41 @@ class SpatialStallProbeTests(unittest.TestCase):
         self.assertEqual(self.visuals.count("SphereMesh.new()"), 1)
         self.assertEqual(self.visuals.count("Label3D.new()"), 1)
 
+    def test_web_path_excludes_label3d_at_creation_boundary(self) -> None:
+        self.assertIn('OS.has_feature("web")', self.visuals)
+        marker_builder = re.search(
+            r"func _add_marker\(.*?(?=\n\nfunc )",
+            self.visuals,
+            re.DOTALL,
+        ).group(0)
+        web_guard = marker_builder.index("if _web_labels_disabled:")
+        label_creation = marker_builder.index("Label3D.new()")
+        self.assertLess(web_guard, label_creation)
+        self.assertIn("return", marker_builder[web_guard:label_creation])
+        self.assertNotIn("visible = false", marker_builder[web_guard:label_creation])
+
+    def test_native_label3d_configuration_is_preserved(self) -> None:
+        for expected in (
+            "label.text = marker_text",
+            "label.position = Vector3(0, 0.55, 0)",
+            "label.font_size = 48",
+            "label.outline_size = 8",
+            "label.modulate = color",
+            "label.billboard = BaseMaterial3D.BILLBOARD_ENABLED",
+            "label.no_depth_test = true",
+        ):
+            self.assertIn(expected, self.visuals)
+
+    def test_web_disabled_label_modes_are_explicit_in_hud_name(self) -> None:
+        mode_name = re.search(
+            r"func get_diagnostic_mode_name\(.*",
+            self.visuals,
+            re.DOTALL,
+        ).group(0)
+        self.assertIn("DiagnosticMode.LABELS", mode_name)
+        self.assertIn("DiagnosticMode.ALL", mode_name)
+        self.assertIn("(WEB LABELS OFF)", mode_name)
+
     def test_visualization_render_paths_are_independently_selectable(self) -> None:
         self.assertIn(
             'const MODE_NAMES := ["OFF", "ROUTES", "MARKERS", "LABELS", "ALL"]',
@@ -123,6 +158,10 @@ class SpatialStallProbeTests(unittest.TestCase):
         self.assertIn("else _route_original_materials[index]", mode_handler)
         self.assertIn("marker_mesh.visible = show_markers", mode_handler)
         self.assertIn("marker_label.visible = show_labels", mode_handler)
+
+    def test_visualization_has_no_per_frame_label_work(self) -> None:
+        self.assertNotIn("func _process(", self.visuals)
+        self.assertNotIn("func _physics_process(", self.visuals)
 
     def test_hud_is_ascii_safe(self) -> None:
         expected = "STALL PROBE FRAMING:ON VISUALS:ALL BG:ON"
