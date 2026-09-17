@@ -51,6 +51,18 @@ class GeneratedRuntimeSceneTests(unittest.TestCase):
         ):
             self.assertIn(expected, self.scene)
 
+    def test_orthographic_camera_framing_is_fifteen_percent_wider(self) -> None:
+        camera = re.search(
+            r'\[node name="Camera3D".*?(?=\n\[node )',
+            self.scene,
+            re.DOTALL,
+        ).group(0)
+        self.assertIn("projection = 1", camera)
+        self.assertIn("size = 6.325", camera)
+        self.assertIn("0, 2.2, 8", camera)
+        self.assertNotIn("fov =", camera)
+        self.assertAlmostEqual(6.325 / 5.5, 1.15)
+
     def test_runtime_resource_paths_exist_and_generated_events_are_preserved(self) -> None:
         resource_paths = re.findall(r'path="res://([^"]+)"', self.scene)
         self.assertTrue(resource_paths)

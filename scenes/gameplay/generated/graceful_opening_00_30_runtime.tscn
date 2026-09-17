@@ -83,7 +83,7 @@ target = NodePath("../Dancer")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 8)
 projection = 1
 current = true
-size = 5.5
+size = 6.325
 
 [node name="ParallaxPresentation" type="Node3D" parent="CameraRig/Camera3D" node_paths=PackedStringArray("progress_source", "far_layer", "mid_layer", "foreground_layer")]
 script = ExtResource("15_parallax")
