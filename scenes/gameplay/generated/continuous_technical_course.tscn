@@ -1,0 +1,474 @@
+[gd_scene format=3]
+
+[sub_resource type="BoxMesh" id="Mesh_ramp"]
+size = Vector3(14.277, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_ramp"]
+size = Vector3(14.277, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_15"]
+size = Vector3(15, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_15"]
+size = Vector3(15, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_7_5"]
+size = Vector3(7.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_7_5"]
+size = Vector3(7.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_9"]
+size = Vector3(9, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_9"]
+size = Vector3(9, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_8"]
+size = Vector3(8, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_8"]
+size = Vector3(8, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_8_5"]
+size = Vector3(8.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_8_5"]
+size = Vector3(8.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_10"]
+size = Vector3(10, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_10"]
+size = Vector3(10, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_10_5"]
+size = Vector3(10.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_10_5"]
+size = Vector3(10.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_11_5"]
+size = Vector3(11.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_11_5"]
+size = Vector3(11.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_14"]
+size = Vector3(14, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_14"]
+size = Vector3(14, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_22"]
+size = Vector3(22, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_22"]
+size = Vector3(22, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_19_5"]
+size = Vector3(19.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_19_5"]
+size = Vector3(19.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_23_5"]
+size = Vector3(23.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_23_5"]
+size = Vector3(23.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_12"]
+size = Vector3(12, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_12"]
+size = Vector3(12, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_descent_14_5"]
+size = Vector3(14.509, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_descent_14_5"]
+size = Vector3(14.509, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_neutral_33"]
+size = Vector3(33, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_neutral_33"]
+size = Vector3(33, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_neutral_8"]
+size = Vector3(8, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_neutral_8"]
+size = Vector3(8, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_neutral_9"]
+size = Vector3(9, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_neutral_9"]
+size = Vector3(9, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_neutral_close"]
+size = Vector3(35.064, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_neutral_close"]
+size = Vector3(35.064, 0.5, 4)
+
+[node name="ContinuousTechnicalCourse" type="Node3D"]
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="RouteFork01" type="Node3D" parent="Level"]
+metadata/_design = "NO_JUMP_SAFE__JUMP_TECHNICAL"
+
+[node name="RouteFork02" type="Node3D" parent="Level"]
+metadata/_design = "NO_JUMP_SAFE__JUMP_TECHNICAL"
+
+[node name="RouteFork03" type="Node3D" parent="Level"]
+metadata/_design = "NO_JUMP_SAFE__JUMP_TECHNICAL"
+
+[node name="RouteFork04" type="Node3D" parent="Level"]
+metadata/_design = "NO_JUMP_SAFE__JUMP_TECHNICAL"
+
+[node name="RouteFork05" type="Node3D" parent="Level"]
+metadata/_design = "NO_JUMP_SAFE__JUMP_TECHNICAL"
+
+[node name="ForkStart01" type="Marker3D" parent="Level"]
+position = Vector3(175, 0, 0)
+[node name="ForkMerge01" type="Marker3D" parent="Level"]
+position = Vector3(193, -2.8, 0)
+[node name="ForkStart02" type="Marker3D" parent="Level"]
+position = Vector3(250, 0, 0)
+[node name="ForkMerge02" type="Marker3D" parent="Level"]
+position = Vector3(268, -2.8, 0)
+[node name="ForkStart03" type="Marker3D" parent="Level"]
+position = Vector3(330, 0, 0)
+[node name="ForkMerge03" type="Marker3D" parent="Level"]
+position = Vector3(348, -2.8, 0)
+[node name="ForkStart04" type="Marker3D" parent="Level"]
+position = Vector3(410, 0, 0)
+[node name="ForkMerge04" type="Marker3D" parent="Level"]
+position = Vector3(428, -2.8, 0)
+[node name="ForkStart05" type="Marker3D" parent="Level"]
+position = Vector3(505, 0, 0)
+[node name="ForkMerge05" type="Marker3D" parent="Level"]
+position = Vector3(523, -2.8, 0)
+
+[node name="GapEvent01_F01_ENTRY" type="Marker3D" parent="Level"]
+position = Vector3(175.75, 0, 0)
+[node name="GapEvent02_INTERSTITIAL_04_A" type="Marker3D" parent="Level"]
+position = Vector3(462.75, -2.425, 0)
+[node name="GapEvent03_F01_DESCENT" type="Marker3D" parent="Level"]
+position = Vector3(192.25, -1.275, 0)
+[node name="GapEvent04_INTERSTITIAL_01" type="Marker3D" parent="Level"]
+position = Vector3(235.25, -2.675, 0)
+[node name="GapEvent05_F02_ENTRY" type="Marker3D" parent="Level"]
+position = Vector3(250.75, 0, 0)
+[node name="GapEvent06_INTERSTITIAL_04_B" type="Marker3D" parent="Level"]
+position = Vector3(490.25, -2.675, 0)
+[node name="GapEvent07_INTERSTITIAL_02" type="Marker3D" parent="Level"]
+position = Vector3(315.25, -2.675, 0)
+[node name="GapEvent08_F03_ENTRY" type="Marker3D" parent="Level"]
+position = Vector3(330.75, 0, 0)
+[node name="GapEvent09_F03_SAFE" type="Marker3D" parent="Level"]
+position = Vector3(338.75, -2.8, 0)
+[node name="GapEvent10_F03_DESCENT" type="Marker3D" parent="Level"]
+position = Vector3(347.25, -1.275, 0)
+[node name="GapEvent11_INTERSTITIAL_03" type="Marker3D" parent="Level"]
+position = Vector3(395.25, -2.675, 0)
+[node name="GapEvent12_F04_ENTRY" type="Marker3D" parent="Level"]
+position = Vector3(410.75, 0, 0)
+[node name="GapEvent13_F04_DESCENT" type="Marker3D" parent="Level"]
+position = Vector3(427.25, -1.275, 0)
+[node name="GapEvent14_F05_ENTRY" type="Marker3D" parent="Level"]
+position = Vector3(505.75, 0, 0)
+[node name="GapEvent15_F05_SAFE" type="Marker3D" parent="Level"]
+position = Vector3(513.75, -2.8, 0)
+[node name="GapEvent16_F05_DESCENT" type="Marker3D" parent="Level"]
+position = Vector3(522.25, -1.275, 0)
+
+[node name="NeutralRunway01" type="StaticBody3D" parent="Level"]
+position = Vector3(144.5, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway01"]
+mesh = SubResource("Mesh_neutral_33")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway01"]
+shape = SubResource("Shape_neutral_33")
+
+[node name="TechnicalPlatform01_ApproachRamp" type="StaticBody3D" parent="Level"]
+position = Vector3(168, -1.65, 0)
+rotation = Vector3(0, 0, 0.1974)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform01_ApproachRamp"]
+mesh = SubResource("Mesh_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform01_ApproachRamp"]
+shape = SubResource("Shape_ramp")
+
+[node name="TechnicalRoute01_TechnicalPlatform02_Upper" type="StaticBody3D" parent="Level"]
+position = Vector3(184, -0.25, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute01_TechnicalPlatform02_Upper"]
+mesh = SubResource("Mesh_15")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute01_TechnicalPlatform02_Upper"]
+shape = SubResource("Shape_15")
+
+[node name="SafeLowerRoute01" type="StaticBody3D" parent="Level"]
+position = Vector3(178.75, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute01"]
+mesh = SubResource("Mesh_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute01"]
+shape = SubResource("Shape_7_5")
+
+[node name="SafeRoute01_B" type="StaticBody3D" parent="Level"]
+position = Vector3(187.75, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeRoute01_B"]
+mesh = SubResource("Mesh_10_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeRoute01_B"]
+shape = SubResource("Shape_10_5")
+
+[node name="TechnicalPlatform03_Recovery" type="StaticBody3D" parent="Level"]
+position = Vector3(200, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform03_Recovery"]
+mesh = SubResource("Mesh_14")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform03_Recovery"]
+shape = SubResource("Shape_14")
+
+[node name="NeutralRunway02" type="StaticBody3D" parent="Level"]
+position = Vector3(211, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway02"]
+mesh = SubResource("Mesh_neutral_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway02"]
+shape = SubResource("Shape_neutral_8")
+
+[node name="TechnicalPlatform04_Interstitial" type="StaticBody3D" parent="Level"]
+position = Vector3(224.75, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform04_Interstitial"]
+mesh = SubResource("Mesh_19_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform04_Interstitial"]
+shape = SubResource("Shape_19_5")
+
+[node name="TechnicalPlatform05_ApproachRamp" type="StaticBody3D" parent="Level"]
+position = Vector3(243, -1.65, 0)
+rotation = Vector3(0, 0, 0.1974)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform05_ApproachRamp"]
+mesh = SubResource("Mesh_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform05_ApproachRamp"]
+shape = SubResource("Shape_ramp")
+
+[node name="TechnicalRoute02_TechnicalPlatform06_UpperA" type="StaticBody3D" parent="Level"]
+position = Vector3(255.25, -0.25, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute02_TechnicalPlatform06_UpperA"]
+mesh = SubResource("Mesh_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute02_TechnicalPlatform06_UpperA"]
+shape = SubResource("Shape_7_5")
+
+[node name="TechnicalRoute02_TechnicalPlatform07_UpperB" type="StaticBody3D" parent="Level"]
+position = Vector3(263.5, 0, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute02_TechnicalPlatform07_UpperB"]
+mesh = SubResource("Mesh_9")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute02_TechnicalPlatform07_UpperB"]
+shape = SubResource("Shape_9")
+
+[node name="SafeLowerRoute02" type="StaticBody3D" parent="Level"]
+position = Vector3(254, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute02"]
+mesh = SubResource("Mesh_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute02"]
+shape = SubResource("Shape_8")
+
+[node name="SafeRoute02_B" type="StaticBody3D" parent="Level"]
+position = Vector3(263, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeRoute02_B"]
+mesh = SubResource("Mesh_10")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeRoute02_B"]
+shape = SubResource("Shape_10")
+
+[node name="TechnicalPlatform08_Recovery" type="StaticBody3D" parent="Level"]
+position = Vector3(275, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform08_Recovery"]
+mesh = SubResource("Mesh_14")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform08_Recovery"]
+shape = SubResource("Shape_14")
+
+[node name="NeutralRunway03" type="StaticBody3D" parent="Level"]
+position = Vector3(286.5, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway03"]
+mesh = SubResource("Mesh_neutral_9")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway03"]
+shape = SubResource("Shape_neutral_9")
+
+[node name="TechnicalPlatform09_Interstitial" type="StaticBody3D" parent="Level"]
+position = Vector3(302.75, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform09_Interstitial"]
+mesh = SubResource("Mesh_23_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform09_Interstitial"]
+shape = SubResource("Shape_23_5")
+
+[node name="TechnicalPlatform10_ApproachRamp" type="StaticBody3D" parent="Level"]
+position = Vector3(323, -1.65, 0)
+rotation = Vector3(0, 0, 0.1974)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform10_ApproachRamp"]
+mesh = SubResource("Mesh_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform10_ApproachRamp"]
+shape = SubResource("Shape_ramp")
+
+[node name="TechnicalRoute03_TechnicalPlatform11_UpperA" type="StaticBody3D" parent="Level"]
+position = Vector3(335.25, -0.25, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute03_TechnicalPlatform11_UpperA"]
+mesh = SubResource("Mesh_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute03_TechnicalPlatform11_UpperA"]
+shape = SubResource("Shape_7_5")
+
+[node name="TechnicalRoute03_TechnicalPlatform12_UpperB" type="StaticBody3D" parent="Level"]
+position = Vector3(342.75, 0, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute03_TechnicalPlatform12_UpperB"]
+mesh = SubResource("Mesh_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute03_TechnicalPlatform12_UpperB"]
+shape = SubResource("Shape_7_5")
+
+[node name="SafeLowerRoute03" type="StaticBody3D" parent="Level"]
+position = Vector3(334, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute03"]
+mesh = SubResource("Mesh_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute03"]
+shape = SubResource("Shape_8")
+
+[node name="SafeRoute03_B" type="StaticBody3D" parent="Level"]
+position = Vector3(343.75, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeRoute03_B"]
+mesh = SubResource("Mesh_8_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeRoute03_B"]
+shape = SubResource("Shape_8_5")
+
+[node name="TechnicalPlatform13_Recovery" type="StaticBody3D" parent="Level"]
+position = Vector3(355, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform13_Recovery"]
+mesh = SubResource("Mesh_14")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform13_Recovery"]
+shape = SubResource("Shape_14")
+
+[node name="NeutralRunway04" type="StaticBody3D" parent="Level"]
+position = Vector3(366.5, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway04"]
+mesh = SubResource("Mesh_neutral_9")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway04"]
+shape = SubResource("Shape_neutral_9")
+
+[node name="TechnicalPlatform14_Interstitial" type="StaticBody3D" parent="Level"]
+position = Vector3(382.75, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform14_Interstitial"]
+mesh = SubResource("Mesh_23_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform14_Interstitial"]
+shape = SubResource("Shape_23_5")
+
+[node name="TechnicalPlatform15_ApproachRamp" type="StaticBody3D" parent="Level"]
+position = Vector3(403, -1.65, 0)
+rotation = Vector3(0, 0, 0.1974)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform15_ApproachRamp"]
+mesh = SubResource("Mesh_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform15_ApproachRamp"]
+shape = SubResource("Shape_ramp")
+
+[node name="TechnicalRoute04_TechnicalPlatform16_UpperA" type="StaticBody3D" parent="Level"]
+position = Vector3(419, -0.25, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute04_TechnicalPlatform16_UpperA"]
+mesh = SubResource("Mesh_15")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute04_TechnicalPlatform16_UpperA"]
+shape = SubResource("Shape_15")
+
+[node name="SafeLowerRoute04" type="StaticBody3D" parent="Level"]
+position = Vector3(414, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute04"]
+mesh = SubResource("Mesh_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute04"]
+shape = SubResource("Shape_8")
+
+[node name="SafeRoute04_B" type="StaticBody3D" parent="Level"]
+position = Vector3(423, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeRoute04_B"]
+mesh = SubResource("Mesh_10")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeRoute04_B"]
+shape = SubResource("Shape_10")
+
+[node name="TechnicalPlatform18_Recovery" type="StaticBody3D" parent="Level"]
+position = Vector3(435, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform18_Recovery"]
+mesh = SubResource("Mesh_14")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform18_Recovery"]
+shape = SubResource("Shape_14")
+
+[node name="NeutralRunway05" type="StaticBody3D" parent="Level"]
+position = Vector3(446, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway05"]
+mesh = SubResource("Mesh_neutral_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway05"]
+shape = SubResource("Shape_neutral_8")
+
+[node name="TechnicalPlatform19_InterstitialRise" type="StaticBody3D" parent="Level"]
+position = Vector3(456, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform19_InterstitialRise"]
+mesh = SubResource("Mesh_12")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform19_InterstitialRise"]
+shape = SubResource("Shape_12")
+
+[node name="TechnicalPlatform17_InterstitialHigh" type="StaticBody3D" parent="Level"]
+position = Vector3(469.25, -2.55, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform17_InterstitialHigh"]
+mesh = SubResource("Mesh_11_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform17_InterstitialHigh"]
+shape = SubResource("Shape_11_5")
+
+[node name="TechnicalPlatform20_InterstitialDescent" type="StaticBody3D" parent="Level"]
+position = Vector3(482.25, -2.8, 0)
+rotation = Vector3(0, 0, -0.03447)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform20_InterstitialDescent"]
+mesh = SubResource("Mesh_descent_14_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform20_InterstitialDescent"]
+shape = SubResource("Shape_descent_14_5")
+
+[node name="TechnicalPlatform21_ApproachRamp" type="StaticBody3D" parent="Level"]
+position = Vector3(498, -1.65, 0)
+rotation = Vector3(0, 0, 0.1974)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform21_ApproachRamp"]
+mesh = SubResource("Mesh_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform21_ApproachRamp"]
+shape = SubResource("Shape_ramp")
+
+[node name="TechnicalRoute05_TechnicalPlatform22_UpperA" type="StaticBody3D" parent="Level"]
+position = Vector3(510.25, -0.25, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute05_TechnicalPlatform22_UpperA"]
+mesh = SubResource("Mesh_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute05_TechnicalPlatform22_UpperA"]
+shape = SubResource("Shape_7_5")
+
+[node name="TechnicalRoute05_TechnicalPlatform23_UpperB" type="StaticBody3D" parent="Level"]
+position = Vector3(517.75, 0, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute05_TechnicalPlatform23_UpperB"]
+mesh = SubResource("Mesh_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute05_TechnicalPlatform23_UpperB"]
+shape = SubResource("Shape_7_5")
+
+[node name="SafeLowerRoute05" type="StaticBody3D" parent="Level"]
+position = Vector3(509, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute05"]
+mesh = SubResource("Mesh_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute05"]
+shape = SubResource("Shape_8")
+
+[node name="SafeRoute05_B" type="StaticBody3D" parent="Level"]
+position = Vector3(518.75, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeRoute05_B"]
+mesh = SubResource("Mesh_8_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeRoute05_B"]
+shape = SubResource("Shape_8_5")
+
+[node name="TechnicalPlatform24_Recovery" type="StaticBody3D" parent="Level"]
+position = Vector3(534, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform24_Recovery"]
+mesh = SubResource("Mesh_22")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform24_Recovery"]
+shape = SubResource("Shape_22")
+
+[node name="NeutralClosingRunway" type="StaticBody3D" parent="Level"]
+position = Vector3(562.532, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralClosingRunway"]
+mesh = SubResource("Mesh_neutral_close")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralClosingRunway"]
+shape = SubResource("Shape_neutral_close")
