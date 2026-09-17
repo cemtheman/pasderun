@@ -1,6 +1,6 @@
 extends Node
 
-const DANCER_VISUAL_SCRIPT := preload("res://scenes/gameplay/dancer_visual_motion_v4.gd")
+const DANCER_VISUAL_SCRIPT := preload("res://scenes/gameplay/dancer_visual_motion_v5.gd")
 const DANCER_TAP_FEEDBACK_SCRIPT := preload("res://scenes/gameplay/dancer_tap_feedback.gd")
 
 
