@@ -10,6 +10,7 @@ extends Node
 
 var _default_camera_size: float = 5.5
 var _forks: Array[Dictionary] = []
+var _frozen := false
 
 
 func _ready() -> void:
@@ -20,7 +21,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if camera_rig == null or camera == null or target == null:
+	if _frozen or camera_rig == null or camera == null or target == null:
 		return
 
 	var active_fork := _find_active_fork(target.global_position.x)
@@ -46,6 +47,26 @@ func _process(_delta: float) -> void:
 		weight
 	)
 	camera.size = lerpf(_default_camera_size, framed_size, weight)
+
+
+func set_frozen(value: bool) -> void:
+	_frozen = value
+
+
+func restore_normal_state() -> void:
+	_frozen = false
+	if camera != null:
+		camera.size = _default_camera_size
+
+
+func is_outside_fork() -> bool:
+	if target == null:
+		return true
+	var world_x := target.global_position.x
+	for fork in _forks:
+		if world_x >= float(fork["start_x"]) and world_x <= float(fork["merge_x"]):
+			return false
+	return true
 
 
 func _collect_forks() -> void:
