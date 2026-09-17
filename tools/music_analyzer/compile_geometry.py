@@ -61,7 +61,11 @@ def _round(value: float) -> float:
     return round(float(value), 4)
 
 
-def _has_viable_fork(event: dict[str, Any], next_time: float | None) -> bool:
+def _has_viable_fork(
+    event: dict[str, Any],
+    next_time: float | None,
+    current_surface_y: float,
+) -> bool:
     if float(event["branchability"]) < FORK_THRESHOLD:
         return False
     candidates = event["candidate_classes"]
@@ -73,7 +77,11 @@ def _has_viable_fork(event: dict[str, Any], next_time: float | None) -> bool:
         return False
     if next_time is not None and next_time - float(event["time"]) < MIN_FORK_DURATION_SECONDS:
         return False
-    return candidates[0]["class"] in {"SMALL_JUMP", "MEDIUM_JUMP", "LARGE_TRAVELLING_LEAP"}
+    if candidates[0]["class"] not in {"SMALL_JUMP", "MEDIUM_JUMP", "LARGE_TRAVELLING_LEAP"}:
+        return False
+    safe_surface_y = _safe_surface_y(current_surface_y)
+    safe_standing_root_y = safe_surface_y + DANCER_CAPSULE_HEIGHT / 2.0
+    return safe_standing_root_y > FALL_LIMIT_Y
 
 
 def _safe_surface_y(technical_surface_y: float) -> float:
@@ -90,6 +98,7 @@ def _compile_event(
     event: dict[str, Any],
     next_time: float | None,
     current_surface_y: float,
+    level_end_x: float = LEVEL_END_X,
 ) -> dict[str, Any]:
     source_time = float(event["time"])
     event_x = time_to_x(source_time)
@@ -148,19 +157,19 @@ def _compile_event(
     else:
         output["geometry"].update({
             "start_x": _round(max(LEVEL_START_X, event_x - 2.0)),
-            "end_x": _round(min(LEVEL_END_X, event_x + 2.0)),
+            "end_x": _round(min(level_end_x, event_x + 2.0)),
         })
 
-    if _has_viable_fork(event, next_time):
+    if _has_viable_fork(event, next_time, current_surface_y):
         technical_type = CLASS_TO_GEOMETRY[source_class]
         calibration = GAP_CALIBRATION[technical_type]
         gap_start = event_x - calibration["length"] / 2.0
         gap_end = event_x + calibration["length"] / 2.0
         fork_start = max(LEVEL_START_X, event_x - calibration["preparation"])
         fork_end = min(
-            LEVEL_END_X,
+            level_end_x,
             event_x + calibration["landing"],
-            time_to_x(next_time) - 2.0 if next_time is not None else LEVEL_END_X,
+            time_to_x(next_time) - 2.0 if next_time is not None else level_end_x,
         )
         safe_surface_y = _safe_surface_y(current_surface_y)
         technical_underside_y = _round(current_surface_y - GROUND_HEIGHT)
@@ -299,13 +308,19 @@ def _subtract_intervals(base: list[tuple[float, float]], cuts: list[tuple[float,
     return [(start, end) for start, end in result if end - start >= 0.1]
 
 
-def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
-    source_events = [event for event in movement_demands["events"] if float(event["time"]) <= COMPILE_END_SECONDS]
+def compile_plan(
+    movement_demands: dict[str, Any],
+    compile_end_seconds: float = COMPILE_END_SECONDS,
+) -> dict[str, Any]:
+    if compile_end_seconds <= 0.0:
+        raise ValueError("compile_end_seconds must be positive")
+    level_end_x = compile_end_seconds * RUN_SPEED + 8.0
+    source_events = [event for event in movement_demands["events"] if float(event["time"]) <= compile_end_seconds]
     events: list[dict[str, Any]] = []
     current_surface_y = 0.0
     for index, source_event in enumerate(source_events):
         next_time = float(source_events[index + 1]["time"]) if index + 1 < len(source_events) else None
-        event = _compile_event(source_event, next_time, current_surface_y)
+        event = _compile_event(source_event, next_time, current_surface_y, level_end_x)
         events.append(event)
         if event["branch"] is not None:
             current_surface_y = float(event["branch"]["merge"]["surface_y"])
@@ -323,7 +338,7 @@ def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
         elif geometry["type"] == "ROUTE_FORK":
             mandatory_cuts.append((geometry["start_x"], geometry["end_x"]))
 
-    runway_intervals = _subtract_intervals([(LEVEL_START_X, LEVEL_END_X)], mandatory_cuts)
+    runway_intervals = _subtract_intervals([(LEVEL_START_X, level_end_x)], mandatory_cuts)
 
     def surface_at(start_x: float) -> float:
         surface_y = 0.0
@@ -335,8 +350,8 @@ def compile_plan(movement_demands: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema_version": SCHEMA_VERSION,
         "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
-        "compiled_time_range": {"start": 0.0, "end": COMPILE_END_SECONDS},
-        "playable_world_extent": {"start_x": LEVEL_START_X, "end_x": LEVEL_END_X},
+        "compiled_time_range": {"start": 0.0, "end": compile_end_seconds},
+        "playable_world_extent": {"start_x": LEVEL_START_X, "end_x": _round(level_end_x)},
         "timebase": {
             "canonical_unit": "seconds",
             "run_speed_world_units_per_second": RUN_SPEED,
@@ -482,7 +497,9 @@ def render_scene(plan: dict[str, Any]) -> str:
         f'[gd_scene load_steps={len(resources) + 2} format=3]\n\n'
         '[ext_resource type="Script" path="res://scenes/gameplay/balance_area.gd" id="1_balance"]\n\n'
     )
-    return header + "\n".join(resources) + "\n[node name=\"GracefulOpening0030\" type=\"Node3D\"]\n\n[node name=\"Level\" type=\"Node3D\" parent=\".\"]\n\n[node name=\"Events\" type=\"Node3D\" parent=\".\"]\n\n" + "\n".join(nodes)
+    end_seconds = float(plan["compiled_time_range"]["end"])
+    root_name = f"GracefulOpening{int(round(end_seconds)):04d}"
+    return header + "\n".join(resources) + f"\n[node name=\"{root_name}\" type=\"Node3D\"]\n\n[node name=\"Level\" type=\"Node3D\" parent=\".\"]\n\n[node name=\"Events\" type=\"Node3D\" parent=\".\"]\n\n" + "\n".join(nodes)
 
 
 def main() -> None:
@@ -490,9 +507,10 @@ def main() -> None:
     parser.add_argument("movement_demands", type=Path)
     parser.add_argument("--plan-output", required=True, type=Path)
     parser.add_argument("--scene-output", required=True, type=Path)
+    parser.add_argument("--compile-end-seconds", type=float, default=COMPILE_END_SECONDS)
     args = parser.parse_args()
     movement_demands = json.loads(args.movement_demands.read_text(encoding="utf-8"))
-    plan = compile_plan(movement_demands)
+    plan = compile_plan(movement_demands, args.compile_end_seconds)
     args.plan_output.parent.mkdir(parents=True, exist_ok=True)
     args.scene_output.parent.mkdir(parents=True, exist_ok=True)
     args.plan_output.write_text(json.dumps(plan, indent=2, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
