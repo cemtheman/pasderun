@@ -53,6 +53,7 @@ class AccentRuntimeTraceTests(unittest.TestCase):
             "MARKER=",
             "DELTA=",
             "INPUT=",
+            "PRESS=",
             "CLASS=",
             "SIGNAL=",
             "FLOW BEFORE=",
@@ -69,6 +70,9 @@ class AccentRuntimeTraceTests(unittest.TestCase):
         self.assertIn("Engine.get_physics_frames() <= _handler_physics_frame", self.trace)
         self.assertIn('call_deferred("_confirm_signal_presence"', self.trace)
         self.assertIn('_signal_status = "NO"', self.trace)
+        self.assertIn('musicality.get("dancer")', self.trace)
+        self.assertIn('dancer_node.get("press_started_ms")', self.trace)
+        self.assertIn("Time.get_ticks_msec()", self.trace)
 
     def test_musicality_diagnostic_signal_does_not_replace_classification(self) -> None:
         self.assertIn("signal accent_evaluation_started", self.musicality)

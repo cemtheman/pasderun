@@ -10,6 +10,7 @@ var _tap_time := 0.0
 var _marker_time := -1.0
 var _tap_delta := 0.0
 var _input_source := &"NONE"
+var _press_duration_ms := -1
 var _classification := &"PENDING"
 var _signal_status := "PENDING"
 var _flow_before := 0.0
@@ -64,6 +65,16 @@ func _on_accent_evaluation_started(
 	_marker_time = marker_time
 	_tap_delta = delta
 	_input_source = input_source
+	_press_duration_ms = -1
+	if input_source == &"TAP":
+		var dancer_node := musicality.get("dancer") as Node
+		if dancer_node != null:
+			var press_started_value = dancer_node.get("press_started_ms")
+			if press_started_value != null:
+				_press_duration_ms = maxi(
+					Time.get_ticks_msec() - int(press_started_value),
+					0
+				)
 	_classification = &"PENDING"
 	_signal_status = "PENDING"
 	_flow_before = _current_flow()
@@ -123,12 +134,14 @@ func _read_hud_flow() -> float:
 func _update_trace() -> void:
 	var marker_text := "NONE" if _marker_time < 0.0 else "%.3f" % _marker_time
 	var handler_text := "-" if not _handler_captured else "%.3f" % _flow_handler
+	var press_text := "NONE" if _press_duration_ms < 0 else "%dms" % _press_duration_ms
 	var next_text := "-" if not _next_physics_captured else "%.3f" % _flow_next_physics
 	trace_label.text = (
 		"EVAL t=%.3f\n"
 		+ "MARKER=%s\n"
 		+ "DELTA=%+.3f\n"
 		+ "INPUT=%s\n"
+		+ "PRESS=%s\n"
 		+ "CLASS=%s\n"
 		+ "SIGNAL=%s\n"
 		+ "FLOW BEFORE=%.3f\n"
@@ -140,6 +153,7 @@ func _update_trace() -> void:
 		marker_text,
 		_tap_delta,
 		_input_source,
+		press_text,
 		_classification,
 		_signal_status,
 		_flow_before,
