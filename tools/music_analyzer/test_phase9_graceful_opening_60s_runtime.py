@@ -10,6 +10,7 @@ RUNTIME_60 = ROOT / "scenes/gameplay/generated/graceful_opening_00_60_runtime.ts
 RUNTIME_30 = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
 FRAMING = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
 RECOVERY = ROOT / "scenes/gameplay/run_recovery_manager.gd"
+PROJECT = ROOT / "project.godot"
 
 
 class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
@@ -19,6 +20,7 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
         cls.baseline_runtime = RUNTIME_30.read_text(encoding="utf-8")
         cls.framing = FRAMING.read_text(encoding="utf-8")
         cls.recovery = RECOVERY.read_text(encoding="utf-8")
+        cls.project = PROJECT.read_text(encoding="utf-8")
 
     def test_60s_runtime_is_isolated_from_full_course_extension(self) -> None:
         self.assertIn(
@@ -74,6 +76,14 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
             "TapTimingDebug",
         ):
             self.assertIn(f'name="{node_name}"', self.runtime)
+
+
+    def test_project_launches_phase9_60s_runtime(self) -> None:
+        self.assertIn(
+            'run/main_scene="res://scenes/gameplay/generated/graceful_opening_00_60_runtime.tscn"',
+            self.project,
+        )
+        self.assertNotIn('run/main_scene="uid://wrse8kqkd211"', self.project)
 
     def test_accepted_30s_runtime_remains_full_course_baseline(self) -> None:
         self.assertIn("continuous_technical_course.tscn", self.baseline_runtime)
