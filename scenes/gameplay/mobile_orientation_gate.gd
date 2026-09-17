@@ -8,7 +8,7 @@ var _mobile_like := false
 var _blocked := false
 var _paused_by_orientation := false
 var _resume_audio := false
-
+var _resume_audio_position := 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -46,7 +46,9 @@ func _evaluate_orientation() -> void:
 func _pause_for_portrait() -> void:
 	_resume_audio = audio_player.playing and not audio_player.stream_paused
 	if _resume_audio:
+		_resume_audio_position = audio_player.get_playback_position()
 		audio_player.stream_paused = true
+
 	if not get_tree().paused:
 		get_tree().paused = true
 		_paused_by_orientation = true
@@ -56,8 +58,14 @@ func _resume_from_portrait() -> void:
 	if _paused_by_orientation:
 		get_tree().paused = false
 		_paused_by_orientation = false
-	if _resume_audio and audio_player.playing:
-		audio_player.stream_paused = false
+
+	if _resume_audio:
+		if audio_player.playing:
+			audio_player.stream_paused = false
+			audio_player.seek(_resume_audio_position)
+		else:
+			audio_player.play(_resume_audio_position)
+
 	_resume_audio = false
 
 
