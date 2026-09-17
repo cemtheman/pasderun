@@ -41,6 +41,38 @@ class Phase8PerformanceHudTests(unittest.TestCase):
             self.runtime,
         )
 
+    def test_startup_profile_collects_first_five_seconds(self) -> None:
+        self.assertIn("STARTUP_PROFILE_DURATION := 5.0", self.hud)
+        self.assertIn("_startup_profile_active = true", self.hud)
+        self.assertIn("func _sample_startup_performance(delta: float)", self.hud)
+        self.assertIn("_startup_profile_elapsed += delta", self.hud)
+        self.assertIn(
+            "if _startup_profile_elapsed >= STARTUP_PROFILE_DURATION",
+            self.hud,
+        )
+
+    def test_startup_profile_tracks_worst_case_metrics(self) -> None:
+        self.assertIn(
+            "_startup_min_fps = minf(_startup_min_fps, fps)",
+            self.hud,
+        )
+        self.assertIn(
+            "_startup_max_frame_ms = maxf(_startup_max_frame_ms, frame_ms)",
+            self.hud,
+        )
+        self.assertIn(
+            "_startup_max_physics_ms = maxf(_startup_max_physics_ms, physics_ms)",
+            self.hud,
+        )
+        self.assertIn(
+            "_startup_max_delta_ms = maxf(_startup_max_delta_ms, delta * 1000.0)",
+            self.hud,
+        )
+        self.assertIn(
+            "START 5s MINFPS:%d MAXF:%.1fms MAXP:%.1fms",
+            self.hud,
+        )
+
     def test_existing_hud_toggle_contract_remains(self) -> None:
         self.assertIn("key_event.keycode != KEY_H", self.hud)
         self.assertIn("hud_root.visible = not hud_root.visible", self.hud)

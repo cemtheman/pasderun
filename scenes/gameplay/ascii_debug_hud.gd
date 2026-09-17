@@ -20,8 +20,15 @@ const ASCII_REPLACEMENTS := {
 }
 
 const PERFORMANCE_SAMPLE_INTERVAL := 0.5
+const STARTUP_PROFILE_DURATION := 5.0
 
 var _performance_elapsed := 0.0
+var _startup_profile_active := false
+var _startup_profile_elapsed := 0.0
+var _startup_min_fps := 9999.0
+var _startup_max_frame_ms := 0.0
+var _startup_max_physics_ms := 0.0
+var _startup_max_delta_ms := 0.0
 
 
 func _ready() -> void:
@@ -37,6 +44,12 @@ func _ready() -> void:
 
 
 func _on_runtime_started() -> void:
+	_startup_profile_active = true
+	_startup_profile_elapsed = 0.0
+	_startup_min_fps = 9999.0
+	_startup_max_frame_ms = 0.0
+	_startup_max_physics_ms = 0.0
+	_startup_max_delta_ms = 0.0
 	set_process_input(true)
 
 
@@ -51,11 +64,32 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if _startup_profile_active:
+		_sample_startup_performance(delta)
+
 	_performance_elapsed += delta
 	if _performance_elapsed >= PERFORMANCE_SAMPLE_INTERVAL:
 		_performance_elapsed = 0.0
 		_update_performance_label()
 	_sanitize_labels(self)
+
+
+func _sample_startup_performance(delta: float) -> void:
+	_startup_profile_elapsed += delta
+	_startup_max_delta_ms = maxf(_startup_max_delta_ms, delta * 1000.0)
+
+	var fps := Performance.get_monitor(Performance.TIME_FPS)
+	var frame_ms := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
+	var physics_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+
+	if fps > 0.0:
+		_startup_min_fps = minf(_startup_min_fps, fps)
+	_startup_max_frame_ms = maxf(_startup_max_frame_ms, frame_ms)
+	_startup_max_physics_ms = maxf(_startup_max_physics_ms, physics_ms)
+
+	if _startup_profile_elapsed >= STARTUP_PROFILE_DURATION:
+		_startup_profile_active = false
+		_update_performance_label()
 
 
 func _update_performance_label() -> void:
@@ -64,9 +98,21 @@ func _update_performance_label() -> void:
 	var physics_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
 	var memory_mib := Performance.get_monitor(Performance.MEMORY_STATIC) / (1024.0 * 1024.0)
 	var draw_calls := int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	var startup_text := "START 5s: WAIT"
+	if _startup_profile_elapsed > 0.0:
+		var min_fps := 0
+		if _startup_min_fps < 9999.0:
+			min_fps = int(_startup_min_fps)
+		startup_text = "START 5s MINFPS:%d MAXF:%.1fms MAXP:%.1fms MAXD:%.1fms" % [
+			min_fps,
+			_startup_max_frame_ms,
+			_startup_max_physics_ms,
+			_startup_max_delta_ms,
+		]
+
 	performance_label.text = (
-		"PERF FPS:%d FRAME:%.2fms PHYS:%.2fms\nMEM:%.1fMiB DRAW:%d"
-		% [int(fps), frame_ms, physics_ms, memory_mib, draw_calls]
+		"PERF FPS:%d FRAME:%.2fms PHYS:%.2fms\nMEM:%.1fMiB DRAW:%d\n%s"
+		% [int(fps), frame_ms, physics_ms, memory_mib, draw_calls, startup_text]
 	)
 
 
