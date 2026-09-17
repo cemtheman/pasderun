@@ -201,7 +201,7 @@ class SpatialStallProbeTests(unittest.TestCase):
             self.assertIn(f"0, 0, {z_value}", node)
             self.assertNotIn("Collision", node)
             self.assertNotIn("script =", node)
-        self.assertEqual(self.runtime.count("size = Vector2(38, 12.6667)"), 3)
+        self.assertEqual(self.runtime.count("size = Vector2(50, 16.6667)"), 3)
         self.assertEqual(self.runtime.count("transparency = 1"), 2)
 
     def test_parallax_uses_horizontal_gameplay_progress_only(self) -> None:

@@ -25,7 +25,7 @@ albedo_texture = ExtResource("16_far")
 
 [sub_resource type="QuadMesh" id="QuadMesh_far"]
 material = SubResource("StandardMaterial3D_far")
-size = Vector2(38, 12.6667)
+size = Vector2(50, 16.6667)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mid"]
 transparency = 1
@@ -34,7 +34,7 @@ albedo_texture = ExtResource("17_mid")
 
 [sub_resource type="QuadMesh" id="QuadMesh_mid"]
 material = SubResource("StandardMaterial3D_mid")
-size = Vector2(38, 12.6667)
+size = Vector2(50, 16.6667)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_foreground"]
 transparency = 1
@@ -43,71 +43,89 @@ albedo_texture = ExtResource("18_foreground")
 
 [sub_resource type="QuadMesh" id="QuadMesh_foreground"]
 material = SubResource("StandardMaterial3D_foreground")
-size = Vector2(38, 12.6667)
+size = Vector2(50, 16.6667)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_runtime"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_neutral_01"]
-size = Vector3(42, 0.5, 4)
+size = Vector3(36, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_neutral_01"]
-size = Vector3(42, 0.5, 4)
+size = Vector3(36, 0.5, 4)
 
-[sub_resource type="BoxMesh" id="BoxMesh_technical_01"]
-size = Vector3(14, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape_technical_01"]
-size = Vector3(14, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_technical_02"]
+[sub_resource type="BoxMesh" id="BoxMesh_technical_13"]
 size = Vector3(13, 0.5, 4)
 
-[sub_resource type="BoxShape3D" id="BoxShape_technical_02"]
+[sub_resource type="BoxShape3D" id="BoxShape_technical_13"]
 size = Vector3(13, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_technical_12"]
+size = Vector3(12, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_technical_12"]
+size = Vector3(12, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_technical_11"]
+size = Vector3(11, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_technical_11"]
+size = Vector3(11, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_technical_10"]
+size = Vector3(10, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_technical_10"]
+size = Vector3(10, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_technical_8"]
+size = Vector3(8, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_technical_8"]
+size = Vector3(8, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_technical_7_5"]
+size = Vector3(7.5, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_technical_7_5"]
+size = Vector3(7.5, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_technical_7"]
+size = Vector3(7, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_technical_7"]
+size = Vector3(7, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_neutral_02"]
-size = Vector3(71.5, 0.5, 4)
+size = Vector3(48.5, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_neutral_02"]
-size = Vector3(71.5, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_technical_03"]
-size = Vector3(10, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape_technical_03"]
-size = Vector3(10, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_technical_04"]
-size = Vector3(9, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape_technical_04"]
-size = Vector3(9, 0.5, 4)
+size = Vector3(48.5, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_neutral_03"]
-size = Vector3(79.4, 0.5, 4)
+size = Vector3(58.9, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_neutral_03"]
-size = Vector3(79.4, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_technical_05"]
-size = Vector3(7, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape_technical_05"]
-size = Vector3(7, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_technical_06"]
-size = Vector3(6, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape_technical_06"]
-size = Vector3(6, 0.5, 4)
+size = Vector3(58.9, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_neutral_04"]
-size = Vector3(193.664, 0.5, 4)
+size = Vector3(58, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_neutral_04"]
-size = Vector3(193.664, 0.5, 4)
+size = Vector3(58, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_neutral_05"]
+size = Vector3(69.2, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_neutral_05"]
+size = Vector3(69.2, 0.5, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_neutral_06"]
+size = Vector3(40.864, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_neutral_06"]
+size = Vector3(40.864, 0.5, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_panel"]
 content_margin_left = 8.0
@@ -131,74 +149,144 @@ corner_radius_bottom_left = 5
 [node name="ExtendedCourse" type="Node3D" parent="."]
 
 [node name="NeutralRunway01" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(149, -3.05, 0)
+position = Vector3(146, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/NeutralRunway01"]
 mesh = SubResource("BoxMesh_neutral_01")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/NeutralRunway01"]
 shape = SubResource("BoxShape_neutral_01")
 
 [node name="TechnicalPlatform01_Wide" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(177, -3.05, 0)
+position = Vector3(170.5, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform01_Wide"]
-mesh = SubResource("BoxMesh_technical_01")
+mesh = SubResource("BoxMesh_technical_13")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform01_Wide"]
-shape = SubResource("BoxShape_technical_01")
+shape = SubResource("BoxShape_technical_13")
 
 [node name="TechnicalPlatform02_Wide" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(192, -3.05, 0)
+position = Vector3(184.5, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform02_Wide"]
-mesh = SubResource("BoxMesh_technical_02")
+mesh = SubResource("BoxMesh_technical_12")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform02_Wide"]
-shape = SubResource("BoxShape_technical_02")
+shape = SubResource("BoxShape_technical_12")
 
 [node name="NeutralRunway02" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(234.25, -3.05, 0)
+position = Vector3(214.75, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/NeutralRunway02"]
 mesh = SubResource("BoxMesh_neutral_02")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/NeutralRunway02"]
 shape = SubResource("BoxShape_neutral_02")
 
-[node name="TechnicalPlatform03_Medium" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(275, -3.05, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform03_Medium"]
-mesh = SubResource("BoxMesh_technical_03")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform03_Medium"]
-shape = SubResource("BoxShape_technical_03")
+[node name="TechnicalPlatform03_Wide" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(244.5, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform03_Wide"]
+mesh = SubResource("BoxMesh_technical_11")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform03_Wide"]
+shape = SubResource("BoxShape_technical_11")
 
-[node name="TechnicalPlatform04_Medium" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(286.1, -3.05, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform04_Medium"]
-mesh = SubResource("BoxMesh_technical_04")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform04_Medium"]
-shape = SubResource("BoxShape_technical_04")
+[node name="TechnicalPlatform04_Wide" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(256.6, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform04_Wide"]
+mesh = SubResource("BoxMesh_technical_10")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform04_Wide"]
+shape = SubResource("BoxShape_technical_10")
 
 [node name="NeutralRunway03" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(330.3, -3.05, 0)
+position = Vector3(291.05, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/NeutralRunway03"]
 mesh = SubResource("BoxMesh_neutral_03")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/NeutralRunway03"]
 shape = SubResource("BoxShape_neutral_03")
 
-[node name="TechnicalPlatform05_Precision" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(373.5, -3.05, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform05_Precision"]
-mesh = SubResource("BoxMesh_technical_05")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform05_Precision"]
-shape = SubResource("BoxShape_technical_05")
+[node name="TechnicalPlatform05_Low" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(326, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform05_Low"]
+mesh = SubResource("BoxMesh_technical_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform05_Low"]
+shape = SubResource("BoxShape_technical_8")
 
-[node name="TechnicalPlatform06_Precision" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(381.7, -3.05, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform06_Precision"]
-mesh = SubResource("BoxMesh_technical_06")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform06_Precision"]
-shape = SubResource("BoxShape_technical_06")
+[node name="TechnicalPlatform06_Medium" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(335.25, -2.55, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform06_Medium"]
+mesh = SubResource("BoxMesh_technical_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform06_Medium"]
+shape = SubResource("BoxShape_technical_7_5")
+
+[node name="TechnicalPlatform07_Low" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(343, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform07_Low"]
+mesh = SubResource("BoxMesh_technical_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform07_Low"]
+shape = SubResource("BoxShape_technical_8")
 
 [node name="NeutralRunway04" type="StaticBody3D" parent="ExtendedCourse"]
-position = Vector3(483.232, -3.05, 0)
+position = Vector3(376, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/NeutralRunway04"]
 mesh = SubResource("BoxMesh_neutral_04")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/NeutralRunway04"]
 shape = SubResource("BoxShape_neutral_04")
+
+[node name="TechnicalPlatform08_Low" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(410.6, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform08_Low"]
+mesh = SubResource("BoxMesh_technical_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform08_Low"]
+shape = SubResource("BoxShape_technical_8")
+
+[node name="TechnicalPlatform09_Medium" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(419.7, -2.55, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform09_Medium"]
+mesh = SubResource("BoxMesh_technical_7")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform09_Medium"]
+shape = SubResource("BoxShape_technical_7")
+
+[node name="TechnicalPlatform10_Low" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(427.2, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform10_Low"]
+mesh = SubResource("BoxMesh_technical_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform10_Low"]
+shape = SubResource("BoxShape_technical_8")
+
+[node name="NeutralRunway05" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(465.8, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/NeutralRunway05"]
+mesh = SubResource("BoxMesh_neutral_05")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/NeutralRunway05"]
+shape = SubResource("BoxShape_neutral_05")
+
+[node name="TechnicalPlatform11_Medium" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(506, -2.55, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform11_Medium"]
+mesh = SubResource("BoxMesh_technical_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform11_Medium"]
+shape = SubResource("BoxShape_technical_8")
+
+[node name="TechnicalPlatform12_Low" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(514, -2.8, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform12_Low"]
+mesh = SubResource("BoxMesh_technical_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform12_Low"]
+shape = SubResource("BoxShape_technical_8")
+
+[node name="TechnicalPlatform13_High" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(523.45, -2.3, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform13_High"]
+mesh = SubResource("BoxMesh_technical_7_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform13_High"]
+shape = SubResource("BoxShape_technical_7_5")
+
+[node name="TechnicalPlatform14_Medium" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(533.2, -2.55, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/TechnicalPlatform14_Medium"]
+mesh = SubResource("BoxMesh_technical_12")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/TechnicalPlatform14_Medium"]
+shape = SubResource("BoxShape_technical_12")
+
+[node name="NeutralRunway06" type="StaticBody3D" parent="ExtendedCourse"]
+position = Vector3(559.632, -3.05, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ExtendedCourse/NeutralRunway06"]
+mesh = SubResource("BoxMesh_neutral_06")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtendedCourse/NeutralRunway06"]
+shape = SubResource("BoxShape_neutral_06")
 
 [node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]
 script = ExtResource("8_debug")
