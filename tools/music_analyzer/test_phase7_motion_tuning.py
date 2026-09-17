@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "scenes/gameplay/dancer_visual_motion_v2.gd"
 POLISH = ROOT / "scenes/gameplay/dancer_visual_motion_v3.gd"
 FINAL = ROOT / "scenes/gameplay/dancer_visual_motion_v4.gd"
+LOW = ROOT / "scenes/gameplay/dancer_visual_motion_v5.gd"
 TAP = ROOT / "scenes/gameplay/dancer_tap_feedback.gd"
 BOOTSTRAP = ROOT / "scenes/gameplay/dancer_visual_bootstrap.gd"
 
@@ -17,6 +18,7 @@ class Phase7MotionTuningTests(unittest.TestCase):
         cls.run = RUN.read_text(encoding="utf-8")
         cls.polish = POLISH.read_text(encoding="utf-8")
         cls.final = FINAL.read_text(encoding="utf-8")
+        cls.low = LOW.read_text(encoding="utf-8")
         cls.tap = TAP.read_text(encoding="utf-8")
         cls.bootstrap = BOOTSTRAP.read_text(encoding="utf-8")
 
@@ -24,7 +26,8 @@ class Phase7MotionTuningTests(unittest.TestCase):
         self.assertIn('extends "res://scenes/gameplay/dancer_visual.gd"', self.run)
         self.assertIn('extends "res://scenes/gameplay/dancer_visual_motion_v2.gd"', self.polish)
         self.assertIn('extends "res://scenes/gameplay/dancer_visual_motion_v3.gd"', self.final)
-        for source in (self.run, self.polish, self.final):
+        self.assertIn('extends "res://scenes/gameplay/dancer_visual_motion_v4.gd"', self.low)
+        for source in (self.run, self.polish, self.final, self.low):
             for forbidden in ('velocity =', 'global_position =', 'move_and_slide()', 'move_and_collide('):
                 self.assertNotIn(forbidden, source)
 
@@ -60,9 +63,16 @@ class Phase7MotionTuningTests(unittest.TestCase):
         self.assertIn('from_state == STATE_STUMBLE and to_state == STATE_RECOVERY', self.final)
         self.assertIn('from_state == STATE_RECOVERY and to_state == STATE_TRAVEL', self.final)
 
+    def test_low_transition_uses_knees_instead_of_sinking_whole_rig(self) -> None:
+        self.assertIn('func _low_transition_animation()', self.low)
+        self.assertIn('func _low_articulated_pose_v5(', self.low)
+        self.assertIn('Vector3(0.025, depth, 0.0)', self.low)
+        self.assertIn('0.12, 0.78, -0.05', self.low)
+        self.assertIn('0.12, 0.80, -0.05', self.low)
+        self.assertIn('-0.085', self.low)
+        self.assertNotIn('-0.130', self.low)
+
     def test_low_transition_and_balance_polish_remain(self) -> None:
-        self.assertIn('func _low_transition_animation()', self.polish)
-        self.assertIn('func _low_run_pose(', self.polish)
         self.assertIn('func _balance_animation()', self.polish)
         self.assertIn('func _retire_balance_pose(', self.polish)
 
@@ -74,7 +84,7 @@ class Phase7MotionTuningTests(unittest.TestCase):
             self.assertNotIn(forbidden, self.tap)
 
     def test_bootstrap_uses_final_motion_layer_and_tap_feedback(self) -> None:
-        self.assertIn('dancer_visual_motion_v4.gd', self.bootstrap)
+        self.assertIn('dancer_visual_motion_v5.gd', self.bootstrap)
         self.assertIn('dancer_tap_feedback.gd', self.bootstrap)
         self.assertIn('TapVisualFeedback', self.bootstrap)
         self.assertIn('capsule_visual.visible = false', self.bootstrap)
