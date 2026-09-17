@@ -31,6 +31,11 @@ class Phase51PresentationTests(unittest.TestCase):
         shader = SHADER.read_text(encoding="utf-8")
         for color in ("top_color", "side_color", "trim_color"):
             self.assertIn(color, shader)
+        for panel_control in ("panel_spacing", "seam_width", "seam_strength"):
+            self.assertIn(panel_control, shader)
+        self.assertIn("object_position.x / panel_spacing", shader)
+        self.assertIn("mix(side_color.rgb, top_surface, top_mask)", shader)
+        self.assertNotIn("TIME", shader)
         for scene in (self.generated, self.course):
             self.assertIn("palace_stage_platform.tres", scene)
             shape_blocks = re.findall(
