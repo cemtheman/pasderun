@@ -1,0 +1,3168 @@
+{
+  "schema_version": "0.1",
+  "source_analysis": "graceful_opening.mp3",
+  "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
+  "duration_seconds": 140.016,
+  "method": {
+    "type": "continuous_visual_score_with_playability_gate",
+    "beats_per_window": 4,
+    "principle": "music may vary continuously; required player input remains sparse and physically feasible"
+  },
+  "playability_gate": {
+    "controller": {
+      "run_speed": 4.0,
+      "jump_velocity": 6.0,
+      "gravity": 18.0,
+      "jump_airtime_seconds": 0.6667,
+      "same_height_jump_range_world": 2.6667,
+      "low_transition_duration_seconds": 0.55,
+      "low_transition_distance_world": 2.2,
+      "max_traversable_step_height": 0.45
+    },
+    "design_limits": {
+      "reaction_lead_seconds": 0.75,
+      "min_required_action_spacing_seconds": 0.9,
+      "max_required_actions_per_window": 2,
+      "max_passive_step_height": 0.3,
+      "max_gap_world": 2.2,
+      "low_passage_max_length_world": 1.8,
+      "required_input_concurrency": 1
+    },
+    "action_occupancy_seconds": {
+      "JUMP": 0.9167,
+      "SWIPE_DOWN": 0.8,
+      "HOLD": 1.0,
+      "TAP": 0.3
+    }
+  },
+  "windows": [
+    {
+      "start": 0.0,
+      "end": 2.141,
+      "duration": 2.141,
+      "beat_span": {
+        "start_index": 0,
+        "end_index": 4,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.2299,
+        "energy_delta": 0.159,
+        "rhythmic_density": 0.188,
+        "sustain": 0.5937,
+        "accent_peak": 0.644,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 0.279,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.2542,
+        "continuity": 0.6701,
+        "lift": 0.2087
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 2.141,
+      "end": 3.999,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 4,
+        "end_index": 8,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.3502,
+        "energy_delta": 0.0825,
+        "rhythmic_density": 0.0769,
+        "sustain": 0.6607,
+        "accent_peak": 0.5522,
+        "boundary_peak": 0.2899,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 2.438,
+        "boundary": 2.5,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "SUSTAIN",
+        "articulation": "LEGATO",
+        "contour": "RISE",
+        "intensity": 0.2386,
+        "continuity": 0.7525,
+        "lift": 0.1628
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 3.999,
+      "end": 5.856,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 8,
+        "end_index": 12,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.3726,
+        "energy_delta": -0.0932,
+        "rhythmic_density": 0.0,
+        "sustain": 0.6374,
+        "accent_peak": 0.0,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": null,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "SUSTAIN",
+        "articulation": "LEGATO",
+        "contour": "FALL",
+        "intensity": 0.1118,
+        "continuity": 0.7643,
+        "lift": 0.0
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 5.856,
+      "end": 7.714,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 12,
+        "end_index": 16,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5966,
+        "energy_delta": 0.303,
+        "rhythmic_density": 0.3187,
+        "sustain": 0.5206,
+        "accent_peak": 0.6187,
+        "boundary_peak": 1.0,
+        "climax_peak": 0.9247
+      },
+      "salient_times": {
+        "accent": 7.663,
+        "boundary": 6.75,
+        "climax": 7.25
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.5833,
+        "continuity": 0.5769,
+        "lift": 0.6617
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 7.714,
+      "end": 9.572,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 16,
+        "end_index": 20,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6608,
+        "energy_delta": -0.0904,
+        "rhythmic_density": 0.6731,
+        "sustain": 0.2792,
+        "accent_peak": 0.7336,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 9.451,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5469,
+        "continuity": 0.2959,
+        "lift": 0.1834
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 9.572,
+      "end": 11.429,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 20,
+        "end_index": 24,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5121,
+        "energy_delta": -0.0859,
+        "rhythmic_density": 0.6484,
+        "sustain": 0.4428,
+        "accent_peak": 0.786,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 9.683,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.5053,
+        "continuity": 0.4109,
+        "lift": 0.1965
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 11.429,
+      "end": 13.287,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 24,
+        "end_index": 28,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6717,
+        "energy_delta": 0.0553,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.4541,
+        "accent_peak": 0.7731,
+        "boundary_peak": 0.3436,
+        "climax_peak": 0.828
+      },
+      "salient_times": {
+        "accent": 13.166,
+        "boundary": 13.0,
+        "climax": 11.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.7179,
+        "continuity": 0.4163,
+        "lift": 0.5825
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 13.287,
+      "end": 15.145,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 28,
+        "end_index": 32,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5367,
+        "energy_delta": -0.0415,
+        "rhythmic_density": 0.5165,
+        "sustain": 0.5099,
+        "accent_peak": 0.7223,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 14.095,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4604,
+        "continuity": 0.5007,
+        "lift": 0.1806
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 15.145,
+      "end": 17.003,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 32,
+        "end_index": 36,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5609,
+        "energy_delta": -0.0276,
+        "rhythmic_density": 0.4134,
+        "sustain": 0.5645,
+        "accent_peak": 0.6806,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 16.44,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4284,
+        "continuity": 0.5722,
+        "lift": 0.1701
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 17.003,
+      "end": 18.86,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 36,
+        "end_index": 40,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.4728,
+        "energy_delta": 0.0305,
+        "rhythmic_density": 0.3736,
+        "sustain": 0.5524,
+        "accent_peak": 0.675,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 18.297,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.3889,
+        "continuity": 0.5783,
+        "lift": 0.1779
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 18.86,
+      "end": 20.718,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 40,
+        "end_index": 44,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5417,
+        "energy_delta": 0.0058,
+        "rhythmic_density": 0.3407,
+        "sustain": 0.549,
+        "accent_peak": 0.5985,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 19.691,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.3844,
+        "continuity": 0.5876,
+        "lift": 0.1514
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 20.718,
+      "end": 22.576,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 44,
+        "end_index": 48,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7679,
+        "energy_delta": 0.2058,
+        "rhythmic_density": 0.4519,
+        "sustain": 0.4108,
+        "accent_peak": 0.6539,
+        "boundary_peak": 0.7615,
+        "climax_peak": 1.0
+      },
+      "salient_times": {
+        "accent": 22.245,
+        "boundary": 21.75,
+        "climax": 22.25
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.6967,
+        "continuity": 0.4588,
+        "lift": 0.6752
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 22.576,
+      "end": 24.433,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 48,
+        "end_index": 52,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7215,
+        "energy_delta": -0.2454,
+        "rhythmic_density": 0.7143,
+        "sustain": 0.3764,
+        "accent_peak": 0.7676,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 24.335,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5843,
+        "continuity": 0.3446,
+        "lift": 0.1919
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 24.433,
+      "end": 26.291,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 52,
+        "end_index": 56,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5923,
+        "energy_delta": 0.0529,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.3527,
+        "accent_peak": 0.8182,
+        "boundary_peak": 0.2589,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 25.263,
+        "boundary": 26.0,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5375,
+        "continuity": 0.3504,
+        "lift": 0.2204
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 26.291,
+      "end": 28.149,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 56,
+        "end_index": 60,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.628,
+        "energy_delta": -0.0925,
+        "rhythmic_density": 0.5824,
+        "sustain": 0.4737,
+        "accent_peak": 0.8144,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 28.05,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.526,
+        "continuity": 0.4541,
+        "lift": 0.2036
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 28.149,
+      "end": 30.006,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 60,
+        "end_index": 64,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6669,
+        "energy_delta": 0.0731,
+        "rhythmic_density": 0.6731,
+        "sustain": 0.3774,
+        "accent_peak": 0.7751,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 28.979,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.557,
+        "continuity": 0.3597,
+        "lift": 0.2157
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 30.006,
+      "end": 31.864,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 64,
+        "end_index": 68,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.4981,
+        "energy_delta": -0.119,
+        "rhythmic_density": 0.6484,
+        "sustain": 0.488,
+        "accent_peak": 0.7808,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 31.324,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.5001,
+        "continuity": 0.4403,
+        "lift": 0.1952
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 31.864,
+      "end": 33.722,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 68,
+        "end_index": 72,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6793,
+        "energy_delta": 0.1186,
+        "rhythmic_density": 0.6593,
+        "sustain": 0.3887,
+        "accent_peak": 0.7051,
+        "boundary_peak": 0.3546,
+        "climax_peak": 0.8829
+      },
+      "salient_times": {
+        "accent": 32.926,
+        "boundary": 33.0,
+        "climax": 32.25
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.7192,
+        "continuity": 0.3719,
+        "lift": 0.6092
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 33.722,
+      "end": 35.58,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 72,
+        "end_index": 76,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5872,
+        "energy_delta": -0.1192,
+        "rhythmic_density": 0.5289,
+        "sustain": 0.4504,
+        "accent_peak": 0.6187,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 33.855,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4586,
+        "continuity": 0.4577,
+        "lift": 0.1547
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 35.58,
+      "end": 37.437,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 76,
+        "end_index": 80,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6565,
+        "energy_delta": 0.1877,
+        "rhythmic_density": 0.6813,
+        "sustain": 0.3543,
+        "accent_peak": 0.7071,
+        "boundary_peak": 0.3483,
+        "climax_peak": 0.9356
+      },
+      "salient_times": {
+        "accent": 36.664,
+        "boundary": 36.0,
+        "climax": 36.25
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.7299,
+        "continuity": 0.3418,
+        "lift": 0.6541
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 37.437,
+      "end": 39.295,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 80,
+        "end_index": 84,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5693,
+        "energy_delta": -0.0494,
+        "rhythmic_density": 0.7115,
+        "sustain": 0.3302,
+        "accent_peak": 0.847,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 37.593,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5537,
+        "continuity": 0.3156,
+        "lift": 0.2117
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 39.295,
+      "end": 41.153,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 84,
+        "end_index": 88,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5408,
+        "energy_delta": -0.1015,
+        "rhythmic_density": 0.6374,
+        "sustain": 0.5652,
+        "accent_peak": 0.7675,
+        "boundary_peak": 0.3544,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 39.683,
+        "boundary": 39.5,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.507,
+        "continuity": 0.4943,
+        "lift": 0.1919
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 41.153,
+      "end": 43.01,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 88,
+        "end_index": 92,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6094,
+        "energy_delta": 0.1427,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.3631,
+        "accent_peak": 0.7952,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.8965
+      },
+      "salient_times": {
+        "accent": 41.564,
+        "boundary": null,
+        "climax": 42.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.7288,
+        "continuity": 0.3437,
+        "lift": 0.645
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 43.01,
+      "end": 44.868,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 92,
+        "end_index": 96,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5617,
+        "energy_delta": -0.0562,
+        "rhythmic_density": 0.6703,
+        "sustain": 0.4398,
+        "accent_peak": 0.7966,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 43.862,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5289,
+        "continuity": 0.4013,
+        "lift": 0.1991
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 44.868,
+      "end": 46.726,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 96,
+        "end_index": 100,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6146,
+        "energy_delta": -0.0125,
+        "rhythmic_density": 0.7362,
+        "sustain": 0.4214,
+        "accent_peak": 0.8004,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 46.208,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5653,
+        "continuity": 0.3662,
+        "lift": 0.2001
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 46.726,
+      "end": 48.583,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 100,
+        "end_index": 104,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5558,
+        "energy_delta": -0.0282,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.5423,
+        "accent_peak": 0.7866,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 47.137,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5202,
+        "continuity": 0.4737,
+        "lift": 0.1966
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 48.583,
+      "end": 50.441,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 104,
+        "end_index": 108,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6284,
+        "energy_delta": 0.0011,
+        "rhythmic_density": 0.7692,
+        "sustain": 0.4108,
+        "accent_peak": 0.7218,
+        "boundary_peak": 0.3063,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 49.923,
+        "boundary": 49.25,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "PULSED",
+        "contour": "LEVEL",
+        "intensity": 0.5636,
+        "continuity": 0.3478,
+        "lift": 0.1808
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 50.441,
+      "end": 52.299,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 108,
+        "end_index": 112,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5956,
+        "energy_delta": 0.119,
+        "rhythmic_density": 0.9231,
+        "sustain": 0.3983,
+        "accent_peak": 0.8023,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 50.62,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.6161,
+        "continuity": 0.2858,
+        "lift": 0.2363
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 52.299,
+      "end": 54.157,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 112,
+        "end_index": 116,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.937,
+        "energy_delta": 0.0818,
+        "rhythmic_density": 0.7912,
+        "sustain": 0.3767,
+        "accent_peak": 0.7759,
+        "boundary_peak": 0.5642,
+        "climax_peak": 1.0
+      },
+      "salient_times": {
+        "accent": 52.454,
+        "boundary": 52.5,
+        "climax": 53.0
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8736,
+        "continuity": 0.3179,
+        "lift": 0.6685
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 54.157,
+      "end": 56.014,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 116,
+        "end_index": 120,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7866,
+        "energy_delta": -0.1053,
+        "rhythmic_density": 0.7788,
+        "sustain": 0.2583,
+        "accent_peak": 0.7566,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 54.335,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "PULSED",
+        "contour": "FALL",
+        "intensity": 0.6209,
+        "continuity": 0.2453,
+        "lift": 0.1892
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 56.014,
+      "end": 57.872,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 120,
+        "end_index": 124,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6364,
+        "energy_delta": -0.1154,
+        "rhythmic_density": 0.6703,
+        "sustain": 0.4323,
+        "accent_peak": 0.8299,
+        "boundary_peak": 0.3911,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 56.889,
+        "boundary": 56.25,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.558,
+        "continuity": 0.3964,
+        "lift": 0.2075
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 57.872,
+      "end": 59.73,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 124,
+        "end_index": 128,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5575,
+        "energy_delta": 0.0614,
+        "rhythmic_density": 0.7912,
+        "sustain": 0.3429,
+        "accent_peak": 0.7614,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 59.211,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.5569,
+        "continuity": 0.2959,
+        "lift": 0.2088
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 59.73,
+      "end": 61.587,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 128,
+        "end_index": 132,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6086,
+        "energy_delta": -0.0185,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.4605,
+        "accent_peak": 0.7845,
+        "boundary_peak": 0.293,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 60.604,
+        "boundary": 60.5,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5472,
+        "continuity": 0.407,
+        "lift": 0.1961
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 61.587,
+      "end": 63.445,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 132,
+        "end_index": 136,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5812,
+        "energy_delta": 0.0036,
+        "rhythmic_density": 0.6154,
+        "sustain": 0.4418,
+        "accent_peak": 0.6698,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 62.949,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4929,
+        "continuity": 0.4218,
+        "lift": 0.1685
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 63.445,
+      "end": 65.303,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 136,
+        "end_index": 140,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5211,
+        "energy_delta": -0.0654,
+        "rhythmic_density": 0.6346,
+        "sustain": 0.503,
+        "accent_peak": 0.6772,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 64.342,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4821,
+        "continuity": 0.4548,
+        "lift": 0.1693
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 65.303,
+      "end": 67.16,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 140,
+        "end_index": 144,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6094,
+        "energy_delta": 0.0521,
+        "rhythmic_density": 0.4615,
+        "sustain": 0.4557,
+        "accent_peak": 0.6806,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 66.664,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4574,
+        "continuity": 0.4847,
+        "lift": 0.1858
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 67.16,
+      "end": 69.018,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 144,
+        "end_index": 148,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7911,
+        "energy_delta": 0.2115,
+        "rhythmic_density": 0.7885,
+        "sustain": 0.3754,
+        "accent_peak": 0.6544,
+        "boundary_peak": 0.7849,
+        "climax_peak": 1.0
+      },
+      "salient_times": {
+        "accent": 68.986,
+        "boundary": 68.0,
+        "climax": 68.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8048,
+        "continuity": 0.318,
+        "lift": 0.6771
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 69.018,
+      "end": 70.876,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 148,
+        "end_index": 152,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7749,
+        "energy_delta": -0.209,
+        "rhythmic_density": 0.7363,
+        "sustain": 0.3349,
+        "accent_peak": 0.7948,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 70.844,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6123,
+        "continuity": 0.31,
+        "lift": 0.1987
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 70.876,
+      "end": 72.734,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 152,
+        "end_index": 156,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7081,
+        "energy_delta": 0.1113,
+        "rhythmic_density": 0.7033,
+        "sustain": 0.3424,
+        "accent_peak": 0.798,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 71.773,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.583,
+        "continuity": 0.3264,
+        "lift": 0.2329
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 72.734,
+      "end": 74.591,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 156,
+        "end_index": 160,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6365,
+        "energy_delta": -0.1065,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.4524,
+        "accent_peak": 0.7763,
+        "boundary_peak": 0.2992,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 74.118,
+        "boundary": 73.5,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5539,
+        "continuity": 0.4018,
+        "lift": 0.1941
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 74.591,
+      "end": 76.449,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 160,
+        "end_index": 164,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.582,
+        "energy_delta": 0.0046,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.3424,
+        "accent_peak": 0.7648,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 76.185,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5353,
+        "continuity": 0.3303,
+        "lift": 0.1926
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 76.449,
+      "end": 78.307,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 164,
+        "end_index": 168,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5824,
+        "energy_delta": -0.0236,
+        "rhythmic_density": 0.5673,
+        "sustain": 0.4881,
+        "accent_peak": 0.6965,
+        "boundary_peak": 0.2757,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 76.672,
+        "boundary": 76.75,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4842,
+        "continuity": 0.4687,
+        "lift": 0.1741
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 78.307,
+      "end": 80.164,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 168,
+        "end_index": 172,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6201,
+        "energy_delta": 0.0215,
+        "rhythmic_density": 0.6154,
+        "sustain": 0.4661,
+        "accent_peak": 0.7057,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 80.155,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5118,
+        "continuity": 0.4376,
+        "lift": 0.1829
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 80.164,
+      "end": 82.022,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 172,
+        "end_index": 176,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6225,
+        "energy_delta": 0.0515,
+        "rhythmic_density": 0.5962,
+        "sustain": 0.4811,
+        "accent_peak": 0.7002,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 80.62,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5057,
+        "continuity": 0.4541,
+        "lift": 0.1905
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 82.022,
+      "end": 83.88,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 176,
+        "end_index": 180,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7976,
+        "energy_delta": -0.0453,
+        "rhythmic_density": 0.4396,
+        "sustain": 0.385,
+        "accent_peak": 0.8357,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.9412
+      },
+      "salient_times": {
+        "accent": 82.709,
+        "boundary": null,
+        "climax": 82.75
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7265,
+        "continuity": 0.4464,
+        "lift": 0.6325
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 83.88,
+      "end": 85.737,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 180,
+        "end_index": 184,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.593,
+        "energy_delta": -0.0742,
+        "rhythmic_density": 0.5604,
+        "sustain": 0.4572,
+        "accent_peak": 0.6987,
+        "boundary_peak": 0.5242,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 84.103,
+        "boundary": 84.75,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4858,
+        "continuity": 0.451,
+        "lift": 0.1747
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 85.737,
+      "end": 87.595,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 184,
+        "end_index": 188,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5227,
+        "energy_delta": 0.0348,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.5447,
+        "accent_peak": 0.7934,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 87.353,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 87.595,
+      "end": 89.453,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 188,
+        "end_index": 192,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5013,
+        "energy_delta": -0.0067,
+        "rhythmic_density": 0.6813,
+        "sustain": 0.3791,
+        "accent_peak": 0.676,
+        "boundary_peak": 0.2824,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 89.002,
+        "boundary": 88.25,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.49,
+        "continuity": 0.3579,
+        "lift": 0.169
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 89.453,
+      "end": 91.311,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 192,
+        "end_index": 196,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5486,
+        "energy_delta": 0.0255,
+        "rhythmic_density": 0.5962,
+        "sustain": 0.4601,
+        "accent_peak": 0.7602,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 91.069,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4955,
+        "continuity": 0.4404,
+        "lift": 0.1977
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 91.311,
+      "end": 93.168,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 196,
+        "end_index": 200,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.612,
+        "energy_delta": -0.0269,
+        "rhythmic_density": 0.6484,
+        "sustain": 0.4636,
+        "accent_peak": 0.6537,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 92.717,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5088,
+        "continuity": 0.4244,
+        "lift": 0.1634
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 93.168,
+      "end": 95.026,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 200,
+        "end_index": 204,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5494,
+        "energy_delta": -0.0099,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.5355,
+        "accent_peak": 0.681,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 93.646,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4972,
+        "continuity": 0.4692,
+        "lift": 0.1703
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 95.026,
+      "end": 96.884,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 204,
+        "end_index": 208,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5838,
+        "energy_delta": 0.0101,
+        "rhythmic_density": 0.6703,
+        "sustain": 0.4484,
+        "accent_peak": 0.7731,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 96.2,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5309,
+        "continuity": 0.4068,
+        "lift": 0.1963
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 96.884,
+      "end": 98.741,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 208,
+        "end_index": 212,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6404,
+        "energy_delta": 0.1401,
+        "rhythmic_density": 0.6484,
+        "sustain": 0.4816,
+        "accent_peak": 0.7202,
+        "boundary_peak": 0.4314,
+        "climax_peak": 0.9287
+      },
+      "salient_times": {
+        "accent": 97.129,
+        "boundary": 98.25,
+        "climax": 98.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.7164,
+        "continuity": 0.4361,
+        "lift": 0.64
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 98.741,
+      "end": 100.599,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 212,
+        "end_index": 216,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7232,
+        "energy_delta": -0.1588,
+        "rhythmic_density": 0.8173,
+        "sustain": 0.3847,
+        "accent_peak": 0.7018,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 99.915,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "PULSED",
+        "contour": "FALL",
+        "intensity": 0.6025,
+        "continuity": 0.314,
+        "lift": 0.1754
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 100.599,
+      "end": 102.457,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 216,
+        "end_index": 220,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5379,
+        "energy_delta": 0.1186,
+        "rhythmic_density": 0.6703,
+        "sustain": 0.3466,
+        "accent_peak": 0.7911,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 100.844,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.5207,
+        "continuity": 0.3406,
+        "lift": 0.2334
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 102.457,
+      "end": 104.314,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 220,
+        "end_index": 224,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.602,
+        "energy_delta": -0.1445,
+        "rhythmic_density": 0.6442,
+        "sustain": 0.4285,
+        "accent_peak": 0.8006,
+        "boundary_peak": 0.3925,
+        "climax_peak": 0.9484
+      },
+      "salient_times": {
+        "accent": 102.47,
+        "boundary": 103.25,
+        "climax": 102.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.7237,
+        "continuity": 0.403,
+        "lift": 0.6269
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 104.314,
+      "end": 106.172,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 224,
+        "end_index": 228,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5397,
+        "energy_delta": 0.153,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.3922,
+        "accent_peak": 0.8247,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 105.256,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.5345,
+        "continuity": 0.3627,
+        "lift": 0.2521
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 106.172,
+      "end": 108.03,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 228,
+        "end_index": 232,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6287,
+        "energy_delta": -0.1363,
+        "rhythmic_density": 0.6346,
+        "sustain": 0.413,
+        "accent_peak": 0.8151,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 107.137,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.542,
+        "continuity": 0.3963,
+        "lift": 0.2038
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 108.03,
+      "end": 109.888,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 232,
+        "end_index": 236,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6285,
+        "energy_delta": 0.1727,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.3145,
+        "accent_peak": 0.8301,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.8774
+      },
+      "salient_times": {
+        "accent": 108.066,
+        "boundary": null,
+        "climax": 108.75
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.7377,
+        "continuity": 0.3121,
+        "lift": 0.6542
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 109.888,
+      "end": 111.745,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 236,
+        "end_index": 240,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5503,
+        "energy_delta": -0.1158,
+        "rhythmic_density": 0.6374,
+        "sustain": 0.4647,
+        "accent_peak": 0.7447,
+        "boundary_peak": 0.2435,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 111.316,
+        "boundary": 110.0,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5052,
+        "continuity": 0.429,
+        "lift": 0.1862
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 111.745,
+      "end": 113.603,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 240,
+        "end_index": 244,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6463,
+        "energy_delta": 0.0939,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.395,
+        "accent_peak": 0.7392,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 112.71,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "MIXED",
+        "contour": "RISE",
+        "intensity": 0.5379,
+        "continuity": 0.3779,
+        "lift": 0.213
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 113.603,
+      "end": 115.461,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 244,
+        "end_index": 248,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7194,
+        "energy_delta": 0.0587,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.4242,
+        "accent_peak": 0.6948,
+        "boundary_peak": 0.3114,
+        "climax_peak": 0.9046
+      },
+      "salient_times": {
+        "accent": 113.871,
+        "boundary": 114.75,
+        "climax": 115.25
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.7434,
+        "continuity": 0.3834,
+        "lift": 0.5984
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 115.461,
+      "end": 117.318,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 248,
+        "end_index": 252,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.757,
+        "energy_delta": -0.0663,
+        "rhythmic_density": 0.7404,
+        "sustain": 0.3917,
+        "accent_peak": 0.7657,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 116.912,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "PULSED",
+        "contour": "FALL",
+        "intensity": 0.6024,
+        "continuity": 0.3455,
+        "lift": 0.1914
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 117.318,
+      "end": 119.176,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 252,
+        "end_index": 256,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.5742,
+        "energy_delta": -0.0027,
+        "rhythmic_density": 0.7253,
+        "sustain": 0.3396,
+        "accent_peak": 0.8183,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 118.515,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5535,
+        "continuity": 0.3169,
+        "lift": 0.2046
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 119.176,
+      "end": 121.034,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 256,
+        "end_index": 260,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6216,
+        "energy_delta": -0.0068,
+        "rhythmic_density": 0.7115,
+        "sustain": 0.4313,
+        "accent_peak": 0.8423,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 120.628,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5684,
+        "continuity": 0.3813,
+        "lift": 0.2106
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 121.034,
+      "end": 122.891,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 260,
+        "end_index": 264,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6412,
+        "energy_delta": 0.0443,
+        "rhythmic_density": 0.7582,
+        "sustain": 0.2933,
+        "accent_peak": 0.8266,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.8603
+      },
+      "salient_times": {
+        "accent": 122.021,
+        "boundary": null,
+        "climax": 122.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7572,
+        "continuity": 0.2753,
+        "lift": 0.6071
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 122.891,
+      "end": 124.749,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 264,
+        "end_index": 268,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6687,
+        "energy_delta": -0.0454,
+        "rhythmic_density": 0.6703,
+        "sustain": 0.5245,
+        "accent_peak": 0.7458,
+        "boundary_peak": 0.3313,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 123.414,
+        "boundary": 123.25,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5509,
+        "continuity": 0.4563,
+        "lift": 0.1865
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 124.749,
+      "end": 126.607,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 268,
+        "end_index": 272,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6626,
+        "energy_delta": 0.0148,
+        "rhythmic_density": 0.6923,
+        "sustain": 0.3974,
+        "accent_peak": 0.7453,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 124.807,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5555,
+        "continuity": 0.366,
+        "lift": 0.1908
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 126.607,
+      "end": 128.465,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 272,
+        "end_index": 276,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6464,
+        "energy_delta": 0.0522,
+        "rhythmic_density": 0.7582,
+        "sustain": 0.427,
+        "accent_peak": 0.7962,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.9043
+      },
+      "salient_times": {
+        "accent": 126.665,
+        "boundary": null,
+        "climax": 128.0
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7615,
+        "continuity": 0.3622,
+        "lift": 0.6216
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 128.465,
+      "end": 130.322,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 276,
+        "end_index": 280,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6478,
+        "energy_delta": -0.0406,
+        "rhythmic_density": 0.7211,
+        "sustain": 0.456,
+        "accent_peak": 0.811,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 128.755,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5729,
+        "continuity": 0.394,
+        "lift": 0.2028
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 130.322,
+      "end": 132.18,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 280,
+        "end_index": 284,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.6629,
+        "energy_delta": 0.0029,
+        "rhythmic_density": 0.7472,
+        "sustain": 0.3282,
+        "accent_peak": 0.8568,
+        "boundary_peak": 0.3024,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 130.612,
+        "boundary": 131.25,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "PULSE",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5944,
+        "continuity": 0.3018,
+        "lift": 0.2151
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 132.18,
+      "end": 134.038,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 284,
+        "end_index": 288,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7155,
+        "energy_delta": -0.0424,
+        "rhythmic_density": 0.6539,
+        "sustain": 0.4115,
+        "accent_peak": 0.8434,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 133.399,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5795,
+        "continuity": 0.3887,
+        "lift": 0.2109
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 134.038,
+      "end": 135.895,
+      "duration": 1.857,
+      "beat_span": {
+        "start_index": 288,
+        "end_index": 292,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.67,
+        "energy_delta": 0.1135,
+        "rhythmic_density": 0.6703,
+        "sustain": 0.3103,
+        "accent_peak": 0.8294,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.8679
+      },
+      "salient_times": {
+        "accent": 135.047,
+        "boundary": null,
+        "climax": 135.5
+      },
+      "visual_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.7415,
+        "continuity": 0.3171,
+        "lift": 0.632
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 135.895,
+      "end": 137.753,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 292,
+        "end_index": 296,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.7404,
+        "energy_delta": -0.1243,
+        "rhythmic_density": 0.7308,
+        "sustain": 0.3603,
+        "accent_peak": 0.8605,
+        "boundary_peak": 1.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 136.673,
+        "boundary": 137.5,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "TURNING_POINT",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6135,
+        "continuity": 0.3284,
+        "lift": 0.2151
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 137.753,
+      "end": 139.611,
+      "duration": 1.858,
+      "beat_span": {
+        "start_index": 296,
+        "end_index": 300,
+        "count": 4
+      },
+      "metrics": {
+        "energy": 0.1725,
+        "energy_delta": -0.3043,
+        "rhythmic_density": 0.1209,
+        "sustain": 0.6949,
+        "accent_peak": 0.4962,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": 137.764,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "SUSTAIN",
+        "articulation": "LEGATO",
+        "contour": "FALL",
+        "intensity": 0.1873,
+        "continuity": 0.7594,
+        "lift": 0.124
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    },
+    {
+      "start": 139.611,
+      "end": 140.016,
+      "duration": 0.405,
+      "beat_span": {
+        "start_index": 300,
+        "end_index": 301,
+        "count": 1
+      },
+      "metrics": {
+        "energy": 0.0166,
+        "energy_delta": -0.0225,
+        "rhythmic_density": 0.0,
+        "sustain": 0.8854,
+        "accent_peak": 0.0,
+        "boundary_peak": 0.0,
+        "climax_peak": 0.0
+      },
+      "salient_times": {
+        "accent": null,
+        "boundary": null,
+        "climax": null
+      },
+      "visual_intent": {
+        "phrase_role": "SUSTAIN",
+        "articulation": "LEGATO",
+        "contour": "LEVEL",
+        "intensity": 0.005,
+        "continuity": 0.9255,
+        "lift": 0.0
+      },
+      "interaction_budget": {
+        "max_required_actions": 2,
+        "passive_spatial_change": true
+      }
+    }
+  ],
+  "event_anchors": [
+    {
+      "time": 2.5,
+      "window_index": 1,
+      "primary_class": "SUSTAINED_BALANCE",
+      "confidence": 0.6483,
+      "interaction": {
+        "candidate_action": "HOLD",
+        "required": true,
+        "occupancy_seconds": 1.0,
+        "suppression_reason": null
+      },
+      "branchability": 0.4
+    },
+    {
+      "time": 7.25,
+      "window_index": 3,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7989,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 11.5,
+      "window_index": 6,
+      "primary_class": "MEDIUM_JUMP",
+      "confidence": 0.7617,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 22.25,
+      "window_index": 11,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.8361,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 25.263,
+      "window_index": 13,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7772,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 28.05,
+      "window_index": 14,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7571,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 32.25,
+      "window_index": 17,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7761,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 36.25,
+      "window_index": 19,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7964,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 37.593,
+      "window_index": 20,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7891,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 42.5,
+      "window_index": 22,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7644,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 43.862,
+      "window_index": 23,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.733,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 46.208,
+      "window_index": 24,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7466,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 50.62,
+      "window_index": 27,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7812,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 53.0,
+      "window_index": 28,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.8627,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 56.889,
+      "window_index": 30,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7594,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 60.604,
+      "window_index": 32,
+      "primary_class": "SMALL_JUMP",
+      "confidence": 0.7342,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 68.5,
+      "window_index": 36,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.8769,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 74.118,
+      "window_index": 39,
+      "primary_class": "SMALL_JUMP",
+      "confidence": 0.7241,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 82.75,
+      "window_index": 44,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7641,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 87.353,
+      "window_index": 46,
+      "primary_class": "SMALL_JUMP",
+      "confidence": 0.7431,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 91.069,
+      "window_index": 48,
+      "primary_class": "SMALL_JUMP",
+      "confidence": 0.7557,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 98.5,
+      "window_index": 52,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7989,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 102.5,
+      "window_index": 55,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7895,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 108.75,
+      "window_index": 58,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7646,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 115.25,
+      "window_index": 61,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7775,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 116.912,
+      "window_index": 62,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7133,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.8
+    },
+    {
+      "time": 120.628,
+      "window_index": 64,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7684,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 0.6
+    },
+    {
+      "time": 122.5,
+      "window_index": 65,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7991,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 128.0,
+      "window_index": 68,
+      "primary_class": "LARGE_TRAVELLING_LEAP",
+      "confidence": 0.7733,
+      "interaction": {
+        "candidate_action": "JUMP",
+        "required": true,
+        "occupancy_seconds": 0.9167,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    },
+    {
+      "time": 135.5,
+      "window_index": 72,
+      "primary_class": "ACCENT_ACTION",
+      "confidence": 0.7952,
+      "interaction": {
+        "candidate_action": "TAP",
+        "required": true,
+        "occupancy_seconds": 0.3,
+        "suppression_reason": null
+      },
+      "branchability": 1.0
+    }
+  ]
+}
