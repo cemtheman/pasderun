@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pas de Run Visual Score v0.1",
+  "type": "object",
+  "required": ["schema_version", "source_analysis", "source_movement_demands", "duration_seconds", "method", "playability_gate", "windows", "event_anchors"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "source_analysis": {"type": "string"},
+    "source_movement_demands": {"type": "string"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "method": {
+      "type": "object",
+      "required": ["type", "beats_per_window", "principle"]
+    },
+    "playability_gate": {
+      "type": "object",
+      "required": ["controller", "design_limits", "action_occupancy_seconds"]
+    },
+    "windows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["start", "end", "duration", "beat_span", "metrics", "salient_times", "visual_intent", "interaction_budget"],
+        "properties": {
+          "start": {"type": "number", "minimum": 0},
+          "end": {"type": "number", "exclusiveMinimum": 0},
+          "duration": {"type": "number", "exclusiveMinimum": 0},
+          "visual_intent": {
+            "type": "object",
+            "required": ["phrase_role", "articulation", "contour", "intensity", "continuity", "lift"],
+            "properties": {
+              "phrase_role": {"enum": ["CLIMAX", "TURNING_POINT", "SUSTAIN", "BUILD", "RELEASE", "PULSE", "FLOW"]},
+              "articulation": {"enum": ["LEGATO", "ACCENTED", "PULSED", "MIXED"]},
+              "contour": {"enum": ["RISE", "FALL", "LEVEL"]},
+              "intensity": {"type": "number", "minimum": 0, "maximum": 1},
+              "continuity": {"type": "number", "minimum": 0, "maximum": 1},
+              "lift": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        }
+      }
+    },
+    "event_anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "primary_class", "confidence", "interaction", "branchability"]
+      }
+    }
+  }
+}
