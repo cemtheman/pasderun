@@ -76,10 +76,15 @@ class Phase7MotionTuningTests(unittest.TestCase):
         self.assertIn('func _balance_animation()', self.polish)
         self.assertIn('func _retire_balance_pose(', self.polish)
 
-    def test_tap_response_is_presentation_only_and_web_safe(self) -> None:
+    def test_tap_response_is_presentation_only_and_web_has_no_3d_pulse(self) -> None:
         self.assertIn('tap_detected', self.tap)
+        self.assertIn('OS.has_feature("web")', self.tap)
+        self.assertIn('WEB_PULSE_DURATION := 0.12', self.tap)
+        self.assertIn('WEB_SCALE_AMOUNT := 0.018', self.tap)
+        self.assertIn('_web_visual.scale', self.tap)
+        self.assertIn('if _web_mode:', self.tap)
+        self.assertIn('else:\n\t\t_build_ring()', self.tap)
         self.assertIn('TorusMesh.new()', self.tap)
-        self.assertIn('PULSE_DURATION := 0.18', self.tap)
         self.assertNotIn('transparency', self.tap)
         self.assertNotIn('emission_enabled', self.tap)
         self.assertNotIn('emission_energy_multiplier', self.tap)
