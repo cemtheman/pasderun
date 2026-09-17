@@ -387,13 +387,18 @@ def compile_plan(
     }
 
 
-def _box_resources(resources: list[str], size: tuple[float, float, float]) -> tuple[str, str]:
+def _box_resources(
+    resources: list[str],
+    size: tuple[float, float, float],
+    material_resource: str | None = None,
+) -> tuple[str, str]:
     index = len(resources) // 2 + 1
     mesh_id = f"BoxMesh_{index}"
     shape_id = f"BoxShape_{index}"
     size_text = f"Vector3({size[0]:.4f}, {size[1]:.4f}, {size[2]:.4f})"
+    material_line = f'material = ExtResource("{material_resource}")\n' if material_resource else ""
     resources.extend([
-        f'[sub_resource type="BoxMesh" id="{mesh_id}"]\nsize = {size_text}\n',
+        f'[sub_resource type="BoxMesh" id="{mesh_id}"]\n{material_line}size = {size_text}\n',
         f'[sub_resource type="BoxShape3D" id="{shape_id}"]\nsize = {size_text}\n',
     ])
     return mesh_id, shape_id
@@ -403,7 +408,11 @@ def _static_box(nodes: list[str], resources: list[str], name: str, start: float,
                 width: float = GROUND_WIDTH, center_y: float = GROUND_Y) -> None:
     length = end - start
     center_x = (start + end) / 2.0
-    mesh_id, shape_id = _box_resources(resources, (length, GROUND_HEIGHT, width))
+    mesh_id, shape_id = _box_resources(
+        resources,
+        (length, GROUND_HEIGHT, width),
+        "2_palace",
+    )
     nodes.append(
         f'[node name="{name}" type="StaticBody3D" parent="Level"]\n'
         f'position = Vector3({center_x:.4f}, {center_y:.4f}, 0)\n'
@@ -494,8 +503,9 @@ def render_scene(plan: dict[str, Any]) -> str:
         )
 
     header = (
-        f'[gd_scene load_steps={len(resources) + 2} format=3]\n\n'
-        '[ext_resource type="Script" path="res://scenes/gameplay/balance_area.gd" id="1_balance"]\n\n'
+        f'[gd_scene load_steps={len(resources) + 3} format=3]\n\n'
+        '[ext_resource type="Script" path="res://scenes/gameplay/balance_area.gd" id="1_balance"]\n'
+        '[ext_resource type="Material" path="res://assets/materials/palace_stage_platform.tres" id="2_palace"]\n\n'
     )
     end_seconds = float(plan["compiled_time_range"]["end"])
     root_name = f"GracefulOpening{int(round(end_seconds)):04d}"

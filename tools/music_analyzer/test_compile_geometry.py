@@ -28,7 +28,7 @@ COMPILE_PATH = ROOT / "tools/music_analyzer/compile_geometry.py"
 CAMERA_PATH = ROOT / "scenes/gameplay/camera_rig.gd"
 DANCER_PATH = ROOT / "scenes/gameplay/dancer.gd"
 VERTICAL_SLICE_PATH = ROOT / "scenes/gameplay/vertical_slice_01.tscn"
-DANCER_SHA256 = "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748"
+DANCER_SHA256 = "f7292a8c0226bb14ad41ee68dfbf68cd664ae4fdfb4df9b9f332284b8c35ab8d"
 
 
 class GeometryCompilerTests(unittest.TestCase):
