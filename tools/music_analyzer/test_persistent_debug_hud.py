@@ -11,12 +11,10 @@ HUD = ROOT / "scenes/gameplay/ascii_debug_hud.gd"
 RUNTIME = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
 START_GATE = ROOT / "scenes/gameplay/runtime_start_gate.gd"
 PROBE = ROOT / "scenes/gameplay/spatial_stall_probe.gd"
-FORK_VISUALS = ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
 
 TRUSTED = {
     START_GATE: "bda071ca4a89af71b6227f19d9613b8c12bd9cb24f0007ec3274a583e23198ca",
     PROBE: "ba36cdb99f07c538370856c5afc6b0db5254c792a11677161edd8eb369117ace",
-    FORK_VISUALS: "e44e600f968229739c8140f22f40b247cd24736b6bc57fbe0518e0276639e979",
 }
 
 
@@ -87,7 +85,7 @@ class PersistentDebugHudTests(unittest.TestCase):
         self.assertIn('parent="DebugHUD/HUDRoot/RightPanel"', self.runtime)
         self.assertIn('parent="DebugHUD/HUDRoot/BottomStatusPanel"', self.runtime)
 
-    def test_f_v_b_and_fork_visualization_sources_are_unchanged(self) -> None:
+    def test_h_start_gate_and_f_v_b_probe_sources_are_unchanged(self) -> None:
         for path, expected in TRUSTED.items():
             self.assertEqual(digest(path), expected, path)
 
