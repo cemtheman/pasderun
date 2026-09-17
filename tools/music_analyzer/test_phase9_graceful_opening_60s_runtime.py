@@ -66,6 +66,32 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
         ):
             self.assertIn(call, self.recovery)
 
+    def test_phase9_tap_markers_only_use_primary_accent_actions_after_opening(self) -> None:
+        musicality = (ROOT / "scenes/gameplay/musicality.gd").read_text(encoding="utf-8")
+        demands = __import__("json").loads(
+            (ROOT / "data/choreography/graceful_opening.movement_demands_v0_1.json").read_text(encoding="utf-8")
+        )
+        self.assertIn("@export var tap_accents_require_accent_action := false", musicality)
+        self.assertIn('tap_accents_require_accent_action = true', self.runtime)
+        self.assertIn('String(primary_candidate.get("class", "")) != "ACCENT_ACTION"', musicality)
+
+        phase9_tap_times = [
+            float(event["time"])
+            for event in demands["events"]
+            if 30.0 < float(event["time"]) <= 60.0
+            and event["candidate_classes"][0]["class"] == "ACCENT_ACTION"
+        ]
+        self.assertEqual(phase9_tap_times, [37.593, 43.862, 46.208, 50.62, 56.889])
+
+        phase9_jump_times = [
+            float(event["time"])
+            for event in demands["events"]
+            if 30.0 < float(event["time"]) <= 60.0
+            and event["candidate_classes"][0]["class"] == "LARGE_TRAVELLING_LEAP"
+        ]
+        self.assertEqual(phase9_jump_times, [32.25, 36.25, 42.5, 53.0])
+
+
     def test_phase8_hud_and_timing_instrumentation_are_preserved(self) -> None:
         for node_name in (
             "DebugHUD",

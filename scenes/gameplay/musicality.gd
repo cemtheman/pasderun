@@ -22,6 +22,7 @@ const FEEDBACK_DURATION := 1.5
 @export var dancer: Node
 @export var debug_label: Label
 @export_file("*.json") var movement_demands_path := "res://data/choreography/graceful_opening.movement_demands_v0_1.json"
+@export var tap_accents_require_accent_action := false
 
 var _consumed_accents: Dictionary = {}
 var _output_latency := 0.0
@@ -171,6 +172,13 @@ func _load_accent_markers() -> void:
 		var marker_time := float(source_event["time"])
 		if marker_time <= FULL_COURSE_START_TIME:
 			continue
+		if tap_accents_require_accent_action:
+			var candidates: Array = source_event.get("candidate_classes", [])
+			if candidates.is_empty():
+				continue
+			var primary_candidate: Dictionary = candidates[0]
+			if String(primary_candidate.get("class", "")) != "ACCENT_ACTION":
+				continue
 		var context: Dictionary = source_event["musical_context"]
 		var is_meaningful := (
 			float(context["accent_strength"]) >= ACCENT_STRENGTH_MINIMUM

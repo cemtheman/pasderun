@@ -140,6 +140,7 @@ script = ExtResource("6_musicality")
 music_timeline = NodePath("../MusicTimeline")
 dancer = NodePath("../../Dancer")
 debug_label = NodePath("../../DebugHUD/HUDRoot/LeftPanel/LeftStack/AccentDebug")
+tap_accents_require_accent_action = true
 
 [node name="FlowTracker" type="Node" parent="." unique_id=87562896 node_paths=PackedStringArray("dancer", "music_timeline", "musicality", "generated_level", "debug_label")]
 script = ExtResource("9_flow")
