@@ -63,12 +63,12 @@ class Phase7MotionTuningTests(unittest.TestCase):
         self.assertIn('from_state == STATE_STUMBLE and to_state == STATE_RECOVERY', self.final)
         self.assertIn('from_state == STATE_RECOVERY and to_state == STATE_TRAVEL', self.final)
 
-    def test_low_transition_uses_knees_instead_of_sinking_whole_rig(self) -> None:
+    def test_low_transition_uses_anatomical_knee_flexion(self) -> None:
         self.assertIn('func _low_transition_animation()', self.low)
         self.assertIn('func _low_articulated_pose_v5(', self.low)
-        self.assertIn('Vector3(0.025, depth, 0.0)', self.low)
-        self.assertIn('0.12, 0.78, -0.05', self.low)
-        self.assertIn('0.12, 0.80, -0.05', self.low)
+        self.assertIn('Vector3(0.020, depth, 0.0)', self.low)
+        self.assertIn('0.38, -0.76, 0.36', self.low)
+        self.assertIn('0.45, -0.90, 0.43', self.low)
         self.assertIn('-0.085', self.low)
         self.assertNotIn('-0.130', self.low)
 
@@ -76,10 +76,13 @@ class Phase7MotionTuningTests(unittest.TestCase):
         self.assertIn('func _balance_animation()', self.polish)
         self.assertIn('func _retire_balance_pose(', self.polish)
 
-    def test_tap_response_is_presentation_only(self) -> None:
+    def test_tap_response_is_presentation_only_and_web_safe(self) -> None:
         self.assertIn('tap_detected', self.tap)
         self.assertIn('TorusMesh.new()', self.tap)
         self.assertIn('PULSE_DURATION := 0.18', self.tap)
+        self.assertNotIn('transparency', self.tap)
+        self.assertNotIn('emission_enabled', self.tap)
+        self.assertNotIn('emission_energy_multiplier', self.tap)
         for forbidden in ('velocity =', 'global_position =', 'move_and_slide()', 'move_and_collide('):
             self.assertNotIn(forbidden, self.tap)
 
