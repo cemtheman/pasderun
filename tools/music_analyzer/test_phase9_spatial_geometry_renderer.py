@@ -41,24 +41,32 @@ class Phase9SpatialGeometryRendererTests(unittest.TestCase):
         start_x = float(self.spatial["world_range"]["start_x"])
         end_x = float(self.spatial["world_range"]["end_x"])
 
-        before_base = [
-            interval for interval in self.base_plan["surface_plan"]["runway_intervals"]
-            if float(interval["end_x"]) <= start_x
-        ]
-        before_new = [
-            interval for interval in self.transformed["surface_plan"]["runway_intervals"]
-            if float(interval["end_x"]) <= start_x
-        ]
-        self.assertEqual(before_new, before_base)
+        def clipped_outside(
+            intervals: list[dict[str, float]],
+        ) -> tuple[list[tuple[float, float, float]], list[tuple[float, float, float]]]:
+            before: list[tuple[float, float, float]] = []
+            after: list[tuple[float, float, float]] = []
+            for interval in intervals:
+                left = float(interval["start_x"])
+                right = float(interval["end_x"])
+                surface_y = float(interval["surface_y"])
 
-        after_base = [
-            interval for interval in self.base_plan["surface_plan"]["runway_intervals"]
-            if float(interval["start_x"]) >= end_x
-        ]
-        after_new = [
-            interval for interval in self.transformed["surface_plan"]["runway_intervals"]
-            if float(interval["start_x"]) >= end_x
-        ]
+                before_end = min(right, start_x)
+                if before_end - left > 1e-6:
+                    before.append((left, before_end, surface_y))
+
+                after_start = max(left, end_x)
+                if right - after_start > 1e-6:
+                    after.append((after_start, right, surface_y))
+            return before, after
+
+        before_base, after_base = clipped_outside(
+            self.base_plan["surface_plan"]["runway_intervals"]
+        )
+        before_new, after_new = clipped_outside(
+            self.transformed["surface_plan"]["runway_intervals"]
+        )
+        self.assertEqual(before_new, before_base)
         self.assertEqual(after_new, after_base)
 
         inside = [
