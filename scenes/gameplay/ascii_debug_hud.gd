@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @export var hud_root: Control
 @export var start_gate: Node
+@export var performance_label: Label
 
 # Presentation-only compatibility filter for debug labels in Web/mobile builds.
 # Code points keep the source itself ASCII-safe while preserving gameplay sources.
@@ -18,15 +19,20 @@ const ASCII_REPLACEMENTS := {
 	0x25CF: "o",  # black circle
 }
 
+const PERFORMANCE_SAMPLE_INTERVAL := 0.5
+
+var _performance_elapsed := 0.0
+
 
 func _ready() -> void:
 	process_priority = 1000
 	set_process_input(false)
-	if hud_root == null or start_gate == null or not start_gate.has_signal("runtime_started"):
-		push_error("DebugHUD requires HUDRoot and RuntimeStartGate references.")
+	if hud_root == null or start_gate == null or performance_label == null or not start_gate.has_signal("runtime_started"):
+		push_error("DebugHUD requires HUDRoot, RuntimeStartGate and PerformanceDebug references.")
 		return
 	hud_root.visible = false
 	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
+	_update_performance_label()
 	_sanitize_labels(self)
 
 
@@ -44,8 +50,24 @@ func _input(event: InputEvent) -> void:
 	hud_root.visible = not hud_root.visible
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_performance_elapsed += delta
+	if _performance_elapsed >= PERFORMANCE_SAMPLE_INTERVAL:
+		_performance_elapsed = 0.0
+		_update_performance_label()
 	_sanitize_labels(self)
+
+
+func _update_performance_label() -> void:
+	var fps := Performance.get_monitor(Performance.TIME_FPS)
+	var frame_ms := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
+	var physics_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+	var memory_mib := Performance.get_monitor(Performance.MEMORY_STATIC) / (1024.0 * 1024.0)
+	var draw_calls := int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	performance_label.text = (
+		"PERF FPS:%d FRAME:%.2fms PHYS:%.2fms\nMEM:%.1fMiB DRAW:%d"
+		% [int(fps), frame_ms, physics_ms, memory_mib, draw_calls]
+	)
 
 
 func _sanitize_labels(node: Node) -> void:

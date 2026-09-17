@@ -208,10 +208,11 @@ mesh = SubResource("CapsuleMesh_runtime")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer" unique_id=761921886]
 shape = SubResource("CapsuleShape_runtime")
 
-[node name="DebugHUD" type="CanvasLayer" parent="." unique_id=1243432770 node_paths=PackedStringArray("hud_root", "start_gate")]
+[node name="DebugHUD" type="CanvasLayer" parent="." unique_id=1243432770 node_paths=PackedStringArray("hud_root", "start_gate", "performance_label")]
 script = ExtResource("12_ascii_hud")
 hud_root = NodePath("HUDRoot")
 start_gate = NodePath("../RuntimeStartGate")
+performance_label = NodePath("HUDRoot/LeftPanel/LeftStack/PerformanceDebug")
 
 [node name="HUDRoot" type="Control" parent="DebugHUD"]
 layout_mode = 3
@@ -265,6 +266,12 @@ APPROACH
 EARLY      PERFECT      LATE
 --------------o--------------
 LAST ACCENT: -"
+
+[node name="PerformanceDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "PERF FPS:0 FRAME:0.00ms PHYS:0.00ms
+MEM:0.0MiB DRAW:0"
 
 [node name="RightPanel" type="PanelContainer" parent="DebugHUD/HUDRoot"]
 layout_mode = 0
