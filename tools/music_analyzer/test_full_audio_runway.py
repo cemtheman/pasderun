@@ -88,7 +88,7 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             self.course,
         )
         self.assertEqual(len(platforms), 24)
-        self.assertEqual(len(gaps), 16)
+        self.assertEqual(len(gaps), 19)
         self.assertEqual(len(forks), 5)
 
     def test_forks_are_distributed_and_have_natural_input_topology(self) -> None:
@@ -118,9 +118,23 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             _, safe_a_end = self._bounds(safe_a)
             safe_b_start, safe_b_end = self._bounds(safe_b)
             recovery_start, _ = self._bounds(recovery)
-            expected_safe_gap = 1.5 if index in {3, 5} else 0.0
-            self.assertTrue(math.isclose(safe_b_start - safe_a_end, expected_safe_gap, abs_tol=0.001))
+            self.assertTrue(math.isclose(safe_b_start - safe_a_end, 1.3, abs_tol=0.001))
             self.assertTrue(math.isclose(safe_b_end, recovery_start, abs_tol=0.001))
+
+    def test_safe_gaps_follow_landing_and_grounded_recovery(self) -> None:
+        fall_time = math.sqrt(2.0 * 2.8 / 18.0)
+        expected_landing_offset = 4.0 * fall_time
+        runups = []
+        gaps = []
+        for index, split_x in enumerate((175.0, 250.0, 330.0, 410.0, 505.0), 1):
+            safe_a = self._body(f"SafeLowerRoute{index:02d}")
+            safe_b = self._body(f"SafeRoute{index:02d}_B")
+            _, gap_start = self._bounds(safe_a)
+            gap_end, _ = self._bounds(safe_b)
+            runups.append(gap_start - (split_x + expected_landing_offset))
+            gaps.append(gap_end - gap_start)
+        self.assertGreaterEqual(min(runups), 4.0)
+        self.assertTrue(all(math.isclose(gap, 1.3, abs_tol=0.001) for gap in gaps))
 
     def test_technical_routes_require_jump_and_reconnect(self) -> None:
         first_platform = {
@@ -157,8 +171,8 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
                 re.DOTALL,
             )
         ]
-        self.assertEqual(len(gap_x), 16)
-        self.assertEqual(len(set(gap_x)), 16)
+        self.assertEqual(len(gap_x), 19)
+        self.assertEqual(len(set(gap_x)), 19)
         self.assertEqual(self.course.count('_DESCENT" type="Marker3D"'), 4)
         downward_transitions = 5
         self.assertGreaterEqual(4 / downward_transitions, 0.5)

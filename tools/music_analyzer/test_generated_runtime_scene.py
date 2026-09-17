@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 RUNTIME_SCENE = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
 GENERATED_SCENE = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 CAMERA_HELPER = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
+CAMERA_RIG = ROOT / "scenes/gameplay/camera_rig.gd"
 DEBUG_HELPER = ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
 DANCER = ROOT / "scenes/gameplay/dancer.gd"
 PLAN = ROOT / "data/geometry/graceful_opening.geometry_plan_v0_1.json"
@@ -28,6 +29,7 @@ class GeneratedRuntimeSceneTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.scene = RUNTIME_SCENE.read_text(encoding="utf-8")
         cls.helper = CAMERA_HELPER.read_text(encoding="utf-8")
+        cls.camera_rig = CAMERA_RIG.read_text(encoding="utf-8")
         cls.debug_helper = DEBUG_HELPER.read_text(encoding="utf-8")
 
     def test_runtime_instances_generated_geometry_without_legacy_level(self) -> None:
@@ -51,17 +53,24 @@ class GeneratedRuntimeSceneTests(unittest.TestCase):
         ):
             self.assertIn(expected, self.scene)
 
-    def test_orthographic_camera_framing_is_fifteen_percent_wider(self) -> None:
+    def test_orthographic_camera_framing_is_wider_with_fixed_lookahead(self) -> None:
         camera = re.search(
             r'\[node name="Camera3D".*?(?=\n\[node )',
             self.scene,
             re.DOTALL,
         ).group(0)
         self.assertIn("projection = 1", camera)
-        self.assertIn("size = 6.325", camera)
+        self.assertIn("size = 7.5", camera)
         self.assertIn("0, 2.2, 8", camera)
         self.assertNotIn("fov =", camera)
-        self.assertAlmostEqual(6.325 / 5.5, 1.15)
+        self.assertAlmostEqual(7.5 / 6.325, 1.18577, places=4)
+        self.assertAlmostEqual(7.5 / 5.5, 1.36364, places=4)
+        self.assertIn("look_ahead: float = 1.75", self.camera_rig)
+        self.assertIn("target.global_position.x + look_ahead", self.camera_rig)
+        landscape_width = 7.5 * (16.0 / 9.0)
+        dancer_screen_x = 0.5 - 1.75 / landscape_width
+        self.assertGreaterEqual(dancer_screen_x, 0.35)
+        self.assertLessEqual(dancer_screen_x, 0.38)
 
     def test_runtime_resource_paths_exist_and_generated_events_are_preserved(self) -> None:
         resource_paths = re.findall(r'path="res://([^"]+)"', self.scene)

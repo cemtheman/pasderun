@@ -3,7 +3,7 @@ extends Node3D
 @export var target: Node3D
 @export var follow_speed: float = 8.0
 @export var vertical_follow_speed: float = 6.0
-@export var look_ahead: float = 1.5
+@export var look_ahead: float = 1.75
 
 var _vertical_offset: float = 0.0
 
