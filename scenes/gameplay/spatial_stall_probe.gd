@@ -6,8 +6,11 @@ extends Node
 @export var parallax_presentation: Node3D
 @export var debug_label: Label
 
+const VISUALIZATION_MODE_COUNT := 5
+const VISUALIZATION_MODE_ALL := 4
+
 var _framing_enabled := true
-var _visuals_enabled := true
+var _visualization_mode := VISUALIZATION_MODE_ALL
 var _background_enabled := true
 
 
@@ -20,6 +23,8 @@ func _ready() -> void:
 		or parallax_presentation == null
 		or debug_label == null
 		or not start_gate.has_signal("runtime_started")
+		or not fork_debug_visualization.has_method("set_diagnostic_mode")
+		or not fork_debug_visualization.has_method("get_diagnostic_mode_name")
 	):
 		push_error("SpatialStallProbe requires start gate, fork helpers, and debug label.")
 		return
@@ -44,7 +49,7 @@ func _input(event: InputEvent) -> void:
 		_set_framing_enabled(not _framing_enabled)
 	elif key_event.keycode == KEY_V:
 		get_viewport().set_input_as_handled()
-		_set_visuals_enabled(not _visuals_enabled)
+		_cycle_visualization_mode()
 	elif key_event.keycode == KEY_B:
 		get_viewport().set_input_as_handled()
 		_set_background_enabled(not _background_enabled)
@@ -58,12 +63,11 @@ func _set_framing_enabled(enabled: bool) -> void:
 	_update_debug_label()
 
 
-func _set_visuals_enabled(enabled: bool) -> void:
-	_visuals_enabled = enabled
-	fork_debug_visualization.visible = enabled
-	fork_debug_visualization.process_mode = (
-		Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
+func _cycle_visualization_mode() -> void:
+	_visualization_mode = (
+		(_visualization_mode + 1) % VISUALIZATION_MODE_COUNT
 	)
+	fork_debug_visualization.call("set_diagnostic_mode", _visualization_mode)
 	_update_debug_label()
 
 
@@ -76,6 +80,6 @@ func _set_background_enabled(enabled: bool) -> void:
 func _update_debug_label() -> void:
 	debug_label.text = "STALL PROBE FRAMING:%s VISUALS:%s BG:%s" % [
 		"ON" if _framing_enabled else "OFF",
-		"ON" if _visuals_enabled else "OFF",
+		String(fork_debug_visualization.call("get_diagnostic_mode_name")),
 		"ON" if _background_enabled else "OFF",
 	]

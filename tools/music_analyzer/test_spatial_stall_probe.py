@@ -29,7 +29,6 @@ GENERATED = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 TRUSTED = {
     START_GATE: "bda071ca4a89af71b6227f19d9613b8c12bd9cb24f0007ec3274a583e23198ca",
     FRAMING: "8b14a565bd8d1f45189a4b7801855c8159847545a43f1cba276f19a5da2022e1",
-    VISUALS: "d3f001d98b64169cf41d9a10126399ccd23c57d1dacaec21f8f4327f769a4553",
     DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
     GENERATED: "2483eb3de87da79b2ad2ae3ccb734ca868898b3009e5861787be1853162ec7d4",
@@ -46,6 +45,7 @@ class SpatialStallProbeTests(unittest.TestCase):
         cls.probe = PROBE.read_text(encoding="utf-8")
         cls.parallax = PARALLAX.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
+        cls.visuals = VISUALS.read_text(encoding="utf-8")
 
     def test_probe_is_wired_to_only_runtime_diagnostic_nodes(self) -> None:
         self.assertIn('name="SpatialStallProbe" type="Node" parent="."', self.runtime)
@@ -85,18 +85,47 @@ class SpatialStallProbeTests(unittest.TestCase):
         self.assertNotIn("fork_debug_visualization", handler)
         self.assertNotIn("camera.size", handler)
 
-    def test_visual_toggle_only_changes_debug_visualization(self) -> None:
+    def test_visual_mode_cycle_is_deterministic(self) -> None:
         handler = re.search(
-            r"func _set_visuals_enabled\(.*?(?=\n\nfunc )",
+            r"func _cycle_visualization_mode\(.*?(?=\n\nfunc )",
             self.probe,
             re.DOTALL,
         ).group(0)
-        self.assertIn("fork_debug_visualization.visible = enabled", handler)
-        self.assertIn("fork_debug_visualization.process_mode", handler)
+        self.assertIn("(_visualization_mode + 1) % VISUALIZATION_MODE_COUNT", handler)
+        self.assertIn('call("set_diagnostic_mode", _visualization_mode)', handler)
         self.assertNotIn("fork_camera_framing", handler)
+        self.assertNotIn(".new()", handler)
+
+    def test_visualization_resources_are_created_once_not_during_mode_switch(self) -> None:
+        mode_handler = re.search(
+            r"func set_diagnostic_mode\(.*?(?=\n\nfunc )",
+            self.visuals,
+            re.DOTALL,
+        ).group(0)
+        self.assertNotIn(".new()", mode_handler)
+        self.assertEqual(self.visuals.count("SphereMesh.new()"), 1)
+        self.assertEqual(self.visuals.count("Label3D.new()"), 1)
+
+    def test_visualization_render_paths_are_independently_selectable(self) -> None:
+        self.assertIn(
+            'const MODE_NAMES := ["OFF", "ROUTES", "MARKERS", "LABELS", "ALL"]',
+            self.visuals,
+        )
+        mode_handler = re.search(
+            r"func set_diagnostic_mode\(.*?(?=\n\nfunc )",
+            self.visuals,
+            re.DOTALL,
+        ).group(0)
+        self.assertIn("_diagnostic_mode == DiagnosticMode.ROUTES", mode_handler)
+        self.assertIn("_diagnostic_mode == DiagnosticMode.MARKERS", mode_handler)
+        self.assertIn("_diagnostic_mode == DiagnosticMode.LABELS", mode_handler)
+        self.assertIn("or _diagnostic_mode == DiagnosticMode.ALL", mode_handler)
+        self.assertIn("else _route_original_materials[index]", mode_handler)
+        self.assertIn("marker_mesh.visible = show_markers", mode_handler)
+        self.assertIn("marker_label.visible = show_labels", mode_handler)
 
     def test_hud_is_ascii_safe(self) -> None:
-        expected = "STALL PROBE FRAMING:ON VISUALS:ON BG:ON"
+        expected = "STALL PROBE FRAMING:ON VISUALS:ALL BG:ON"
         self.assertIn(expected, self.runtime)
         self.assertTrue(all(ord(character) < 128 for character in expected))
 

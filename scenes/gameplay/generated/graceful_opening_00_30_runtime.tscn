@@ -231,7 +231,7 @@ offset_left = 57.0
 offset_top = 315.0
 offset_right = 440.0
 offset_bottom = 338.0
-text = "STALL PROBE FRAMING:ON VISUALS:ON BG:ON"
+text = "STALL PROBE FRAMING:ON VISUALS:ALL BG:ON"
 
 [node name="StartGateOverlay" type="CanvasLayer" parent="."]
 layer = 100
