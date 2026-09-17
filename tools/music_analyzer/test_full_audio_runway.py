@@ -92,8 +92,8 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
         self.assertEqual(len(forks), 5)
 
     def test_forks_are_distributed_and_have_natural_input_topology(self) -> None:
-        expected = [(175.0, 193.0), (250.0, 268.0), (330.0, 348.0), (410.0, 428.0), (505.0, 523.0)]
-        for index, (start_expected, merge_expected) in enumerate(expected, 1):
+        expected = [(167.0, 175.0, 193.0), (242.0, 250.0, 268.0), (322.0, 330.0, 348.0), (402.0, 410.0, 428.0), (497.0, 505.0, 523.0)]
+        for index, (start_expected, split_expected, merge_expected) in enumerate(expected, 1):
             start = float(re.search(
                 rf'\[node name="ForkStart{index:02d}".*?position = Vector3\(([0-9.]+),',
                 self.course,
@@ -104,7 +104,12 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
                 self.course,
                 re.DOTALL,
             ).group(1))
-            self.assertEqual((start, merge), (start_expected, merge_expected))
+            split = float(re.search(
+                rf'\[node name="RouteSplit{index:02d}".*?position = Vector3\(([0-9.]+),',
+                self.course,
+                re.DOTALL,
+            ).group(1))
+            self.assertEqual((start, split, merge), (start_expected, split_expected, merge_expected))
             self.assertIn(f'[node name="SafeLowerRoute{index:02d}"', self.course)
             self.assertIn(f'[node name="TechnicalRoute{index:02d}_', self.course)
         self.assertEqual(self.course.count('metadata/_design = "NO_JUMP_SAFE__JUMP_TECHNICAL"'), 5)
@@ -122,7 +127,7 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             self.assertTrue(math.isclose(safe_b_end, recovery_start, abs_tol=0.001))
 
     def test_safe_gaps_follow_landing_and_grounded_recovery(self) -> None:
-        fall_time = math.sqrt(2.0 * 2.8 / 18.0)
+        fall_time = math.sqrt(2.0 * 3.75 / 18.0)
         expected_landing_offset = 4.0 * fall_time
         runups = []
         gaps = []
@@ -181,14 +186,15 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
 
     def test_vertical_clearance_and_elevation_are_safe(self) -> None:
         safe_surface = -3.05 + 0.25
-        dancer_top = safe_surface + 2.0
-        technical_underside = -0.25 - 0.25
-        self.assertGreaterEqual(technical_underside - dancer_top, 0.25)
-        upper_a_surface = -0.25 + 0.25
-        upper_b_surface = 0.0 + 0.25
-        self.assertEqual(upper_b_surface, 0.25)
+        jump_apex = 6.0 * 6.0 / (2.0 * 18.0)
+        dancer_top = safe_surface + 2.0 + jump_apex
+        technical_underside = 0.7 - 0.25
+        self.assertTrue(math.isclose(technical_underside - dancer_top, 0.25, abs_tol=0.001))
+        upper_a_surface = 0.7 + 0.25
+        upper_b_surface = 0.95 + 0.25
+        self.assertEqual(upper_b_surface, 1.2)
         self.assertLessEqual(upper_b_surface - upper_a_surface, 0.5)
-        self.assertEqual(self.course.count("rotation = Vector3(0, 0, 0.1974)"), 5)
+        self.assertEqual(self.course.count("rotation = Vector3(0, 0, 0.26166)"), 5)
 
     def test_active_neutral_spans_are_short_and_course_closes_cleanly(self) -> None:
         active_neutral_lengths = [

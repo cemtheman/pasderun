@@ -19,6 +19,8 @@
 [ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_mid_palace_frame_v0_1.png" id="17_mid"]
 [ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png" id="18_foreground"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/generated/continuous_technical_course.tscn" id="19_course"]
+[ext_resource type="Script" path="res://scenes/gameplay/fork_camera_controller.gd" id="20_fork_camera"]
+[ext_resource type="Script" path="res://scenes/gameplay/run_recovery_manager.gd" id="21_recovery"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -60,6 +62,17 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_game_over"]
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.035, 0.025, 0.045, 0.94)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="GracefulOpening0030Runtime" type="Node3D" unique_id=717052963]
 
@@ -113,6 +126,13 @@ camera_rig = NodePath("..")
 camera = NodePath("../Camera3D")
 target = NodePath("../../Dancer")
 generated_level = NodePath("../../GeneratedLevel")
+
+[node name="ProductionForkCamera" type="Node" parent="." node_paths=PackedStringArray("camera_rig", "camera", "target", "course_root")]
+script = ExtResource("20_fork_camera")
+camera_rig = NodePath("../CameraRig")
+camera = NodePath("../CameraRig/Camera3D")
+target = NodePath("../Dancer")
+course_root = NodePath("../ExtendedCourse")
 
 [node name="Music" type="Node" parent="." unique_id=2088412974]
 
@@ -309,3 +329,66 @@ grow_vertical = 2
 text = "TAP TO START"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="GameOverOverlay" type="CanvasLayer" parent="."]
+layer = 110
+visible = false
+
+[node name="InputBlocker" type="ColorRect" parent="GameOverOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="GameOverOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="GameOverOverlay/Center"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_game_over")
+
+[node name="Actions" type="VBoxContainer" parent="GameOverOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="Continue" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="Restart" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "RESTART"
+
+[node name="Exit" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "EXIT"
+
+[node name="RunRecoveryManager" type="Node" parent="." node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button")]
+script = ExtResource("21_recovery")
+dancer = NodePath("../Dancer")
+camera_rig = NodePath("../CameraRig")
+fork_camera_controller = NodePath("../ProductionForkCamera")
+start_gate = NodePath("../RuntimeStartGate")
+music_root = NodePath("../Music")
+audio_player = NodePath("../Music/AudioStreamPlayer")
+flow_tracker = NodePath("../FlowTracker")
+tap_timing_debug = NodePath("../TapTimingDebug")
+accent_runtime_trace = NodePath("../AccentRuntimeTrace")
+game_over_overlay = NodePath("../GameOverOverlay")
+continue_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Continue")
+restart_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Restart")
+exit_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Exit")

@@ -30,3 +30,10 @@ func _process(delta: float) -> void:
 		desired_y,
 		1.0 - exp(-vertical_follow_speed * delta)
 	)
+
+
+func reset_to_target() -> void:
+	if target == null:
+		return
+	global_position.x = target.global_position.x + look_ahead
+	global_position.y = target.global_position.y + _vertical_offset
