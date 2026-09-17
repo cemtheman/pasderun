@@ -24,6 +24,7 @@ const FEEDBACK_DURATION := 1.5
 @export_file("*.json") var movement_demands_path := "res://data/choreography/graceful_opening.movement_demands_v0_1.json"
 
 var _consumed_accents: Dictionary = {}
+var _output_latency := 0.0
 var _accent_markers: Array[float] = []
 var _last_playback_time := 0.0
 var _feedback_remaining := 0.0
@@ -38,6 +39,7 @@ func _ready() -> void:
 		push_error("Musicality requires the existing Dancer tap_detected signal.")
 		set_process(false)
 		return
+	_output_latency = AudioServer.get_output_latency()
 	dancer.connect(&"tap_detected", Callable(self, "_on_tap_detected"))
 	_load_accent_markers()
 	_last_playback_time = _playback_time()
@@ -63,7 +65,7 @@ func _process(delta: float) -> void:
 
 
 func _on_tap_detected() -> void:
-	var playback_time := _playback_time()
+	var playback_time := _tap_scoring_time()
 	var accent_index := _nearest_available_accent(playback_time)
 	if accent_index < 0:
 		accent_evaluation_started.emit(playback_time, -1.0, 0.0, &"TAP")
@@ -189,8 +191,25 @@ func _classify_delta(delta: float) -> StringName:
 	return &"EARLY" if delta < 0.0 else &"LATE"
 
 
+func _tap_scoring_time() -> float:
+	var heard_time := _playback_time()
+	var press_started_value = dancer.get("press_started_ms")
+	if press_started_value == null:
+		return heard_time
+
+	var press_duration := maxf(
+		float(Time.get_ticks_msec() - int(press_started_value)) / 1000.0,
+		0.0
+	)
+	return maxf(heard_time - press_duration, 0.0)
+
+
 func _playback_time() -> float:
-	return float(music_timeline.call("get_playback_time"))
+	var mixed_time := (
+		float(music_timeline.call("get_playback_time"))
+		+ AudioServer.get_time_since_last_mix()
+	)
+	return maxf(mixed_time - _output_latency, 0.0)
 
 
 func _show_feedback(message: String) -> void:
