@@ -19,8 +19,8 @@ COMPILER = ROOT / "tools/music_analyzer/compile_geometry.py"
 CAMERA = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
 
 TRUSTED = {
-    FLOW: "90e1ff56977a8c93198d3d9b1fc932f3edef945b38ad1eb902555f0deb20fb3a",
-    DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
+    FLOW: "7e9fe3f67099b52e0f813795874f5e57deeac78228e9b859b0229ea91aeb6f8a",
+    DANCER: "f7292a8c0226bb14ad41ee68dfbf68cd664ae4fdfb4df9b9f332284b8c35ab8d",
     TIMELINE: "605e9605c5a53ec84b862d4ce0b3893802fdfeb36f20dc09b3c67e3a5a183f68",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
     GENERATED: "2ede8fcbd2a7158332c1656459a0e41e12886a8af4c3101576131713ef6ca4e6",
@@ -100,7 +100,7 @@ class AccentRuntimeTraceTests(unittest.TestCase):
             self.assertEqual(digest(path), expected, path)
 
     def test_tuning_and_classification_constants_remain_exact(self) -> None:
-        self.assertIn("const ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]", self.musicality)
+        self.assertIn("const OPENING_ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]", self.musicality)
         self.assertIn("const PERFECT_WINDOW := 0.12", self.musicality)
         self.assertIn("const GOOD_WINDOW := 0.28", self.musicality)
         self.assertIn("const EARLY_LATE_WINDOW := 0.50", self.musicality)
