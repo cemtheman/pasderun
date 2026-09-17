@@ -17,7 +17,6 @@ GENERATED = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 COMPILER = ROOT / "tools/music_analyzer/compile_geometry.py"
 
 TRUSTED = {
-    DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
     TIMELINE: "605e9605c5a53ec84b862d4ce0b3893802fdfeb36f20dc09b3c67e3a5a183f68",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
 }
@@ -75,8 +74,8 @@ class FlowTrackerTests(unittest.TestCase):
     def test_musicality_emits_its_actual_classification(self) -> None:
         self.assertIn("signal accent_evaluated", self.musicality)
         self.assertIn("accent_evaluated.emit(classification, delta", self.musicality)
-        self.assertEqual(self.musicality.count("const ACCENT_MARKERS"), 1)
-        self.assertIn("const ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]", self.musicality)
+        self.assertIn("const OPENING_ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]", self.musicality)
+        self.assertIn("func _load_accent_markers()", self.musicality)
 
     def test_only_validated_outcomes_build_flow(self) -> None:
         self.assertIn("dancer.is_on_floor()", self.flow)

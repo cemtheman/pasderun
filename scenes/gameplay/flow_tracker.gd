@@ -56,6 +56,7 @@ var _fork_events: Array[Dictionary] = []
 var _miss_visible_through_process_frame := -1
 var last_miss_before := 0.0
 var last_miss_after := 0.0
+var _suppress_next_poor_landing := false
 
 
 func _ready() -> void:
@@ -68,6 +69,11 @@ func _ready() -> void:
 		set_physics_process(false)
 		return
 	musicality.connect(&"accent_evaluated", Callable(self, "_on_accent_evaluated"))
+	if not dancer.has_signal(&"stumble_started"):
+		push_error("FlowTracker requires Dancer stumble_started signal.")
+		set_physics_process(false)
+		return
+	dancer.connect(&"stumble_started", Callable(self, "_on_stumble_started"))
 	if not _load_geometry_opportunities():
 		set_physics_process(false)
 		return
@@ -192,10 +198,14 @@ func _track_jump_events(playback_time: float) -> void:
 			event["airborne"] = true
 		if event["airborne"] and world_x >= end_x + LANDING_MARGIN_X and on_floor:
 			event["resolved"] = true
+			_suppress_next_poor_landing = false
 			_apply_success(float(CONTRIBUTIONS[&"JUMP"]), "%s SUCCESS" % event["movement_class"], playback_time)
 		elif world_x > end_x + LANDING_SEARCH_X:
 			event["resolved"] = true
-			_apply_reduction(float(REDUCTIONS[&"POOR_LANDING"]), "%s POOR LANDING" % event["movement_class"])
+			if _suppress_next_poor_landing:
+				_suppress_next_poor_landing = false
+			else:
+				_apply_reduction(float(REDUCTIONS[&"POOR_LANDING"]), "%s POOR LANDING" % event["movement_class"])
 
 
 func _track_forks(playback_time: float) -> void:
@@ -256,6 +266,11 @@ func _on_accent_evaluated(classification: StringName, delta: float, _marker_time
 	_apply_success(float(CONTRIBUTIONS[classification]), "%s ACCENT" % classification, _playback_time())
 
 
+func _on_stumble_started(reason: StringName) -> void:
+	_suppress_next_poor_landing = reason == &"PLATFORM_EDGE"
+	_apply_reduction(float(REDUCTIONS[&"PHRASE_BREAK"]), "STUMBLE: %s" % reason)
+
+
 func _apply_success(base_amount: float, reason: String, playback_time: float) -> void:
 	if playback_time - _last_success_time <= CONTINUITY_WINDOW_SECONDS:
 		_continuity_links = mini(_continuity_links + 1, MAX_CONTINUITY_LINKS)
@@ -303,6 +318,7 @@ func _reset_flow(reason: String) -> void:
 	_miss_visible_through_process_frame = -1
 	last_miss_before = 0.0
 	last_miss_after = 0.0
+	_suppress_next_poor_landing = false
 	_set_flow(0.0, reason)
 
 

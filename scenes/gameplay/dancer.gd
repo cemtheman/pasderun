@@ -1,6 +1,22 @@
 extends CharacterBody3D
 
 signal tap_detected
+signal stumble_started(reason: StringName)
+signal locomotion_state_changed(state: StringName, reason: StringName)
+
+enum LocomotionState {
+	NORMAL,
+	STUMBLE,
+	RECOVERY,
+}
+
+const STUMBLE_DURATION := 0.24
+const RECOVERY_DURATION := 0.62
+const STUMBLE_SPEED_MULTIPLIER := 0.45
+const RECOVERY_SPEED_MULTIPLIER := 0.78
+const VALID_DROP_MINIMUM := 0.60
+const MAX_TRAVERSABLE_STEP_HEIGHT := 0.45
+const STEP_FORWARD_CLEARANCE := 0.16
 
 # PAS DE RUN — DANCER CONTROLLER v0.4
 #
@@ -92,6 +108,17 @@ var has_fallen: bool = false
 
 
 # ---------------------------------------------------------
+# LOCOMOTION INTERRUPTION STATE
+# ---------------------------------------------------------
+
+var locomotion_state := LocomotionState.NORMAL
+var last_stumble_reason: StringName = &""
+var _locomotion_timer := 0.0
+var _jump_in_progress := false
+var _airborne_origin_y := 0.0
+
+
+# ---------------------------------------------------------
 # BALANCE STATE
 # ---------------------------------------------------------
 
@@ -154,7 +181,8 @@ func _physics_process(delta: float) -> void:
 	# AUTO-RUN
 	# ---------------------------------------------------------
 
-	velocity.x = run_speed
+	_update_locomotion_state(delta)
+	velocity.x = run_speed * _locomotion_speed_multiplier()
 
 
 	# ---------------------------------------------------------
@@ -223,7 +251,10 @@ func _physics_process(delta: float) -> void:
 			_end_low_transition()
 
 
+	var was_on_floor := is_on_floor()
+	var position_before_move := global_position
 	move_and_slide()
+	_handle_motion_outcome(was_on_floor, position_before_move, delta)
 
 
 func _process(_delta: float) -> void:
@@ -407,6 +438,105 @@ func _jump() -> void:
 		return
 
 	velocity.y = jump_velocity
+	_jump_in_progress = true
+	_airborne_origin_y = global_position.y
+
+
+func get_locomotion_state() -> StringName:
+	return StringName(LocomotionState.keys()[locomotion_state])
+
+
+func reset_locomotion_state() -> void:
+	locomotion_state = LocomotionState.NORMAL
+	last_stumble_reason = &""
+	_locomotion_timer = 0.0
+	_jump_in_progress = false
+	_airborne_origin_y = global_position.y
+	locomotion_state_changed.emit(&"NORMAL", &"RESET")
+
+
+func _update_locomotion_state(delta: float) -> void:
+	if locomotion_state == LocomotionState.NORMAL:
+		return
+	_locomotion_timer -= delta
+	if _locomotion_timer > 0.0:
+		return
+	if locomotion_state == LocomotionState.STUMBLE:
+		locomotion_state = LocomotionState.RECOVERY
+		_locomotion_timer = RECOVERY_DURATION
+		locomotion_state_changed.emit(&"RECOVERY", last_stumble_reason)
+		_show_input("RECOVERY")
+	else:
+		locomotion_state = LocomotionState.NORMAL
+		_locomotion_timer = 0.0
+		locomotion_state_changed.emit(&"NORMAL", last_stumble_reason)
+
+
+func _locomotion_speed_multiplier() -> float:
+	if locomotion_state == LocomotionState.STUMBLE:
+		return STUMBLE_SPEED_MULTIPLIER
+	if locomotion_state == LocomotionState.RECOVERY:
+		return RECOVERY_SPEED_MULTIPLIER
+	return 1.0
+
+
+func _handle_motion_outcome(
+	was_on_floor: bool,
+	position_before_move: Vector3,
+	delta: float
+) -> void:
+	if was_on_floor and not is_on_floor():
+		_airborne_origin_y = position_before_move.y
+
+	var hit_forward_edge := false
+	for collision_index in get_slide_collision_count():
+		var collision := get_slide_collision(collision_index)
+		var normal := collision.get_normal()
+		if normal.x < -0.55 and absf(normal.y) < 0.45:
+			hit_forward_edge = true
+			break
+
+	if hit_forward_edge:
+		if was_on_floor and _attempt_small_step(delta):
+			_trigger_stumble(&"SMALL_STEP")
+		elif not was_on_floor or _jump_in_progress:
+			_trigger_stumble(&"PLATFORM_EDGE")
+
+	if not was_on_floor and is_on_floor():
+		var drop_distance := _airborne_origin_y - global_position.y
+		if not _jump_in_progress and drop_distance >= VALID_DROP_MINIMUM:
+			_trigger_stumble(&"LOWER_ROUTE_DROP")
+		_jump_in_progress = false
+
+
+func _attempt_small_step(delta: float) -> bool:
+	var raised_transform := global_transform
+	var upward_motion := Vector3.UP * MAX_TRAVERSABLE_STEP_HEIGHT
+	if test_move(global_transform, upward_motion):
+		return false
+	raised_transform.origin.y += MAX_TRAVERSABLE_STEP_HEIGHT
+	var forward_motion := Vector3(
+		maxf(run_speed * delta, STEP_FORWARD_CLEARANCE),
+		0.0,
+		0.0
+	)
+	if test_move(raised_transform, forward_motion):
+		return false
+	global_transform = raised_transform
+	move_and_collide(forward_motion)
+	velocity.x = run_speed * STUMBLE_SPEED_MULTIPLIER
+	return true
+
+
+func _trigger_stumble(reason: StringName) -> void:
+	if has_fallen or locomotion_state != LocomotionState.NORMAL:
+		return
+	locomotion_state = LocomotionState.STUMBLE
+	last_stumble_reason = reason
+	_locomotion_timer = STUMBLE_DURATION
+	stumble_started.emit(reason)
+	locomotion_state_changed.emit(&"STUMBLE", reason)
+	_show_input("STUMBLE: %s" % reason)
 
 
 func _start_low_transition() -> void:

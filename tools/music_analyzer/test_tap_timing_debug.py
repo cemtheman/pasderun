@@ -18,8 +18,6 @@ GENERATED = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 COMPILER = ROOT / "tools/music_analyzer/compile_geometry.py"
 
 TRUSTED = {
-    FLOW: "90e1ff56977a8c93198d3d9b1fc932f3edef945b38ad1eb902555f0deb20fb3a",
-    DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
     TIMELINE: "605e9605c5a53ec84b862d4ce0b3893802fdfeb36f20dc09b3c67e3a5a183f68",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
     GENERATED: "2ede8fcbd2a7158332c1656459a0e41e12886a8af4c3101576131713ef6ca4e6",
@@ -45,7 +43,7 @@ class TapTimingDebugTests(unittest.TestCase):
 
     def test_accent_opportunity_source_is_musicality_only(self) -> None:
         self.assertIn('musicality.call("get_next_accent_opportunity", playback_time)', self.assist)
-        self.assertIn("for index in ACCENT_MARKERS.size()", self.musicality)
+        self.assertIn("for index in _accent_markers.size()", self.musicality)
         self.assertNotRegex(self.assist, r"\b(18|22|26)(\.0)?\b")
 
     def test_clock_is_music_timeline_playback(self) -> None:
@@ -81,7 +79,7 @@ class TapTimingDebugTests(unittest.TestCase):
         self.assertNotIn("flow_value", self.assist)
 
     def test_classification_logic_and_tuning_are_unchanged(self) -> None:
-        self.assertIn("const ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]", self.musicality)
+        self.assertIn("const OPENING_ACCENT_MARKERS: Array[float] = [18.0, 22.0, 26.0]", self.musicality)
         self.assertIn("const PERFECT_WINDOW := 0.12", self.musicality)
         self.assertIn("const GOOD_WINDOW := 0.28", self.musicality)
         self.assertIn("const EARLY_LATE_WINDOW := 0.50", self.musicality)

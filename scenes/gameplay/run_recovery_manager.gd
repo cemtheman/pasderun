@@ -207,6 +207,8 @@ func _restore_dancer() -> void:
 	dancer.set("hold_triggered", false)
 	dancer.set("using_touch", false)
 	dancer.set("active_touch_index", -1)
+	if dancer.has_method("reset_locomotion_state"):
+		dancer.call("reset_locomotion_state")
 
 	var collider := dancer.get_node("CollisionShape3D") as CollisionShape3D
 	var capsule := collider.shape as CapsuleShape3D

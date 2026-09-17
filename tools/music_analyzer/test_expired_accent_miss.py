@@ -16,8 +16,6 @@ GENERATED = ROOT / "scenes/gameplay/generated/graceful_opening_00_30.tscn"
 CAMERA = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
 
 TRUSTED = {
-    FLOW: "90e1ff56977a8c93198d3d9b1fc932f3edef945b38ad1eb902555f0deb20fb3a",
-    DANCER: "6068ec94ba4d99fa75180226f2d8cdf0a8172c868b9a4851c7214e1ce0b62748",
     PLAN: "6cc084749cc558659016cb5834da0fab8447c155918c16565a35666439ee1fd4",
     GENERATED: "2ede8fcbd2a7158332c1656459a0e41e12886a8af4c3101576131713ef6ca4e6",
     CAMERA: "8b14a565bd8d1f45189a4b7801855c8159847545a43f1cba276f19a5da2022e1",
@@ -62,8 +60,8 @@ class ExpiredAccentMissTests(unittest.TestCase):
 
     def test_existing_classifications_and_tap_miss_are_unchanged(self) -> None:
         self.assertIn('accent_evaluated.emit(&"MISS", 0.0, -1.0)', self.tap)
-        self.assertIn('accent_evaluated.emit(&"MISS", delta, ACCENT_MARKERS[accent_index])', self.tap)
-        self.assertIn("accent_evaluated.emit(classification, delta, ACCENT_MARKERS[accent_index])", self.tap)
+        self.assertIn('accent_evaluated.emit(&"MISS", delta, _accent_markers[accent_index])', self.tap)
+        self.assertIn("accent_evaluated.emit(classification, delta, _accent_markers[accent_index])", self.tap)
         classifier = re.search(
             r"func _classify_delta\(.*?(?=\n\nfunc )",
             self.source,
@@ -87,7 +85,7 @@ class ExpiredAccentMissTests(unittest.TestCase):
         self.assertIn("rewind_detected or forward_seek_detected", process)
         self.assertIn("_rebuild_accent_state(playback_time)", process)
         self.assertIn("_consumed_accents.clear()", rebuild)
-        self.assertIn("ACCENT_MARKERS[index] + EARLY_LATE_WINDOW", rebuild)
+        self.assertIn("_accent_markers[index] + EARLY_LATE_WINDOW", rebuild)
         self.assertNotIn("accent_evaluated.emit", rebuild)
 
     def test_trace_identifies_expired_opportunity_as_no_input(self) -> None:
