@@ -77,8 +77,12 @@ class Phase9SpatialScoreTests(unittest.TestCase):
             step = abs(float(later["surface_y"]) - float(earlier["surface_y"]))
             self.assertLessEqual(step, design_limit + 1e-6)
 
-    def test_required_action_reaction_and_occupancy_zones_are_flat_locked(self) -> None:
-        self.assertEqual(len(self.spatial["action_locks"]), 9)
+    def test_only_geometry_sensitive_actions_are_flat_locked(self) -> None:
+        self.assertEqual(len(self.spatial["action_locks"]), 4)
+        self.assertEqual(
+            {lock["action"] for lock in self.spatial["action_locks"]},
+            {"JUMP"},
+        )
         self.assertTrue(
             all(float(lock["time"]) < DEFAULT_END_SECONDS for lock in self.spatial["action_locks"])
         )
@@ -113,17 +117,38 @@ class Phase9SpatialScoreTests(unittest.TestCase):
         self.assertIn("PULSE_STEPS", patterns)
         self.assertIn("RISING_TERRACE", patterns)
 
-    def test_no_unlocked_runway_segment_exceeds_one_visual_window_span(self) -> None:
+    def test_unlocked_runway_is_subdivided_to_beat_scale(self) -> None:
         run_speed = float(self.visual["playability_gate"]["controller"]["run_speed"])
-        longest_window = max(
-            float(window["duration"])
-            for window in self.visual["windows"]
-            if window["start"] < DEFAULT_END_SECONDS and window["end"] > DEFAULT_START_SECONDS
-        )
-        limit = longest_window * run_speed + 1e-4
         for segment in self.spatial["segments"]:
-            if segment["interaction_lock"] is None:
-                self.assertLessEqual(float(segment["length"]), limit)
+            if segment["interaction_lock"] is not None:
+                continue
+            window = self.visual["windows"][int(segment["source_window_index"])]
+            beat_count = max(1, int(window["beat_span"]["count"]))
+            beat_length = float(window["duration"]) * run_speed / beat_count
+            self.assertLessEqual(float(segment["length"]), beat_length + 1e-4)
+
+    def test_pulse_and_build_patterns_have_internal_shape(self) -> None:
+        pulse_groups: dict[int, list[dict[str, object]]] = {}
+        build_segments: list[dict[str, object]] = []
+        for segment in self.spatial["segments"]:
+            if segment["interaction_lock"] is not None:
+                continue
+            if segment["pattern"] == "PULSE_STEPS":
+                pulse_groups.setdefault(int(segment["source_window_index"]), []).append(segment)
+            if segment["pattern"] == "RISING_TERRACE":
+                build_segments.append(segment)
+
+        self.assertTrue(
+            any(
+                len({float(segment["delta_y"]) for segment in group}) >= 2
+                for group in pulse_groups.values()
+            )
+        )
+
+        self.assertGreaterEqual(len(build_segments), 3)
+        build_segments.sort(key=lambda segment: float(segment["start_x"]))
+        build_deltas = [float(segment["delta_y"]) for segment in build_segments]
+        self.assertEqual(build_deltas, sorted(build_deltas))
 
     def test_schema_declares_spatial_score_contract(self) -> None:
         self.assertEqual(self.schema["properties"]["schema_version"]["const"], "0.1")

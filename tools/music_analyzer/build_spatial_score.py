@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ DEFAULT_START_SECONDS = 30.0
 DEFAULT_END_SECONDS = 60.0
 MAX_PASSIVE_DELTA_Y = 0.15
 MIN_SEGMENT_LENGTH = 0.0001
+GEOMETRY_LOCK_ACTIONS = {"JUMP", "HOLD", "SWIPE_DOWN"}
 
 ROLE_TO_PATTERN = {
     "CLIMAX": "LIFTED_TERRACE",
@@ -49,21 +51,43 @@ def _window_for_time(windows: list[dict[str, Any]], time: float) -> tuple[int, d
     raise ValueError(f"no visual-score window contains time {time:.4f}")
 
 
-def _passive_delta(window: dict[str, Any], window_index: int) -> float:
+def _phase_index(window: dict[str, Any], time: float) -> tuple[int, int]:
+    count = max(1, int(window["beat_span"]["count"]))
+    start = float(window["start"])
+    end = float(window["end"])
+    progress = _clip((time - start) / max(end - start, 1e-9), 0.0, 0.999999)
+    return min(count - 1, int(progress * count)), count
+
+
+def _passive_delta(
+    window: dict[str, Any],
+    phase_index: int,
+    phase_count: int,
+) -> float:
     intent = window["visual_intent"]
     intensity = float(intent["intensity"])
     amplitude = min(MAX_PASSIVE_DELTA_Y, 0.05 + 0.10 * intensity)
-    contour = str(intent["contour"])
     role = str(intent["phrase_role"])
 
-    if contour == "RISE":
-        return _round(amplitude)
-    if contour == "FALL":
-        return _round(-amplitude)
-    if role == "PULSE":
-        sign = 1.0 if window_index % 2 == 0 else -1.0
-        return _round(sign * amplitude * 0.6)
-    return 0.0
+    if role == "CLIMAX":
+        center = (phase_count - 1) * 0.60
+        distance = abs(phase_index - center) / max(1.0, phase_count * 0.60)
+        factor = max(0.25, 1.0 - distance)
+    elif role == "BUILD":
+        factor = (phase_index + 1) / phase_count
+    elif role == "RELEASE":
+        factor = -(phase_index + 1) / phase_count
+    elif role == "PULSE":
+        factor = 0.70 if phase_index % 2 == 0 else -0.35
+    elif role == "TURNING_POINT":
+        factor = -0.45 if phase_index < phase_count / 2.0 else 0.45
+    elif role == "SUSTAIN":
+        factor = 0.20
+    else:
+        phase = (phase_index + 0.5) / phase_count
+        factor = 0.30 * math.sin(phase * math.tau)
+
+    return _round(_clip(amplitude * factor, -MAX_PASSIVE_DELTA_Y, MAX_PASSIVE_DELTA_Y))
 
 
 def _action_locks(
@@ -80,6 +104,9 @@ def _action_locks(
         interaction = anchor["interaction"]
         if not bool(interaction["required"]):
             continue
+        action = interaction["candidate_action"]
+        if action not in GEOMETRY_LOCK_ACTIONS:
+            continue
         time = float(anchor["time"])
         if time >= end_seconds:
             continue
@@ -92,7 +119,7 @@ def _action_locks(
             continue
         locks.append({
             "time": _round(time),
-            "action": interaction["candidate_action"],
+            "action": action,
             "start_time": _round(lock_start_time),
             "end_time": _round(lock_end_time),
             "start_x": _round(lock_start_time * run_speed),
@@ -164,6 +191,12 @@ def build_spatial_score(
             if runway["start_x"] < window_end_x < runway["end_x"]:
                 boundaries.add(window_end_x)
 
+            phase_count = max(1, int(window["beat_span"]["count"]))
+            for phase_index in range(1, phase_count):
+                phase_x = window_start_x + (window_end_x - window_start_x) * phase_index / phase_count
+                if runway["start_x"] < phase_x < runway["end_x"]:
+                    boundaries.add(phase_x)
+
         for lock in locks:
             lock_start_x = float(lock["start_x"])
             lock_end_x = float(lock["end_x"])
@@ -179,9 +212,10 @@ def build_spatial_score(
             midpoint_x = (left + right) * 0.5
             midpoint_time = midpoint_x / run_speed
             window_index, window = _window_for_time(windows, midpoint_time)
+            phase_index, phase_count = _phase_index(window, midpoint_time)
             active_lock = _lock_at_x(locks, midpoint_x)
             locked = active_lock is not None
-            delta_y = 0.0 if locked else _passive_delta(window, window_index)
+            delta_y = 0.0 if locked else _passive_delta(window, phase_index, phase_count)
             surface_y = float(runway["surface_y"]) + delta_y
             intent = window["visual_intent"]
 
@@ -194,6 +228,8 @@ def build_spatial_score(
                 "delta_y": _round(delta_y),
                 "pattern": "ACTION_LOCK" if locked else ROLE_TO_PATTERN[str(intent["phrase_role"])],
                 "source_window_index": window_index,
+                "source_phase_index": phase_index,
+                "source_phase_count": phase_count,
                 "source_time": {
                     "start": _round(left / run_speed),
                     "end": _round(right / run_speed),
@@ -233,6 +269,8 @@ def build_spatial_score(
             "max_adjacent_passive_step": _round(MAX_PASSIVE_DELTA_Y * 2.0),
             "controller_max_traversable_step_height": max_step_height,
             "reaction_lead_seconds": float(gate["design_limits"]["reaction_lead_seconds"]),
+            "geometry_lock_actions": sorted(GEOMETRY_LOCK_ACTIONS),
+            "beat_subdivision": True,
         },
         "action_locks": locks,
         "segments": segments,
