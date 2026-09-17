@@ -13,11 +13,11 @@ PARALLAX = ROOT / "scenes/gameplay/parallax_presentation.gd"
 RUNTIME = ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn"
 PARALLAX_ASSETS = {
     ROOT / "assets/visuals/parallax/graceful_opening_far_city_v0_1.png":
-        "7c298cff10d00f1ef18ddf41959fd4589618fc7e52b4ba7214eea29ef20322f5",
+        "ed7999d22c96a357558c17b2f7865e684512ba990a999a364a470f9483ca4dbf",
     ROOT / "assets/visuals/parallax/graceful_opening_mid_palace_frame_v0_1.png":
-        "0b3db9717e79ff2c00573e15ba23385d414bcab24d324ad30e457e3015fa759d",
+        "c7cfec333e0fac261c94ea50f97a4f064fe237e733180481a123fb7e069eaed9",
     ROOT / "assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png":
-        "91a02340f465bb537c71ac980b7d5f6a056103fca62383db064037eafc99feb8",
+        "f2ae222bff0cdba8acc027e6a64017562c4dd41d1c49a61ebe083a2f85023561",
 }
 START_GATE = ROOT / "scenes/gameplay/runtime_start_gate.gd"
 FRAMING = ROOT / "scenes/gameplay/generated/fork_camera_framing.gd"
@@ -172,8 +172,9 @@ class SpatialStallProbeTests(unittest.TestCase):
         for asset, expected_hash in PARALLAX_ASSETS.items():
             data = asset.read_bytes()
             self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
-            self.assertEqual(struct.unpack(">II", data[16:24]), (1672, 941))
-            self.assertEqual(data[25], 6, f"RGBA required: {asset}")
+            self.assertEqual(struct.unpack(">II", data[16:24]), (3840, 1280))
+            expected_color_type = 2 if "far_city" in asset.name else 6
+            self.assertEqual(data[25], expected_color_type, asset)
             self.assertEqual(digest(asset), expected_hash, asset)
 
     def test_runtime_has_three_collision_free_parallax_quads(self) -> None:
@@ -200,7 +201,7 @@ class SpatialStallProbeTests(unittest.TestCase):
             self.assertIn(f"0, 0, {z_value}", node)
             self.assertNotIn("Collision", node)
             self.assertNotIn("script =", node)
-        self.assertEqual(self.runtime.count("size = Vector2(17.5, 9.85)"), 3)
+        self.assertEqual(self.runtime.count("size = Vector2(38, 12.6667)"), 3)
         self.assertEqual(self.runtime.count("transparency = 1"), 2)
 
     def test_parallax_uses_horizontal_gameplay_progress_only(self) -> None:

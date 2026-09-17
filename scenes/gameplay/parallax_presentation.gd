@@ -7,7 +7,7 @@ extends Node3D
 @export var far_factor: float = 0.005
 @export var mid_factor: float = 0.010
 @export var foreground_factor: float = 0.018
-@export var pace_multiplier: float = 1.15
+@export var pace_multiplier: float = 1.20
 
 var _initial_world_x: float
 var _far_initial_x: float
