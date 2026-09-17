@@ -15,6 +15,10 @@ run/main_scene="uid://wrse8kqkd211"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+DancerVisualBootstrap="*res://scenes/gameplay/dancer_visual_bootstrap.gd"
+
 [display]
 
 window/stretch/mode="canvas_items"
