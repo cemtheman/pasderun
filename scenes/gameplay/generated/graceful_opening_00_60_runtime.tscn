@@ -6,7 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://cw8xnn6efuv64" path="res://assets/audio/graceful_opening.mp3" id="4_music"]
 [ext_resource type="Script" uid="uid://dvruxwtwohbex" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
 [ext_resource type="Script" uid="uid://lqlq71arr06n" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
-[ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_60.tscn" id="7_generated"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_60_spatial.tscn" id="7_generated"]
 [ext_resource type="Script" uid="uid://hphxx5asu33q" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
 [ext_resource type="Script" uid="uid://d31d3vxeg31l7" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
 [ext_resource type="Script" uid="uid://bagrec1bocuaq" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]

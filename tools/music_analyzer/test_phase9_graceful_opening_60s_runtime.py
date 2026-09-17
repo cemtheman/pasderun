@@ -24,11 +24,19 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
 
     def test_60s_runtime_is_isolated_from_full_course_extension(self) -> None:
         self.assertIn(
-            'path="res://scenes/gameplay/generated/graceful_opening_00_60.tscn"',
+            'path="res://scenes/gameplay/generated/graceful_opening_00_60_spatial.tscn"',
             self.runtime,
         )
         self.assertIn(
             'geometry_plan_path = "res://data/geometry/graceful_opening_00_60.geometry_plan_v0_1.json"',
+            self.runtime,
+        )
+        self.assertIn(
+            'path="res://scenes/gameplay/generated/graceful_opening_00_60_spatial.tscn"',
+            self.runtime,
+        )
+        self.assertNotIn(
+            'path="res://scenes/gameplay/generated/graceful_opening_00_60.tscn"',
             self.runtime,
         )
         self.assertNotIn("continuous_technical_course.tscn", self.runtime)
