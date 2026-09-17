@@ -1,5 +1,8 @@
 extends Node3D
 
+# Keep Tap feedback deliberately cheap: on Web, per-frame instance transparency
+# plus an emissive material caused a visible render stall when a Tap fired.
+# The response is now a scale-only pulse on an already-created opaque ring.
 const PULSE_DURATION := 0.18
 const PULSE_START_SCALE := 0.72
 const PULSE_END_SCALE := 1.42
@@ -26,7 +29,6 @@ func _process(delta: float) -> void:
 	var progress := 1.0 - (_remaining / PULSE_DURATION)
 	var scale_value := lerpf(PULSE_START_SCALE, PULSE_END_SCALE, progress)
 	_ring.scale = Vector3.ONE * scale_value
-	_ring.transparency = lerpf(0.08, 1.0, progress)
 	if _remaining <= 0.0:
 		_ring.visible = false
 		set_process(false)
@@ -36,17 +38,13 @@ func _on_tap_detected() -> void:
 	_remaining = PULSE_DURATION
 	_ring.visible = true
 	_ring.scale = Vector3.ONE * PULSE_START_SCALE
-	_ring.transparency = 0.08
 	set_process(true)
 
 
 func _build_ring() -> void:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = Color(0.94, 0.80, 0.48, 1.0)
-	material.emission_enabled = true
-	material.emission = Color(0.94, 0.72, 0.34, 1.0)
-	material.emission_energy_multiplier = 1.35
-	material.roughness = 0.45
+	material.roughness = 0.55
 
 	var mesh := TorusMesh.new()
 	mesh.inner_radius = 0.31
