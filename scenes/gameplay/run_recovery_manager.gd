@@ -5,6 +5,12 @@ const RUN_SPEED := 4.0
 const CHECKPOINT_SURFACE_Y := -2.8
 const DANCER_STANDING_OFFSET := 1.5
 
+enum RunState {
+	PLAYING,
+	DEAD,
+	LEVEL_COMPLETE,
+}
+
 const CHECKPOINTS := [
 	{"id": "START", "x": 0.0},
 	{"id": "POST_FORK_01", "x": 201.0},
@@ -27,8 +33,15 @@ const CHECKPOINTS := [
 @export var continue_button: Button
 @export var restart_button: Button
 @export var exit_button: Button
+@export var completion_trigger: Marker3D
+@export var level_complete_overlay: CanvasLayer
+@export var next_level_button: Button
+@export var main_menu_button: Button
+@export var next_level_status: Label
+@export var next_level_scene: PackedScene
 
-var _dead := false
+var _state := RunState.PLAYING
+var _run_started := false
 var _checkpoint_index := 0
 var _checkpoint_position := Vector3.ZERO
 var _checkpoint_music_time := 0.0
@@ -41,13 +54,22 @@ func _ready() -> void:
 		return
 	_checkpoint_position = dancer.global_position
 	game_over_overlay.visible = false
+	level_complete_overlay.visible = false
 	continue_button.pressed.connect(_continue_from_checkpoint)
 	restart_button.pressed.connect(_restart_run)
 	exit_button.pressed.connect(_exit_run)
+	next_level_button.pressed.connect(_load_next_level)
+	main_menu_button.pressed.connect(_return_to_main_menu)
+	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
+	next_level_button.disabled = next_level_scene == null
+	next_level_status.visible = next_level_scene == null
 
 
 func _physics_process(_delta: float) -> void:
-	if _dead or not audio_player.playing:
+	if not _run_started or _state != RunState.PLAYING:
+		return
+	if dancer.global_position.x >= completion_trigger.global_position.x:
+		_enter_level_complete_state()
 		return
 	if dancer.global_position.y < DEATH_Y:
 		_enter_dead_state()
@@ -69,6 +91,14 @@ func consume_continue_cost() -> void:
 
 func get_checkpoint_id() -> String:
 	return String(CHECKPOINTS[_checkpoint_index]["id"])
+
+
+func get_run_state() -> String:
+	return RunState.keys()[_state]
+
+
+func _on_runtime_started() -> void:
+	_run_started = true
 
 
 func _update_checkpoint() -> void:
@@ -93,7 +123,7 @@ func _update_checkpoint() -> void:
 
 
 func _enter_dead_state() -> void:
-	_dead = true
+	_state = RunState.DEAD
 	fork_camera_controller.call("set_frozen", true)
 	camera_rig.process_mode = Node.PROCESS_MODE_DISABLED
 	dancer.process_mode = Node.PROCESS_MODE_DISABLED
@@ -107,7 +137,7 @@ func _enter_dead_state() -> void:
 
 
 func _continue_from_checkpoint() -> void:
-	if not _dead or not continue_is_allowed():
+	if _state != RunState.DEAD or not continue_is_allowed():
 		return
 	consume_continue_cost()
 	game_over_overlay.visible = false
@@ -123,7 +153,36 @@ func _continue_from_checkpoint() -> void:
 	audio_player.stop()
 	audio_player.play(_checkpoint_music_time)
 	dancer.process_mode = Node.PROCESS_MODE_INHERIT
-	_dead = false
+	_state = RunState.PLAYING
+
+
+func _enter_level_complete_state() -> void:
+	_state = RunState.LEVEL_COMPLETE
+	fork_camera_controller.call("restore_normal_state")
+	fork_camera_controller.call("set_frozen", true)
+	camera_rig.process_mode = Node.PROCESS_MODE_DISABLED
+	dancer.process_mode = Node.PROCESS_MODE_DISABLED
+	audio_player.stop()
+	music_root.process_mode = Node.PROCESS_MODE_DISABLED
+	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
+	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
+	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
+	game_over_overlay.visible = false
+	level_complete_overlay.visible = true
+	if next_level_button.disabled:
+		main_menu_button.grab_focus()
+	else:
+		next_level_button.grab_focus()
+
+
+func _load_next_level() -> void:
+	if _state != RunState.LEVEL_COMPLETE or next_level_scene == null:
+		return
+	get_tree().change_scene_to_packed(next_level_scene)
+
+
+func _return_to_main_menu() -> void:
+	get_tree().reload_current_scene()
 
 
 func _restart_run() -> void:
@@ -174,4 +233,9 @@ func _references_valid() -> bool:
 		and continue_button != null
 		and restart_button != null
 		and exit_button != null
+		and completion_trigger != null
+		and level_complete_overlay != null
+		and next_level_button != null
+		and main_menu_button != null
+		and next_level_status != null
 	)

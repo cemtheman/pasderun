@@ -377,7 +377,56 @@ text = "RESTART"
 layout_mode = 2
 text = "EXIT"
 
-[node name="RunRecoveryManager" type="Node" parent="." node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button")]
+[node name="LevelCompleteOverlay" type="CanvasLayer" parent="."]
+layer = 110
+visible = false
+
+[node name="InputBlocker" type="ColorRect" parent="LevelCompleteOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="LevelCompleteOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="LevelCompleteOverlay/Center"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_game_over")
+
+[node name="Actions" type="VBoxContainer" parent="LevelCompleteOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "LEVEL COMPLETE"
+horizontal_alignment = 1
+
+[node name="NextLevel" type="Button" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "NEXT LEVEL"
+
+[node name="NextLevelStatus" type="Label" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "NEXT LEVEL: COMING SOON"
+horizontal_alignment = 1
+
+[node name="MainMenu" type="Button" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "MAIN MENU"
+
+[node name="RunRecoveryManager" type="Node" parent="." node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button", "completion_trigger", "level_complete_overlay", "next_level_button", "main_menu_button", "next_level_status")]
 script = ExtResource("21_recovery")
 dancer = NodePath("../Dancer")
 camera_rig = NodePath("../CameraRig")
@@ -392,3 +441,8 @@ game_over_overlay = NodePath("../GameOverOverlay")
 continue_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Continue")
 restart_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Restart")
 exit_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Exit")
+completion_trigger = NodePath("../ExtendedCourse/Level/LevelCompleteTrigger")
+level_complete_overlay = NodePath("../LevelCompleteOverlay")
+next_level_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevel")
+main_menu_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/MainMenu")
+next_level_status = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevelStatus")
