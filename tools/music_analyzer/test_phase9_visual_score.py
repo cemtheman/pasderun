@@ -48,7 +48,7 @@ class Phase9VisualScoreTests(unittest.TestCase):
     def test_visual_score_separates_passive_expression_from_required_input(self) -> None:
         for window in self.score["windows"]:
             self.assertTrue(window["interaction_budget"]["passive_spatial_change"])
-            self.assertEqual(window["interaction_budget"]["max_required_actions"], 1)
+            self.assertEqual(window["interaction_budget"]["max_required_actions"], 2)
 
         anchors = [
             anchor for anchor in self.score["event_anchors"]
@@ -101,6 +101,15 @@ class Phase9VisualScoreTests(unittest.TestCase):
             )
             self.assertGreaterEqual(later["time"] + 1e-6, occupied_until)
 
+    def test_required_actions_respect_four_beat_window_budget(self) -> None:
+        counts: dict[int, int] = {}
+        for anchor in self.score["event_anchors"]:
+            if not anchor["interaction"]["required"]:
+                continue
+            window_index = int(anchor["window_index"])
+            counts[window_index] = counts.get(window_index, 0) + 1
+        self.assertTrue(all(count <= 2 for count in counts.values()))
+
     def test_score_preserves_all_movement_events_even_when_interaction_is_suppressed(self) -> None:
         self.assertEqual(
             [anchor["time"] for anchor in self.score["event_anchors"]],
@@ -110,7 +119,10 @@ class Phase9VisualScoreTests(unittest.TestCase):
             if not anchor["interaction"]["required"]:
                 action = anchor["interaction"]["candidate_action"]
                 reason = anchor["interaction"]["suppression_reason"]
-                self.assertTrue(action is None or reason in {"required_action_spacing", "required_action_overlap"})
+                self.assertTrue(
+                    action is None
+                    or reason in {"required_action_spacing", "required_action_overlap", "window_action_budget"}
+                )
 
     def test_visual_score_contains_no_geometry_coordinates(self) -> None:
         forbidden = {"x", "world_x", "position", "geometry", "obstacle"}

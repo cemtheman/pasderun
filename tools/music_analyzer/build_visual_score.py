@@ -22,7 +22,7 @@ MAX_CALIBRATED_GAP = 2.2
 
 REACTION_LEAD_SECONDS = 0.75
 MIN_REQUIRED_ACTION_SPACING_SECONDS = 0.90
-MAX_REQUIRED_ACTIONS_PER_WINDOW = 1
+MAX_REQUIRED_ACTIONS_PER_WINDOW = 2
 MAX_PASSIVE_STEP_HEIGHT = 0.30
 LOW_PASSAGE_MAX_LENGTH = 1.80
 
@@ -137,16 +137,28 @@ def _contour(energy_delta: float) -> str:
     return "LEVEL"
 
 
-def _event_anchors(movement_demands: dict[str, Any]) -> list[dict[str, Any]]:
+def _window_index(time: float, bounds: list[tuple[float, float, int, int]]) -> int:
+    for index, (start, end, _beat_start, _beat_end) in enumerate(bounds):
+        if start <= time < end or (index == len(bounds) - 1 and math.isclose(time, end)):
+            return index
+    return -1
+
+
+def _event_anchors(
+    movement_demands: dict[str, Any],
+    bounds: list[tuple[float, float, int, int]],
+) -> list[dict[str, Any]]:
     anchors: list[dict[str, Any]] = []
     last_required_time = -math.inf
     last_required_end = -math.inf
+    required_per_window: dict[int, int] = {}
 
     for event in movement_demands["events"]:
         candidates = event["candidate_classes"]
-        primary_class = String = str(candidates[0]["class"])
+        primary_class = str(candidates[0]["class"])
         action = CLASS_TO_ACTION.get(primary_class)
         time = float(event["time"])
+        window_index = _window_index(time, bounds)
 
         required = action is not None
         suppression_reason: str | None = None
@@ -159,13 +171,18 @@ def _event_anchors(movement_demands: dict[str, Any]) -> list[dict[str, Any]]:
             elif time < last_required_end:
                 required = False
                 suppression_reason = "required_action_overlap"
+            elif required_per_window.get(window_index, 0) >= MAX_REQUIRED_ACTIONS_PER_WINDOW:
+                required = False
+                suppression_reason = "window_action_budget"
 
         if required:
             last_required_time = time
             last_required_end = time + occupancy
+            required_per_window[window_index] = required_per_window.get(window_index, 0) + 1
 
         anchors.append({
             "time": round(time, 3),
+            "window_index": window_index,
             "primary_class": primary_class,
             "confidence": float(candidates[0]["confidence"]),
             "interaction": {
@@ -185,8 +202,9 @@ def build_visual_score(analysis: dict[str, Any], movement_demands: dict[str, Any
     beats = [float(value) for value in analysis["tempo"]["beats"]]
     sustain_points = analysis["sustain"]["points"]
 
+    bounds = _window_bounds(beats, duration)
     windows: list[dict[str, Any]] = []
-    for start, end, beat_start, beat_end in _window_bounds(beats, duration):
+    for start, end, beat_start, beat_end in bounds:
         energy = _mean(analysis["energy"], start, end)
         energy_delta = _mean(analysis["energy"], start, end, "delta")
         density = _mean(analysis["rhythmic_density"], start, end)
@@ -251,7 +269,7 @@ def build_visual_score(analysis: dict[str, Any], movement_demands: dict[str, Any
     return {
         "schema_version": SCHEMA_VERSION,
         "source_analysis": analysis["source"]["file"],
-        "source_movement_demands": movement_demands["source_analysis"],
+        "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
         "duration_seconds": duration,
         "method": {
             "type": "continuous_visual_score_with_playability_gate",
@@ -283,7 +301,7 @@ def build_visual_score(analysis: dict[str, Any], movement_demands: dict[str, Any
             },
         },
         "windows": windows,
-        "event_anchors": _event_anchors(movement_demands),
+        "event_anchors": _event_anchors(movement_demands, bounds),
     }
 
 
