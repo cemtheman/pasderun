@@ -49,6 +49,12 @@ size = Vector2(17.5, 9.85)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_runtime"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_full_audio_continuation"]
+size = Vector3(452.064, 0.5, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_full_audio_continuation"]
+size = Vector3(452.064, 0.5, 4)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_panel"]
 content_margin_left = 8.0
 content_margin_top = 6.0
@@ -67,6 +73,15 @@ corner_radius_bottom_left = 5
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1777819294]
 
 [node name="GeneratedLevel" parent="." unique_id=771723095 instance=ExtResource("7_generated")]
+
+[node name="FullAudioContinuation" type="StaticBody3D" parent="."]
+position = Vector3(354.032, -3.05, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="FullAudioContinuation"]
+mesh = SubResource("BoxMesh_full_audio_continuation")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FullAudioContinuation"]
+shape = SubResource("BoxShape_full_audio_continuation")
 
 [node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]
 script = ExtResource("8_debug")
