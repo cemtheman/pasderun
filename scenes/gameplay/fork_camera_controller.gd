@@ -2,7 +2,15 @@ extends Node
 
 const NORMAL_CAMERA_SIZE := 7.5
 const NORMAL_LOOK_AHEAD := 1.75
-const TRANSITION_SPEED := 4.5
+const ENTRY_DURATION := 1.05
+const EXIT_DURATION := 1.15
+
+enum CameraState {
+	NORMAL,
+	APPROACHING_FORK,
+	FORK_ACTIVE,
+	LEAVING_FORK,
+}
 
 @export var camera_rig: Node3D
 @export var camera: Camera3D
@@ -10,13 +18,25 @@ const TRANSITION_SPEED := 4.5
 @export var course_root: Node3D
 
 var _forks: Array[Dictionary] = []
+var _next_fork_index := 0
 var _active_index := -1
-var _state := "OUTSIDE"
+var _state := CameraState.NORMAL
 var _frozen := false
+var _transition_elapsed := 0.0
+var _transition_duration := 0.0
+var _start_size := NORMAL_CAMERA_SIZE
+var _target_size := NORMAL_CAMERA_SIZE
+var _start_look_ahead := NORMAL_LOOK_AHEAD
+var _target_look_ahead := NORMAL_LOOK_AHEAD
+var _start_rig_y := 0.0
+var _target_rig_y := 0.0
+var _normal_vertical_offset := 0.0
 
 
 func _ready() -> void:
 	process_priority = 20
+	if camera_rig != null and target != null:
+		_normal_vertical_offset = camera_rig.global_position.y - target.global_position.y
 	_collect_fork_metadata()
 
 
@@ -25,41 +45,24 @@ func _process(delta: float) -> void:
 		return
 
 	var world_x := target.global_position.x
-	if _active_index < 0:
-		_active_index = _fork_index_containing(world_x)
-
-	var target_size := NORMAL_CAMERA_SIZE
-	var target_look_ahead := NORMAL_LOOK_AHEAD
-	var fork_rig_y := camera_rig.global_position.y
-	var frame_fork_vertically := false
-	if _active_index >= 0:
-		var fork := _forks[_active_index]
-		if world_x >= float(fork["end_x"]):
-			_active_index = -1
-			_state = "OUTSIDE"
-		else:
-			var route_height := (
-				float(fork["upper_max_y"])
-				+ 2.0
-				- float(fork["lower_min_y"])
-			)
-			var required_vertical_size := route_height + float(fork["camera_margin"]) * 2.0
-			target_size = maxf(float(fork["target_camera_size"]), required_vertical_size)
-			target_look_ahead = float(fork["target_look_ahead"])
-			var route_center_y := (
-				float(fork["lower_min_y"])
-				+ float(fork["upper_max_y"])
-				+ 2.0
-			) * 0.5
-			fork_rig_y = route_center_y - camera.position.y
-			frame_fork_vertically = true
-			_state = _state_for_position(fork, world_x)
-
-	var blend := 1.0 - exp(-TRANSITION_SPEED * delta)
-	camera.size = lerpf(camera.size, target_size, blend)
-	camera_rig.set("look_ahead", lerpf(float(camera_rig.get("look_ahead")), target_look_ahead, blend))
-	if frame_fork_vertically:
-		camera_rig.global_position.y = lerpf(camera_rig.global_position.y, fork_rig_y, blend)
+	match _state:
+		CameraState.NORMAL:
+			if _next_fork_index < _forks.size() \
+			and world_x >= float(_forks[_next_fork_index]["start_x"]):
+				_begin_fork_entry(_next_fork_index)
+		CameraState.APPROACHING_FORK:
+			_apply_transition(delta)
+			if _transition_elapsed >= _transition_duration:
+				_state = CameraState.FORK_ACTIVE
+				_apply_exact_targets()
+		CameraState.FORK_ACTIVE:
+			_apply_exact_targets()
+			if world_x >= float(_forks[_active_index]["end_x"]):
+				_begin_fork_exit()
+		CameraState.LEAVING_FORK:
+			_apply_transition(delta)
+			if _transition_elapsed >= _transition_duration:
+				_finish_fork_exit()
 
 
 func set_frozen(value: bool) -> void:
@@ -68,8 +71,10 @@ func set_frozen(value: bool) -> void:
 
 func restore_normal_state() -> void:
 	_active_index = -1
-	_state = "OUTSIDE"
+	_state = CameraState.NORMAL
+	_transition_elapsed = 0.0
 	_frozen = false
+	_next_fork_index = _first_future_fork_index()
 	if camera != null:
 		camera.size = NORMAL_CAMERA_SIZE
 	if camera_rig != null:
@@ -77,7 +82,14 @@ func restore_normal_state() -> void:
 
 
 func get_fork_state() -> String:
-	return _state
+	match _state:
+		CameraState.APPROACHING_FORK:
+			return "APPROACH"
+		CameraState.FORK_ACTIVE:
+			return "ACTIVE"
+		CameraState.LEAVING_FORK:
+			return "EXIT"
+	return "OUTSIDE"
 
 
 func get_active_fork_id() -> int:
@@ -87,7 +99,97 @@ func get_active_fork_id() -> int:
 
 
 func is_outside_fork() -> bool:
-	return _active_index < 0
+	return _state == CameraState.NORMAL
+
+
+func _begin_fork_entry(index: int) -> void:
+	_active_index = index
+	_state = CameraState.APPROACHING_FORK
+	var fork := _forks[index]
+	var route_height := (
+		float(fork["upper_max_y"])
+		+ 2.0
+		- float(fork["lower_min_y"])
+	)
+	var required_vertical_size := route_height + float(fork["camera_margin"]) * 2.0
+	var route_center_y := (
+		float(fork["lower_min_y"])
+		+ float(fork["upper_max_y"])
+		+ 2.0
+	) * 0.5
+	_capture_transition(
+		maxf(float(fork["target_camera_size"]), required_vertical_size),
+		float(fork["target_look_ahead"]),
+		route_center_y - camera.position.y,
+		ENTRY_DURATION
+	)
+
+
+func _begin_fork_exit() -> void:
+	_state = CameraState.LEAVING_FORK
+	_capture_transition(
+		NORMAL_CAMERA_SIZE,
+		NORMAL_LOOK_AHEAD,
+		target.global_position.y + _normal_vertical_offset,
+		EXIT_DURATION
+	)
+
+
+func _capture_transition(
+	new_size: float,
+	new_look_ahead: float,
+	new_rig_y: float,
+	duration: float
+) -> void:
+	_transition_elapsed = 0.0
+	_transition_duration = duration
+	_start_size = camera.size
+	_target_size = new_size
+	_start_look_ahead = float(camera_rig.get("look_ahead"))
+	_target_look_ahead = new_look_ahead
+	_start_rig_y = camera_rig.global_position.y
+	_target_rig_y = new_rig_y
+
+
+func _apply_transition(delta: float) -> void:
+	_transition_elapsed = minf(_transition_elapsed + delta, _transition_duration)
+	var linear_progress := _transition_elapsed / _transition_duration
+	var eased_progress := _smoothstep(linear_progress)
+	camera.size = lerpf(_start_size, _target_size, eased_progress)
+	camera_rig.set(
+		"look_ahead",
+		lerpf(_start_look_ahead, _target_look_ahead, eased_progress)
+	)
+	camera_rig.global_position.y = lerpf(_start_rig_y, _target_rig_y, eased_progress)
+
+
+func _apply_exact_targets() -> void:
+	camera.size = _target_size
+	camera_rig.set("look_ahead", _target_look_ahead)
+	camera_rig.global_position.y = _target_rig_y
+
+
+func _finish_fork_exit() -> void:
+	camera.size = NORMAL_CAMERA_SIZE
+	camera_rig.set("look_ahead", NORMAL_LOOK_AHEAD)
+	_active_index = -1
+	_next_fork_index += 1
+	_state = CameraState.NORMAL
+	_transition_elapsed = 0.0
+
+
+func _smoothstep(value: float) -> float:
+	var clamped := clampf(value, 0.0, 1.0)
+	return clamped * clamped * (3.0 - 2.0 * clamped)
+
+
+func _first_future_fork_index() -> int:
+	if target == null:
+		return 0
+	for index in range(_forks.size()):
+		if target.global_position.x < float(_forks[index]["start_x"]):
+			return index
+	return _forks.size()
 
 
 func _collect_fork_metadata() -> void:
@@ -104,8 +206,6 @@ func _collect_fork_metadata() -> void:
 		_forks.append({
 			"fork_id": int(child.get_meta("fork_id")),
 			"start_x": float(child.get_meta("start_x")),
-			"split_x": float(child.get_meta("split_x")),
-			"merge_x": float(child.get_meta("merge_x")),
 			"end_x": float(child.get_meta("end_x")),
 			"upper_max_y": float(child.get_meta("upper_max_y")),
 			"lower_min_y": float(child.get_meta("lower_min_y")),
@@ -114,19 +214,3 @@ func _collect_fork_metadata() -> void:
 			"target_look_ahead": float(child.get_meta("target_look_ahead")),
 		})
 	_forks.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["start_x"] < b["start_x"])
-
-
-func _fork_index_containing(world_x: float) -> int:
-	for index in range(_forks.size()):
-		var fork := _forks[index]
-		if world_x >= float(fork["start_x"]) and world_x < float(fork["end_x"]):
-			return index
-	return -1
-
-
-func _state_for_position(fork: Dictionary, world_x: float) -> String:
-	if world_x < float(fork["split_x"]):
-		return "APPROACH"
-	if world_x < float(fork["merge_x"]):
-		return "ACTIVE"
-	return "EXIT"
