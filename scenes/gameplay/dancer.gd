@@ -518,10 +518,31 @@ func _handle_motion_outcome(
 			hit_forward_edge = true
 			break
 
-	if hit_forward_edge:
-		if was_on_floor and _attempt_small_step(delta):
+	# Capsule/box contacts at a platform lip can report a diagonal normal rather
+	# than a clean horizontal wall normal.  Runtime acceptance therefore cannot
+	# rely on collision-normal classification alone: if a grounded auto-run frame
+	# makes materially less forward progress than requested, treat that as a
+	# candidate traversable step and let the clearance probe decide.
+	var intended_forward := (
+		run_speed
+		* _locomotion_speed_multiplier()
+		* delta
+	)
+	var actual_forward := maxf(
+		global_position.x - position_before_move.x,
+		0.0
+	)
+	var stalled_forward := (
+		was_on_floor
+		and intended_forward > 0.001
+		and actual_forward < intended_forward * 0.35
+	)
+
+	if was_on_floor and (hit_forward_edge or stalled_forward):
+		if _attempt_small_step(delta):
 			_trigger_stumble(&"SMALL_STEP")
-		elif not was_on_floor or _jump_in_progress:
+	elif hit_forward_edge:
+		if not was_on_floor or _jump_in_progress:
 			_trigger_stumble(&"PLATFORM_EDGE")
 
 	if not was_on_floor and is_on_floor():
@@ -537,17 +558,31 @@ func _attempt_small_step(delta: float) -> bool:
 	var upward_motion := Vector3.UP * MAX_TRAVERSABLE_STEP_HEIGHT
 	if test_move(probe_transform, upward_motion):
 		return false
-	var raised_transform := global_transform
+
+	# Perform the forward clearance test from the backed-off transform as well.
+	# Starting the raised probe from the exact wall-contact transform can keep the
+	# capsule inside the contact margin and make a valid 0.25 m step look blocked.
+	var raised_transform := probe_transform
 	raised_transform.origin.y += MAX_TRAVERSABLE_STEP_HEIGHT
-	var forward_motion := Vector3(
+	var desired_forward := maxf(
 		maxf(run_speed * delta, STEP_FORWARD_CLEARANCE),
+		STEP_FORWARD_CLEARANCE
+	)
+	var forward_motion := Vector3(
+		STEP_PROBE_BACKOFF + desired_forward,
 		0.0,
 		0.0
 	)
 	if test_move(raised_transform, forward_motion):
 		return false
+
 	global_transform = raised_transform
 	move_and_collide(forward_motion)
+
+	# Settle immediately onto the first playable surface below the raised probe.
+	# This avoids a one-frame hover and makes the step read as a stumble-through
+	# rather than a miniature jump.
+	move_and_collide(Vector3.DOWN * MAX_TRAVERSABLE_STEP_HEIGHT)
 	velocity.x = run_speed * STUMBLE_SPEED_MULTIPLIER
 	return true
 

@@ -65,12 +65,18 @@ class Phase6RecoveryFlowTests(unittest.TestCase):
 
     def test_small_step_uses_wall_safe_clearance_probe_and_forward_traversal(self) -> None:
         step = function(self.dancer, "_attempt_small_step")
+        outcome = function(self.dancer, "_handle_motion_outcome")
         self.assertIn("MAX_TRAVERSABLE_STEP_HEIGHT", step)
         self.assertIn("STEP_PROBE_BACKOFF", step)
         self.assertIn("probe_transform.origin.x -= STEP_PROBE_BACKOFF", step)
+        self.assertIn("raised_transform := probe_transform", step)
         self.assertGreaterEqual(step.count("test_move("), 2)
         self.assertIn("move_and_collide(forward_motion)", step)
+        self.assertIn("move_and_collide(Vector3.DOWN * MAX_TRAVERSABLE_STEP_HEIGHT)", step)
         self.assertIn("STEP_FORWARD_CLEARANCE", step)
+        self.assertIn("actual_forward", outcome)
+        self.assertIn("stalled_forward", outcome)
+        self.assertIn("hit_forward_edge or stalled_forward", outcome)
 
     def test_recovery_is_observable_and_catches_up_without_course_music_drift(self) -> None:
         stumble_duration = float(re.search(r"const STUMBLE_DURATION := ([0-9.]+)", self.dancer).group(1))
