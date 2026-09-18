@@ -213,7 +213,7 @@ func _add_shallow_ramp(
 	if dx <= 0.0:
 		return
 	var dy := end_surface_y - start_surface_y
-	var length := hypot(dx, dy)
+	var length: float = sqrt(dx * dx + dy * dy)
 	var angle := atan2(dy, dx)
 	var normal_x := -sin(angle)
 	var normal_y := cos(angle)

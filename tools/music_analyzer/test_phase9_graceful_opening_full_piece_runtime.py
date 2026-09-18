@@ -32,7 +32,7 @@ class Phase9GracefulOpeningFullPieceRuntimeTests(unittest.TestCase):
             self.runtime.count(
                 'geometry_plan_path = "res://data/geometry/graceful_opening_00_140_bridge.geometry_plan_v0_1.json"'
             ),
-            2,
+            3,
         )
 
     def test_completion_matches_exact_music_end_not_recovery_extent(self) -> None:
