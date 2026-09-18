@@ -297,11 +297,13 @@ func _apply_state_baseline(state: StringName) -> void:
 	# fourth wall. Retargeting only pelvis/limb bones left the imported
 	# ballerina in profile, so otherwise-correct arm motion disappeared behind
 	# the torso from the gameplay camera. Carry the source Rig yaw onto the
-	# imported model root before applying the limb pose.
+	# imported model root before applying the limb pose. The imported GLB's
+	# forward axis is opposite the mannequin rig's yaw convention, so invert
+	# the source yaw when applying it to the model root.
 	if state == &"STAGE_BOW" and _source_rig != null:
 		var source_yaw := _source_rig.rotation.y
 		_model_root.transform = Transform3D(
-			_model_base_transform.basis * Basis(Vector3.UP, source_yaw),
+			_model_base_transform.basis * Basis(Vector3.UP, -source_yaw),
 			_model_base_transform.origin
 		)
 	else:
