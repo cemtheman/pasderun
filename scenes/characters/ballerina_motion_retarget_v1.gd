@@ -24,6 +24,8 @@ var _retarget_active := false
 var _bindings: Array[Dictionary] = []
 var _target_idle_poses: Dictionary = {}
 var _target_idle_globals: Dictionary = {}
+var _target_bow_arm_poses: Dictionary = {}
+var _target_bow_arm_globals: Dictionary = {}
 
 
 func _ready() -> void:
@@ -49,8 +51,8 @@ func _process(_delta: float) -> void:
 		if not _retarget_active:
 			_animation_player.stop()
 			_retarget_active = true
-		_apply_idle_baseline()
-		_apply_motion_retarget()
+		_apply_state_baseline(state)
+		_apply_motion_retarget(state)
 	elif _retarget_active:
 		_retarget_active = false
 
@@ -73,6 +75,7 @@ func _try_bind() -> void:
 		return
 
 	_capture_idle_baseline()
+	_capture_bow_arm_baseline()
 	_bound = true
 	print(
 		"Ballerina retarget v1 ready: %d mannequin joints mapped to humanoid bones."
@@ -169,6 +172,7 @@ func _resolve_bindings() -> Array[Dictionary]:
 			]
 		)
 		resolved.append({
+			"label": String(spec["label"]),
 			"source_node": source_node,
 			"bone_idx": bone_idx,
 		})
@@ -237,6 +241,56 @@ func _capture_idle_baseline() -> void:
 		_animation_player.stop()
 
 
+func _capture_bow_arm_baseline() -> void:
+	# The imported idle pose keeps this low-poly character's arms very close to
+	# the torso. The mannequin's front-facing bow also relied on mannequin-only
+	# shoulder spacing, which a skinned humanoid cannot inherit as joint
+	# positions. Use the model's own T-Pose arm orientation as the morphological
+	# reference for STAGE_BOW, while the mannequin still supplies the motion.
+	if not _animation_player.has_animation("T-Pose"):
+		return
+
+	var previous_animation := _animation_player.current_animation
+	var previous_position := _animation_player.current_animation_position
+	var was_playing := _animation_player.is_playing()
+
+	_animation_player.play("T-Pose")
+	_animation_player.seek(0.0, true)
+	_animation_player.advance(0.0)
+
+	for binding in _bindings:
+		if not _is_arm_binding(binding):
+			continue
+		var bone_idx: int = binding["bone_idx"]
+		_target_bow_arm_poses[bone_idx] = _skeleton.get_bone_pose(bone_idx)
+		_target_bow_arm_globals[bone_idx] = _skeleton.get_bone_global_pose(bone_idx)
+
+	if previous_animation != &"" and _animation_player.has_animation(previous_animation):
+		_animation_player.play(previous_animation)
+		_animation_player.seek(previous_position, true)
+		if not was_playing:
+			_animation_player.pause()
+	else:
+		_animation_player.stop()
+
+
+func _is_arm_binding(binding: Dictionary) -> bool:
+	return String(binding.get("label", "")).begins_with("Arm")
+
+
+func _apply_state_baseline(state: StringName) -> void:
+	_apply_idle_baseline()
+	if state != &"STAGE_BOW":
+		return
+
+	for binding in _bindings:
+		if not _is_arm_binding(binding):
+			continue
+		var bone_idx: int = binding["bone_idx"]
+		if _target_bow_arm_poses.has(bone_idx):
+			_skeleton.set_bone_pose(bone_idx, _target_bow_arm_poses[bone_idx])
+
+
 func _apply_idle_baseline() -> void:
 	for binding in _bindings:
 		var bone_idx: int = binding["bone_idx"]
@@ -244,7 +298,7 @@ func _apply_idle_baseline() -> void:
 			_skeleton.set_bone_pose(bone_idx, _target_idle_poses[bone_idx])
 
 
-func _apply_motion_retarget() -> void:
+func _apply_motion_retarget(state: StringName) -> void:
 	var source_base_basis := _source_visual.global_transform.basis
 	var skeleton_basis := _skeleton.global_transform.basis
 	var skeleton_basis_inverse := skeleton_basis.inverse()
@@ -266,6 +320,12 @@ func _apply_motion_retarget() -> void:
 		)
 
 		var baseline_global: Transform3D = _target_idle_globals[bone_idx]
+		if (
+			state == &"STAGE_BOW"
+			and _is_arm_binding(binding)
+			and _target_bow_arm_globals.has(bone_idx)
+		):
+			baseline_global = _target_bow_arm_globals[bone_idx]
 		var baseline_world_basis := skeleton_basis * baseline_global.basis
 		var desired_world_basis := source_delta_world * baseline_world_basis
 		var desired_skeleton_basis := skeleton_basis_inverse * desired_world_basis
