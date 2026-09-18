@@ -335,6 +335,53 @@ func _apply_idle_baseline() -> void:
 			_skeleton.set_bone_pose(bone_idx, _target_idle_poses[bone_idx])
 
 
+func _is_bow_body_binding(binding: Dictionary) -> bool:
+	var label := String(binding.get("label", ""))
+	return label == "Pelvis" or label == "Torso" or label == "Head"
+
+
+func _apply_stage_bow_body_plane(
+	binding: Dictionary,
+	source_node: Node3D,
+	bone_idx: int,
+	skeleton_basis: Basis,
+	skeleton_basis_inverse: Basis
+) -> bool:
+	if not _is_bow_body_binding(binding):
+		return false
+	if not _target_idle_globals.has(bone_idx):
+		return false
+
+	# The mannequin choreography was authored in side view: its visible forward
+	# reverence is encoded as local/global Z rotation. Once the humanoid turns
+	# 90 degrees toward the audience, copying that Z rotation literally becomes
+	# a sideways body roll. A reverence must incline TOWARD the audience.
+	#
+	# Pas de Run audience side is +Z, so forward inclination is a rotation about
+	# world +X. Negate the mannequin's accumulated Z angle: its bow uses negative
+	# Z values, which become positive X pitch toward +Z.
+	var source_in_rig := (
+		_source_rig.global_transform.basis.inverse()
+		* source_node.global_transform.basis
+	)
+	var bow_angle := -source_in_rig.get_euler().z
+
+	var baseline_global: Transform3D = _target_idle_globals[bone_idx]
+	var baseline_world_basis := skeleton_basis * baseline_global.basis
+	var desired_world_basis := (
+		Basis(Vector3.RIGHT, bow_angle)
+		* baseline_world_basis
+	)
+	var desired_skeleton_basis := skeleton_basis_inverse * desired_world_basis
+
+	var current_global := _skeleton.get_bone_global_pose(bone_idx)
+	_skeleton.set_bone_global_pose(
+		bone_idx,
+		Transform3D(desired_skeleton_basis, current_global.origin)
+	)
+	return true
+
+
 func _apply_motion_retarget(state: StringName) -> void:
 	var source_rig_basis := _source_rig.global_transform.basis
 	var source_rig_basis_inverse := source_rig_basis.inverse()
@@ -347,6 +394,18 @@ func _apply_motion_retarget(state: StringName) -> void:
 		if not is_instance_valid(source_node):
 			continue
 		if not _target_idle_globals.has(bone_idx):
+			continue
+
+		if (
+			state == &"STAGE_BOW"
+			and _apply_stage_bow_body_plane(
+				binding,
+				source_node,
+				bone_idx,
+				skeleton_basis,
+				skeleton_basis_inverse
+			)
+		):
 			continue
 
 		# Retarget joint articulation relative to the mannequin Rig itself.
