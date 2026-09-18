@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RUNTIME_120 = ROOT / "scenes/gameplay/generated/graceful_opening_00_120_runtime.tscn"
 RUNTIME_90 = ROOT / "scenes/gameplay/generated/graceful_opening_00_90_runtime.tscn"
-PLAN = ROOT / "data/geometry/graceful_opening_00_120_topology_v1.geometry_plan_v0_1.json"
+PLAN = ROOT / "data/geometry/graceful_opening_00_120_topology_v1_1.geometry_plan_v0_1.json"
 PROJECT = ROOT / "project.godot"
 
 
@@ -20,19 +20,23 @@ class Phase9GracefulOpening120sRuntimeTests(unittest.TestCase):
         cls.runtime_90 = RUNTIME_90.read_text(encoding="utf-8")
         cls.plan = json.loads(PLAN.read_text(encoding="utf-8"))
         cls.project = PROJECT.read_text(encoding="utf-8")
+        cls.crest = next(
+            event for event in cls.plan["events"]
+            if float(event["source_time"]) == 68.5
+        )
         cls.staircase = next(
             event for event in cls.plan["events"]
             if float(event["source_time"]) == 102.5
         )
 
-    def test_120s_runtime_is_separate_and_uses_topology_v1_artifacts(self) -> None:
+    def test_120s_runtime_is_separate_and_uses_topology_v1_1_artifacts(self) -> None:
         self.assertIn('name="GracefulOpening0120Runtime"', self.runtime)
         self.assertIn(
-            'path="res://scenes/gameplay/generated/graceful_opening_00_120_topology_v1.tscn"',
+            'path="res://scenes/gameplay/generated/graceful_opening_00_120_topology_v1_1.tscn"',
             self.runtime,
         )
         self.assertIn(
-            'geometry_plan_path = "res://data/geometry/graceful_opening_00_120_topology_v1.geometry_plan_v0_1.json"',
+            'geometry_plan_path = "res://data/geometry/graceful_opening_00_120_topology_v1_1.geometry_plan_v0_1.json"',
             self.runtime,
         )
         self.assertIn('name="GracefulOpening0090Runtime"', self.runtime_90)
@@ -46,6 +50,21 @@ class Phase9GracefulOpening120sRuntimeTests(unittest.TestCase):
         self.assertIsNotNone(match)
         self.assertAlmostEqual(float(match.group(1)) / 4.0, 120.0, places=4)
         self.assertEqual(float(match.group(2)), -2.8)
+
+    def test_685_runtime_event_is_crest(self) -> None:
+        branch = self.crest["branch"]
+        self.assertEqual(branch["topology"], "CREST")
+        self.assertEqual(branch["routes"]["technical"]["profile"], "STEPPED_CREST")
+        terraces = [
+            segment
+            for segment in branch["routes"]["technical"]["segments"]
+            if str(segment["type"]).startswith("CREST_TERRACE_")
+        ]
+        self.assertEqual(
+            [float(segment["surface_y"]) for segment in terraces],
+            [0.0, 0.28, 0.56, 0.28, 0.0],
+        )
+        self.assertFalse(branch["new_required_actions"])
 
     def test_1025_runtime_event_is_crescendo_staircase(self) -> None:
         branch = self.staircase["branch"]
