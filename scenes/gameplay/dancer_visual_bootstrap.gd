@@ -49,6 +49,10 @@ func _attach_visual(dancer: CharacterBody3D) -> void:
 		visual.visible = false
 		var external_player := external_visual.get_node_or_null("low_poly_girl/AnimationPlayer") as AnimationPlayer
 		if external_player != null and external_player.has_animation("run"):
+			var run_animation := external_player.get_animation("run")
+			if run_animation != null:
+				run_animation.loop_mode = Animation.LOOP_LINEAR
+			external_player.speed_scale = 1.0
 			external_player.play("run")
 		else:
 			push_warning("BallerinaVisualV1 found, but its run animation is unavailable.")
