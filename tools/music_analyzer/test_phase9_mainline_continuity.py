@@ -33,11 +33,24 @@ class Phase9MainlineContinuityTests(unittest.TestCase):
             SCRIPT,
         )
 
-    def test_mainline_keeps_architectural_mass_and_golden_edge(self) -> None:
+    def test_mainline_visual_deck_is_thinner_than_collision_but_top_aligned(self) -> None:
+        self.assertIn("const MAINLINE_VISUAL_THICKNESS := 0.32", SCRIPT)
+        self.assertIn("MainlineArchitecturalDeck", SCRIPT)
         self.assertIn(
-            "mesh_resource.size = Vector3(length, GROUND_HEIGHT, GROUND_WIDTH)",
+            "base_box.size.y * 0.5 - MAINLINE_VISUAL_THICKNESS * 0.5",
             SCRIPT,
         )
+        self.assertIn(
+            "GROUND_HEIGHT * 0.5 - MAINLINE_VISUAL_THICKNESS * 0.5",
+            SCRIPT,
+        )
+
+    def test_mainline_keeps_architectural_mass_and_golden_edge(self) -> None:
+        self.assertIn(
+            "shape_resource.size = Vector3(length, GROUND_HEIGHT, GROUND_WIDTH)",
+            SCRIPT,
+        )
+        self.assertIn("MAINLINE_VISUAL_THICKNESS", SCRIPT)
         self.assertIn("MainlineGoldenNosing", SCRIPT)
         self.assertIn("mainline_material", SCRIPT)
         self.assertIn("trim_material", SCRIPT)

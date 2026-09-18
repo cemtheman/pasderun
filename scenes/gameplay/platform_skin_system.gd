@@ -34,14 +34,18 @@ const STAIR_NOSING_DEPTH_BLEED := 0.08
 const STAIR_LOWER_BAND_HEIGHT := 0.022
 const STAIR_LOWER_BAND_LENGTH_RATIO := 0.72
 
-const SOAR_VISUAL_EDGE_DEPTH := 0.22
-const SOAR_ARCH_RISE := 0.10
+const SAFE_VISUAL_THICKNESS := 0.30
+const SAFE_NOSING_HEIGHT := 0.045
+const SAFE_DEPTH_BLEED := 0.06
+
+const SOAR_VISUAL_EDGE_DEPTH := 0.28
+const SOAR_ARCH_RISE := 0.04
 const SOAR_ARCH_SAMPLES := 12
 const SOAR_NOSING_HEIGHT := 0.05
 const SOAR_DEPTH_BLEED := 0.06
 
-const BRIDGE_VISUAL_EDGE_DEPTH := 0.16
-const BRIDGE_ARCH_RISE := 0.075
+const BRIDGE_VISUAL_EDGE_DEPTH := 0.26
+const BRIDGE_ARCH_RISE := 0.04
 const BRIDGE_ARCH_SAMPLES := 20
 const BRIDGE_NOSING_HEIGHT := 0.045
 const BRIDGE_DEPTH_BLEED := 0.08
@@ -181,6 +185,7 @@ func _skin_branch(event_number: int, branch: Dictionary) -> void:
 	) as StaticBody3D
 	if safe_body != null:
 		_apply_surface_material(safe_body, safe_material)
+		_add_safe_architectural_deck(safe_body)
 
 	var topology := String(branch.get("topology", "SOAR"))
 	var technical: Dictionary = routes["technical"]
@@ -215,6 +220,50 @@ func _skin_branch(event_number: int, branch: Dictionary) -> void:
 
 	for body in collision_bodies:
 		_add_fascia(body, topology)
+
+
+func _add_safe_architectural_deck(body: StaticBody3D) -> void:
+	var base_mesh_instance := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
+	if base_mesh_instance == null or not base_mesh_instance.mesh is BoxMesh:
+		return
+	var base_box := base_mesh_instance.mesh as BoxMesh
+	base_mesh_instance.visible = false
+
+	var deck_mesh := BoxMesh.new()
+	deck_mesh.size = Vector3(
+		base_box.size.x,
+		SAFE_VISUAL_THICKNESS,
+		base_box.size.z
+	)
+	var deck := MeshInstance3D.new()
+	deck.name = "SafeArchitecturalDeck"
+	deck.mesh = deck_mesh
+	deck.material_override = safe_material
+	deck.position = Vector3(
+		0.0,
+		base_box.size.y * 0.5 - SAFE_VISUAL_THICKNESS * 0.5,
+		0.0
+	)
+	body.add_child(deck)
+
+	if trim_material == null:
+		return
+	var nosing_mesh := BoxMesh.new()
+	nosing_mesh.size = Vector3(
+		base_box.size.x,
+		SAFE_NOSING_HEIGHT,
+		base_box.size.z + SAFE_DEPTH_BLEED
+	)
+	var nosing := MeshInstance3D.new()
+	nosing.name = "SafeGoldenNosing"
+	nosing.mesh = nosing_mesh
+	nosing.material_override = trim_material
+	nosing.position = Vector3(
+		0.0,
+		base_box.size.y * 0.5 - SAFE_NOSING_HEIGHT * 0.5,
+		0.0
+	)
+	body.add_child(nosing)
 
 
 func _material_for_topology(topology: String) -> Material:

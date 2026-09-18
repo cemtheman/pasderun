@@ -117,6 +117,13 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("BRIDGE_ARCH_RISE", SCRIPT)
         self.assertNotIn("CollisionShape3D.new()", SCRIPT)
 
+    def test_palace_deck_family_unifies_safe_soar_and_bridge_proportions(self) -> None:
+        self.assertIn("const SAFE_VISUAL_THICKNESS := 0.30", SCRIPT)
+        self.assertIn("const SOAR_VISUAL_EDGE_DEPTH := 0.28", SCRIPT)
+        self.assertIn("const BRIDGE_VISUAL_EDGE_DEPTH := 0.26", SCRIPT)
+        self.assertIn("SafeArchitecturalDeck", SCRIPT)
+        self.assertIn("SafeGoldenNosing", SCRIPT)
+
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)

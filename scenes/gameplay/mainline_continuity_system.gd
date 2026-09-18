@@ -11,6 +11,7 @@ extends Node3D
 
 const GROUND_HEIGHT := 0.5
 const GROUND_WIDTH := 4.0
+const MAINLINE_VISUAL_THICKNESS := 0.32
 const MAX_SMOOTH_DELTA := 0.20
 const CONTIGUITY_EPSILON := 0.002
 const FLAT_EPSILON := 0.0005
@@ -179,11 +180,29 @@ func _style_existing_runway(body: StaticBody3D) -> void:
 	var mesh := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
 	if mesh == null or not mesh.mesh is BoxMesh:
 		return
-	if mainline_material != null:
-		mesh.material_override = mainline_material
+	var base_box := mesh.mesh as BoxMesh
+	mesh.visible = false
+
+	if not body.has_node("MainlineArchitecturalDeck"):
+		var deck_mesh := BoxMesh.new()
+		deck_mesh.size = Vector3(
+			base_box.size.x,
+			MAINLINE_VISUAL_THICKNESS,
+			base_box.size.z
+		)
+		var deck := MeshInstance3D.new()
+		deck.name = "MainlineArchitecturalDeck"
+		deck.mesh = deck_mesh
+		deck.material_override = mainline_material
+		deck.position = Vector3(
+			0.0,
+			base_box.size.y * 0.5 - MAINLINE_VISUAL_THICKNESS * 0.5,
+			0.0
+		)
+		body.add_child(deck)
+
 	if trim_material == null or body.has_node("MainlineGoldenNosing"):
 		return
-	var base_box := mesh.mesh as BoxMesh
 	var trim_mesh := BoxMesh.new()
 	trim_mesh.size = Vector3(
 		base_box.size.x,
@@ -228,10 +247,19 @@ func _add_shallow_ramp(
 	body.rotation = Vector3(0.0, 0.0, angle)
 
 	var mesh_resource := BoxMesh.new()
-	mesh_resource.size = Vector3(length, GROUND_HEIGHT, GROUND_WIDTH)
+	mesh_resource.size = Vector3(
+		length,
+		MAINLINE_VISUAL_THICKNESS,
+		GROUND_WIDTH
+	)
 	var mesh := MeshInstance3D.new()
 	mesh.name = "MeshInstance3D"
 	mesh.mesh = mesh_resource
+	mesh.position = Vector3(
+		0.0,
+		GROUND_HEIGHT * 0.5 - MAINLINE_VISUAL_THICKNESS * 0.5,
+		0.0
+	)
 	if mainline_material != null:
 		mesh.material_override = mainline_material
 	body.add_child(mesh)
