@@ -485,17 +485,17 @@ def render_climax_fork_scene(plan: dict[str, Any]) -> str:
     load_steps = int(header.group(1)) + len(ramps) * 2
     scene = scene[:header.start()] + f"[gd_scene load_steps={load_steps} format=3]" + scene[header.end():]
 
-    root_marker = '[node name="GracefulOpening0060" type="Node3D"]'
+    end_seconds = float(plan["compiled_time_range"]["end"])
+    root_name = f"GracefulOpening{int(round(end_seconds)):04d}"
+    climax_root_name = root_name + "ClimaxFork"
+    root_marker = f'[node name="{root_name}" type="Node3D"]'
+    climax_root_marker = f'[node name="{climax_root_name}" type="Node3D"]'
     if root_marker not in scene:
-        raise ValueError("expected 60 second root was not found")
+        raise ValueError("expected compiled-horizon root was not found")
+    scene = scene.replace(root_marker, climax_root_marker, 1)
     scene = scene.replace(
-        root_marker,
-        '[node name="GracefulOpening0060ClimaxFork" type="Node3D"]',
-        1,
-    )
-    scene = scene.replace(
-        '[node name="GracefulOpening0060ClimaxFork" type="Node3D"]',
-        resources + '\n[node name="GracefulOpening0060ClimaxFork" type="Node3D"]',
+        climax_root_marker,
+        resources + "\n" + climax_root_marker,
         1,
     )
     return scene + "\n" + nodes

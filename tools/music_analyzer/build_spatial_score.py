@@ -251,7 +251,11 @@ def build_spatial_score(
     return {
         "schema_version": SCHEMA_VERSION,
         "source_visual_score": "data/music/graceful_opening.visual_score_v0_1.json",
-        "source_geometry_plan": "data/geometry/graceful_opening_00_60.geometry_plan_v0_1.json",
+        "source_geometry_plan": (
+            "data/geometry/graceful_opening_00_"
+            f"{int(round(float(geometry_plan['compiled_time_range']['end']))):02d}"
+            ".geometry_plan_v0_1.json"
+        ),
         "time_range": {
             "start": _round(start_seconds),
             "end": _round(end_seconds),
