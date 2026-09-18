@@ -163,7 +163,7 @@ func get_visual_state() -> StringName:
 
 
 func _resolve_visual_state(delta: float) -> StringName:
-	if not _stage_presentation_state.is_empty():
+	if _stage_presentation_state != &"":
 		return _stage_presentation_state
 
 	if dancer.get("has_fallen") == true:
