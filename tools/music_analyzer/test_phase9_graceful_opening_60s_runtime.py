@@ -135,12 +135,12 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
             self.assertIn(f'name="{node_name}"', self.runtime)
 
 
-    def test_project_launches_phase9_60s_runtime(self) -> None:
+    def test_accepted_60s_runtime_remains_available_after_extension(self) -> None:
+        self.assertIn('name="GracefulOpening0060Runtime"', self.runtime)
         self.assertIn(
-            'run/main_scene="res://scenes/gameplay/generated/graceful_opening_00_60_runtime.tscn"',
-            self.project,
+            'path="res://scenes/gameplay/generated/graceful_opening_00_60_climax_fork.tscn"',
+            self.runtime,
         )
-        self.assertNotIn('run/main_scene="uid://wrse8kqkd211"', self.project)
 
     def test_accepted_30s_runtime_remains_full_course_baseline(self) -> None:
         self.assertIn("continuous_technical_course.tscn", self.baseline_runtime)

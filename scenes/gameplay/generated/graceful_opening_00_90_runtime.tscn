@@ -1,0 +1,498 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cs0r3obsyp76v" path="res://scenes/gameplay/camera_rig.gd" id="1_camera"]
+[ext_resource type="Script" uid="uid://bh4crynrhk21a" path="res://scenes/gameplay/generated/fork_camera_framing.gd" id="2_framing"]
+[ext_resource type="Script" uid="uid://mpnd2c2foaq1" path="res://scenes/gameplay/dancer.gd" id="3_dancer"]
+[ext_resource type="AudioStream" uid="uid://cw8xnn6efuv64" path="res://assets/audio/graceful_opening.mp3" id="4_music"]
+[ext_resource type="Script" uid="uid://dvruxwtwohbex" path="res://scenes/gameplay/music_timeline.gd" id="5_timeline"]
+[ext_resource type="Script" uid="uid://lqlq71arr06n" path="res://scenes/gameplay/musicality.gd" id="6_musicality"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/generated/graceful_opening_00_90_climax_fork.tscn" id="7_generated"]
+[ext_resource type="Script" uid="uid://hphxx5asu33q" path="res://scenes/gameplay/generated/fork_debug_visualization.gd" id="8_debug"]
+[ext_resource type="Script" uid="uid://d31d3vxeg31l7" path="res://scenes/gameplay/flow_tracker.gd" id="9_flow"]
+[ext_resource type="Script" uid="uid://bagrec1bocuaq" path="res://scenes/gameplay/tap_timing_debug.gd" id="10_tap_debug"]
+[ext_resource type="Script" uid="uid://croawgsco8b5c" path="res://scenes/gameplay/accent_runtime_trace.gd" id="11_trace"]
+[ext_resource type="Script" uid="uid://cw63t1pduqsu6" path="res://scenes/gameplay/ascii_debug_hud.gd" id="12_ascii_hud"]
+[ext_resource type="Script" path="res://scenes/gameplay/runtime_start_gate.gd" id="13_start_gate"]
+[ext_resource type="Script" path="res://scenes/gameplay/spatial_stall_probe.gd" id="14_stall_probe"]
+[ext_resource type="Script" path="res://scenes/gameplay/parallax_presentation.gd" id="15_parallax"]
+[ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_far_city_v0_1.png" id="16_far"]
+[ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_mid_palace_frame_v0_1.png" id="17_mid"]
+[ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png" id="18_foreground"]
+[ext_resource type="Script" path="res://scenes/gameplay/run_recovery_manager.gd" id="21_recovery"]
+[ext_resource type="Script" path="res://scenes/gameplay/mobile_orientation_gate.gd" id="22_orientation"]
+[ext_resource type="Script" path="res://scenes/gameplay/music_choreography_director.gd" id="23_choreo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
+shading_mode = 0
+albedo_texture = ExtResource("16_far")
+
+[sub_resource type="QuadMesh" id="QuadMesh_far"]
+material = SubResource("StandardMaterial3D_far")
+size = Vector2(70, 23.3333)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mid"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("17_mid")
+
+[sub_resource type="QuadMesh" id="QuadMesh_mid"]
+material = SubResource("StandardMaterial3D_mid")
+size = Vector2(70, 23.3333)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_foreground"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("18_foreground")
+
+[sub_resource type="QuadMesh" id="QuadMesh_foreground"]
+material = SubResource("StandardMaterial3D_foreground")
+size = Vector2(70, 23.3333)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_runtime"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_runtime"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_panel"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.02, 0.02, 0.025, 0.42)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_game_over"]
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.035, 0.025, 0.045, 0.94)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="GracefulOpening0090Runtime" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=342073125]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1777819294]
+
+[node name="GeneratedLevel" parent="." unique_id=771723095 instance=ExtResource("7_generated")]
+
+
+[node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]
+script = ExtResource("8_debug")
+generated_level = NodePath("../GeneratedLevel")
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=970329606 node_paths=PackedStringArray("target")]
+script = ExtResource("1_camera")
+target = NodePath("../Dancer")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=2128843652]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 8)
+projection = 1
+current = true
+size = 7.5
+
+[node name="ParallaxPresentation" type="Node3D" parent="CameraRig/Camera3D" node_paths=PackedStringArray("progress_source", "far_layer", "mid_layer", "foreground_layer")]
+script = ExtResource("15_parallax")
+progress_source = NodePath("../../../Dancer")
+far_layer = NodePath("FarCity")
+mid_layer = NodePath("MidPalace")
+foreground_layer = NodePath("ForegroundStage")
+
+[node name="FarCity" type="MeshInstance3D" parent="CameraRig/Camera3D/ParallaxPresentation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_far")
+
+[node name="MidPalace" type="MeshInstance3D" parent="CameraRig/Camera3D/ParallaxPresentation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -23)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_mid")
+
+[node name="ForegroundStage" type="MeshInstance3D" parent="CameraRig/Camera3D/ParallaxPresentation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_foreground")
+
+[node name="ForkFraming" type="Node" parent="CameraRig" unique_id=1406707815 node_paths=PackedStringArray("camera_rig", "camera", "target", "generated_level")]
+script = ExtResource("2_framing")
+camera_rig = NodePath("..")
+camera = NodePath("../Camera3D")
+target = NodePath("../../Dancer")
+generated_level = NodePath("../../GeneratedLevel")
+
+[node name="Music" type="Node" parent="." unique_id=2088412974]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music" unique_id=32499196]
+stream = ExtResource("4_music")
+
+[node name="MusicTimeline" type="Node" parent="Music" unique_id=1206020740 node_paths=PackedStringArray("audio_player", "debug_label")]
+script = ExtResource("5_timeline")
+audio_player = NodePath("../AudioStreamPlayer")
+debug_label = NodePath("../../DebugHUD/HUDRoot/LeftPanel/LeftStack/MusicDebug")
+
+[node name="Musicality" type="Node" parent="Music" unique_id=1008573966 node_paths=PackedStringArray("music_timeline", "dancer", "debug_label")]
+script = ExtResource("6_musicality")
+music_timeline = NodePath("../MusicTimeline")
+dancer = NodePath("../../Dancer")
+debug_label = NodePath("../../DebugHUD/HUDRoot/LeftPanel/LeftStack/AccentDebug")
+tap_accents_require_accent_action = true
+
+[node name="FlowTracker" type="Node" parent="." unique_id=87562896 node_paths=PackedStringArray("dancer", "music_timeline", "musicality", "generated_level", "debug_label")]
+script = ExtResource("9_flow")
+dancer = NodePath("../Dancer")
+music_timeline = NodePath("../Music/MusicTimeline")
+musicality = NodePath("../Music/Musicality")
+generated_level = NodePath("../GeneratedLevel")
+debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/FlowDebug")
+geometry_plan_path = "res://data/geometry/graceful_opening_00_90_climax_fork.geometry_plan_v0_1.json"
+
+[node name="MusicChoreographyDirector" type="Node" parent="." node_paths=PackedStringArray("music_timeline", "dancer", "musicality", "debug_label")]
+script = ExtResource("23_choreo")
+music_timeline = NodePath("../Music/MusicTimeline")
+dancer = NodePath("../Dancer")
+musicality = NodePath("../Music/Musicality")
+debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/ChoreographyDebug")
+
+[node name="TapTimingDebug" type="Node" parent="." unique_id=600502133 node_paths=PackedStringArray("musicality", "music_timeline", "debug_label")]
+script = ExtResource("10_tap_debug")
+musicality = NodePath("../Music/Musicality")
+music_timeline = NodePath("../Music/MusicTimeline")
+debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/TapTimingDebug")
+
+[node name="AccentRuntimeTrace" type="Node" parent="." unique_id=1394950077 node_paths=PackedStringArray("musicality", "flow_tracker", "flow_debug_label", "trace_label")]
+script = ExtResource("11_trace")
+musicality = NodePath("../Music/Musicality")
+flow_tracker = NodePath("../FlowTracker")
+flow_debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/FlowDebug")
+trace_label = NodePath("../DebugHUD/HUDRoot/RightPanel/AccentRuntimeTrace")
+
+[node name="RuntimeStartGate" type="Node" parent="." node_paths=PackedStringArray("dancer", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "overlay")]
+script = ExtResource("13_start_gate")
+dancer = NodePath("../Dancer")
+music_root = NodePath("../Music")
+audio_player = NodePath("../Music/AudioStreamPlayer")
+flow_tracker = NodePath("../FlowTracker")
+tap_timing_debug = NodePath("../TapTimingDebug")
+accent_runtime_trace = NodePath("../AccentRuntimeTrace")
+overlay = NodePath("../StartGateOverlay")
+
+[node name="MobileOrientationGate" type="Node" parent="." node_paths=PackedStringArray("overlay", "audio_player", "start_gate")]
+process_mode = 3
+script = ExtResource("22_orientation")
+overlay = NodePath("../PortraitOrientationOverlay")
+audio_player = NodePath("../Music/AudioStreamPlayer")
+start_gate = NodePath("../RuntimeStartGate")
+
+[node name="SpatialStallProbe" type="Node" parent="." node_paths=PackedStringArray("start_gate", "fork_camera_framing", "fork_debug_visualization", "parallax_presentation", "debug_label")]
+script = ExtResource("14_stall_probe")
+start_gate = NodePath("../RuntimeStartGate")
+fork_camera_framing = NodePath("../CameraRig/ForkFraming")
+fork_debug_visualization = NodePath("../ForkDebugVisualization")
+parallax_presentation = NodePath("../CameraRig/Camera3D/ParallaxPresentation")
+debug_label = NodePath("../DebugHUD/HUDRoot/BottomStatusPanel/SpatialStallProbe")
+
+[node name="Dancer" type="CharacterBody3D" parent="." unique_id=681487939 node_paths=PackedStringArray("input_debug_label")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("3_dancer")
+input_debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/InputDebug")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Dancer" unique_id=520819232]
+mesh = SubResource("CapsuleMesh_runtime")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer" unique_id=761921886]
+shape = SubResource("CapsuleShape_runtime")
+
+[node name="DebugHUD" type="CanvasLayer" parent="." unique_id=1243432770 node_paths=PackedStringArray("hud_root", "start_gate", "performance_label")]
+script = ExtResource("12_ascii_hud")
+hud_root = NodePath("HUDRoot")
+start_gate = NodePath("../RuntimeStartGate")
+performance_label = NodePath("HUDRoot/LeftPanel/LeftStack/PerformanceDebug")
+
+[node name="HUDRoot" type="Control" parent="DebugHUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftPanel" type="PanelContainer" parent="DebugHUD/HUDRoot"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 300.0
+offset_bottom = 270.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_panel")
+
+[node name="LeftStack" type="VBoxContainer" parent="DebugHUD/HUDRoot/LeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="InputDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack" unique_id=94899940]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "INPUT: -"
+
+[node name="MusicDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack" unique_id=605584545]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "MUSIC: 00:00.0 / 00:00.0
+SECTION: OPENING"
+
+[node name="AccentDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack" unique_id=1366275914]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "ACCENT: -"
+
+[node name="FlowDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack" unique_id=260352153]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "FLOW: EMPTY 0.00
+LAST: -"
+
+[node name="TapTimingDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack" unique_id=460186433]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "NEXT TAP: -
+APPROACH
+EARLY      PERFECT      LATE
+--------------o--------------
+LAST ACCENT: -"
+
+[node name="ChoreographyDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "CHOREO: BASELINE"
+
+[node name="PerformanceDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "PERF FPS:0 FRAME:0.00ms PHYS:0.00ms
+MEM:0.0MiB DRAW:0"
+
+[node name="RightPanel" type="PanelContainer" parent="DebugHUD/HUDRoot"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -228.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 205.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_panel")
+
+[node name="AccentRuntimeTrace" type="Label" parent="DebugHUD/HUDRoot/RightPanel" unique_id=1128025895]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "EVAL t=0.000
+MARKER=NONE
+DELTA=+0.000
+INPUT=NONE
+CLASS=PENDING
+SIGNAL=PENDING
+FLOW BEFORE=0.000
+FLOW HANDLER=-
+FLOW NEXT PHYSICS=-
+HUD FLOW=0.000"
+
+[node name="BottomStatusPanel" type="PanelContainer" parent="DebugHUD/HUDRoot"]
+layout_mode = 0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -38.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_panel")
+
+[node name="SpatialStallProbe" type="Label" parent="DebugHUD/HUDRoot/BottomStatusPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "STALL PROBE FRAMING:ON VISUALS:ALL BG:ON"
+
+[node name="StartGateOverlay" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="Dimmer" type="ColorRect" parent="StartGateOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Prompt" type="Label" parent="StartGateOverlay"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -22.0
+offset_right = 110.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "TAP TO START"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PortraitOrientationOverlay" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 200
+visible = false
+
+[node name="Backdrop" type="ColorRect" parent="PortraitOrientationOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.025, 0.018, 0.035, 0.9)
+
+[node name="Message" type="Label" parent="PortraitOrientationOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.93, 0.84, 0.68, 1)
+theme_override_font_sizes/font_size = 22
+text = "Lütfen cihazınızı yatay çevirin"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="GameOverOverlay" type="CanvasLayer" parent="."]
+layer = 110
+visible = false
+
+[node name="InputBlocker" type="ColorRect" parent="GameOverOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="GameOverOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="GameOverOverlay/Center"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_game_over")
+
+[node name="Actions" type="VBoxContainer" parent="GameOverOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="Continue" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="Restart" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "RESTART"
+
+[node name="Exit" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "EXIT"
+
+[node name="LevelCompleteOverlay" type="CanvasLayer" parent="."]
+layer = 110
+visible = false
+
+[node name="InputBlocker" type="ColorRect" parent="LevelCompleteOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="LevelCompleteOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="LevelCompleteOverlay/Center"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_game_over")
+
+[node name="Actions" type="VBoxContainer" parent="LevelCompleteOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "LEVEL COMPLETE"
+horizontal_alignment = 1
+
+[node name="NextLevel" type="Button" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "NEXT LEVEL"
+
+[node name="NextLevelStatus" type="Label" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "NEXT LEVEL: COMING SOON"
+horizontal_alignment = 1
+
+[node name="MainMenu" type="Button" parent="LevelCompleteOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "MAIN MENU"
+
+[node name="SliceCompletion" type="Marker3D" parent="."]
+position = Vector3(360, -2.8, 0)
+
+[node name="RunRecoveryManager" type="Node" parent="." node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button", "completion_trigger", "level_complete_overlay", "next_level_button", "main_menu_button", "next_level_status")]
+script = ExtResource("21_recovery")
+dancer = NodePath("../Dancer")
+camera_rig = NodePath("../CameraRig")
+fork_camera_controller = NodePath("../CameraRig/ForkFraming")
+start_gate = NodePath("../RuntimeStartGate")
+music_root = NodePath("../Music")
+audio_player = NodePath("../Music/AudioStreamPlayer")
+flow_tracker = NodePath("../FlowTracker")
+tap_timing_debug = NodePath("../TapTimingDebug")
+accent_runtime_trace = NodePath("../AccentRuntimeTrace")
+game_over_overlay = NodePath("../GameOverOverlay")
+continue_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Continue")
+restart_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Restart")
+exit_button = NodePath("../GameOverOverlay/Center/Panel/Actions/Exit")
+completion_trigger = NodePath("../SliceCompletion")
+level_complete_overlay = NodePath("../LevelCompleteOverlay")
+next_level_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevel")
+main_menu_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/MainMenu")
+next_level_status = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevelStatus")
