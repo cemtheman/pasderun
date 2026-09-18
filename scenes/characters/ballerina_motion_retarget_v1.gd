@@ -51,6 +51,10 @@ func _process(_delta: float) -> void:
 		if not _retarget_active:
 			_animation_player.stop()
 			_retarget_active = true
+
+		# The source mannequin choreography changes every frame. Retarget the
+		# current pose continuously for the full state instead of freezing on the
+		# first frame seen at state entry.
 		_apply_state_baseline(state)
 		_apply_motion_retarget(state)
 	elif _retarget_active:
