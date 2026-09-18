@@ -204,8 +204,8 @@ func _begin_completion_ceremony() -> void:
 	_completion_ceremony_elapsed = 0.0
 	fork_camera_controller.call("restore_normal_state")
 	fork_camera_controller.call("set_frozen", true)
-	audio_player.stop()
-	music_root.process_mode = Node.PROCESS_MODE_DISABLED
+	# Let the soundtrack finish naturally through the closing reverence.
+	# Stopping here can audibly cut the final sustain before the ceremony lands.
 	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
@@ -224,6 +224,8 @@ func _begin_completion_ceremony() -> void:
 
 func _finish_level_complete_state() -> void:
 	_state = RunState.LEVEL_COMPLETE
+	audio_player.stop()
+	music_root.process_mode = Node.PROCESS_MODE_DISABLED
 	camera_rig.process_mode = Node.PROCESS_MODE_DISABLED
 	dancer.process_mode = Node.PROCESS_MODE_DISABLED
 	game_over_overlay.visible = false
