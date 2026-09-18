@@ -22,17 +22,17 @@ const FRONT_FACING_STATES := {
 	&"STAGE_FINAL_BOW": true,
 }
 
-# Pas de Run stage geometry: the audience/camera is 90 degrees to the dancer's
-# RIGHT relative to the +X travel direction. The imported humanoid follows
-# Godot's conventional -Z visual forward, so a local -90 degree yaw from the
-# accepted gameplay orientation turns her from travel toward the audience.
-const STAGE_AUDIENCE_RIGHT_YAW := -PI * 0.5
+# Pas de Run stage geometry: gameplay travels along +X. The audience is exactly
+# 90 degrees to the dancer's RIGHT, i.e. +Z in world space.
+const TRAVEL_DIRECTION := Vector3.RIGHT
+const AUDIENCE_DIRECTION := Vector3(0.0, 0.0, 1.0)
 
 @onready var _model_root: Node3D = $low_poly_girl
 @onready var _skeleton: Skeleton3D = $low_poly_girl/Rig/Skeleton3D
 @onready var _animation_player: AnimationPlayer = $low_poly_girl/AnimationPlayer
 
 var _source_visual: Node3D
+var _source_rig: Node3D
 var _model_base_transform: Transform3D
 var _bound := false
 var _retarget_active := false
@@ -90,6 +90,9 @@ func _try_bind() -> void:
 	if _source_visual == null or _skeleton == null or _animation_player == null:
 		return
 
+	_source_rig = _source_visual.get_node_or_null("Rig") as Node3D
+	if _source_rig == null:
+		return
 
 	_bindings = _resolve_bindings()
 	if _bindings.is_empty():
@@ -303,15 +306,15 @@ func _is_arm_binding(binding: Dictionary) -> bool:
 func _apply_state_baseline(state: StringName) -> void:
 	_apply_idle_baseline()
 
-	# Stage orientation is relative to the dancer's travel direction, not to
-	# camera position. Enter/bow/ready/final-bow turn exactly 90 degrees to the
-	# dancer's RIGHT; leaving those states restores the accepted travel transform.
+	# Stage orientation is relative to travel, never inferred from camera yaw.
+	# Travel is +X; dancer-right is +Z. Restore the accepted gameplay transform,
+	# then aim the imported model's conventional -Z forward exactly along +Z.
 	_model_root.transform = _model_base_transform
 	if FRONT_FACING_STATES.has(state):
-		_model_root.transform = Transform3D(
-			_model_base_transform.basis
-			* Basis(Vector3.UP, STAGE_AUDIENCE_RIGHT_YAW),
-			_model_base_transform.origin
+		_model_root.look_at(
+			_model_root.global_position + AUDIENCE_DIRECTION,
+			Vector3.UP,
+			false
 		)
 
 	if state != &"STAGE_BOW":
@@ -333,7 +336,8 @@ func _apply_idle_baseline() -> void:
 
 
 func _apply_motion_retarget(state: StringName) -> void:
-	var source_base_basis := _source_visual.global_transform.basis
+	var source_rig_basis := _source_rig.global_transform.basis
+	var source_rig_basis_inverse := source_rig_basis.inverse()
 	var skeleton_basis := _skeleton.global_transform.basis
 	var skeleton_basis_inverse := skeleton_basis.inverse()
 
@@ -345,12 +349,13 @@ func _apply_motion_retarget(state: StringName) -> void:
 		if not _target_idle_globals.has(bone_idx):
 			continue
 
-		# Every joint in the accepted mannequin rig has an identity rest basis.
-		# Its current world basis therefore carries the complete accumulated
-		# choreography delta relative to DancerVisual's own basis.
-		var source_delta_world := (
-			source_node.global_transform.basis
-			* source_base_basis.inverse()
+		# Retarget joint articulation relative to the mannequin Rig itself.
+		# STAGE_BOW rotates that entire source Rig by 90 degrees for presentation;
+		# including that root yaw here would apply the stage turn a second time
+		# through every target bone. Root orientation is handled separately above.
+		var source_delta_in_rig := (
+			source_rig_basis_inverse
+			* source_node.global_transform.basis
 		)
 
 		var baseline_global: Transform3D = _target_idle_globals[bone_idx]
@@ -360,8 +365,7 @@ func _apply_motion_retarget(state: StringName) -> void:
 			and _target_bow_arm_globals.has(bone_idx)
 		):
 			baseline_global = _target_bow_arm_globals[bone_idx]
-		var baseline_world_basis := skeleton_basis * baseline_global.basis
-		var desired_world_basis := source_delta_world * baseline_world_basis
+		var desired_world_basis := skeleton_basis * source_delta_in_rig * baseline_global.basis
 		var desired_skeleton_basis := skeleton_basis_inverse * desired_world_basis
 
 		# Keep the humanoid rig's own bone positions/lengths. Only orientation is
