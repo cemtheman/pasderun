@@ -31,6 +31,8 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	pause_button.focus_mode = Control.FOCUS_NONE
 	resume_button.focus_mode = Control.FOCUS_NONE
+	pause_button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
+	resume_button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
 	pause_button.release_focus()
 	resume_button.release_focus()
 	pause_button.pressed.connect(_toggle_pause)
@@ -100,13 +102,14 @@ func _set_paused(paused: bool) -> void:
 
 	# Web MP3 playback may resume from 0 after stream_paused is cleared.
 	# Restore the exact captured playback position explicitly, matching the
-	# orientation-gate resume contract.
-	get_tree().paused = false
+	# orientation-gate resume contract. Restore audio before releasing the
+	# scene tree so gameplay cannot advance ahead of the resumed soundtrack.
 	if audio_player.playing:
 		audio_player.stream_paused = false
 		audio_player.seek(_paused_audio_position)
 	else:
 		audio_player.play(_paused_audio_position)
+	get_tree().paused = false
 
 
 func _exit_tree() -> void:
