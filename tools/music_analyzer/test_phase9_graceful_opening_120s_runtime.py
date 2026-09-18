@@ -109,10 +109,15 @@ class Phase9GracefulOpening120sRuntimeTests(unittest.TestCase):
         ):
             self.assertIn(token, self.runtime)
 
-    def test_project_launches_120s_runtime(self) -> None:
+    def test_120s_runtime_remains_available_as_rollback_baseline(self) -> None:
+        self.assertIn('name="GracefulOpening0120Runtime"', self.runtime)
         self.assertIn(
-            'run/main_scene="res://scenes/gameplay/generated/graceful_opening_00_120_runtime.tscn"',
-            self.project,
+            'path="res://scenes/gameplay/generated/graceful_opening_00_120_topology_v1_1.tscn"',
+            self.runtime,
+        )
+        self.assertNotIn(
+            'graceful_opening_00_140_bridge.tscn',
+            self.runtime,
         )
 
 
