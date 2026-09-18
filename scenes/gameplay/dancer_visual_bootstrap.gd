@@ -49,7 +49,7 @@ func _attach_visual(dancer: CharacterBody3D) -> void:
 		visual.visible = false
 		var external_player := external_visual.get_node_or_null("low_poly_girl/AnimationPlayer") as AnimationPlayer
 		if external_player != null:
-			_connect_ballerina_animation_bridge(visual, external_player)
+			_connect_ballerina_animation_bridge(visual, external_visual, external_player)
 		else:
 			push_warning("BallerinaVisualV1 found, but its AnimationPlayer is unavailable.")
 
@@ -64,24 +64,45 @@ func _attach_visual(dancer: CharacterBody3D) -> void:
 
 
 
-func _connect_ballerina_animation_bridge(visual: Node, player: AnimationPlayer) -> void:
+func _connect_ballerina_animation_bridge(
+	visual: Node,
+	external_visual: Node,
+	player: AnimationPlayer
+) -> void:
 	if visual.get_meta("_ballerina_animation_bridge_connected", false):
 		return
 
 	visual.set_meta("_ballerina_animation_bridge_connected", true)
 	visual.connect(
 		"visual_state_changed",
-		Callable(self, "_on_ballerina_visual_state_changed").bind(player)
+		Callable(self, "_on_ballerina_visual_state_changed").bind(external_visual, player)
 	)
 
 	if visual.has_method("get_visual_state"):
 		_on_ballerina_visual_state_changed(
 			StringName(visual.call("get_visual_state")),
+			external_visual,
 			player
 		)
 
 
-func _on_ballerina_visual_state_changed(state: StringName, player: AnimationPlayer) -> void:
+func _on_ballerina_visual_state_changed(
+	state: StringName,
+	external_visual: Node,
+	player: AnimationPlayer
+) -> void:
+	# Semantic retarget v2 owns every choreography-bearing humanoid state.
+	# Stop the imported stock clip immediately so it cannot overwrite the
+	# Skeleton3D for even one frame. States intentionally not handled by the
+	# retarget layer (currently BALANCE) use the imported fallback below.
+	if (
+		external_visual != null
+		and external_visual.has_method("handles_visual_state")
+		and bool(external_visual.call("handles_visual_state", state))
+	):
+		player.stop()
+		return
+
 	match state:
 		&"NEUTRAL", &"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"BALANCE", &"RECOVERY":
 			_play_ballerina_animation(player, &"idle", true)
