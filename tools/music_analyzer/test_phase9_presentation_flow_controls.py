@@ -78,6 +78,13 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn('name="PauseButton"', RUNTIME)
         self.assertIn('name="PauseOverlay"', RUNTIME)
 
+    def test_pause_resume_restores_captured_music_position(self) -> None:
+        self.assertIn("var _paused_audio_position := 0.0", PAUSE)
+        self.assertIn("_paused_audio_position = audio_player.get_playback_position()", PAUSE)
+        self.assertIn("audio_player.seek(_paused_audio_position)", PAUSE)
+        self.assertIn("audio_player.play(_paused_audio_position)", PAUSE)
+        self.assertNotIn("audio_player.play(0.0)", PAUSE)
+
     def test_pause_buttons_never_capture_space_focus(self) -> None:
         self.assertIn("pause_button.focus_mode = Control.FOCUS_NONE", PAUSE)
         self.assertIn("resume_button.focus_mode = Control.FOCUS_NONE", PAUSE)
