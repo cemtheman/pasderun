@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://d2xptha2qy11b"]
 
 [ext_resource type="PackedScene" uid="uid://dkn0c1s1txhef" path="res://assets/characters/low_poly_girl/low_poly_girl .glb" id="1_ogapk"]
-[ext_resource type="Script" path="res://scenes/characters/ballerina_motion_retarget_v1.gd" id="2_retarget"]
+[ext_resource type="Script" path="res://scenes/characters/ballerina_motion_retarget_v2.gd" id="2_retarget"]
 
 [node name="BallerinaVisualV1" type="Node3D" unique_id=29026648]
 script = ExtResource("2_retarget")
