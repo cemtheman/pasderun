@@ -24,15 +24,19 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
 
     def test_60s_runtime_is_isolated_from_full_course_extension(self) -> None:
         self.assertIn(
-            'path="res://scenes/gameplay/generated/graceful_opening_00_60_spatial.tscn"',
+            'path="res://scenes/gameplay/generated/graceful_opening_00_60_climax_fork.tscn"',
             self.runtime,
         )
         self.assertIn(
+            'geometry_plan_path = "res://data/geometry/graceful_opening_00_60_climax_fork.geometry_plan_v0_1.json"',
+            self.runtime,
+        )
+        self.assertNotIn(
+            'path="res://scenes/gameplay/generated/graceful_opening_00_60_spatial.tscn"',
+            self.runtime,
+        )
+        self.assertNotIn(
             'geometry_plan_path = "res://data/geometry/graceful_opening_00_60.geometry_plan_v0_1.json"',
-            self.runtime,
-        )
-        self.assertIn(
-            'path="res://scenes/gameplay/generated/graceful_opening_00_60_spatial.tscn"',
             self.runtime,
         )
         self.assertNotIn(
@@ -42,6 +46,25 @@ class Phase9GracefulOpening60sRuntimeTests(unittest.TestCase):
         self.assertNotIn("continuous_technical_course.tscn", self.runtime)
         self.assertNotIn('name="ExtendedCourse"', self.runtime)
         self.assertNotIn('name="ProductionForkCamera"', self.runtime)
+
+    def test_runtime_uses_single_input_climax_fork_artifacts(self) -> None:
+        plan = __import__("json").loads(
+            (
+                ROOT
+                / "data/geometry/graceful_opening_00_60_climax_fork.geometry_plan_v0_1.json"
+            ).read_text(encoding="utf-8")
+        )
+        event = next(item for item in plan["events"] if item["source_time"] == 53.0)
+        self.assertEqual(event["geometry"]["type"], "ROUTE_FORK")
+        self.assertEqual(event["branch"]["split"]["jump_destination"], "TECHNICAL")
+        self.assertEqual(event["branch"]["split"]["no_jump_destination"], "SAFE")
+        self.assertEqual(
+            event["branch"]["selection"],
+            "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
+        )
+        self.assertFalse(
+            plan["prototype_overlays"]["climax_fork_v0_1"]["new_required_actions"]
+        )
 
     def test_completion_is_music_synchronous_at_exact_60_seconds(self) -> None:
         block = re.search(
