@@ -83,54 +83,67 @@ func _try_bind() -> void:
 func _resolve_bindings() -> Array[Dictionary]:
 	var specs := [
 		{
+			"label": "Pelvis",
 			"source": NodePath("Rig/Pelvis"),
 			"aliases": ["hips", "pelvis"],
 		},
 		{
+			"label": "Torso",
 			"source": NodePath("Rig/Pelvis/Torso"),
 			"aliases": ["chest", "upperchest", "spine2", "spine02", "spine1", "spine01", "spine"],
 		},
 		{
+			"label": "Head",
 			"source": NodePath("Rig/Pelvis/Torso/Head"),
 			"aliases": ["head"],
 		},
 		{
+			"label": "ArmBackShoulder",
 			"source": NodePath("Rig/Pelvis/Torso/ArmBackShoulder"),
 			"aliases": ["leftupperarm", "upperarml", "leftarm", "arml"],
 		},
 		{
+			"label": "ArmBackElbow",
 			"source": NodePath("Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow"),
 			"aliases": ["leftlowerarm", "lowerarml", "leftforearm", "forearml"],
 		},
 		{
+			"label": "ArmFrontShoulder",
 			"source": NodePath("Rig/Pelvis/Torso/ArmFrontShoulder"),
 			"aliases": ["rightupperarm", "upperarmr", "rightarm", "armr"],
 		},
 		{
+			"label": "ArmFrontElbow",
 			"source": NodePath("Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow"),
 			"aliases": ["rightlowerarm", "lowerarmr", "rightforearm", "forearmr"],
 		},
 		{
+			"label": "LegBackHip",
 			"source": NodePath("Rig/Pelvis/LegBackHip"),
 			"aliases": ["leftupperleg", "upperlegl", "leftupleg", "leftthigh", "thighl"],
 		},
 		{
+			"label": "LegBackKnee",
 			"source": NodePath("Rig/Pelvis/LegBackHip/LegBackKnee"),
 			"aliases": ["leftlowerleg", "lowerlegl", "leftleg", "leftcalf", "calfl", "leftshin", "shinl"],
 		},
 		{
+			"label": "FootBack",
 			"source": NodePath("Rig/Pelvis/LegBackHip/LegBackKnee/FootBack"),
 			"aliases": ["leftfoot", "footl"],
 		},
 		{
+			"label": "LegFrontHip",
 			"source": NodePath("Rig/Pelvis/LegFrontHip"),
 			"aliases": ["rightupperleg", "upperlegr", "rightupleg", "rightthigh", "thighr"],
 		},
 		{
+			"label": "LegFrontKnee",
 			"source": NodePath("Rig/Pelvis/LegFrontHip/LegFrontKnee"),
 			"aliases": ["rightlowerleg", "lowerlegr", "rightleg", "rightcalf", "calfr", "rightshin", "shinr"],
 		},
 		{
+			"label": "FootFront",
 			"source": NodePath("Rig/Pelvis/LegFrontHip/LegFrontKnee/FootFront"),
 			"aliases": ["rightfoot", "footr"],
 		},
@@ -143,11 +156,29 @@ func _resolve_bindings() -> Array[Dictionary]:
 			continue
 		var bone_idx := _find_bone(spec["aliases"])
 		if bone_idx < 0:
+			print(
+				"Ballerina retarget unresolved: %s"
+				% String(spec["label"])
+			)
 			continue
+		print(
+			"Ballerina retarget map: %s -> %s"
+			% [
+				String(spec["label"]),
+				String(_skeleton.get_bone_name(bone_idx)),
+			]
+		)
 		resolved.append({
 			"source_node": source_node,
 			"bone_idx": bone_idx,
 		})
+
+	if resolved.size() < specs.size():
+		var bone_names: Array[String] = []
+		for bone_idx in range(_skeleton.get_bone_count()):
+			bone_names.append(String(_skeleton.get_bone_name(bone_idx)))
+		print("Ballerina skeleton bones: %s" % ", ".join(bone_names))
+
 	return resolved
 
 
