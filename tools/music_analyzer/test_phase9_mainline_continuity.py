@@ -45,6 +45,18 @@ class Phase9MainlineContinuityTests(unittest.TestCase):
             SCRIPT,
         )
 
+    def test_mainline_uses_single_explicit_golden_edge(self) -> None:
+        material = (
+            ROOT / "assets/materials/palace_stage_platform_mainline.tres"
+        ).read_text(encoding="utf-8")
+        shader = (
+            ROOT / "assets/materials/palace_stage_platform.gdshader"
+        ).read_text(encoding="utf-8")
+        self.assertIn("uniform float upper_trim_strength = 1.0", shader)
+        self.assertIn("upper_edge * upper_trim_strength", shader)
+        self.assertIn("shader_parameter/upper_trim_strength = 0.0", material)
+        self.assertIn("MainlineGoldenNosing", SCRIPT)
+
     def test_mainline_keeps_architectural_mass_and_golden_edge(self) -> None:
         self.assertIn(
             "shape_resource.size = Vector3(length, GROUND_HEIGHT, GROUND_WIDTH)",

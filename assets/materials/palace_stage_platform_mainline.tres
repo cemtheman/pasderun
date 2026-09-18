@@ -9,6 +9,7 @@ shader_parameter/top_color = Color(0.72, 0.65, 0.54, 1)
 shader_parameter/side_color = Color(0.16, 0.03, 0.055, 1)
 shader_parameter/trim_color = Color(0.64, 0.45, 0.20, 1)
 shader_parameter/trim_start = 0.14
+shader_parameter/upper_trim_strength = 0.0
 shader_parameter/panel_spacing = 3.2
 shader_parameter/seam_width = 0.016
 shader_parameter/seam_strength = 0.30
