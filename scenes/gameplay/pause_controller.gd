@@ -28,6 +28,10 @@ func _ready() -> void:
 
 	pause_button.visible = false
 	pause_overlay.visible = false
+	pause_button.focus_mode = Control.FOCUS_NONE
+	resume_button.focus_mode = Control.FOCUS_NONE
+	pause_button.release_focus()
+	resume_button.release_focus()
 	pause_button.pressed.connect(_toggle_pause)
 	resume_button.pressed.connect(_toggle_pause)
 	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
@@ -73,6 +77,8 @@ func _can_toggle() -> bool:
 
 
 func _toggle_pause() -> void:
+	pause_button.release_focus()
+	resume_button.release_focus()
 	if not _can_toggle():
 		return
 	_set_paused(not _paused_by_user)
@@ -82,6 +88,8 @@ func _set_paused(paused: bool) -> void:
 	_paused_by_user = paused
 	pause_overlay.visible = paused
 	pause_button.text = ">" if paused else "II"
+	pause_button.release_focus()
+	resume_button.release_focus()
 	audio_player.stream_paused = paused
 	get_tree().paused = paused
 

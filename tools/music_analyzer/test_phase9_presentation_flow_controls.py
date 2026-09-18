@@ -33,7 +33,9 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn("_stage_bow_animation", VISUAL)
         self.assertIn("_stage_walk_animation", VISUAL)
         self.assertIn('"Rig:rotation"', VISUAL)
-        self.assertIn("_stage_fourth_wall_turn_pose(-0.72)", VISUAL)
+        self.assertIn("const FOURTH_WALL_YAW := -PI * 0.5", VISUAL)
+        self.assertIn("_stage_fourth_wall_turn_pose()", VISUAL)
+        self.assertIn('"Rig:rotation": _ry(FOURTH_WALL_YAW)', VISUAL)
 
     def test_final_completion_waits_for_large_kneeling_reverence(self) -> None:
         self.assertIn("COMPLETION_CEREMONY", RECOVERY)
@@ -64,6 +66,14 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn("KEY_ESCAPE", PAUSE)
         self.assertIn('name="PauseButton"', RUNTIME)
         self.assertIn('name="PauseOverlay"', RUNTIME)
+
+    def test_pause_buttons_never_capture_space_focus(self) -> None:
+        self.assertIn("pause_button.focus_mode = Control.FOCUS_NONE", PAUSE)
+        self.assertIn("resume_button.focus_mode = Control.FOCUS_NONE", PAUSE)
+        self.assertIn("pause_button.release_focus()", PAUSE)
+        self.assertIn("resume_button.release_focus()", PAUSE)
+        self.assertIn('focus_mode = 0\ntext = "II"', RUNTIME)
+        self.assertIn('focus_mode = 0\ntext = "RESUME"', RUNTIME)
 
     def test_checkpoint_marker_uses_exact_captured_respawn_position(self) -> None:
         self.assertIn("signal checkpoint_changed", RECOVERY)

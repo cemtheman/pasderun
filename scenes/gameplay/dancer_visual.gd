@@ -24,6 +24,7 @@ const STATE_MUSIC_PREP := &"MUSIC_PREP"
 const STATE_MUSIC_ACCENT := &"MUSIC_ACCENT"
 
 const MUSIC_ACCENT_VISUAL_TIME := 0.22
+const FOURTH_WALL_YAW := -PI * 0.5
 
 const VISUAL_STATES := [
 	STATE_NEUTRAL,
@@ -439,7 +440,7 @@ func _stage_walk_animation() -> Animation:
 func _stage_walk_pose(direction: float) -> Dictionary:
 	return _pose({
 		"Rig:position": Vector3(0.0, -0.010, 0.0),
-		"Rig:rotation": _ry(-0.72),
+		"Rig:rotation": _ry(0.0),
 		"Rig/Pelvis:rotation": _rz(-0.008 * direction),
 		"Rig/Pelvis/Torso:rotation": _rz(-0.010),
 		"Rig/Pelvis/Torso/Head:rotation": _rz(0.010),
@@ -460,10 +461,11 @@ func _stage_bow_animation() -> Animation:
 	# Enter in profile, turn deliberately to the fourth wall, then offer a light
 	# standing reverence before settling into the ready pose.
 	return _animation_from_poses(1.35, [0.0, 0.28, 0.68, 0.94, 1.35], [
-		_stage_fourth_wall_turn_pose(-0.72),
+		_stage_side_ready_pose(),
 		_stage_ready_pose(),
 		_pose({
 			"Rig:position": Vector3(0.0, -0.025, 0.0),
+			"Rig:rotation": _ry(FOURTH_WALL_YAW),
 			"Rig/Pelvis:rotation": _rz(-0.045),
 			"Rig/Pelvis/Torso:rotation": _rz(-0.24),
 			"Rig/Pelvis/Torso/Head:rotation": _rz(0.08),
@@ -478,6 +480,7 @@ func _stage_bow_animation() -> Animation:
 		}),
 		_pose({
 			"Rig:position": Vector3(0.0, -0.040, 0.0),
+			"Rig:rotation": _ry(FOURTH_WALL_YAW),
 			"Rig/Pelvis:rotation": _rz(-0.060),
 			"Rig/Pelvis/Torso:rotation": _rz(-0.34),
 			"Rig/Pelvis/Torso/Head:rotation": _rz(0.11),
@@ -492,9 +495,15 @@ func _stage_bow_animation() -> Animation:
 	], false)
 
 
-func _stage_fourth_wall_turn_pose(heading_y: float) -> Dictionary:
+func _stage_side_ready_pose() -> Dictionary:
 	var pose := _stage_ready_pose()
-	pose["Rig:rotation"] = _ry(heading_y)
+	pose["Rig:rotation"] = _ry(0.0)
+	return pose
+
+
+func _stage_fourth_wall_turn_pose() -> Dictionary:
+	var pose := _stage_ready_pose()
+	pose["Rig:rotation"] = _ry(FOURTH_WALL_YAW)
 	return pose
 
 
@@ -505,8 +514,8 @@ func _stage_final_bow_animation() -> Animation:
 		2.60,
 		[0.0, 0.32, 0.78, 1.30, 1.95, 2.60],
 		[
-			_stage_fourth_wall_turn_pose(0.48),
-			_stage_ready_pose(),
+			_stage_side_ready_pose(),
+			_stage_fourth_wall_turn_pose(),
 			_final_kneel_pose(-0.18, -0.16, 0.62),
 			_final_kneel_pose(-0.29, -0.38, 0.92),
 			_final_kneel_pose(-0.34, -0.58, 1.08),
@@ -523,7 +532,7 @@ func _final_kneel_pose(
 ) -> Dictionary:
 	return _pose({
 		"Rig:position": Vector3(0.0, root_drop, 0.0),
-		"Rig:rotation": _ry(0.0),
+		"Rig:rotation": _ry(FOURTH_WALL_YAW),
 		"Rig/Pelvis:rotation": _rz(-0.035),
 		"Rig/Pelvis/Torso:rotation": _rz(torso_bow),
 		"Rig/Pelvis/Torso/Head:rotation": _rz(-torso_bow * 0.30),
@@ -551,6 +560,7 @@ func _stage_ready_animation() -> Animation:
 
 func _stage_ready_pose() -> Dictionary:
 	return _pose({
+		"Rig:rotation": _ry(FOURTH_WALL_YAW),
 		"Rig/Pelvis/Torso:rotation": _rz(-0.012),
 		"Rig/Pelvis/Torso/Head:rotation": _rz(0.015),
 		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.24),
