@@ -138,6 +138,11 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn('mainline_material = ExtResource("32_mainline")', full_runtime)
 
+    def test_final_recovery_runway_continues_bridge_visual_language(self) -> None:
+        self.assertIn("BridgeRecoveryDeck", SCRIPT)
+        self.assertIn("BridgeRecoveryNosing", SCRIPT)
+        self.assertIn("var recovery_index := runway_index + 1", SCRIPT)
+
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)

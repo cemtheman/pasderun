@@ -309,9 +309,16 @@ func _excluded_architectural_spans(plan: Dictionary) -> Array[Vector2]:
 		var span: Dictionary = span_variant
 		if String(span.get("topology", "")) != BRIDGE:
 			continue
+		var exclusion_end := float(span["end_x"])
+		var extent_variant: Variant = plan.get("playable_world_extent", {})
+		if extent_variant is Dictionary:
+			var extent: Dictionary = extent_variant
+			var extent_end := float(extent.get("end_x", exclusion_end))
+			if extent_end > exclusion_end:
+				exclusion_end = extent_end
 		result.append(Vector2(
 			float(span["start_x"]),
-			float(span["end_x"])
+			exclusion_end
 		))
 	return result
 

@@ -59,6 +59,10 @@ class Phase9MainlineContinuityTests(unittest.TestCase):
         self.assertIn("_excluded_architectural_spans", SCRIPT)
         self.assertIn('String(span.get("topology", "")) != BRIDGE', SCRIPT)
 
+    def test_mainline_excludes_final_bridge_recovery_extent(self) -> None:
+        self.assertIn('plan.get("playable_world_extent", {})', SCRIPT)
+        self.assertIn("exclusion_end = extent_end", SCRIPT)
+
     def test_full_runtime_wires_continuity_before_platform_skinning(self) -> None:
         continuity = RUNTIME.index('[node name="MainlineContinuitySystem"')
         skin = RUNTIME.index('[node name="PlatformSkinSystem"')

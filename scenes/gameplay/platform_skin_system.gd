@@ -242,6 +242,22 @@ func _skin_bridge_span(plan: Dictionary, span: Dictionary) -> void:
 		top_y
 	)
 
+	var recovery_index := runway_index + 1
+	if recovery_index < runways.size():
+		var recovery_runway: Dictionary = runways[recovery_index]
+		if abs(float(recovery_runway["start_x"]) - end_x) <= 0.001:
+			var recovery_body := generated_level.get_node_or_null(
+				"Level/Runway%02d" % (recovery_index + 1)
+			) as StaticBody3D
+			if recovery_body != null:
+				_add_shared_palace_deck(
+					recovery_body,
+					bridge_material if bridge_material != null else technical_material,
+					BRIDGE_VISUAL_EDGE_DEPTH,
+					"BridgeRecoveryDeck",
+					"BridgeRecoveryNosing"
+				)
+
 
 func _add_local_bridge_nosing(
 	parent: Node3D,
