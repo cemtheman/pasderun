@@ -488,7 +488,7 @@ def render_scene(plan: dict[str, Any]) -> str:
                     segment["start_x"],
                     segment["end_x"],
                     GROUND_WIDTH,
-                    technical["elevation"] - GROUND_HEIGHT / 2.0,
+                    float(segment.get("surface_y", technical["elevation"])) - GROUND_HEIGHT / 2.0,
                 )
             nodes.append(
                 f'[node name="ForkStart{index:02d}" type="Marker3D" parent="Level"]\n'

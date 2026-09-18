@@ -234,14 +234,18 @@ func _track_forks(playback_time: float) -> void:
 				event["route"] = &"SAFE"
 
 		if event["route"] == &"TECHNICAL":
-			if world_x >= float(event["gap_start_x"]) - 0.5 \
+			var route_threshold := lerpf(float(event["safe_elevation"]), float(event["technical_elevation"]), 0.5)
+			if on_floor and world_y <= route_threshold and world_x < float(event["merge_x"]):
+				event["route"] = &"SAFE"
+			elif world_x >= float(event["gap_start_x"]) - 0.5 \
 			and world_x <= float(event["gap_end_x"]) + LANDING_SEARCH_X \
 			and not on_floor:
 				event["gap_airborne"] = true
-			if event["gap_airborne"] \
+			if event["route"] == &"TECHNICAL" \
+			and event["gap_airborne"] \
 			and world_x >= float(event["gap_end_x"]) + LANDING_MARGIN_X \
 			and on_floor \
-			and world_y > lerpf(float(event["safe_elevation"]), float(event["technical_elevation"]), 0.5):
+			and world_y > route_threshold:
 				event["gap_landed"] = true
 
 		if world_x >= float(event["merge_x"]) + LANDING_MARGIN_X and on_floor:
