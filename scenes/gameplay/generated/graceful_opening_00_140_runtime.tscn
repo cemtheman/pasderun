@@ -108,6 +108,7 @@ technical_material = ExtResource("26_technical")
 crest_material = ExtResource("27_crest")
 staircase_material = ExtResource("28_staircase")
 bridge_material = ExtResource("30_bridge")
+mainline_material = ExtResource("32_mainline")
 trim_material = ExtResource("29_trim")
 
 [node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]

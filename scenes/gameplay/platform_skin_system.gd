@@ -10,6 +10,7 @@ extends Node3D
 @export var crest_material: Material
 @export var staircase_material: Material
 @export var bridge_material: Material
+@export var mainline_material: Material
 @export var trim_material: Material
 
 const SOAR := "SOAR"
@@ -37,6 +38,11 @@ const STAIR_LOWER_BAND_LENGTH_RATIO := 0.72
 const SAFE_VISUAL_THICKNESS := 0.30
 const SAFE_NOSING_HEIGHT := 0.045
 const SAFE_DEPTH_BLEED := 0.06
+
+const MAINLINE_SHARED_THICKNESS := 0.32
+const APPROACH_VISUAL_THICKNESS := 0.30
+const SHARED_NOSING_HEIGHT := 0.045
+const SHARED_DEPTH_BLEED := 0.08
 
 const SOAR_VISUAL_EDGE_DEPTH := 0.28
 const SOAR_ARCH_RISE := 0.04
@@ -78,7 +84,88 @@ func _ready() -> void:
 			continue
 		_skin_branch(event_index + 1, branch_variant)
 
+	_skin_shared_generated_families()
 	_skin_architectural_spans(plan)
+
+
+func _skin_shared_generated_families() -> void:
+	var level := generated_level.get_node_or_null("Level")
+	if level == null:
+		return
+
+	var balance := level.get_node_or_null("BalancePassage01") as StaticBody3D
+	if balance != null:
+		_add_shared_palace_deck(
+			balance,
+			mainline_material if mainline_material != null else safe_material,
+			MAINLINE_SHARED_THICKNESS,
+			"BalanceArchitecturalDeck",
+			"BalanceGoldenNosing"
+		)
+
+	for index in range(1, 6):
+		var ramp := level.get_node_or_null(
+			"ClimaxApproachRamp%02d" % index
+		) as StaticBody3D
+		if ramp == null:
+			continue
+		_add_shared_palace_deck(
+			ramp,
+			mainline_material if mainline_material != null else technical_material,
+			APPROACH_VISUAL_THICKNESS,
+			"ApproachArchitecturalDeck",
+			"ApproachGoldenNosing"
+		)
+
+
+func _add_shared_palace_deck(
+	body: StaticBody3D,
+	material: Material,
+	visual_thickness: float,
+	deck_name: String,
+	nosing_name: String
+) -> void:
+	var mesh_instance := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
+	if mesh_instance == null or not mesh_instance.mesh is BoxMesh:
+		return
+	var base_box := mesh_instance.mesh as BoxMesh
+	mesh_instance.visible = false
+
+	var deck_mesh := BoxMesh.new()
+	deck_mesh.size = Vector3(
+		base_box.size.x,
+		visual_thickness,
+		base_box.size.z
+	)
+	var deck := MeshInstance3D.new()
+	deck.name = deck_name
+	deck.mesh = deck_mesh
+	deck.material_override = material
+	deck.position = Vector3(
+		0.0,
+		base_box.size.y * 0.5 - visual_thickness * 0.5,
+		0.0
+	)
+	body.add_child(deck)
+
+	if trim_material == null:
+		return
+	var nosing_mesh := BoxMesh.new()
+	nosing_mesh.size = Vector3(
+		base_box.size.x,
+		SHARED_NOSING_HEIGHT,
+		base_box.size.z + SHARED_DEPTH_BLEED
+	)
+	var nosing := MeshInstance3D.new()
+	nosing.name = nosing_name
+	nosing.mesh = nosing_mesh
+	nosing.material_override = trim_material
+	nosing.position = Vector3(
+		0.0,
+		base_box.size.y * 0.5 - SHARED_NOSING_HEIGHT * 0.5,
+		0.0
+	)
+	body.add_child(nosing)
 
 
 func _skin_architectural_spans(plan: Dictionary) -> void:
@@ -185,7 +272,13 @@ func _skin_branch(event_number: int, branch: Dictionary) -> void:
 	) as StaticBody3D
 	if safe_body != null:
 		_apply_surface_material(safe_body, safe_material)
-		_add_safe_architectural_deck(safe_body)
+		_add_shared_palace_deck(
+			safe_body,
+			safe_material,
+			SAFE_VISUAL_THICKNESS,
+			"SafeArchitecturalDeck",
+			"SafeGoldenNosing"
+		)
 
 	var topology := String(branch.get("topology", "SOAR"))
 	var technical: Dictionary = routes["technical"]
@@ -220,50 +313,6 @@ func _skin_branch(event_number: int, branch: Dictionary) -> void:
 
 	for body in collision_bodies:
 		_add_fascia(body, topology)
-
-
-func _add_safe_architectural_deck(body: StaticBody3D) -> void:
-	var base_mesh_instance := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
-	if base_mesh_instance == null or not base_mesh_instance.mesh is BoxMesh:
-		return
-	var base_box := base_mesh_instance.mesh as BoxMesh
-	base_mesh_instance.visible = false
-
-	var deck_mesh := BoxMesh.new()
-	deck_mesh.size = Vector3(
-		base_box.size.x,
-		SAFE_VISUAL_THICKNESS,
-		base_box.size.z
-	)
-	var deck := MeshInstance3D.new()
-	deck.name = "SafeArchitecturalDeck"
-	deck.mesh = deck_mesh
-	deck.material_override = safe_material
-	deck.position = Vector3(
-		0.0,
-		base_box.size.y * 0.5 - SAFE_VISUAL_THICKNESS * 0.5,
-		0.0
-	)
-	body.add_child(deck)
-
-	if trim_material == null:
-		return
-	var nosing_mesh := BoxMesh.new()
-	nosing_mesh.size = Vector3(
-		base_box.size.x,
-		SAFE_NOSING_HEIGHT,
-		base_box.size.z + SAFE_DEPTH_BLEED
-	)
-	var nosing := MeshInstance3D.new()
-	nosing.name = "SafeGoldenNosing"
-	nosing.mesh = nosing_mesh
-	nosing.material_override = trim_material
-	nosing.position = Vector3(
-		0.0,
-		base_box.size.y * 0.5 - SAFE_NOSING_HEIGHT * 0.5,
-		0.0
-	)
-	body.add_child(nosing)
 
 
 func _material_for_topology(topology: String) -> Material:

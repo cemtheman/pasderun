@@ -124,6 +124,20 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("SafeArchitecturalDeck", SCRIPT)
         self.assertIn("SafeGoldenNosing", SCRIPT)
 
+    def test_balance_and_climax_approach_use_shared_palace_deck_grammar(self) -> None:
+        self.assertIn("BalanceArchitecturalDeck", SCRIPT)
+        self.assertIn("BalanceGoldenNosing", SCRIPT)
+        self.assertIn("ApproachArchitecturalDeck", SCRIPT)
+        self.assertIn("ApproachGoldenNosing", SCRIPT)
+        self.assertIn("MAINLINE_SHARED_THICKNESS := 0.32", SCRIPT)
+        self.assertIn("APPROACH_VISUAL_THICKNESS := 0.30", SCRIPT)
+
+    def test_full_runtime_wires_mainline_material_into_platform_skin_system(self) -> None:
+        full_runtime = (
+            ROOT / "scenes/gameplay/generated/graceful_opening_00_140_runtime.tscn"
+        ).read_text(encoding="utf-8")
+        self.assertIn('mainline_material = ExtResource("32_mainline")', full_runtime)
+
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)
