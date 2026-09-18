@@ -290,16 +290,13 @@ func _apply_state_baseline(state: StringName) -> void:
 	_apply_idle_baseline()
 
 	# The imported character and the procedural mannequin use different forward
-	# axes. Do not reuse the mannequin Rig yaw here: doing so double-applies the
-	# coordinate conversion and leaves the skinned character in profile.
-	#
-	# The raw GLB faces the fourth wall at Y=0. The wrapper's accepted gameplay
-	# orientation is Y=+90 degrees so she travels along +X. During STAGE_BOW we
-	# therefore set the imported model explicitly to its native front-facing
-	# orientation, then restore the gameplay transform when the bow ends.
+	# axes. During STAGE_BOW do not guess a fixed yaw. Face the active gameplay
+	# camera directly in the horizontal plane using the model's native +Z visual
+	# forward axis. This removes the ±90° ambiguity between mannequin, GLB and
+	# wrapper coordinate spaces.
 	_model_root.transform = _model_base_transform
 	if state == &"STAGE_BOW":
-		_model_root.rotation.y = 0.0
+		_face_active_camera()
 
 	if state != &"STAGE_BOW":
 		return
@@ -310,6 +307,33 @@ func _apply_state_baseline(state: StringName) -> void:
 		var bone_idx: int = binding["bone_idx"]
 		if _target_bow_arm_poses.has(bone_idx):
 			_skeleton.set_bone_pose(bone_idx, _target_bow_arm_poses[bone_idx])
+
+
+func _face_active_camera() -> void:
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		return
+
+	var to_camera := camera.global_position - _model_root.global_position
+	to_camera.y = 0.0
+	if to_camera.length_squared() < 0.000001:
+		return
+
+	# Convert the desired world-facing vector into the model parent's local
+	# space. For this imported character, visual front is native +Z.
+	var parent_3d := _model_root.get_parent_node_3d()
+	var local_dir := to_camera.normalized()
+	if parent_3d != null:
+		local_dir = (
+			parent_3d.global_transform.basis.inverse()
+			* local_dir
+		).normalized()
+
+	_model_root.rotation = Vector3(
+		_model_root.rotation.x,
+		atan2(local_dir.x, local_dir.z),
+		_model_root.rotation.z
+	)
 
 
 func _apply_idle_baseline() -> void:
