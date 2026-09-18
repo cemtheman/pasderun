@@ -203,10 +203,11 @@ func _add_crest_architectural_shell(
 	shell.mesh = _build_extruded_profile(profile, shell_width, crest_material)
 	level.add_child(shell)
 
-	for segment in crest_segments:
+	for segment_index in range(crest_segments.size()):
+		var segment: Dictionary = crest_segments[segment_index]
 		_add_absolute_nosing(
 			level,
-			"CrestNosing%02d" % event_number,
+			"CrestNosing%02d_%02d" % [event_number, segment_index + 1],
 			float(segment["start_x"]),
 			float(segment["end_x"]),
 			float(segment["surface_y"]),
