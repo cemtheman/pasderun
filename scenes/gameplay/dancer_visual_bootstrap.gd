@@ -40,6 +40,19 @@ func _attach_visual(dancer: CharacterBody3D) -> void:
 		push_error("DancerVisual failed to initialize; keeping capsule fallback visible.")
 		return
 
+	# Prototype bridge: when an external rigged ballerina visual is already
+	# parented under Dancer, keep the accepted Phase 7 visual/state machine
+	# alive but hide its geometry. This lets the new skinned character inherit
+	# gameplay motion without changing collision or dancer physics.
+	var external_visual := dancer.get_node_or_null("BallerinaVisualV1")
+	if external_visual is Node3D:
+		visual.visible = false
+		var external_player := external_visual.get_node_or_null("low_poly_girl/AnimationPlayer") as AnimationPlayer
+		if external_player != null and external_player.has_animation("run"):
+			external_player.play("run")
+		else:
+			push_warning("BallerinaVisualV1 found, but its run animation is unavailable.")
+
 	var capsule_visual := dancer.get_node_or_null("MeshInstance3D")
 	if capsule_visual is GeometryInstance3D:
 		capsule_visual.visible = false
