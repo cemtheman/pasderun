@@ -26,8 +26,10 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         hold_pos = START.index('audio_player.stream_paused = true', play_pos)
         release_pos = START.index('audio_player.stream_paused = false', hold_pos)
         deferred_pos = START.index('func _enable_gameplay_after_start_input() -> void:')
+        rewind_pos = START.index('audio_player.seek(0.0)', deferred_pos)
         self.assertLess(play_pos, hold_pos)
-        self.assertLess(deferred_pos, release_pos)
+        self.assertLess(deferred_pos, rewind_pos)
+        self.assertLess(rewind_pos, release_pos)
         self.assertIn('overlay.visible = false', START)
         self.assertIn('dancer.call("begin_stage_entrance", entrance_speed)', START)
         self.assertIn('transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 1.5, 0)', RUNTIME)
@@ -70,6 +72,14 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn("_stage_final_bow_animation", VISUAL)
         self.assertIn("_final_kneel_pose", VISUAL)
         self.assertIn('"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rx(-1.30)', VISUAL)
+
+    def test_final_reverence_does_not_cut_soundtrack_early(self) -> None:
+        begin = RECOVERY.index("func _begin_completion_ceremony() -> void:")
+        finish = RECOVERY.index("func _finish_level_complete_state() -> void:")
+        begin_block = RECOVERY[begin:finish]
+        finish_block = RECOVERY[finish:]
+        self.assertNotIn("audio_player.stop()", begin_block)
+        self.assertIn("audio_player.stop()", finish_block)
 
     def test_final_ceremony_blocks_gameplay_input_but_keeps_grounding(self) -> None:
         self.assertIn("var stage_ending_mode := false", DANCER)
