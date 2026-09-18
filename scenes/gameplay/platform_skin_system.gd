@@ -24,10 +24,12 @@ const CREST_ARCH_SAMPLES := 18
 const CREST_DEPTH_BLEED := 0.06
 const CREST_NOSING_HEIGHT := 0.055
 
-const STAIR_RISER_EXTRA_DEPTH := 0.08
-const STAIR_RISER_BOTTOM_INSET := 0.055
-const STAIR_NOSING_HEIGHT := 0.055
-const STAIR_NOSING_DEPTH_BLEED := 0.10
+const STAIR_VISUAL_THICKNESS := 0.18
+const STAIR_RISER_BOTTOM_INSET := 0.035
+const STAIR_NOSING_HEIGHT := 0.045
+const STAIR_NOSING_DEPTH_BLEED := 0.08
+const STAIR_LOWER_BAND_HEIGHT := 0.022
+const STAIR_LOWER_BAND_LENGTH_RATIO := 0.72
 
 
 func _ready() -> void:
@@ -229,7 +231,7 @@ func _add_staircase_architectural_shell(
 		_set_collision_visual_hidden(body, true)
 
 		var top_y := base_box.size.y * 0.5
-		var bottom_y := -base_box.size.y * 0.5 - STAIR_RISER_EXTRA_DEPTH
+		var bottom_y := top_y - STAIR_VISUAL_THICKNESS
 		var half_top := base_box.size.x * 0.5
 		var half_bottom := maxf(
 			0.12,
@@ -259,9 +261,9 @@ func _add_staircase_architectural_shell(
 		)
 		_add_local_lower_band(
 			body,
-			base_box.size.x * 0.82,
-			base_box.size.z + 0.04,
-			bottom_y + 0.075,
+			base_box.size.x * STAIR_LOWER_BAND_LENGTH_RATIO,
+			base_box.size.z + 0.02,
+			bottom_y + STAIR_LOWER_BAND_HEIGHT * 0.5 + 0.018,
 			"TheatricalRiserLowerBand%02d_%02d" % [event_number, body_index + 1]
 		)
 
@@ -330,7 +332,7 @@ func _add_local_lower_band(
 	if trim_material == null:
 		return
 	var mesh := BoxMesh.new()
-	mesh.size = Vector3(length, 0.035, depth)
+	mesh.size = Vector3(length, STAIR_LOWER_BAND_HEIGHT, depth)
 	var band := MeshInstance3D.new()
 	band.name = node_name
 	band.mesh = mesh
