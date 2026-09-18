@@ -71,6 +71,32 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
             debug_script,
         )
 
+    def test_v2_crest_uses_one_collisionless_architectural_shell(self) -> None:
+        self.assertIn("CrestArchitecturalShell", SCRIPT)
+        self.assertIn("Geometry2D.triangulate_polygon", SCRIPT)
+        self.assertIn("CREST_UNDERSIDE_SWELL", SCRIPT)
+        self.assertIn("_set_collision_visual_hidden(body, true)", SCRIPT)
+        self.assertNotIn("CollisionShape3D.new()", SCRIPT)
+
+    def test_v2_staircase_preserves_gaps_with_per_step_riser_shells(self) -> None:
+        self.assertIn("TheatricalRiserShell", SCRIPT)
+        self.assertIn("TheatricalRiserNosing", SCRIPT)
+        self.assertIn("STAIR_RISER_BOTTOM_INSET", SCRIPT)
+        self.assertNotIn("STEP_GAP_", SCRIPT)
+
+    def test_v2_preserves_golden_nosing_signature(self) -> None:
+        self.assertIn("_add_absolute_nosing(", SCRIPT)
+        self.assertIn("_add_local_nosing(", SCRIPT)
+        self.assertIn("trim_material", SCRIPT)
+
+    def test_debug_routes_can_reveal_hidden_collision_meshes(self) -> None:
+        debug_script = (
+            ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
+        ).read_text(encoding="utf-8")
+        self.assertIn("_route_original_visibility", debug_script)
+        self.assertIn("_route_meshes[index].visible", debug_script)
+        self.assertIn("if show_routes", debug_script)
+
     def test_plan_still_contains_both_accepted_topologies(self) -> None:
         self.assertIn('"topology": "CREST"', PLAN)
         self.assertIn('"topology": "CRESCENDO_STAIRCASE"', PLAN)

@@ -18,6 +18,7 @@ const MODE_NAMES := ["OFF", "ROUTES", "MARKERS", "LABELS", "ALL"]
 
 var _diagnostic_mode := DiagnosticMode.MARKERS
 var _route_meshes: Array = []
+var _route_original_visibility: Array[bool] = []
 var _route_original_materials: Array = []
 var _route_debug_materials: Array = []
 var _marker_meshes: Array[MeshInstance3D] = []
@@ -64,6 +65,7 @@ func _register_route(body: Node, material: StandardMaterial3D) -> void:
 	var mesh := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
 	if mesh != null:
 		_route_meshes.append(mesh)
+		_route_original_visibility.append(mesh.visible)
 		_route_original_materials.append(mesh.material_override)
 		_route_debug_materials.append(material)
 
@@ -121,6 +123,11 @@ func set_diagnostic_mode(mode: int) -> void:
 	)
 
 	for index in _route_meshes.size():
+		_route_meshes[index].visible = (
+			true
+			if show_routes
+			else _route_original_visibility[index]
+		)
 		_route_meshes[index].material_override = (
 			_route_debug_materials[index]
 			if show_routes
