@@ -308,13 +308,13 @@ func _apply_state_baseline(state: StringName) -> void:
 
 	# Stage orientation is relative to travel, never inferred from camera yaw.
 	# Travel is +X; dancer-right is +Z. Restore the accepted gameplay transform,
-	# then aim the imported model's conventional -Z forward exactly along +Z.
+	# then aim the imported model's visual +Z front exactly along +Z.
 	_model_root.transform = _model_base_transform
 	if FRONT_FACING_STATES.has(state):
 		_model_root.look_at(
 			_model_root.global_position + AUDIENCE_DIRECTION,
 			Vector3.UP,
-			false
+			true
 		)
 
 	if state != &"STAGE_BOW":
