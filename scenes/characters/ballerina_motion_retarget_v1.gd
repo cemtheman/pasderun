@@ -22,6 +22,12 @@ const FRONT_FACING_STATES := {
 	&"STAGE_FINAL_BOW": true,
 }
 
+# Pas de Run stage geometry: the audience/camera is 90 degrees to the dancer's
+# RIGHT relative to the +X travel direction. The imported humanoid follows
+# Godot's conventional -Z visual forward, so a local -90 degree yaw from the
+# accepted gameplay orientation turns her from travel toward the audience.
+const STAGE_AUDIENCE_RIGHT_YAW := -PI * 0.5
+
 @onready var _model_root: Node3D = $low_poly_girl
 @onready var _skeleton: Skeleton3D = $low_poly_girl/Rig/Skeleton3D
 @onready var _animation_player: AnimationPlayer = $low_poly_girl/AnimationPlayer
@@ -297,14 +303,16 @@ func _is_arm_binding(binding: Dictionary) -> bool:
 func _apply_state_baseline(state: StringName) -> void:
 	_apply_idle_baseline()
 
-	# The imported character and the procedural mannequin use different forward
-	# axes. During STAGE_BOW do not guess a fixed yaw. Face the active gameplay
-	# camera directly in the horizontal plane using the model's native +Z visual
-	# forward axis. This removes the ±90° ambiguity between mannequin, GLB and
-	# wrapper coordinate spaces.
+	# Stage orientation is relative to the dancer's travel direction, not to
+	# camera position. Enter/bow/ready/final-bow turn exactly 90 degrees to the
+	# dancer's RIGHT; leaving those states restores the accepted travel transform.
 	_model_root.transform = _model_base_transform
 	if FRONT_FACING_STATES.has(state):
-		_face_active_camera()
+		_model_root.transform = Transform3D(
+			_model_base_transform.basis
+			* Basis(Vector3.UP, STAGE_AUDIENCE_RIGHT_YAW),
+			_model_base_transform.origin
+		)
 
 	if state != &"STAGE_BOW":
 		return
@@ -315,33 +323,6 @@ func _apply_state_baseline(state: StringName) -> void:
 		var bone_idx: int = binding["bone_idx"]
 		if _target_bow_arm_poses.has(bone_idx):
 			_skeleton.set_bone_pose(bone_idx, _target_bow_arm_poses[bone_idx])
-
-
-func _face_active_camera() -> void:
-	var camera := get_viewport().get_camera_3d()
-	if camera == null:
-		return
-
-	var to_camera := camera.global_position - _model_root.global_position
-	to_camera.y = 0.0
-	if to_camera.length_squared() < 0.000001:
-		return
-
-	# Convert the desired world-facing vector into the model parent's local
-	# space. For this imported character, visual front is native +Z.
-	var parent_3d := _model_root.get_parent_node_3d()
-	var local_dir := to_camera.normalized()
-	if parent_3d != null:
-		local_dir = (
-			parent_3d.global_transform.basis.inverse()
-			* local_dir
-		).normalized()
-
-	_model_root.rotation = Vector3(
-		_model_root.rotation.x,
-		atan2(local_dir.x, local_dir.z),
-		_model_root.rotation.z
-	)
 
 
 func _apply_idle_baseline() -> void:
