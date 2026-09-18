@@ -22,11 +22,15 @@ func _ready() -> void:
 		return
 	musicality.connect(&"accent_evaluated", Callable(self, "_on_accent_evaluated"))
 	_last_playback_time = _playback_time()
-	_update_cue(_last_playback_time)
+	if debug_label.is_visible_in_tree():
+		_update_cue(_last_playback_time)
 
 
 func _process(_delta: float) -> void:
 	var playback_time := _playback_time()
+	if not debug_label.is_visible_in_tree():
+		_last_playback_time = playback_time
+		return
 	if playback_time + 0.05 < _last_playback_time:
 		_last_classification = "-"
 	_last_playback_time = playback_time
