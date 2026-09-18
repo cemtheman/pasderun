@@ -11,6 +11,15 @@ const STATE_LOW_TRANSITION := &"LOW_TRANSITION"
 const STATE_BALANCE := &"BALANCE"
 const STATE_STUMBLE := &"STUMBLE"
 const STATE_RECOVERY := &"RECOVERY"
+const STATE_MUSIC_FLOW := &"MUSIC_FLOW"
+const STATE_MUSIC_BUILD := &"MUSIC_BUILD"
+const STATE_MUSIC_RELEASE := &"MUSIC_RELEASE"
+const STATE_MUSIC_PULSE := &"MUSIC_PULSE"
+const STATE_MUSIC_CLIMAX := &"MUSIC_CLIMAX"
+const STATE_MUSIC_PREP := &"MUSIC_PREP"
+const STATE_MUSIC_ACCENT := &"MUSIC_ACCENT"
+
+const MUSIC_ACCENT_VISUAL_TIME := 0.22
 
 const VISUAL_STATES := [
 	STATE_NEUTRAL,
@@ -22,6 +31,13 @@ const VISUAL_STATES := [
 	STATE_BALANCE,
 	STATE_STUMBLE,
 	STATE_RECOVERY,
+	STATE_MUSIC_FLOW,
+	STATE_MUSIC_BUILD,
+	STATE_MUSIC_RELEASE,
+	STATE_MUSIC_PULSE,
+	STATE_MUSIC_CLIMAX,
+	STATE_MUSIC_PREP,
+	STATE_MUSIC_ACCENT,
 ]
 
 const TAKEOFF_VISUAL_TIME := 0.16
@@ -56,6 +72,11 @@ var _was_on_floor := true
 var _airborne_time := 0.0
 var _landing_time := 0.0
 
+var _music_expression_enabled := false
+var _music_phrase_state: StringName = STATE_MUSIC_FLOW
+var _music_preparing_action: StringName = &""
+var _music_accent_remaining := 0.0
+
 
 func _ready() -> void:
 	dancer = get_parent() as CharacterBody3D
@@ -73,7 +94,40 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if dancer == null:
 		return
+	_music_accent_remaining = maxf(_music_accent_remaining - delta, 0.0)
 	_set_visual_state(_resolve_visual_state(delta))
+
+
+func set_music_expression_enabled(enabled: bool) -> void:
+	_music_expression_enabled = enabled
+	if not enabled:
+		_music_preparing_action = &""
+		_music_accent_remaining = 0.0
+
+
+func set_music_phrase_role(role: StringName) -> void:
+	match role:
+		&"BUILD":
+			_music_phrase_state = STATE_MUSIC_BUILD
+		&"RELEASE":
+			_music_phrase_state = STATE_MUSIC_RELEASE
+		&"PULSE", &"TURNING_POINT":
+			_music_phrase_state = STATE_MUSIC_PULSE
+		&"CLIMAX":
+			_music_phrase_state = STATE_MUSIC_CLIMAX
+		_:
+			_music_phrase_state = STATE_MUSIC_FLOW
+
+
+func set_music_action_preparation(action: StringName, active: bool) -> void:
+	if active:
+		_music_preparing_action = action
+	elif _music_preparing_action == action:
+		_music_preparing_action = &""
+
+
+func trigger_music_accent() -> void:
+	_music_accent_remaining = MUSIC_ACCENT_VISUAL_TIME
 
 
 func get_visual_state() -> StringName:
@@ -117,7 +171,13 @@ func _resolve_visual_state(delta: float) -> StringName:
 		_landing_time = maxf(_landing_time - delta, 0.0)
 		return STATE_LANDING
 
-	return STATE_TRAVEL
+	if not _music_expression_enabled:
+		return STATE_TRAVEL
+	if _music_preparing_action == &"JUMP":
+		return STATE_MUSIC_PREP
+	if _music_accent_remaining > 0.0:
+		return STATE_MUSIC_ACCENT
+	return _music_phrase_state
 
 
 func _set_visual_state(state: StringName, force := false) -> void:
@@ -241,6 +301,13 @@ func _build_animation_system() -> void:
 	_add_animation(library, "balance", _balance_animation())
 	_add_animation(library, "stumble", _stumble_animation())
 	_add_animation(library, "recovery", _recovery_animation())
+	_add_animation(library, "music_flow", _music_flow_animation())
+	_add_animation(library, "music_build", _music_build_animation())
+	_add_animation(library, "music_release", _music_release_animation())
+	_add_animation(library, "music_pulse", _music_pulse_animation())
+	_add_animation(library, "music_climax", _music_climax_animation())
+	_add_animation(library, "music_prep", _music_prep_animation())
+	_add_animation(library, "music_accent", _music_accent_animation())
 	_animation_player.add_animation_library(&"", library)
 
 	_state_machine = AnimationNodeStateMachine.new()
@@ -267,6 +334,34 @@ func _build_animation_system() -> void:
 	_playback = _animation_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
 
 
+func _music_flow_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_build_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_release_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_pulse_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_climax_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_prep_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_accent_animation() -> Animation:
+	return _travel_animation()
+
+
 func _add_animation(library: AnimationLibrary, animation_name: String, animation: Animation) -> void:
 	var error := library.add_animation(StringName(animation_name), animation)
 	if error != OK:
@@ -274,6 +369,12 @@ func _add_animation(library: AnimationLibrary, animation_name: String, animation
 
 
 func _blend_time(from_state: StringName, to_state: StringName) -> float:
+	if to_state == STATE_MUSIC_ACCENT or from_state == STATE_MUSIC_ACCENT:
+		return 0.04
+	if to_state == STATE_MUSIC_PREP:
+		return 0.06
+	if from_state == STATE_MUSIC_PREP:
+		return 0.05
 	if from_state == STATE_STUMBLE or to_state == STATE_STUMBLE:
 		return 0.06
 	if from_state == STATE_RECOVERY or to_state == STATE_RECOVERY:

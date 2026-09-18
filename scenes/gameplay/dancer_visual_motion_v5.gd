@@ -84,3 +84,88 @@ func _low_articulated_pose_v5(
 		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(back_knee),
 		"Rig/Pelvis/LegBackHip/LegBackKnee/FootBack:rotation": _rz(back_foot),
 	})
+
+
+# Phase 9 musical choreography: the world keeps travelling at the accepted
+# gameplay speed, while grounded presentation changes phrase shape. Physical
+# gameplay states (jump, airborne, landing, low transition, balance, stumble)
+# still have priority in dancer_visual.gd.
+
+
+func _music_flow_animation() -> Animation:
+	return _travel_animation()
+
+
+func _music_build_animation() -> Animation:
+	return _animation_from_poses(1.856, [0.0, 0.464, 0.928, 1.392, 1.856], [
+		_music_pose(_front_contact_pose(), 0.52, -0.010, 0.000),
+		_music_pose(_back_contact_pose(), 0.66, -0.020, 0.010),
+		_music_pose(_front_contact_pose(), 0.80, -0.030, 0.020),
+		_music_pose(_back_contact_pose(), 0.94, -0.040, 0.032),
+		_music_pose(_front_contact_pose(), 1.02, -0.045, 0.040),
+	], true)
+
+
+func _music_release_animation() -> Animation:
+	return _animation_from_poses(1.856, [0.0, 0.464, 0.928, 1.392, 1.856], [
+		_music_pose(_front_contact_pose(), 0.94, -0.020, 0.020),
+		_music_pose(_back_contact_pose(), 0.82, -0.010, 0.010),
+		_music_pose(_front_contact_pose(), 0.70, 0.000, 0.000),
+		_music_pose(_back_contact_pose(), 0.58, 0.018, -0.010),
+		_music_pose(_front_contact_pose(), 0.50, 0.030, -0.018),
+	], true)
+
+
+func _music_pulse_animation() -> Animation:
+	return _animation_from_poses(1.856, [0.0, 0.232, 0.464, 0.696, 0.928, 1.160, 1.392, 1.624, 1.856], [
+		_music_pose(_front_contact_pose(), 0.96, -0.025, 0.028),
+		_music_pose(_back_brush_pose(), 0.52, 0.015, -0.008),
+		_music_pose(_back_contact_pose(), 0.96, -0.025, 0.028),
+		_music_pose(_front_brush_pose(), 0.52, 0.015, -0.008),
+		_music_pose(_front_contact_pose(), 0.96, -0.025, 0.028),
+		_music_pose(_back_brush_pose(), 0.52, 0.015, -0.008),
+		_music_pose(_back_contact_pose(), 0.96, -0.025, 0.028),
+		_music_pose(_front_brush_pose(), 0.52, 0.015, -0.008),
+		_music_pose(_front_contact_pose(), 0.96, -0.025, 0.028),
+	], true)
+
+
+func _music_climax_animation() -> Animation:
+	return _animation_from_poses(0.928, [0.0, 0.232, 0.464, 0.696, 0.928], [
+		_music_pose(_front_contact_pose(), 0.90, -0.030, 0.025),
+		_music_pose(_back_flight_pose(), 1.08, -0.045, 0.060),
+		_music_pose(_back_contact_pose(), 1.14, -0.050, 0.070),
+		_music_pose(_front_flight_pose(), 1.08, -0.045, 0.060),
+		_music_pose(_front_contact_pose(), 0.90, -0.030, 0.025),
+	], true)
+
+
+func _music_prep_animation() -> Animation:
+	return _animation_from_poses(0.75, [0.0, 0.25, 0.50, 0.75], [
+		_music_pose(_front_contact_pose(), 0.64, -0.025, 0.000),
+		_music_pose(_back_brush_pose(), 0.48, -0.055, -0.015),
+		_music_pose(_front_contact_pose(), 0.38, -0.085, -0.045),
+		_music_pose(_recovery_compress_pose(), 0.30, -0.105, -0.060),
+	], false)
+
+
+func _music_accent_animation() -> Animation:
+	return _animation_from_poses(0.22, [0.0, 0.08, 0.16, 0.22], [
+		_music_pose(_front_contact_pose(), 0.70, -0.020, 0.000),
+		_music_pose(_back_flight_pose(), 1.18, -0.055, 0.075),
+		_music_pose(_front_brush_pose(), 1.02, -0.035, 0.040),
+		_music_pose(_front_contact_pose(), 0.72, -0.020, 0.000),
+	], false)
+
+
+func _music_pose(base_pose: Dictionary, arm_open: float, torso_angle: float, lift_delta: float) -> Dictionary:
+	var pose := base_pose.duplicate(true)
+	var rig_position: Vector3 = pose["Rig:position"]
+	pose["Rig:position"] = rig_position + Vector3(0.0, lift_delta, 0.0)
+	pose["Rig/Pelvis/Torso:rotation"] = _rz(torso_angle)
+	pose["Rig/Pelvis/Torso/Head:rotation"] = _rz(-torso_angle * 0.45)
+	pose["Rig/Pelvis/Torso/ArmBackShoulder:rotation"] = _rz(-arm_open)
+	pose["Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation"] = _rz(0.26)
+	pose["Rig/Pelvis/Torso/ArmFrontShoulder:rotation"] = _rz(arm_open)
+	pose["Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation"] = _rz(0.26)
+	return pose

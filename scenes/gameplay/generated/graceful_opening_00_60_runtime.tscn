@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" path="res://assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png" id="18_foreground"]
 [ext_resource type="Script" path="res://scenes/gameplay/run_recovery_manager.gd" id="21_recovery"]
 [ext_resource type="Script" path="res://scenes/gameplay/mobile_orientation_gate.gd" id="22_orientation"]
+[ext_resource type="Script" path="res://scenes/gameplay/music_choreography_director.gd" id="23_choreo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -151,6 +152,13 @@ generated_level = NodePath("../GeneratedLevel")
 debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/FlowDebug")
 geometry_plan_path = "res://data/geometry/graceful_opening_00_60.geometry_plan_v0_1.json"
 
+[node name="MusicChoreographyDirector" type="Node" parent="." node_paths=PackedStringArray("music_timeline", "dancer", "musicality", "debug_label")]
+script = ExtResource("23_choreo")
+music_timeline = NodePath("../Music/MusicTimeline")
+dancer = NodePath("../Dancer")
+musicality = NodePath("../Music/Musicality")
+debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/ChoreographyDebug")
+
 [node name="TapTimingDebug" type="Node" parent="." unique_id=600502133 node_paths=PackedStringArray("musicality", "music_timeline", "debug_label")]
 script = ExtResource("10_tap_debug")
 musicality = NodePath("../Music/Musicality")
@@ -258,6 +266,11 @@ APPROACH
 EARLY      PERFECT      LATE
 --------------o--------------
 LAST ACCENT: -"
+
+[node name="ChoreographyDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "CHOREO: BASELINE"
 
 [node name="PerformanceDebug" type="Label" parent="DebugHUD/HUDRoot/LeftPanel/LeftStack"]
 layout_mode = 2
