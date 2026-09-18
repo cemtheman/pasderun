@@ -111,17 +111,22 @@ func _physics_process(delta: float) -> void:
 
 func set_stage_presentation_state(stage: StringName) -> void:
 	var next_state := &""
+	var front_facing := false
 	match stage:
 		&"WALK":
 			next_state = STATE_STAGE_WALK
 		&"BOW":
 			next_state = STATE_STAGE_BOW
+			front_facing = true
 		&"READY":
 			next_state = STATE_STAGE_READY
+			front_facing = true
 		&"FINAL_BOW":
 			next_state = STATE_STAGE_FINAL_BOW
+			front_facing = true
 		_:
 			return
+	_set_front_presentation_geometry(front_facing)
 	if _stage_presentation_state == next_state:
 		return
 	_stage_presentation_state = next_state
@@ -130,6 +135,65 @@ func set_stage_presentation_state(stage: StringName) -> void:
 
 func clear_stage_presentation() -> void:
 	_stage_presentation_state = &""
+	_set_front_presentation_geometry(false)
+
+
+func _set_front_presentation_geometry(enabled: bool) -> void:
+	if _rig == null:
+		return
+
+	var torso := _rig.get_node_or_null("Pelvis/Torso") as Node3D
+	var pelvis := _rig.get_node_or_null("Pelvis") as Node3D
+	if torso == null or pelvis == null:
+		return
+
+	var arm_back := torso.get_node_or_null("ArmBackShoulder") as Node3D
+	var arm_front := torso.get_node_or_null("ArmFrontShoulder") as Node3D
+	var leg_back := pelvis.get_node_or_null("LegBackHip") as Node3D
+	var leg_front := pelvis.get_node_or_null("LegFrontHip") as Node3D
+	var torso_shape := torso.get_node_or_null("TorsoShape") as MeshInstance3D
+	var pelvis_shape := pelvis.get_node_or_null("PelvisShape") as MeshInstance3D
+	var foot_back := pelvis.get_node_or_null(
+		"LegBackHip/LegBackKnee/FootBack/FootBackShape"
+	) as MeshInstance3D
+	var foot_front := pelvis.get_node_or_null(
+		"LegFrontHip/LegFrontKnee/FootFront/FootFrontShape"
+	) as MeshInstance3D
+
+	if enabled:
+		if arm_back != null:
+			arm_back.position = Vector3(0.0, 0.52, 0.20)
+		if arm_front != null:
+			arm_front.position = Vector3(0.0, 0.52, -0.20)
+		if leg_back != null:
+			leg_back.position = Vector3(0.0, -0.08, 0.075)
+		if leg_front != null:
+			leg_front.position = Vector3(0.0, -0.08, -0.075)
+		if torso_shape != null:
+			torso_shape.scale = Vector3(1.0, 1.0, 1.80)
+		if pelvis_shape != null:
+			pelvis_shape.scale = Vector3(1.0, 1.0, 1.40)
+		if foot_back != null:
+			foot_back.scale = Vector3(1.0, 1.0, 1.65)
+		if foot_front != null:
+			foot_front.scale = Vector3(1.0, 1.0, 1.65)
+	else:
+		if arm_back != null:
+			arm_back.position = Vector3(-0.02, 0.52, 0.085)
+		if arm_front != null:
+			arm_front.position = Vector3(0.02, 0.52, -0.085)
+		if leg_back != null:
+			leg_back.position = Vector3(-0.045, -0.08, 0.055)
+		if leg_front != null:
+			leg_front.position = Vector3(0.045, -0.08, -0.055)
+		if torso_shape != null:
+			torso_shape.scale = Vector3.ONE
+		if pelvis_shape != null:
+			pelvis_shape.scale = Vector3.ONE
+		if foot_back != null:
+			foot_back.scale = Vector3.ONE
+		if foot_front != null:
+			foot_front.scale = Vector3.ONE
 
 
 func set_music_expression_enabled(enabled: bool) -> void:
@@ -469,14 +533,14 @@ func _stage_bow_animation() -> Animation:
 			"Rig/Pelvis:rotation": _rz(-0.045),
 			"Rig/Pelvis/Torso:rotation": _rz(-0.24),
 			"Rig/Pelvis/Torso/Head:rotation": _rz(0.08),
-			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.34),
-			"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.18),
-			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.34),
-			"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.18),
-			"Rig/Pelvis/LegBackHip:rotation": _rz(-0.10),
-			"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.30),
-			"Rig/Pelvis/LegFrontHip:rotation": _rz(0.10),
-			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.30),
+			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rx(-0.34),
+			"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rx(0.14),
+			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rx(0.34),
+			"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rx(-0.14),
+			"Rig/Pelvis/LegBackHip:rotation": _rx(-0.10),
+			"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rx(0.30),
+			"Rig/Pelvis/LegFrontHip:rotation": _rx(0.10),
+			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rx(-0.30),
 		}),
 		_pose({
 			"Rig:position": Vector3(0.0, -0.040, 0.0),
@@ -484,21 +548,19 @@ func _stage_bow_animation() -> Animation:
 			"Rig/Pelvis:rotation": _rz(-0.060),
 			"Rig/Pelvis/Torso:rotation": _rz(-0.34),
 			"Rig/Pelvis/Torso/Head:rotation": _rz(0.11),
-			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.40),
-			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.40),
-			"Rig/Pelvis/LegBackHip:rotation": _rz(-0.12),
-			"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.34),
-			"Rig/Pelvis/LegFrontHip:rotation": _rz(0.12),
-			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.34),
+			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rx(-0.40),
+			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rx(0.40),
+			"Rig/Pelvis/LegBackHip:rotation": _rx(-0.12),
+			"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rx(0.34),
+			"Rig/Pelvis/LegFrontHip:rotation": _rx(0.12),
+			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rx(-0.34),
 		}),
 		_stage_ready_pose(),
 	], false)
 
 
 func _stage_side_ready_pose() -> Dictionary:
-	var pose := _stage_ready_pose()
-	pose["Rig:rotation"] = _ry(0.0)
-	return pose
+	return _stage_walk_pose(0.0)
 
 
 func _stage_fourth_wall_turn_pose() -> Dictionary:
@@ -536,17 +598,17 @@ func _final_kneel_pose(
 		"Rig/Pelvis:rotation": _rz(-0.035),
 		"Rig/Pelvis/Torso:rotation": _rz(torso_bow),
 		"Rig/Pelvis/Torso/Head:rotation": _rz(-torso_bow * 0.30),
-		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-arm_open),
-		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.22),
-		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(arm_open),
-		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.22),
+		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rx(-arm_open),
+		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rx(0.18),
+		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rx(arm_open),
+		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rx(-0.18),
 		# Front leg remains the supporting foot while the back knee folds down.
-		"Rig/Pelvis/LegFrontHip:rotation": _rz(0.18),
-		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(-0.42),
-		"Rig/Pelvis/LegFrontHip/LegFrontKnee/FootFront:rotation": _rz(0.20),
-		"Rig/Pelvis/LegBackHip:rotation": _rz(-0.52),
-		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(-1.30),
-		"Rig/Pelvis/LegBackHip/LegBackKnee/FootBack:rotation": _rz(0.52),
+		"Rig/Pelvis/LegFrontHip:rotation": _rx(0.18),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rx(-0.42),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee/FootFront:rotation": _rx(0.20),
+		"Rig/Pelvis/LegBackHip:rotation": _rx(-0.52),
+		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rx(-1.30),
+		"Rig/Pelvis/LegBackHip/LegBackKnee/FootBack:rotation": _rx(0.52),
 	})
 
 
@@ -563,22 +625,22 @@ func _stage_ready_pose() -> Dictionary:
 		"Rig:rotation": _ry(FOURTH_WALL_YAW),
 		"Rig/Pelvis/Torso:rotation": _rz(-0.012),
 		"Rig/Pelvis/Torso/Head:rotation": _rz(0.015),
-		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.24),
-		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.18),
-		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.24),
-		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.18),
-		"Rig/Pelvis/LegBackHip:rotation": _rz(-0.04),
-		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.10),
-		"Rig/Pelvis/LegFrontHip:rotation": _rz(0.04),
-		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.10),
+		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rx(-0.24),
+		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rx(0.14),
+		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rx(0.24),
+		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rx(-0.14),
+		"Rig/Pelvis/LegBackHip:rotation": _rx(-0.04),
+		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rx(0.10),
+		"Rig/Pelvis/LegFrontHip:rotation": _rx(0.04),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rx(-0.10),
 	})
 
 
 func _stage_ready_breath_pose() -> Dictionary:
 	var pose := _stage_ready_pose()
 	pose["Rig:position"] = Vector3(0.0, 0.012, 0.0)
-	pose["Rig/Pelvis/Torso/ArmBackShoulder:rotation"] = _rz(-0.28)
-	pose["Rig/Pelvis/Torso/ArmFrontShoulder:rotation"] = _rz(0.28)
+	pose["Rig/Pelvis/Torso/ArmBackShoulder:rotation"] = _rx(-0.28)
+	pose["Rig/Pelvis/Torso/ArmFrontShoulder:rotation"] = _rx(0.28)
 	return pose
 
 
@@ -790,6 +852,10 @@ func _pose(overrides: Dictionary) -> Dictionary:
 	for key in overrides:
 		pose[key] = overrides[key]
 	return pose
+
+
+func _rx(angle: float) -> Vector3:
+	return Vector3(angle, 0.0, 0.0)
 
 
 func _ry(angle: float) -> Vector3:

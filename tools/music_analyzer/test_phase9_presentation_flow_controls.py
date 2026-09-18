@@ -37,6 +37,17 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn("_stage_fourth_wall_turn_pose()", VISUAL)
         self.assertIn('"Rig:rotation": _ry(FOURTH_WALL_YAW)', VISUAL)
 
+    def test_fourth_wall_presentation_morph_preserves_humanoid_proportions(self) -> None:
+        self.assertIn("_set_front_presentation_geometry(front_facing)", VISUAL)
+        self.assertIn("arm_back.position = Vector3(0.0, 0.52, 0.20)", VISUAL)
+        self.assertIn("arm_front.position = Vector3(0.0, 0.52, -0.20)", VISUAL)
+        self.assertIn("leg_back.position = Vector3(0.0, -0.08, 0.075)", VISUAL)
+        self.assertIn("torso_shape.scale = Vector3(1.0, 1.0, 1.80)", VISUAL)
+        self.assertIn("pelvis_shape.scale = Vector3(1.0, 1.0, 1.40)", VISUAL)
+        self.assertIn("func _rx(angle: float)", VISUAL)
+        self.assertIn('"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rx(-0.24)', VISUAL)
+        self.assertIn("_set_front_presentation_geometry(false)", VISUAL)
+
     def test_final_completion_waits_for_large_kneeling_reverence(self) -> None:
         self.assertIn("COMPLETION_CEREMONY", RECOVERY)
         self.assertIn("COMPLETION_CEREMONY_DURATION := 2.60", RECOVERY)
@@ -50,7 +61,7 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn("STATE_STAGE_FINAL_BOW", VISUAL)
         self.assertIn("_stage_final_bow_animation", VISUAL)
         self.assertIn("_final_kneel_pose", VISUAL)
-        self.assertIn('"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(-1.30)', VISUAL)
+        self.assertIn('"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rx(-1.30)', VISUAL)
 
     def test_final_ceremony_blocks_gameplay_input_but_keeps_grounding(self) -> None:
         self.assertIn("var stage_ending_mode := false", DANCER)
