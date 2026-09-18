@@ -54,16 +54,16 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("body.add_child(fascia)", SCRIPT)
         self.assertIn("FASCIA_WIDTH_BLEED", SCRIPT)
 
-    def test_fork_debug_does_not_hide_platform_skins_by_default(self) -> None:
+    def test_fork_debug_is_off_by_default_without_hiding_platform_skins(self) -> None:
         debug_script = (
             ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "var _diagnostic_mode := DiagnosticMode.MARKERS",
+            "var _diagnostic_mode := DiagnosticMode.OFF",
             debug_script,
         )
         self.assertIn(
-            "set_diagnostic_mode(DiagnosticMode.MARKERS)",
+            "set_diagnostic_mode(DiagnosticMode.OFF)",
             debug_script,
         )
         self.assertNotIn(
