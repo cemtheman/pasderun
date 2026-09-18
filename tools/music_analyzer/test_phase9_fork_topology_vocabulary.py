@@ -14,7 +14,7 @@ from build_120_second_extension import (
 from build_climax_fork import render_climax_fork_scene
 from fork_topology_vocabulary import (
     CRESCENDO_STAIRCASE,
-    SOAR,
+    CREST,
     TIER_CONTRACT,
     classify_topology,
 )
@@ -72,7 +72,7 @@ class Phase9ForkTopologyVocabularyTests(unittest.TestCase):
             anchor for anchor in VISUAL["event_anchors"]
             if float(anchor["time"]) == 68.5
         )
-        self.assertEqual(classify_topology(VISUAL, anchor_68), SOAR)
+        self.assertEqual(classify_topology(VISUAL, anchor_68), CREST)
 
     def test_accepted_0_to_90_event_contract_is_immutable(self) -> None:
         expected = [
