@@ -1,0 +1,2014 @@
+{
+  "schema_version": "0.1",
+  "source_visual_score": "data/music/graceful_opening.visual_score_v0_1.json",
+  "source_geometry_plan": "data/geometry/graceful_opening_00_90.geometry_plan_v0_1.json",
+  "time_range": {
+    "start": 60.0,
+    "end": 90.0
+  },
+  "world_range": {
+    "start_x": 240.0,
+    "end_x": 360.0
+  },
+  "policy": {
+    "type": "passive_spatial_expression_over_existing_runways",
+    "event_geometry_preserved": true,
+    "new_required_actions": false,
+    "new_gaps": false,
+    "max_passive_delta_y": 0.15,
+    "max_adjacent_passive_step": 0.3,
+    "controller_max_traversable_step_height": 0.45,
+    "reaction_lead_seconds": 0.75,
+    "geometry_lock_actions": [
+      "HOLD",
+      "JUMP",
+      "SWIPE_DOWN"
+    ],
+    "beat_subdivision": true
+  },
+  "action_locks": [
+    {
+      "time": 60.604,
+      "action": "JUMP",
+      "start_time": 60.0,
+      "end_time": 61.5207,
+      "start_x": 240.0,
+      "end_x": 246.0828
+    },
+    {
+      "time": 68.5,
+      "action": "JUMP",
+      "start_time": 67.75,
+      "end_time": 69.4167,
+      "start_x": 271.0,
+      "end_x": 277.6668
+    },
+    {
+      "time": 74.118,
+      "action": "JUMP",
+      "start_time": 73.368,
+      "end_time": 75.0347,
+      "start_x": 293.472,
+      "end_x": 300.1388
+    },
+    {
+      "time": 82.75,
+      "action": "JUMP",
+      "start_time": 82.0,
+      "end_time": 83.6667,
+      "start_x": 328.0,
+      "end_x": 334.6668
+    },
+    {
+      "time": 87.353,
+      "action": "JUMP",
+      "start_time": 86.603,
+      "end_time": 88.2697,
+      "start_x": 346.412,
+      "end_x": 353.0788
+    }
+  ],
+  "segments": [
+    {
+      "start_x": 240.0,
+      "end_x": 240.777,
+      "length": 0.777,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 32,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 60.0,
+        "end": 60.1942
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5472,
+        "continuity": 0.407,
+        "lift": 0.1961
+      },
+      "interaction_lock": {
+        "time": 60.604,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 240.777,
+      "end_x": 241.816,
+      "length": 1.039,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 32,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 60.1942,
+        "end": 60.454
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5472,
+        "continuity": 0.407,
+        "lift": 0.1961
+      },
+      "interaction_lock": {
+        "time": 60.604,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 243.016,
+      "end_x": 244.491,
+      "length": 1.475,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 32,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 60.754,
+        "end": 61.1228
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5472,
+        "continuity": 0.407,
+        "lift": 0.1961
+      },
+      "interaction_lock": {
+        "time": 60.604,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 244.491,
+      "end_x": 246.0828,
+      "length": 1.5918,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 32,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 61.1228,
+        "end": 61.5207
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5472,
+        "continuity": 0.407,
+        "lift": 0.1961
+      },
+      "interaction_lock": {
+        "time": 60.604,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 246.0828,
+      "end_x": 246.348,
+      "length": 0.2652,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8222,
+      "delta_y": -0.0222,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 32,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 61.5207,
+        "end": 61.587
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5472,
+        "continuity": 0.407,
+        "lift": 0.1961
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 246.348,
+      "end_x": 248.206,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7789,
+      "delta_y": 0.0211,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 33,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 61.587,
+        "end": 62.0515
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4929,
+        "continuity": 0.4218,
+        "lift": 0.1685
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 248.206,
+      "end_x": 250.064,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7789,
+      "delta_y": 0.0211,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 33,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 62.0515,
+        "end": 62.516
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4929,
+        "continuity": 0.4218,
+        "lift": 0.1685
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 250.064,
+      "end_x": 251.922,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8211,
+      "delta_y": -0.0211,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 33,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 62.516,
+        "end": 62.9805
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4929,
+        "continuity": 0.4218,
+        "lift": 0.1685
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 251.922,
+      "end_x": 253.78,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8211,
+      "delta_y": -0.0211,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 33,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 62.9805,
+        "end": 63.445
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4929,
+        "continuity": 0.4218,
+        "lift": 0.1685
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 253.78,
+      "end_x": 255.638,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7792,
+      "delta_y": 0.0208,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 34,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 63.445,
+        "end": 63.9095
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4821,
+        "continuity": 0.4548,
+        "lift": 0.1693
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 255.638,
+      "end_x": 257.496,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7792,
+      "delta_y": 0.0208,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 34,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 63.9095,
+        "end": 64.374
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4821,
+        "continuity": 0.4548,
+        "lift": 0.1693
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 257.496,
+      "end_x": 259.354,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8208,
+      "delta_y": -0.0208,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 34,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 64.374,
+        "end": 64.8385
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4821,
+        "continuity": 0.4548,
+        "lift": 0.1693
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 259.354,
+      "end_x": 261.212,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8208,
+      "delta_y": -0.0208,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 34,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 64.8385,
+        "end": 65.303
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4821,
+        "continuity": 0.4548,
+        "lift": 0.1693
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 261.212,
+      "end_x": 263.069,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7797,
+      "delta_y": 0.0203,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 35,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 65.303,
+        "end": 65.7672
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4574,
+        "continuity": 0.4847,
+        "lift": 0.1858
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 263.069,
+      "end_x": 264.926,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7797,
+      "delta_y": 0.0203,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 35,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 65.7672,
+        "end": 66.2315
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4574,
+        "continuity": 0.4847,
+        "lift": 0.1858
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 264.926,
+      "end_x": 266.783,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8203,
+      "delta_y": -0.0203,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 35,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 66.2315,
+        "end": 66.6958
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4574,
+        "continuity": 0.4847,
+        "lift": 0.1858
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 266.783,
+      "end_x": 268.64,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8203,
+      "delta_y": -0.0203,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 35,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 66.6958,
+        "end": 67.16
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4574,
+        "continuity": 0.4847,
+        "lift": 0.1858
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 268.64,
+      "end_x": 270.498,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7674,
+      "delta_y": 0.0326,
+      "pattern": "LIFTED_TERRACE",
+      "source_window_index": 36,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 67.16,
+        "end": 67.6245
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8048,
+        "continuity": 0.318,
+        "lift": 0.6771
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 270.498,
+      "end_x": 271.0,
+      "length": 0.502,
+      "base_surface_y": -2.8,
+      "surface_y": -2.713,
+      "delta_y": 0.087,
+      "pattern": "LIFTED_TERRACE",
+      "source_window_index": 36,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 67.6245,
+        "end": 67.75
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8048,
+        "continuity": 0.318,
+        "lift": 0.6771
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 271.0,
+      "end_x": 272.356,
+      "length": 1.356,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 36,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 67.75,
+        "end": 68.089
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8048,
+        "continuity": 0.318,
+        "lift": 0.6771
+      },
+      "interaction_lock": {
+        "time": 68.5,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 272.356,
+      "end_x": 272.9,
+      "length": 0.544,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 36,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 68.089,
+        "end": 68.225
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8048,
+        "continuity": 0.318,
+        "lift": 0.6771
+      },
+      "interaction_lock": {
+        "time": 68.5,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 275.1,
+      "end_x": 276.072,
+      "length": 0.972,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 36,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 68.775,
+        "end": 69.018
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "PULSED",
+        "contour": "RISE",
+        "intensity": 0.8048,
+        "continuity": 0.318,
+        "lift": 0.6771
+      },
+      "interaction_lock": {
+        "time": 68.5,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 276.072,
+      "end_x": 277.6668,
+      "length": 1.5948,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 37,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 69.018,
+        "end": 69.4167
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6123,
+        "continuity": 0.31,
+        "lift": 0.1987
+      },
+      "interaction_lock": {
+        "time": 68.5,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 277.6668,
+      "end_x": 277.93,
+      "length": 0.2632,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8278,
+      "delta_y": -0.0278,
+      "pattern": "FALLING_TERRACE",
+      "source_window_index": 37,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 69.4167,
+        "end": 69.4825
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6123,
+        "continuity": 0.31,
+        "lift": 0.1987
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 277.93,
+      "end_x": 279.788,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8556,
+      "delta_y": -0.0556,
+      "pattern": "FALLING_TERRACE",
+      "source_window_index": 37,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 69.4825,
+        "end": 69.947
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6123,
+        "continuity": 0.31,
+        "lift": 0.1987
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 279.788,
+      "end_x": 281.646,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8834,
+      "delta_y": -0.0834,
+      "pattern": "FALLING_TERRACE",
+      "source_window_index": 37,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 69.947,
+        "end": 70.4115
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6123,
+        "continuity": 0.31,
+        "lift": 0.1987
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 281.646,
+      "end_x": 283.504,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.9112,
+      "delta_y": -0.1112,
+      "pattern": "FALLING_TERRACE",
+      "source_window_index": 37,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 70.4115,
+        "end": 70.876
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "ACCENTED",
+        "contour": "FALL",
+        "intensity": 0.6123,
+        "continuity": 0.31,
+        "lift": 0.1987
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 283.504,
+      "end_x": 285.362,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7729,
+      "delta_y": 0.0271,
+      "pattern": "RISING_TERRACE",
+      "source_window_index": 38,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 70.876,
+        "end": 71.3405
+      },
+      "musical_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.583,
+        "continuity": 0.3264,
+        "lift": 0.2329
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 285.362,
+      "end_x": 287.22,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7458,
+      "delta_y": 0.0542,
+      "pattern": "RISING_TERRACE",
+      "source_window_index": 38,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 71.3405,
+        "end": 71.805
+      },
+      "musical_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.583,
+        "continuity": 0.3264,
+        "lift": 0.2329
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 287.22,
+      "end_x": 289.078,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7188,
+      "delta_y": 0.0812,
+      "pattern": "RISING_TERRACE",
+      "source_window_index": 38,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 71.805,
+        "end": 72.2695
+      },
+      "musical_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.583,
+        "continuity": 0.3264,
+        "lift": 0.2329
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 289.078,
+      "end_x": 290.936,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.6917,
+      "delta_y": 0.1083,
+      "pattern": "RISING_TERRACE",
+      "source_window_index": 38,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 72.2695,
+        "end": 72.734
+      },
+      "musical_intent": {
+        "phrase_role": "BUILD",
+        "articulation": "ACCENTED",
+        "contour": "RISE",
+        "intensity": 0.583,
+        "continuity": 0.3264,
+        "lift": 0.2329
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 290.936,
+      "end_x": 292.793,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8263,
+      "delta_y": -0.0263,
+      "pattern": "FALLING_TERRACE",
+      "source_window_index": 39,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 72.734,
+        "end": 73.1983
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5539,
+        "continuity": 0.4018,
+        "lift": 0.1941
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 292.793,
+      "end_x": 293.472,
+      "length": 0.679,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8527,
+      "delta_y": -0.0527,
+      "pattern": "FALLING_TERRACE",
+      "source_window_index": 39,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 73.1983,
+        "end": 73.368
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5539,
+        "continuity": 0.4018,
+        "lift": 0.1941
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 293.472,
+      "end_x": 294.65,
+      "length": 1.178,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 39,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 73.368,
+        "end": 73.6625
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5539,
+        "continuity": 0.4018,
+        "lift": 0.1941
+      },
+      "interaction_lock": {
+        "time": 74.118,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 294.65,
+      "end_x": 295.872,
+      "length": 1.222,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 39,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 73.6625,
+        "end": 73.968
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5539,
+        "continuity": 0.4018,
+        "lift": 0.1941
+      },
+      "interaction_lock": {
+        "time": 74.118,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 297.072,
+      "end_x": 298.364,
+      "length": 1.292,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 39,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 74.268,
+        "end": 74.591
+      },
+      "musical_intent": {
+        "phrase_role": "RELEASE",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.5539,
+        "continuity": 0.4018,
+        "lift": 0.1941
+      },
+      "interaction_lock": {
+        "time": 74.118,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 298.364,
+      "end_x": 300.1388,
+      "length": 1.7748,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 40,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 74.591,
+        "end": 75.0347
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5353,
+        "continuity": 0.3303,
+        "lift": 0.1926
+      },
+      "interaction_lock": {
+        "time": 74.118,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 300.1388,
+      "end_x": 300.222,
+      "length": 0.0832,
+      "base_surface_y": -2.8,
+      "surface_y": -2.778,
+      "delta_y": 0.022,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 40,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 75.0347,
+        "end": 75.0555
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5353,
+        "continuity": 0.3303,
+        "lift": 0.1926
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 300.222,
+      "end_x": 302.08,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.778,
+      "delta_y": 0.022,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 40,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 75.0555,
+        "end": 75.52
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5353,
+        "continuity": 0.3303,
+        "lift": 0.1926
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 302.08,
+      "end_x": 303.938,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.822,
+      "delta_y": -0.022,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 40,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 75.52,
+        "end": 75.9845
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5353,
+        "continuity": 0.3303,
+        "lift": 0.1926
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 303.938,
+      "end_x": 305.796,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.822,
+      "delta_y": -0.022,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 40,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 75.9845,
+        "end": 76.449
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5353,
+        "continuity": 0.3303,
+        "lift": 0.1926
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 305.796,
+      "end_x": 307.654,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7791,
+      "delta_y": 0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 41,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 76.449,
+        "end": 76.9135
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4842,
+        "continuity": 0.4687,
+        "lift": 0.1741
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 307.654,
+      "end_x": 309.512,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7791,
+      "delta_y": 0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 41,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 76.9135,
+        "end": 77.378
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4842,
+        "continuity": 0.4687,
+        "lift": 0.1741
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 309.512,
+      "end_x": 311.37,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8209,
+      "delta_y": -0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 41,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 77.378,
+        "end": 77.8425
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4842,
+        "continuity": 0.4687,
+        "lift": 0.1741
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 311.37,
+      "end_x": 313.228,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8209,
+      "delta_y": -0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 41,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 77.8425,
+        "end": 78.307
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4842,
+        "continuity": 0.4687,
+        "lift": 0.1741
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 313.228,
+      "end_x": 315.085,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7785,
+      "delta_y": 0.0215,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 42,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 78.307,
+        "end": 78.7713
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5118,
+        "continuity": 0.4376,
+        "lift": 0.1829
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 315.085,
+      "end_x": 316.942,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7785,
+      "delta_y": 0.0215,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 42,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 78.7713,
+        "end": 79.2355
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5118,
+        "continuity": 0.4376,
+        "lift": 0.1829
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 316.942,
+      "end_x": 318.799,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8215,
+      "delta_y": -0.0215,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 42,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 79.2355,
+        "end": 79.6997
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5118,
+        "continuity": 0.4376,
+        "lift": 0.1829
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 318.799,
+      "end_x": 320.656,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8215,
+      "delta_y": -0.0215,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 42,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 79.6997,
+        "end": 80.164
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5118,
+        "continuity": 0.4376,
+        "lift": 0.1829
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 320.656,
+      "end_x": 322.514,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7787,
+      "delta_y": 0.0213,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 43,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 80.164,
+        "end": 80.6285
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5057,
+        "continuity": 0.4541,
+        "lift": 0.1905
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 322.514,
+      "end_x": 324.372,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7787,
+      "delta_y": 0.0213,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 43,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 80.6285,
+        "end": 81.093
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5057,
+        "continuity": 0.4541,
+        "lift": 0.1905
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 324.372,
+      "end_x": 326.23,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8213,
+      "delta_y": -0.0213,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 43,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 81.093,
+        "end": 81.5575
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5057,
+        "continuity": 0.4541,
+        "lift": 0.1905
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 326.23,
+      "end_x": 328.0,
+      "length": 1.77,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8213,
+      "delta_y": -0.0213,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 43,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 81.5575,
+        "end": 82.0
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5057,
+        "continuity": 0.4541,
+        "lift": 0.1905
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 328.0,
+      "end_x": 328.088,
+      "length": 0.088,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 43,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 82.0,
+        "end": 82.022
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.5057,
+        "continuity": 0.4541,
+        "lift": 0.1905
+      },
+      "interaction_lock": {
+        "time": 82.75,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 328.088,
+      "end_x": 329.9,
+      "length": 1.812,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 44,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 82.022,
+        "end": 82.475
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7265,
+        "continuity": 0.4464,
+        "lift": 0.6325
+      },
+      "interaction_lock": {
+        "time": 82.75,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 332.1,
+      "end_x": 333.662,
+      "length": 1.562,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 44,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 83.025,
+        "end": 83.4155
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7265,
+        "continuity": 0.4464,
+        "lift": 0.6325
+      },
+      "interaction_lock": {
+        "time": 82.75,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 333.662,
+      "end_x": 334.6668,
+      "length": 1.0048,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 44,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 83.4155,
+        "end": 83.6667
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7265,
+        "continuity": 0.4464,
+        "lift": 0.6325
+      },
+      "interaction_lock": {
+        "time": 82.75,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 334.6668,
+      "end_x": 335.52,
+      "length": 0.8532,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7387,
+      "delta_y": 0.0613,
+      "pattern": "LIFTED_TERRACE",
+      "source_window_index": 44,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 83.6667,
+        "end": 83.88
+      },
+      "musical_intent": {
+        "phrase_role": "CLIMAX",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.7265,
+        "continuity": 0.4464,
+        "lift": 0.6325
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 335.52,
+      "end_x": 337.377,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7791,
+      "delta_y": 0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 45,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 83.88,
+        "end": 84.3442
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4858,
+        "continuity": 0.451,
+        "lift": 0.1747
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 337.377,
+      "end_x": 339.234,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7791,
+      "delta_y": 0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 45,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 84.3442,
+        "end": 84.8085
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4858,
+        "continuity": 0.451,
+        "lift": 0.1747
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 339.234,
+      "end_x": 341.091,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8209,
+      "delta_y": -0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 45,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 84.8085,
+        "end": 85.2728
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4858,
+        "continuity": 0.451,
+        "lift": 0.1747
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 341.091,
+      "end_x": 342.948,
+      "length": 1.857,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8209,
+      "delta_y": -0.0209,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 45,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 85.2728,
+        "end": 85.737
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "FALL",
+        "intensity": 0.4858,
+        "continuity": 0.451,
+        "lift": 0.1747
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 342.948,
+      "end_x": 344.806,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7785,
+      "delta_y": 0.0215,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 46,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 85.737,
+        "end": 86.2015
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 344.806,
+      "end_x": 346.412,
+      "length": 1.606,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7785,
+      "delta_y": 0.0215,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 46,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 86.2015,
+        "end": 86.603
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 346.412,
+      "end_x": 346.664,
+      "length": 0.252,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 46,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 86.603,
+        "end": 86.666
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_lock": {
+        "time": 87.353,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 346.664,
+      "end_x": 348.522,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 46,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 86.666,
+        "end": 87.1305
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_lock": {
+        "time": 87.353,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 348.522,
+      "end_x": 348.812,
+      "length": 0.29,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 46,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 87.1305,
+        "end": 87.203
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_lock": {
+        "time": 87.353,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 350.012,
+      "end_x": 350.38,
+      "length": 0.368,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 46,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 87.503,
+        "end": 87.595
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "ACCENTED",
+        "contour": "LEVEL",
+        "intensity": 0.5117,
+        "continuity": 0.4752,
+        "lift": 0.2088
+      },
+      "interaction_lock": {
+        "time": 87.353,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 350.38,
+      "end_x": 352.238,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 47,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 87.595,
+        "end": 88.0595
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.49,
+        "continuity": 0.3579,
+        "lift": 0.169
+      },
+      "interaction_lock": {
+        "time": 87.353,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 352.238,
+      "end_x": 353.0788,
+      "length": 0.8408,
+      "base_surface_y": -2.8,
+      "surface_y": -2.8,
+      "delta_y": 0.0,
+      "pattern": "ACTION_LOCK",
+      "source_window_index": 47,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 88.0595,
+        "end": 88.2697
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.49,
+        "continuity": 0.3579,
+        "lift": 0.169
+      },
+      "interaction_lock": {
+        "time": 87.353,
+        "action": "JUMP"
+      }
+    },
+    {
+      "start_x": 353.0788,
+      "end_x": 354.096,
+      "length": 1.0172,
+      "base_surface_y": -2.8,
+      "surface_y": -2.779,
+      "delta_y": 0.021,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 47,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 88.2697,
+        "end": 88.524
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.49,
+        "continuity": 0.3579,
+        "lift": 0.169
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 354.096,
+      "end_x": 355.954,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.821,
+      "delta_y": -0.021,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 47,
+      "source_phase_index": 2,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 88.524,
+        "end": 88.9885
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.49,
+        "continuity": 0.3579,
+        "lift": 0.169
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 355.954,
+      "end_x": 357.812,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.821,
+      "delta_y": -0.021,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 47,
+      "source_phase_index": 3,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 88.9885,
+        "end": 89.453
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.49,
+        "continuity": 0.3579,
+        "lift": 0.169
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 357.812,
+      "end_x": 359.67,
+      "length": 1.858,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7789,
+      "delta_y": 0.0211,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 48,
+      "source_phase_index": 0,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 89.453,
+        "end": 89.9175
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4955,
+        "continuity": 0.4404,
+        "lift": 0.1977
+      },
+      "interaction_lock": null
+    },
+    {
+      "start_x": 359.67,
+      "end_x": 360.0,
+      "length": 0.33,
+      "base_surface_y": -2.8,
+      "surface_y": -2.7789,
+      "delta_y": 0.0211,
+      "pattern": "FLOWING_SPAN",
+      "source_window_index": 48,
+      "source_phase_index": 1,
+      "source_phase_count": 4,
+      "source_time": {
+        "start": 89.9175,
+        "end": 90.0
+      },
+      "musical_intent": {
+        "phrase_role": "FLOW",
+        "articulation": "MIXED",
+        "contour": "LEVEL",
+        "intensity": 0.4955,
+        "continuity": 0.4404,
+        "lift": 0.1977
+      },
+      "interaction_lock": null
+    }
+  ]
+}
