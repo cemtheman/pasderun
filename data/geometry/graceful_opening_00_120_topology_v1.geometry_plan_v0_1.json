@@ -1,0 +1,3273 @@
+{
+  "schema_version": "0.1",
+  "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
+  "compiled_time_range": {
+    "start": 0.0,
+    "end": 120.0
+  },
+  "playable_world_extent": {
+    "start_x": -4.0,
+    "end_x": 488.0
+  },
+  "timebase": {
+    "canonical_unit": "seconds",
+    "run_speed_world_units_per_second": 4.0,
+    "conversion": "event_x = source_time * run_speed_world_units_per_second"
+  },
+  "geometry_calibration_status": "prototype_controller_based",
+  "controller_calibration": {
+    "jump_velocity": 6.0,
+    "gravity": 18.0,
+    "same_height_airtime_seconds": 0.6667,
+    "same_height_horizontal_range": 2.6667,
+    "capsule_height": 2.0,
+    "capsule_radius": 0.5,
+    "fall_limit_y": -3.0,
+    "note": "Gap lengths retain margin below the controller's ideal same-height ballistic range; humanoid/root-motion calibration is deferred."
+  },
+  "gap_calibration": {
+    "SMALL_GAP": {
+      "length": 1.2,
+      "preparation": 6.0,
+      "landing": 4.0
+    },
+    "MEDIUM_GAP": {
+      "length": 1.7,
+      "preparation": 8.0,
+      "landing": 6.0
+    },
+    "LARGE_GAP": {
+      "length": 2.2,
+      "preparation": 10.0,
+      "landing": 8.0
+    }
+  },
+  "geometry_vocabulary": [
+    "RUNWAY",
+    "LOW_PASSAGE",
+    "SMALL_GAP",
+    "MEDIUM_GAP",
+    "LARGE_GAP",
+    "BALANCE_PASSAGE",
+    "ACCENT_ZONE",
+    "RECOVERY_RUNWAY",
+    "ROUTE_FORK",
+    "MERGE"
+  ],
+  "events": [
+    {
+      "source_time": 2.5,
+      "source_class": "SUSTAINED_BALANCE",
+      "source_confidence": 0.6483,
+      "world": {
+        "event_x": 10.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "BALANCE_PASSAGE",
+        "start_x": 7.0,
+        "end_x": 13.0,
+        "length": 6.0,
+        "width": 0.8,
+        "area_width": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.5088,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.4705,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.4362,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from SUSTAINED_BALANCE demand",
+        "event centered on music time 2.500",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 7.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7989,
+      "world": {
+        "event_x": 29.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 27.9,
+        "end_x": 30.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "TRAVEL",
+          "confidence": 0.7089,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6344,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.6245,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5972,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.5897,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4549,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.441,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 7.250",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 11.5,
+      "source_class": "MEDIUM_JUMP",
+      "source_confidence": 0.7617,
+      "world": {
+        "event_x": 46.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 38.0,
+        "end_x": 52.0
+      },
+      "preparation": {
+        "runway_length": 8.0
+      },
+      "recovery": {
+        "runway_length": 6.0
+      },
+      "branch": {
+        "selection": "no jump drops to LOWER SAFE; jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 38.0,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 38.0,
+                "end_x": 52.0,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 38.0,
+              "landing_x": 40.2311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "ENTRY_GAP",
+                "start_x": 38.0,
+                "end_x": 40.3311,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 40.3311,
+                "end_x": 45.15,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "MEDIUM_GAP",
+                "start_x": 45.15,
+                "end_x": 46.85,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 46.85,
+                "end_x": 49.2689,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 49.2689,
+                "end_x": 52.0,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
+        },
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 49.2689,
+          "x": 52.0,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
+      "suppressed_inferences": [
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.7341,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7059,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6817,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6182,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4872,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4081,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from MEDIUM_JUMP demand",
+        "event centered on music time 11.500",
+        "world X derived by source_time × 4.0",
+        "high branchability and multiple viable classes generated optional SAFE/TECHNICAL routes"
+      ]
+    },
+    {
+      "source_time": 22.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.8361,
+      "world": {
+        "event_x": 89.0,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 87.9,
+        "end_x": 90.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "TRAVEL",
+          "confidence": 0.7499,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7127,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.694,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5829,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.482,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.4358,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3653,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 22.250",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 25.263,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7772,
+      "world": {
+        "event_x": 101.052,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 100.452,
+        "end_x": 101.652,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7431,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6381,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4696,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3739,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3735,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3499,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 25.263",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 28.05,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7571,
+      "world": {
+        "event_x": 112.2,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 111.6,
+        "end_x": 112.8,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7448,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6126,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4712,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4008,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3719,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3566,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 28.050",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 32.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7761,
+      "world": {
+        "event_x": 129.0,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 127.9,
+        "end_x": 130.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.7368,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7348,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.7142,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6702,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.505,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.35,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 32.250",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 36.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7964,
+      "world": {
+        "event_x": 145.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 143.4,
+        "end_x": 154.1031
+      },
+      "preparation": {
+        "runway_length": 8.512
+      },
+      "recovery": {
+        "runway_length": 9.1031
+      },
+      "branch": {
+        "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 143.4,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 143.4,
+                "end_x": 154.1031,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 143.4,
+              "landing_x": 145.6311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LARGE_GAP",
+                "start_x": 143.4,
+                "end_x": 145.6,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 145.6,
+                "end_x": 151.372,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 151.372,
+                "end_x": 154.1031,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
+        },
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 151.372,
+          "x": 154.1031,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
+      "suppressed_inferences": [
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.7023,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.6983,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6951,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6889,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4929,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3779,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 36.250",
+        "world X derived by source_time × 4.0",
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
+      ]
+    },
+    {
+      "source_time": 37.593,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7891,
+      "world": {
+        "event_x": 150.372,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 149.772,
+        "end_x": 150.972,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7244,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6531,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5179,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3922,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3906,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3881,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 37.593",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 42.5,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7644,
+      "world": {
+        "event_x": 170.0,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 168.9,
+        "end_x": 171.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.72,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6986,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6914,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6511,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4839,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3836,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 42.500",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 43.862,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.733,
+      "world": {
+        "event_x": 175.448,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 174.848,
+        "end_x": 176.048,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.691,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5968,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4327,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4237,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3509,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 43.862",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 46.208,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7466,
+      "world": {
+        "event_x": 184.832,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 184.232,
+        "end_x": 185.432,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7271,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6281,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5096,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4341,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3913,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3893,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 46.208",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 50.62,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7812,
+      "world": {
+        "event_x": 202.48,
+        "surface_y": -2.602
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 201.88,
+        "end_x": 203.08,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.7525,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.7255,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5307,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.4322,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.4067,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3718,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 50.620",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 53.0,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.8627,
+      "world": {
+        "event_x": 212.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 210.4,
+        "end_x": 220.0
+      },
+      "preparation": {
+        "runway_length": 8.636
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": {
+        "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 210.4,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 210.4,
+                "end_x": 220.0,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 210.4,
+              "landing_x": 212.6311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LARGE_GAP",
+                "start_x": 210.4,
+                "end_x": 212.6,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 212.6,
+                "end_x": 217.2689,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 217.2689,
+                "end_x": 220.0,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
+        },
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 217.2689,
+          "x": 220.0,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
+      "suppressed_inferences": [
+        {
+          "class": "TRAVEL",
+          "confidence": 0.8125,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.7617,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.6691,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5775,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.4871,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4783,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3797,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 53.000",
+        "world X derived by source_time × 4.0",
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
+      ]
+    },
+    {
+      "source_time": 56.889,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7594,
+      "world": {
+        "event_x": 227.556,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 226.956,
+        "end_x": 228.156,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.733,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6391,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4938,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4034,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3928,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.3855,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3845,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "RECOVERY",
+          "confidence": 0.3825,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 56.889",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 60.604,
+      "source_class": "SMALL_JUMP",
+      "source_confidence": 0.7342,
+      "world": {
+        "event_x": 242.416,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "SMALL_GAP",
+        "scale": "SMALL",
+        "start_x": 241.816,
+        "end_x": 243.016,
+        "gap_length": 1.2,
+        "landing_length": 4.0
+      },
+      "preparation": {
+        "runway_length": 6.0
+      },
+      "recovery": {
+        "runway_length": 4.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7227,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6191,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.464,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.459,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3744,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.372,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from SMALL_JUMP demand",
+        "event centered on music time 60.604",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 68.5,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.8769,
+      "world": {
+        "event_x": 274.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 272.4,
+        "end_x": 282.0
+      },
+      "preparation": {
+        "runway_length": 11.188
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": {
+        "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 272.4,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 272.4,
+                "end_x": 282.0,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 272.4,
+              "landing_x": 274.6311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LARGE_GAP",
+                "start_x": 272.4,
+                "end_x": 274.6,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 274.6,
+                "end_x": 279.2689,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 279.2689,
+                "end_x": 282.0,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
+        },
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 279.2689,
+          "x": 282.0,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
+      "suppressed_inferences": [
+        {
+          "class": "TRAVEL",
+          "confidence": 0.8567,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.8496,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7077,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.586,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4848,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.4817,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 68.500",
+        "world X derived by source_time × 4.0",
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
+      ]
+    },
+    {
+      "source_time": 74.118,
+      "source_class": "SMALL_JUMP",
+      "source_confidence": 0.7241,
+      "world": {
+        "event_x": 296.472,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "SMALL_GAP",
+        "scale": "SMALL",
+        "start_x": 295.872,
+        "end_x": 297.072,
+        "gap_length": 1.2,
+        "landing_length": 4.0
+      },
+      "preparation": {
+        "runway_length": 6.0
+      },
+      "recovery": {
+        "runway_length": 4.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7115,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5967,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4543,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4423,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3689,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3633,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.3557,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from SMALL_JUMP demand",
+        "event centered on music time 74.118",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 82.75,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7641,
+      "world": {
+        "event_x": 331.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 329.4,
+        "end_x": 339.0
+      },
+      "preparation": {
+        "runway_length": 8.744
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": {
+        "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 329.4,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 329.4,
+                "end_x": 339.0,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 329.4,
+              "landing_x": 331.6311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LARGE_GAP",
+                "start_x": 329.4,
+                "end_x": 331.6,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 331.6,
+                "end_x": 336.2689,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 336.2689,
+                "end_x": 339.0,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
+        },
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 336.2689,
+          "x": 339.0,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7341,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6483,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6066,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.6058,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4899,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4384,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 82.750",
+        "world X derived by source_time × 4.0",
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
+      ]
+    },
+    {
+      "source_time": 87.353,
+      "source_class": "SMALL_JUMP",
+      "source_confidence": 0.7431,
+      "world": {
+        "event_x": 349.412,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "SMALL_GAP",
+        "scale": "SMALL",
+        "start_x": 348.812,
+        "end_x": 350.012,
+        "gap_length": 1.2,
+        "landing_length": 4.0
+      },
+      "preparation": {
+        "runway_length": 6.0
+      },
+      "recovery": {
+        "runway_length": 4.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7078,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5858,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.5118,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4705,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3733,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3533,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from SMALL_JUMP demand",
+        "event centered on music time 87.353",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 91.069,
+      "source_class": "SMALL_JUMP",
+      "source_confidence": 0.7557,
+      "world": {
+        "event_x": 364.276,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "SMALL_GAP",
+        "scale": "SMALL",
+        "start_x": 363.676,
+        "end_x": 364.876,
+        "gap_length": 1.2,
+        "landing_length": 4.0
+      },
+      "preparation": {
+        "runway_length": 6.0
+      },
+      "recovery": {
+        "runway_length": 4.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.6917,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5351,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.4835,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4494,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.386,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.355,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from SMALL_JUMP demand",
+        "event centered on music time 91.069",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 98.5,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7989,
+      "world": {
+        "event_x": 394.0,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 392.9,
+        "end_x": 395.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "TURN",
+          "confidence": 0.7383,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.7245,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.6921,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6551,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4729,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3957,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "CONTROLLED_TRANSITION",
+          "confidence": 0.37,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 98.500",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 102.5,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7895,
+      "world": {
+        "event_x": 410.0,
+        "surface_y": 0.0
+      },
+      "geometry": {
+        "type": "ROUTE_FORK",
+        "start_x": 408.4,
+        "end_x": 431.9
+      },
+      "preparation": {
+        "runway_length": 13.436
+      },
+      "recovery": {
+        "runway_length": 21.9
+      },
+      "branch": {
+        "topology": "CRESCENDO_STAIRCASE",
+        "selection": "climax jump enters TECHNICAL staircase; missed optional step jumps fail down to SAFE",
+        "split": {
+          "x": 408.4,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 408.4,
+                "end_x": 431.9,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 408.4,
+              "landing_x": 410.6311,
+              "drop_height": 2.8,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "peak_elevation": 0.84,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "ENTRY_GAP",
+                "start_x": 408.4,
+                "end_x": 410.6,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "STAIR_STEP_01",
+                "start_x": 410.6,
+                "end_x": 411.95,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "STEP_GAP_01",
+                "start_x": 411.95,
+                "end_x": 412.5,
+                "surface_y": 0.0,
+                "collision": false,
+                "optional_mastery_action": "JUMP",
+                "failure_destination": "SAFE"
+              },
+              {
+                "type": "STAIR_STEP_02",
+                "start_x": 412.5,
+                "end_x": 413.85,
+                "surface_y": 0.28,
+                "collision": true
+              },
+              {
+                "type": "STEP_GAP_02",
+                "start_x": 413.85,
+                "end_x": 414.4,
+                "surface_y": 0.28,
+                "collision": false,
+                "optional_mastery_action": "JUMP",
+                "failure_destination": "SAFE"
+              },
+              {
+                "type": "STAIR_STEP_03",
+                "start_x": 414.4,
+                "end_x": 415.75,
+                "surface_y": 0.56,
+                "collision": true
+              },
+              {
+                "type": "STEP_GAP_03",
+                "start_x": 415.75,
+                "end_x": 416.3,
+                "surface_y": 0.56,
+                "collision": false,
+                "optional_mastery_action": "JUMP",
+                "failure_destination": "SAFE"
+              },
+              {
+                "type": "STAIR_STEP_04",
+                "start_x": 416.3,
+                "end_x": 417.65,
+                "surface_y": 0.84,
+                "collision": true
+              },
+              {
+                "type": "TOP_RUNWAY",
+                "start_x": 417.65,
+                "end_x": 428.8562,
+                "surface_y": 0.84,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 428.8562,
+                "end_x": 431.9,
+                "from_y": 0.84,
+                "to_y": -2.8,
+                "surface_y": 0.84,
+                "collision": false
+              }
+            ],
+            "optional_mastery_actions": 3,
+            "failure_policy": "FAIL_DOWN_TO_SAFE"
+          },
+          "virtuoso": {
+            "available": false,
+            "future_contract": "compound aerial tier such as travelling leap plus turn; failure falls to TECHNICAL or SAFE"
+          }
+        },
+        "tiers": {
+          "SAFE": {
+            "required": true,
+            "purpose": "flow-preserving lower-risk choreography"
+          },
+          "TECHNICAL": {
+            "required": false,
+            "purpose": "optional precision route with richer choreography",
+            "failure_policy": "FAIL_DOWN_TO_SAFE"
+          },
+          "VIRTUOSO": {
+            "required": false,
+            "purpose": "future mastery tier for compound aerial choreography",
+            "failure_policy": "FAIL_DOWN_TO_TECHNICAL_OR_SAFE"
+          }
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 428.8562,
+          "x": 431.9,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7718,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.7369,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6875,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6804,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.4992,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 102.500",
+        "world X derived by source_time × 4.0",
+        "contiguous BUILD plus major climax selected CRESCENDO_STAIRCASE",
+        "narrow rising steps add optional mastery without adding required inputs"
+      ]
+    },
+    {
+      "source_time": 108.75,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7646,
+      "world": {
+        "event_x": 435.0,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 433.9,
+        "end_x": 436.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.7547,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.7467,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.7026,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.6405,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.5105,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3561,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 108.750",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 115.25,
+      "source_class": "LARGE_TRAVELLING_LEAP",
+      "source_confidence": 0.7775,
+      "world": {
+        "event_x": 461.0,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "LARGE_GAP",
+        "scale": "LARGE",
+        "start_x": 459.9,
+        "end_x": 462.1,
+        "gap_length": 2.2,
+        "landing_length": 8.0
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 8.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "TURN",
+          "confidence": 0.7734,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "ACCENT_ACTION",
+          "confidence": 0.73,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.7081,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.6668,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.468,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.3624,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from LARGE_TRAVELLING_LEAP demand",
+        "event centered on music time 115.250",
+        "world X derived by source_time × 4.0"
+      ]
+    },
+    {
+      "source_time": 116.912,
+      "source_class": "ACCENT_ACTION",
+      "source_confidence": 0.7133,
+      "world": {
+        "event_x": 467.648,
+        "surface_y": -2.8
+      },
+      "geometry": {
+        "type": "ACCENT_ZONE",
+        "start_x": 467.048,
+        "end_x": 468.248,
+        "length": 1.2
+      },
+      "preparation": {
+        "runway_length": 10.0
+      },
+      "recovery": {
+        "runway_length": 10.0
+      },
+      "branch": null,
+      "suppressed_inferences": [
+        {
+          "class": "SMALL_JUMP",
+          "confidence": 0.6885,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TURN",
+          "confidence": 0.5969,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "MEDIUM_JUMP",
+          "confidence": 0.5027,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "SUSTAINED_BALANCE",
+          "confidence": 0.4359,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "TRAVEL",
+          "confidence": 0.3864,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        },
+        {
+          "class": "LARGE_TRAVELLING_LEAP",
+          "confidence": 0.3808,
+          "reason": "lower-ranked compatible inference retained as metadata"
+        }
+      ],
+      "explanation": [
+        "derived from ACCENT_ACTION demand",
+        "event centered on music time 116.912",
+        "world X derived by source_time × 4.0"
+      ]
+    }
+  ],
+  "surface_plan": {
+    "runway_intervals": [
+      {
+        "start_x": -4.0,
+        "end_x": 7.0,
+        "surface_y": 0.0
+      },
+      {
+        "start_x": 13.0,
+        "end_x": 27.9,
+        "surface_y": 0.0
+      },
+      {
+        "start_x": 30.1,
+        "end_x": 38.0,
+        "surface_y": 0.0
+      },
+      {
+        "start_x": 52.0,
+        "end_x": 87.9,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 90.1,
+        "end_x": 120.0,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 120.0,
+        "end_x": 120.024,
+        "surface_y": -2.8224
+      },
+      {
+        "start_x": 120.024,
+        "end_x": 121.882,
+        "surface_y": -2.825
+      },
+      {
+        "start_x": 121.882,
+        "end_x": 123.74,
+        "surface_y": -2.85
+      },
+      {
+        "start_x": 123.74,
+        "end_x": 125.598,
+        "surface_y": -2.875
+      },
+      {
+        "start_x": 125.598,
+        "end_x": 126.0,
+        "surface_y": -2.9
+      },
+      {
+        "start_x": 126.0,
+        "end_x": 127.456,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 127.456,
+        "end_x": 127.9,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 130.1,
+        "end_x": 131.172,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 131.172,
+        "end_x": 132.6668,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 132.6668,
+        "end_x": 133.03,
+        "surface_y": -2.6882
+      },
+      {
+        "start_x": 133.03,
+        "end_x": 134.888,
+        "surface_y": -2.739
+      },
+      {
+        "start_x": 154.1031,
+        "end_x": 155.322,
+        "surface_y": -2.7262
+      },
+      {
+        "start_x": 155.322,
+        "end_x": 157.18,
+        "surface_y": -2.8369
+      },
+      {
+        "start_x": 157.18,
+        "end_x": 159.038,
+        "surface_y": -2.8252
+      },
+      {
+        "start_x": 159.038,
+        "end_x": 160.896,
+        "surface_y": -2.8504
+      },
+      {
+        "start_x": 160.896,
+        "end_x": 162.754,
+        "surface_y": -2.8755
+      },
+      {
+        "start_x": 162.754,
+        "end_x": 164.612,
+        "surface_y": -2.9007
+      },
+      {
+        "start_x": 164.612,
+        "end_x": 166.469,
+        "surface_y": -2.7693
+      },
+      {
+        "start_x": 166.469,
+        "end_x": 167.0,
+        "surface_y": -2.7181
+      },
+      {
+        "start_x": 167.0,
+        "end_x": 168.326,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 168.326,
+        "end_x": 168.9,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 171.1,
+        "end_x": 172.04,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 172.04,
+        "end_x": 173.6668,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 173.6668,
+        "end_x": 173.898,
+        "surface_y": -2.7782
+      },
+      {
+        "start_x": 173.898,
+        "end_x": 175.756,
+        "surface_y": -2.7782
+      },
+      {
+        "start_x": 175.756,
+        "end_x": 177.614,
+        "surface_y": -2.8218
+      },
+      {
+        "start_x": 177.614,
+        "end_x": 179.472,
+        "surface_y": -2.8218
+      },
+      {
+        "start_x": 179.472,
+        "end_x": 181.33,
+        "surface_y": -2.7254
+      },
+      {
+        "start_x": 181.33,
+        "end_x": 183.188,
+        "surface_y": -2.8373
+      },
+      {
+        "start_x": 183.188,
+        "end_x": 185.046,
+        "surface_y": -2.7254
+      },
+      {
+        "start_x": 185.046,
+        "end_x": 186.904,
+        "surface_y": -2.8373
+      },
+      {
+        "start_x": 186.904,
+        "end_x": 188.761,
+        "surface_y": -2.7784
+      },
+      {
+        "start_x": 188.761,
+        "end_x": 190.618,
+        "surface_y": -2.7784
+      },
+      {
+        "start_x": 190.618,
+        "end_x": 192.475,
+        "surface_y": -2.8216
+      },
+      {
+        "start_x": 192.475,
+        "end_x": 194.332,
+        "surface_y": -2.8216
+      },
+      {
+        "start_x": 194.332,
+        "end_x": 196.19,
+        "surface_y": -2.7255
+      },
+      {
+        "start_x": 196.19,
+        "end_x": 198.048,
+        "surface_y": -2.8372
+      },
+      {
+        "start_x": 198.048,
+        "end_x": 199.906,
+        "surface_y": -2.7255
+      },
+      {
+        "start_x": 199.906,
+        "end_x": 201.764,
+        "surface_y": -2.8372
+      },
+      {
+        "start_x": 220.0,
+        "end_x": 220.342,
+        "surface_y": -2.856
+      },
+      {
+        "start_x": 220.342,
+        "end_x": 222.199,
+        "surface_y": -2.8841
+      },
+      {
+        "start_x": 222.199,
+        "end_x": 224.056,
+        "surface_y": -2.9121
+      },
+      {
+        "start_x": 224.056,
+        "end_x": 225.914,
+        "surface_y": -2.8265
+      },
+      {
+        "start_x": 225.914,
+        "end_x": 227.772,
+        "surface_y": -2.8529
+      },
+      {
+        "start_x": 227.772,
+        "end_x": 229.63,
+        "surface_y": -2.8794
+      },
+      {
+        "start_x": 229.63,
+        "end_x": 231.488,
+        "surface_y": -2.9058
+      },
+      {
+        "start_x": 231.488,
+        "end_x": 233.346,
+        "surface_y": -2.726
+      },
+      {
+        "start_x": 233.346,
+        "end_x": 235.204,
+        "surface_y": -2.837
+      },
+      {
+        "start_x": 235.204,
+        "end_x": 237.062,
+        "surface_y": -2.726
+      },
+      {
+        "start_x": 237.062,
+        "end_x": 238.92,
+        "surface_y": -2.837
+      },
+      {
+        "start_x": 238.92,
+        "end_x": 240.0,
+        "surface_y": -2.7778
+      },
+      {
+        "start_x": 240.0,
+        "end_x": 240.777,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 240.777,
+        "end_x": 241.816,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 243.016,
+        "end_x": 244.491,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 244.491,
+        "end_x": 246.0828,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 246.0828,
+        "end_x": 246.348,
+        "surface_y": -2.8222
+      },
+      {
+        "start_x": 246.348,
+        "end_x": 248.206,
+        "surface_y": -2.7789
+      },
+      {
+        "start_x": 248.206,
+        "end_x": 250.064,
+        "surface_y": -2.7789
+      },
+      {
+        "start_x": 250.064,
+        "end_x": 251.922,
+        "surface_y": -2.8211
+      },
+      {
+        "start_x": 251.922,
+        "end_x": 253.78,
+        "surface_y": -2.8211
+      },
+      {
+        "start_x": 253.78,
+        "end_x": 255.638,
+        "surface_y": -2.7792
+      },
+      {
+        "start_x": 255.638,
+        "end_x": 257.496,
+        "surface_y": -2.7792
+      },
+      {
+        "start_x": 257.496,
+        "end_x": 259.354,
+        "surface_y": -2.8208
+      },
+      {
+        "start_x": 259.354,
+        "end_x": 261.212,
+        "surface_y": -2.8208
+      },
+      {
+        "start_x": 282.0,
+        "end_x": 283.504,
+        "surface_y": -2.9112
+      },
+      {
+        "start_x": 283.504,
+        "end_x": 285.362,
+        "surface_y": -2.7729
+      },
+      {
+        "start_x": 285.362,
+        "end_x": 287.22,
+        "surface_y": -2.7458
+      },
+      {
+        "start_x": 287.22,
+        "end_x": 289.078,
+        "surface_y": -2.7188
+      },
+      {
+        "start_x": 289.078,
+        "end_x": 290.936,
+        "surface_y": -2.6917
+      },
+      {
+        "start_x": 290.936,
+        "end_x": 292.793,
+        "surface_y": -2.8263
+      },
+      {
+        "start_x": 292.793,
+        "end_x": 293.472,
+        "surface_y": -2.8527
+      },
+      {
+        "start_x": 293.472,
+        "end_x": 294.65,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 294.65,
+        "end_x": 295.872,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 297.072,
+        "end_x": 298.364,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 298.364,
+        "end_x": 300.1388,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 300.1388,
+        "end_x": 300.222,
+        "surface_y": -2.778
+      },
+      {
+        "start_x": 300.222,
+        "end_x": 302.08,
+        "surface_y": -2.778
+      },
+      {
+        "start_x": 302.08,
+        "end_x": 303.938,
+        "surface_y": -2.822
+      },
+      {
+        "start_x": 303.938,
+        "end_x": 305.796,
+        "surface_y": -2.822
+      },
+      {
+        "start_x": 305.796,
+        "end_x": 307.654,
+        "surface_y": -2.7791
+      },
+      {
+        "start_x": 307.654,
+        "end_x": 309.512,
+        "surface_y": -2.7791
+      },
+      {
+        "start_x": 309.512,
+        "end_x": 311.37,
+        "surface_y": -2.8209
+      },
+      {
+        "start_x": 311.37,
+        "end_x": 313.228,
+        "surface_y": -2.8209
+      },
+      {
+        "start_x": 313.228,
+        "end_x": 315.085,
+        "surface_y": -2.7785
+      },
+      {
+        "start_x": 315.085,
+        "end_x": 316.942,
+        "surface_y": -2.7785
+      },
+      {
+        "start_x": 316.942,
+        "end_x": 318.799,
+        "surface_y": -2.8215
+      },
+      {
+        "start_x": 318.799,
+        "end_x": 320.656,
+        "surface_y": -2.8215
+      },
+      {
+        "start_x": 339.0,
+        "end_x": 339.234,
+        "surface_y": -2.7791
+      },
+      {
+        "start_x": 339.234,
+        "end_x": 341.091,
+        "surface_y": -2.8209
+      },
+      {
+        "start_x": 341.091,
+        "end_x": 342.948,
+        "surface_y": -2.8209
+      },
+      {
+        "start_x": 342.948,
+        "end_x": 344.806,
+        "surface_y": -2.7785
+      },
+      {
+        "start_x": 344.806,
+        "end_x": 346.412,
+        "surface_y": -2.7785
+      },
+      {
+        "start_x": 346.412,
+        "end_x": 346.664,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 346.664,
+        "end_x": 348.522,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 348.522,
+        "end_x": 348.812,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 350.012,
+        "end_x": 350.38,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 350.38,
+        "end_x": 352.238,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 352.238,
+        "end_x": 353.0788,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 353.0788,
+        "end_x": 354.096,
+        "surface_y": -2.779
+      },
+      {
+        "start_x": 354.096,
+        "end_x": 355.954,
+        "surface_y": -2.821
+      },
+      {
+        "start_x": 355.954,
+        "end_x": 357.812,
+        "surface_y": -2.821
+      },
+      {
+        "start_x": 357.812,
+        "end_x": 359.67,
+        "surface_y": -2.7789
+      },
+      {
+        "start_x": 359.67,
+        "end_x": 360.0,
+        "surface_y": -2.7789
+      },
+      {
+        "start_x": 360.0,
+        "end_x": 361.276,
+        "surface_y": -2.7789
+      },
+      {
+        "start_x": 361.276,
+        "end_x": 361.528,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 361.528,
+        "end_x": 363.386,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 363.386,
+        "end_x": 363.676,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 364.876,
+        "end_x": 365.244,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 365.244,
+        "end_x": 367.101,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 367.101,
+        "end_x": 367.9428,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 367.9428,
+        "end_x": 368.958,
+        "surface_y": -2.7786
+      },
+      {
+        "start_x": 368.958,
+        "end_x": 370.815,
+        "surface_y": -2.8214
+      },
+      {
+        "start_x": 370.815,
+        "end_x": 372.672,
+        "surface_y": -2.8214
+      },
+      {
+        "start_x": 372.672,
+        "end_x": 374.53,
+        "surface_y": -2.7788
+      },
+      {
+        "start_x": 374.53,
+        "end_x": 376.388,
+        "surface_y": -2.7788
+      },
+      {
+        "start_x": 376.388,
+        "end_x": 378.246,
+        "surface_y": -2.8212
+      },
+      {
+        "start_x": 378.246,
+        "end_x": 380.104,
+        "surface_y": -2.8212
+      },
+      {
+        "start_x": 380.104,
+        "end_x": 381.962,
+        "surface_y": -2.7781
+      },
+      {
+        "start_x": 381.962,
+        "end_x": 383.82,
+        "surface_y": -2.7781
+      },
+      {
+        "start_x": 383.82,
+        "end_x": 385.678,
+        "surface_y": -2.8219
+      },
+      {
+        "start_x": 385.678,
+        "end_x": 387.536,
+        "surface_y": -2.8219
+      },
+      {
+        "start_x": 387.536,
+        "end_x": 389.393,
+        "surface_y": -2.7696
+      },
+      {
+        "start_x": 389.393,
+        "end_x": 391.0,
+        "surface_y": -2.7189
+      },
+      {
+        "start_x": 391.0,
+        "end_x": 391.25,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 391.25,
+        "end_x": 392.9,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 431.9,
+        "end_x": 432.0,
+        "surface_y": -2.9042
+      },
+      {
+        "start_x": 432.0,
+        "end_x": 432.12,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 432.12,
+        "end_x": 433.9,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 436.1,
+        "end_x": 437.694,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 437.694,
+        "end_x": 438.6668,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 438.6668,
+        "end_x": 439.552,
+        "surface_y": -2.7381
+      },
+      {
+        "start_x": 439.552,
+        "end_x": 441.409,
+        "surface_y": -2.8251
+      },
+      {
+        "start_x": 441.409,
+        "end_x": 443.266,
+        "surface_y": -2.8503
+      },
+      {
+        "start_x": 443.266,
+        "end_x": 445.123,
+        "surface_y": -2.8754
+      },
+      {
+        "start_x": 445.123,
+        "end_x": 446.98,
+        "surface_y": -2.9005
+      },
+      {
+        "start_x": 446.98,
+        "end_x": 448.838,
+        "surface_y": -2.7741
+      },
+      {
+        "start_x": 448.838,
+        "end_x": 450.696,
+        "surface_y": -2.7481
+      },
+      {
+        "start_x": 450.696,
+        "end_x": 452.554,
+        "surface_y": -2.7222
+      },
+      {
+        "start_x": 452.554,
+        "end_x": 454.412,
+        "surface_y": -2.6962
+      },
+      {
+        "start_x": 454.412,
+        "end_x": 456.27,
+        "surface_y": -2.7689
+      },
+      {
+        "start_x": 456.27,
+        "end_x": 458.0,
+        "surface_y": -2.7171
+      },
+      {
+        "start_x": 458.0,
+        "end_x": 458.128,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 458.128,
+        "end_x": 459.9,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 462.1,
+        "end_x": 463.701,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 463.701,
+        "end_x": 464.6668,
+        "surface_y": -2.8
+      },
+      {
+        "start_x": 464.6668,
+        "end_x": 465.558,
+        "surface_y": -2.8386
+      },
+      {
+        "start_x": 465.558,
+        "end_x": 467.415,
+        "surface_y": -2.7228
+      },
+      {
+        "start_x": 467.415,
+        "end_x": 469.272,
+        "surface_y": -2.8386
+      },
+      {
+        "start_x": 469.272,
+        "end_x": 471.13,
+        "surface_y": -2.7263
+      },
+      {
+        "start_x": 471.13,
+        "end_x": 472.988,
+        "surface_y": -2.8369
+      },
+      {
+        "start_x": 472.988,
+        "end_x": 474.846,
+        "surface_y": -2.7263
+      },
+      {
+        "start_x": 474.846,
+        "end_x": 476.704,
+        "surface_y": -2.8369
+      },
+      {
+        "start_x": 476.704,
+        "end_x": 478.562,
+        "surface_y": -2.7252
+      },
+      {
+        "start_x": 478.562,
+        "end_x": 480.0,
+        "surface_y": -2.8374
+      },
+      {
+        "start_x": 480.0,
+        "end_x": 488.0,
+        "surface_y": -2.8
+      }
+    ],
+    "balance_intervals": [
+      {
+        "start_x": 7.0,
+        "end_x": 13.0,
+        "surface_y": 0.0
+      }
+    ],
+    "ramps": [
+      {
+        "type": "APPROACH_RAMP",
+        "start_x": 134.888,
+        "end_x": 143.4,
+        "start_surface_y": -2.739,
+        "end_surface_y": 0.0
+      },
+      {
+        "type": "APPROACH_RAMP",
+        "start_x": 201.764,
+        "end_x": 210.4,
+        "start_surface_y": -2.8372,
+        "end_surface_y": 0.0
+      },
+      {
+        "type": "APPROACH_RAMP",
+        "start_x": 261.212,
+        "end_x": 272.4,
+        "start_surface_y": -2.8208,
+        "end_surface_y": 0.0
+      },
+      {
+        "type": "APPROACH_RAMP",
+        "start_x": 320.656,
+        "end_x": 329.4,
+        "start_surface_y": -2.8215,
+        "end_surface_y": 0.0
+      },
+      {
+        "type": "APPROACH_RAMP",
+        "start_x": 394.964,
+        "end_x": 408.4,
+        "start_surface_y": -2.8,
+        "end_surface_y": 0.0
+      }
+    ]
+  },
+  "source_spatial_scores": [
+    "data/geometry/graceful_opening_30_60.spatial_score_v0_1.json",
+    "data/geometry/graceful_opening_60_90.spatial_score_v0_1.json",
+    "data/geometry/graceful_opening_90_120.spatial_score_v0_1.json"
+  ],
+  "source_visual_score": "data/music/graceful_opening.visual_score_v0_1.json",
+  "prototype_overlays": {
+    "climax_fork_v0_1": {
+      "target_time": 53.0,
+      "climax_peak": 1.0,
+      "intensity": 0.8736,
+      "approach_window_start": 50.441,
+      "approach_source_role": "BUILD",
+      "approach_ramp": {
+        "type": "APPROACH_RAMP",
+        "start_x": 201.764,
+        "end_x": 210.4,
+        "start_surface_y": -2.8372,
+        "end_surface_y": 0.0
+      },
+      "approach_slope_degrees": 18.187,
+      "split_x": 210.4,
+      "merge_x": 220.0,
+      "required_action": "JUMP",
+      "new_required_actions": false
+    },
+    "climax_forks_v0_2": [
+      {
+        "target_time": 36.25,
+        "climax_peak": 0.9356,
+        "intensity": 0.7299,
+        "approach_window_start": 33.722,
+        "approach_source_role": "RELEASE",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 134.888,
+          "end_x": 143.4,
+          "start_surface_y": -2.739,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 17.8372,
+        "split_x": 143.4,
+        "merge_x": 154.1031,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      },
+      {
+        "target_time": 53.0,
+        "climax_peak": 1.0,
+        "intensity": 0.8736,
+        "approach_window_start": 50.441,
+        "approach_source_role": "BUILD",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 201.764,
+          "end_x": 210.4,
+          "start_surface_y": -2.8372,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 18.187,
+        "split_x": 210.4,
+        "merge_x": 220.0,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      }
+    ],
+    "climax_forks_v0_3": [
+      {
+        "target_time": 36.25,
+        "climax_peak": 0.9356,
+        "intensity": 0.7299,
+        "approach_window_start": 33.722,
+        "approach_source_role": "RELEASE",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 134.888,
+          "end_x": 143.4,
+          "start_surface_y": -2.739,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 17.8372,
+        "split_x": 143.4,
+        "merge_x": 154.1031,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      },
+      {
+        "target_time": 53.0,
+        "climax_peak": 1.0,
+        "intensity": 0.8736,
+        "approach_window_start": 50.441,
+        "approach_source_role": "BUILD",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 201.764,
+          "end_x": 210.4,
+          "start_surface_y": -2.8372,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 18.187,
+        "split_x": 210.4,
+        "merge_x": 220.0,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      },
+      {
+        "target_time": 68.5,
+        "climax_peak": 1.0,
+        "intensity": 0.8048,
+        "approach_window_start": 65.303,
+        "approach_source_role": "FLOW",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 261.212,
+          "end_x": 272.4,
+          "start_surface_y": -2.8208,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 14.1509,
+        "split_x": 272.4,
+        "merge_x": 282.0,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      },
+      {
+        "target_time": 82.75,
+        "climax_peak": 0.9412,
+        "intensity": 0.7265,
+        "approach_window_start": 80.164,
+        "approach_source_role": "FLOW",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 320.656,
+          "end_x": 329.4,
+          "start_surface_y": -2.8215,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 17.8838,
+        "split_x": 329.4,
+        "merge_x": 339.0,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      }
+    ],
+    "extension_60_90": {
+      "baseline_end_seconds": 60.0,
+      "baseline_end_x": 240.0,
+      "baseline_immutable": true,
+      "major_climax_threshold": 0.93,
+      "fork_times": [
+        68.5,
+        82.75
+      ],
+      "new_required_actions": false
+    },
+    "fork_topology_vocabulary_v1": {
+      "tiers": {
+        "SAFE": {
+          "required": true,
+          "purpose": "flow-preserving lower-risk choreography"
+        },
+        "TECHNICAL": {
+          "required": false,
+          "purpose": "optional precision route with richer choreography",
+          "failure_policy": "FAIL_DOWN_TO_SAFE"
+        },
+        "VIRTUOSO": {
+          "required": false,
+          "purpose": "future mastery tier for compound aerial choreography",
+          "failure_policy": "FAIL_DOWN_TO_TECHNICAL_OR_SAFE"
+        }
+      },
+      "extension_start": 90.0,
+      "extension_end": 120.0,
+      "selected": [
+        {
+          "target_time": 102.5,
+          "topology": "CRESCENDO_STAIRCASE",
+          "build_window": {
+            "start": 100.599,
+            "end": 102.457,
+            "energy_delta": 0.1186
+          },
+          "climax_peak": 0.9484,
+          "approach_ramp": {
+            "type": "APPROACH_RAMP",
+            "start_x": 394.964,
+            "end_x": 408.4,
+            "start_surface_y": -2.8,
+            "end_surface_y": 0.0
+          },
+          "approach_slope_degrees": 11.7717,
+          "step_count": 4,
+          "step_rise": 0.28,
+          "platform_length": 1.35,
+          "gap_length": 0.55,
+          "optional_mastery_actions": 3,
+          "failure_policy": "FAIL_DOWN_TO_SAFE",
+          "virtuoso_available": false,
+          "new_required_actions": false
+        }
+      ],
+      "new_required_actions": false
+    }
+  }
+}
