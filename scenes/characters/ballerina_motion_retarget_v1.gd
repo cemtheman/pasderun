@@ -2,13 +2,17 @@ extends Node3D
 
 # Phase 10.1 — mannequin-to-ballerina motion retarget v1.
 #
-# This first proof deliberately retargets BALANCE only. The accepted Phase 7/9
-# DancerVisual remains the choreography source of truth; its generated rig keeps
-# running invisibly. During BALANCE we sample that rig and transfer its global
+# This first proof deliberately retargets the opening STAGE_BOW plus BALANCE.
+# The accepted Phase 7/9 DancerVisual remains the choreography source of truth;
+# its generated rig keeps running invisibly. During those states we sample that
+# rig and transfer its global
 # joint-orientation deltas onto the skinned humanoid skeleton. All gameplay,
 # collision, timing, route and recovery logic remain owned by Dancer.
 
-const RETARGET_STATE := &"BALANCE"
+const RETARGET_STATES := {
+	&"STAGE_BOW": true,
+	&"BALANCE": true,
+}
 
 @onready var _model_root: Node3D = $low_poly_girl
 @onready var _skeleton: Skeleton3D = $low_poly_girl/Rig/Skeleton3D
@@ -41,7 +45,7 @@ func _process(_delta: float) -> void:
 	if _source_visual.has_method("get_visual_state"):
 		state = StringName(_source_visual.call("get_visual_state"))
 
-	if state == RETARGET_STATE:
+	if RETARGET_STATES.has(state):
 		if not _retarget_active:
 			_animation_player.stop()
 			_retarget_active = true
