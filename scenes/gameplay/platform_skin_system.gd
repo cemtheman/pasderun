@@ -116,8 +116,8 @@ func _skin_mainline_architecture(plan: Dictionary) -> void:
 			continue
 
 		var previous: Dictionary = current_group[-1]
-		var contiguous := abs(float(previous["end_x"]) - start_x) <= MAINLINE_CONTIGUITY_EPSILON
-		var smooth_delta := abs(float(previous["surface_y"]) - surface_y) <= MAINLINE_MAX_SMOOTH_DELTA
+		var contiguous: bool = abs(float(previous["end_x"]) - start_x) <= MAINLINE_CONTIGUITY_EPSILON
+		var smooth_delta: bool = abs(float(previous["surface_y"]) - surface_y) <= MAINLINE_MAX_SMOOTH_DELTA
 		if contiguous and smooth_delta:
 			current_group.append({
 				"runway_index": runway_index,
