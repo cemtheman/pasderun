@@ -114,12 +114,12 @@ func _update_checkpoint() -> void:
 		return
 
 	_checkpoint_index = next_index
-	_checkpoint_position = Vector3(
-		float(candidate["x"]),
-		CHECKPOINT_SURFACE_Y + DANCER_STANDING_OFFSET,
-		0.0
-	)
-	_checkpoint_music_time = float(candidate["x"]) / RUN_SPEED
+	# Capture the actual grounded position after the threshold has been crossed.
+	# A checkpoint candidate may fall inside a generated fork or on a reshaped
+	# spatial surface; replaying its nominal X/Y would respawn the dancer inside
+	# route geometry or below/above the real runway.
+	_checkpoint_position = dancer.global_position
+	_checkpoint_music_time = dancer.global_position.x / RUN_SPEED
 
 
 func _enter_dead_state() -> void:

@@ -110,6 +110,17 @@ class Phase6RecoveryFlowTests(unittest.TestCase):
         self.assertIn("if _suppress_next_poor_landing:", jumps)
         self.assertIn('REDUCTIONS[&"POOR_LANDING"]', jumps)
 
+    def test_checkpoint_records_actual_safe_grounded_position(self) -> None:
+        update = function(self.recovery, "_update_checkpoint")
+        self.assertIn('fork_camera_controller.call("is_outside_fork")', update)
+        self.assertIn("_checkpoint_position = dancer.global_position", update)
+        self.assertIn(
+            "_checkpoint_music_time = dancer.global_position.x / RUN_SPEED",
+            update,
+        )
+        self.assertNotIn("CHECKPOINT_SURFACE_Y + DANCER_STANDING_OFFSET", update)
+        self.assertNotIn('float(candidate["x"]) / RUN_SPEED', update)
+
     def test_existing_death_continue_restart_and_completion_remain_authoritative(self) -> None:
         self.assertIn("const DEATH_Y := -6.0", self.recovery)
         physics = function(self.recovery, "_physics_process")
