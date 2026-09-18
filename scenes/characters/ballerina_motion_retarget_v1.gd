@@ -11,7 +11,15 @@ extends Node3D
 
 const RETARGET_STATES := {
 	&"STAGE_BOW": true,
+	&"STAGE_READY": true,
+	&"STAGE_FINAL_BOW": true,
 	&"BALANCE": true,
+}
+
+const FRONT_FACING_STATES := {
+	&"STAGE_BOW": true,
+	&"STAGE_READY": true,
+	&"STAGE_FINAL_BOW": true,
 }
 
 @onready var _model_root: Node3D = $low_poly_girl
@@ -295,7 +303,7 @@ func _apply_state_baseline(state: StringName) -> void:
 	# forward axis. This removes the ±90° ambiguity between mannequin, GLB and
 	# wrapper coordinate spaces.
 	_model_root.transform = _model_base_transform
-	if state == &"STAGE_BOW":
+	if FRONT_FACING_STATES.has(state):
 		_face_active_camera()
 
 	if state != &"STAGE_BOW":
