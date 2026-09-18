@@ -39,8 +39,6 @@ func _ready() -> void:
 		return
 	hud_root.visible = false
 	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
-	_update_performance_label()
-	_sanitize_labels(self)
 
 
 func _on_runtime_started() -> void:
@@ -61,11 +59,19 @@ func _input(event: InputEvent) -> void:
 		return
 	get_viewport().set_input_as_handled()
 	hud_root.visible = not hud_root.visible
+	if hud_root.visible:
+		_update_performance_label()
+		_sanitize_labels(self)
 
 
 func _process(delta: float) -> void:
 	if _startup_profile_active:
 		_sample_startup_performance(delta)
+
+	# Permanent developer HUD remains available with H, but presentation work
+	# stays dormant while the HUD is hidden.
+	if not hud_root.visible:
+		return
 
 	_performance_elapsed += delta
 	if _performance_elapsed >= PERFORMANCE_SAMPLE_INTERVAL:
