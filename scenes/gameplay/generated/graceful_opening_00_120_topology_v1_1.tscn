@@ -1,0 +1,2841 @@
+[gd_scene load_steps=395 format=3]
+
+[ext_resource type="Script" path="res://scenes/gameplay/balance_area.gd" id="1_balance"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform.tres" id="2_palace"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+material = ExtResource("2_palace")
+size = Vector3(11.0000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_1"]
+size = Vector3(11.0000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+material = ExtResource("2_palace")
+size = Vector3(14.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_2"]
+size = Vector3(14.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+material = ExtResource("2_palace")
+size = Vector3(7.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_3"]
+size = Vector3(7.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = ExtResource("2_palace")
+size = Vector3(35.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_4"]
+size = Vector3(35.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5"]
+material = ExtResource("2_palace")
+size = Vector3(29.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_5"]
+size = Vector3(29.9000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6"]
+material = ExtResource("2_palace")
+size = Vector3(0.0240, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_6"]
+size = Vector3(0.0240, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_7"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_8"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_9"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_9"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_10"]
+material = ExtResource("2_palace")
+size = Vector3(0.4020, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_10"]
+size = Vector3(0.4020, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_11"]
+material = ExtResource("2_palace")
+size = Vector3(1.4560, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_11"]
+size = Vector3(1.4560, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_12"]
+material = ExtResource("2_palace")
+size = Vector3(0.4440, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_12"]
+size = Vector3(0.4440, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_13"]
+material = ExtResource("2_palace")
+size = Vector3(1.0720, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_13"]
+size = Vector3(1.0720, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_14"]
+material = ExtResource("2_palace")
+size = Vector3(1.4948, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_14"]
+size = Vector3(1.4948, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_15"]
+material = ExtResource("2_palace")
+size = Vector3(0.3632, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_15"]
+size = Vector3(0.3632, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_16"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_16"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_17"]
+material = ExtResource("2_palace")
+size = Vector3(1.2189, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_17"]
+size = Vector3(1.2189, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_18"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_18"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_19"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_19"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_20"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_20"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_21"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_21"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_22"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_22"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_23"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_23"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_24"]
+material = ExtResource("2_palace")
+size = Vector3(0.5310, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_24"]
+size = Vector3(0.5310, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_25"]
+material = ExtResource("2_palace")
+size = Vector3(1.3260, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_25"]
+size = Vector3(1.3260, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_26"]
+material = ExtResource("2_palace")
+size = Vector3(0.5740, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_26"]
+size = Vector3(0.5740, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_27"]
+material = ExtResource("2_palace")
+size = Vector3(0.9400, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_27"]
+size = Vector3(0.9400, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_28"]
+material = ExtResource("2_palace")
+size = Vector3(1.6268, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_28"]
+size = Vector3(1.6268, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_29"]
+material = ExtResource("2_palace")
+size = Vector3(0.2312, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_29"]
+size = Vector3(0.2312, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_30"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_30"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_31"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_31"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_32"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_32"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_33"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_33"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_34"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_34"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_35"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_35"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_36"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_36"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_37"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_37"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_38"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_38"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_39"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_39"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_40"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_40"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_41"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_41"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_42"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_42"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_43"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_43"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_44"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_44"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_45"]
+material = ExtResource("2_palace")
+size = Vector3(0.3420, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_45"]
+size = Vector3(0.3420, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_46"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_46"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_47"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_47"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_48"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_48"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_49"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_49"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_50"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_50"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_51"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_51"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_52"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_52"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_53"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_53"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_54"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_54"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_55"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_55"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_56"]
+material = ExtResource("2_palace")
+size = Vector3(1.0800, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_56"]
+size = Vector3(1.0800, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_57"]
+material = ExtResource("2_palace")
+size = Vector3(0.7770, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_57"]
+size = Vector3(0.7770, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_58"]
+material = ExtResource("2_palace")
+size = Vector3(1.0390, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_58"]
+size = Vector3(1.0390, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_59"]
+material = ExtResource("2_palace")
+size = Vector3(1.4750, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_59"]
+size = Vector3(1.4750, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_60"]
+material = ExtResource("2_palace")
+size = Vector3(1.5918, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_60"]
+size = Vector3(1.5918, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_61"]
+material = ExtResource("2_palace")
+size = Vector3(0.2652, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_61"]
+size = Vector3(0.2652, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_62"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_62"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_63"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_63"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_64"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_64"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_65"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_65"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_66"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_66"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_67"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_67"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_68"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_68"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_69"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_69"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_70"]
+material = ExtResource("2_palace")
+size = Vector3(1.5040, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_70"]
+size = Vector3(1.5040, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_71"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_71"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_72"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_72"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_73"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_73"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_74"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_74"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_75"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_75"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_76"]
+material = ExtResource("2_palace")
+size = Vector3(0.6790, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_76"]
+size = Vector3(0.6790, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_77"]
+material = ExtResource("2_palace")
+size = Vector3(1.1780, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_77"]
+size = Vector3(1.1780, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_78"]
+material = ExtResource("2_palace")
+size = Vector3(1.2220, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_78"]
+size = Vector3(1.2220, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_79"]
+material = ExtResource("2_palace")
+size = Vector3(1.2920, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_79"]
+size = Vector3(1.2920, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_80"]
+material = ExtResource("2_palace")
+size = Vector3(1.7748, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_80"]
+size = Vector3(1.7748, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_81"]
+material = ExtResource("2_palace")
+size = Vector3(0.0832, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_81"]
+size = Vector3(0.0832, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_82"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_82"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_83"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_83"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_84"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_84"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_85"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_85"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_86"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_86"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_87"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_87"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_88"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_88"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_89"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_89"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_90"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_90"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_91"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_91"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_92"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_92"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_93"]
+material = ExtResource("2_palace")
+size = Vector3(0.2340, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_93"]
+size = Vector3(0.2340, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_94"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_94"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_95"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_95"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_96"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_96"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_97"]
+material = ExtResource("2_palace")
+size = Vector3(1.6060, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_97"]
+size = Vector3(1.6060, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_98"]
+material = ExtResource("2_palace")
+size = Vector3(0.2520, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_98"]
+size = Vector3(0.2520, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_99"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_99"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_100"]
+material = ExtResource("2_palace")
+size = Vector3(0.2900, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_100"]
+size = Vector3(0.2900, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_101"]
+material = ExtResource("2_palace")
+size = Vector3(0.3680, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_101"]
+size = Vector3(0.3680, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_102"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_102"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_103"]
+material = ExtResource("2_palace")
+size = Vector3(0.8408, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_103"]
+size = Vector3(0.8408, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_104"]
+material = ExtResource("2_palace")
+size = Vector3(1.0172, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_104"]
+size = Vector3(1.0172, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_105"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_105"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_106"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_106"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_107"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_107"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_108"]
+material = ExtResource("2_palace")
+size = Vector3(0.3300, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_108"]
+size = Vector3(0.3300, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_109"]
+material = ExtResource("2_palace")
+size = Vector3(1.2760, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_109"]
+size = Vector3(1.2760, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_110"]
+material = ExtResource("2_palace")
+size = Vector3(0.2520, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_110"]
+size = Vector3(0.2520, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_111"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_111"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_112"]
+material = ExtResource("2_palace")
+size = Vector3(0.2900, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_112"]
+size = Vector3(0.2900, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_113"]
+material = ExtResource("2_palace")
+size = Vector3(0.3680, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_113"]
+size = Vector3(0.3680, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_114"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_114"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_115"]
+material = ExtResource("2_palace")
+size = Vector3(0.8418, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_115"]
+size = Vector3(0.8418, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_116"]
+material = ExtResource("2_palace")
+size = Vector3(1.0152, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_116"]
+size = Vector3(1.0152, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_117"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_117"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_118"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_118"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_119"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_119"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_120"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_120"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_121"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_121"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_122"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_122"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_123"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_123"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_124"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_124"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_125"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_125"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_126"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_126"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_127"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_127"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_128"]
+material = ExtResource("2_palace")
+size = Vector3(1.6070, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_128"]
+size = Vector3(1.6070, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_129"]
+material = ExtResource("2_palace")
+size = Vector3(0.2500, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_129"]
+size = Vector3(0.2500, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_130"]
+material = ExtResource("2_palace")
+size = Vector3(1.6500, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_130"]
+size = Vector3(1.6500, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_131"]
+material = ExtResource("2_palace")
+size = Vector3(0.1000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_131"]
+size = Vector3(0.1000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_132"]
+material = ExtResource("2_palace")
+size = Vector3(0.1200, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_132"]
+size = Vector3(0.1200, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_133"]
+material = ExtResource("2_palace")
+size = Vector3(1.7800, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_133"]
+size = Vector3(1.7800, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_134"]
+material = ExtResource("2_palace")
+size = Vector3(1.5940, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_134"]
+size = Vector3(1.5940, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_135"]
+material = ExtResource("2_palace")
+size = Vector3(0.9728, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_135"]
+size = Vector3(0.9728, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_136"]
+material = ExtResource("2_palace")
+size = Vector3(0.8852, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_136"]
+size = Vector3(0.8852, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_137"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_137"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_138"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_138"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_139"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_139"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_140"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_140"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_141"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_141"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_142"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_142"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_143"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_143"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_144"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_144"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_145"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_145"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_146"]
+material = ExtResource("2_palace")
+size = Vector3(1.7300, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_146"]
+size = Vector3(1.7300, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_147"]
+material = ExtResource("2_palace")
+size = Vector3(0.1280, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_147"]
+size = Vector3(0.1280, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_148"]
+material = ExtResource("2_palace")
+size = Vector3(1.7720, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_148"]
+size = Vector3(1.7720, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_149"]
+material = ExtResource("2_palace")
+size = Vector3(1.6010, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_149"]
+size = Vector3(1.6010, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_150"]
+material = ExtResource("2_palace")
+size = Vector3(0.9658, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_150"]
+size = Vector3(0.9658, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_151"]
+material = ExtResource("2_palace")
+size = Vector3(0.8912, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_151"]
+size = Vector3(0.8912, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_152"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_152"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_153"]
+material = ExtResource("2_palace")
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_153"]
+size = Vector3(1.8570, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_154"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_154"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_155"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_155"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_156"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_156"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_157"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_157"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_158"]
+material = ExtResource("2_palace")
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_158"]
+size = Vector3(1.8580, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_159"]
+material = ExtResource("2_palace")
+size = Vector3(1.4380, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_159"]
+size = Vector3(1.4380, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_160"]
+material = ExtResource("2_palace")
+size = Vector3(8.0000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_160"]
+size = Vector3(8.0000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_161"]
+material = ExtResource("2_palace")
+size = Vector3(6.0000, 0.5000, 0.8000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_161"]
+size = Vector3(6.0000, 0.5000, 0.8000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_162"]
+size = Vector3(6.0000, 2.0000, 1.2000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_162"]
+size = Vector3(6.0000, 2.0000, 1.2000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_163"]
+material = ExtResource("2_palace")
+size = Vector3(14.0000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_163"]
+size = Vector3(14.0000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_164"]
+material = ExtResource("2_palace")
+size = Vector3(4.8189, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_164"]
+size = Vector3(4.8189, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_165"]
+material = ExtResource("2_palace")
+size = Vector3(2.4189, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_165"]
+size = Vector3(2.4189, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_166"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_166"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_167"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_167"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_168"]
+material = ExtResource("2_palace")
+size = Vector3(10.7031, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_168"]
+size = Vector3(10.7031, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_169"]
+material = ExtResource("2_palace")
+size = Vector3(5.7720, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_169"]
+size = Vector3(5.7720, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_170"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_170"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_171"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_171"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_172"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_172"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_173"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_173"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_174"]
+material = ExtResource("2_palace")
+size = Vector3(9.6000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_174"]
+size = Vector3(9.6000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_175"]
+material = ExtResource("2_palace")
+size = Vector3(4.6689, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_175"]
+size = Vector3(4.6689, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_176"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_176"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_177"]
+material = ExtResource("2_palace")
+size = Vector3(9.6000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_177"]
+size = Vector3(9.6000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_178"]
+material = ExtResource("2_palace")
+size = Vector3(1.4000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_178"]
+size = Vector3(1.4000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_179"]
+material = ExtResource("2_palace")
+size = Vector3(0.8172, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_179"]
+size = Vector3(0.8172, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_180"]
+material = ExtResource("2_palace")
+size = Vector3(0.8173, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_180"]
+size = Vector3(0.8173, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_181"]
+material = ExtResource("2_palace")
+size = Vector3(0.8172, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_181"]
+size = Vector3(0.8172, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_182"]
+material = ExtResource("2_palace")
+size = Vector3(0.8172, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_182"]
+size = Vector3(0.8172, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_183"]
+material = ExtResource("2_palace")
+size = Vector3(9.6000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_183"]
+size = Vector3(9.6000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_184"]
+material = ExtResource("2_palace")
+size = Vector3(4.6689, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_184"]
+size = Vector3(4.6689, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_185"]
+material = ExtResource("2_palace")
+size = Vector3(23.5000, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_185"]
+size = Vector3(23.5000, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_186"]
+material = ExtResource("2_palace")
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_186"]
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_187"]
+material = ExtResource("2_palace")
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_187"]
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_188"]
+material = ExtResource("2_palace")
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_188"]
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_189"]
+material = ExtResource("2_palace")
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_189"]
+size = Vector3(1.3500, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_190"]
+material = ExtResource("2_palace")
+size = Vector3(11.2062, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_190"]
+size = Vector3(11.2062, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_191"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="BoxShape_191"]
+size = Vector3(1.2000, 2.0000, 4.0000)
+
+[sub_resource type="BoxMesh" id="ClimaxRampMesh_1"]
+material = ExtResource("2_palace")
+size = Vector3(8.9418, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="ClimaxRampShape_1"]
+size = Vector3(8.9418, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="ClimaxRampMesh_2"]
+material = ExtResource("2_palace")
+size = Vector3(9.0901, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="ClimaxRampShape_2"]
+size = Vector3(9.0901, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="ClimaxRampMesh_3"]
+material = ExtResource("2_palace")
+size = Vector3(11.5381, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="ClimaxRampShape_3"]
+size = Vector3(11.5381, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="ClimaxRampMesh_4"]
+material = ExtResource("2_palace")
+size = Vector3(9.1879, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="ClimaxRampShape_4"]
+size = Vector3(9.1879, 0.5000, 4.0000)
+
+[sub_resource type="BoxMesh" id="ClimaxRampMesh_5"]
+material = ExtResource("2_palace")
+size = Vector3(13.7247, 0.5000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="ClimaxRampShape_5"]
+size = Vector3(13.7247, 0.5000, 4.0000)
+
+[node name="GracefulOpening0120ClimaxFork" type="Node3D"]
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="Events" type="Node3D" parent="."]
+
+[node name="Runway01" type="StaticBody3D" parent="Level"]
+position = Vector3(1.5000, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway01"]
+mesh = SubResource("BoxMesh_1")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway01"]
+shape = SubResource("BoxShape_1")
+
+[node name="Runway02" type="StaticBody3D" parent="Level"]
+position = Vector3(20.4500, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway02"]
+mesh = SubResource("BoxMesh_2")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway02"]
+shape = SubResource("BoxShape_2")
+
+[node name="Runway03" type="StaticBody3D" parent="Level"]
+position = Vector3(34.0500, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway03"]
+mesh = SubResource("BoxMesh_3")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway03"]
+shape = SubResource("BoxShape_3")
+
+[node name="Runway04" type="StaticBody3D" parent="Level"]
+position = Vector3(69.9500, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway04"]
+mesh = SubResource("BoxMesh_4")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway04"]
+shape = SubResource("BoxShape_4")
+
+[node name="Runway05" type="StaticBody3D" parent="Level"]
+position = Vector3(105.0500, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway05"]
+mesh = SubResource("BoxMesh_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway05"]
+shape = SubResource("BoxShape_5")
+
+[node name="Runway06" type="StaticBody3D" parent="Level"]
+position = Vector3(120.0120, -3.0724, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway06"]
+mesh = SubResource("BoxMesh_6")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway06"]
+shape = SubResource("BoxShape_6")
+
+[node name="Runway07" type="StaticBody3D" parent="Level"]
+position = Vector3(120.9530, -3.0750, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway07"]
+mesh = SubResource("BoxMesh_7")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway07"]
+shape = SubResource("BoxShape_7")
+
+[node name="Runway08" type="StaticBody3D" parent="Level"]
+position = Vector3(122.8110, -3.1000, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway08"]
+mesh = SubResource("BoxMesh_8")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway08"]
+shape = SubResource("BoxShape_8")
+
+[node name="Runway09" type="StaticBody3D" parent="Level"]
+position = Vector3(124.6690, -3.1250, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway09"]
+mesh = SubResource("BoxMesh_9")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway09"]
+shape = SubResource("BoxShape_9")
+
+[node name="Runway10" type="StaticBody3D" parent="Level"]
+position = Vector3(125.7990, -3.1500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway10"]
+mesh = SubResource("BoxMesh_10")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway10"]
+shape = SubResource("BoxShape_10")
+
+[node name="Runway11" type="StaticBody3D" parent="Level"]
+position = Vector3(126.7280, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway11"]
+mesh = SubResource("BoxMesh_11")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway11"]
+shape = SubResource("BoxShape_11")
+
+[node name="Runway12" type="StaticBody3D" parent="Level"]
+position = Vector3(127.6780, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway12"]
+mesh = SubResource("BoxMesh_12")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway12"]
+shape = SubResource("BoxShape_12")
+
+[node name="Runway13" type="StaticBody3D" parent="Level"]
+position = Vector3(130.6360, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway13"]
+mesh = SubResource("BoxMesh_13")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway13"]
+shape = SubResource("BoxShape_13")
+
+[node name="Runway14" type="StaticBody3D" parent="Level"]
+position = Vector3(131.9194, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway14"]
+mesh = SubResource("BoxMesh_14")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway14"]
+shape = SubResource("BoxShape_14")
+
+[node name="Runway15" type="StaticBody3D" parent="Level"]
+position = Vector3(132.8484, -2.9382, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway15"]
+mesh = SubResource("BoxMesh_15")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway15"]
+shape = SubResource("BoxShape_15")
+
+[node name="Runway16" type="StaticBody3D" parent="Level"]
+position = Vector3(133.9590, -2.9890, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway16"]
+mesh = SubResource("BoxMesh_16")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway16"]
+shape = SubResource("BoxShape_16")
+
+[node name="Runway17" type="StaticBody3D" parent="Level"]
+position = Vector3(154.7126, -2.9762, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway17"]
+mesh = SubResource("BoxMesh_17")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway17"]
+shape = SubResource("BoxShape_17")
+
+[node name="Runway18" type="StaticBody3D" parent="Level"]
+position = Vector3(156.2510, -3.0869, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway18"]
+mesh = SubResource("BoxMesh_18")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway18"]
+shape = SubResource("BoxShape_18")
+
+[node name="Runway19" type="StaticBody3D" parent="Level"]
+position = Vector3(158.1090, -3.0752, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway19"]
+mesh = SubResource("BoxMesh_19")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway19"]
+shape = SubResource("BoxShape_19")
+
+[node name="Runway20" type="StaticBody3D" parent="Level"]
+position = Vector3(159.9670, -3.1004, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway20"]
+mesh = SubResource("BoxMesh_20")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway20"]
+shape = SubResource("BoxShape_20")
+
+[node name="Runway21" type="StaticBody3D" parent="Level"]
+position = Vector3(161.8250, -3.1255, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway21"]
+mesh = SubResource("BoxMesh_21")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway21"]
+shape = SubResource("BoxShape_21")
+
+[node name="Runway22" type="StaticBody3D" parent="Level"]
+position = Vector3(163.6830, -3.1507, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway22"]
+mesh = SubResource("BoxMesh_22")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway22"]
+shape = SubResource("BoxShape_22")
+
+[node name="Runway23" type="StaticBody3D" parent="Level"]
+position = Vector3(165.5405, -3.0193, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway23"]
+mesh = SubResource("BoxMesh_23")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway23"]
+shape = SubResource("BoxShape_23")
+
+[node name="Runway24" type="StaticBody3D" parent="Level"]
+position = Vector3(166.7345, -2.9681, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway24"]
+mesh = SubResource("BoxMesh_24")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway24"]
+shape = SubResource("BoxShape_24")
+
+[node name="Runway25" type="StaticBody3D" parent="Level"]
+position = Vector3(167.6630, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway25"]
+mesh = SubResource("BoxMesh_25")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway25"]
+shape = SubResource("BoxShape_25")
+
+[node name="Runway26" type="StaticBody3D" parent="Level"]
+position = Vector3(168.6130, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway26"]
+mesh = SubResource("BoxMesh_26")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway26"]
+shape = SubResource("BoxShape_26")
+
+[node name="Runway27" type="StaticBody3D" parent="Level"]
+position = Vector3(171.5700, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway27"]
+mesh = SubResource("BoxMesh_27")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway27"]
+shape = SubResource("BoxShape_27")
+
+[node name="Runway28" type="StaticBody3D" parent="Level"]
+position = Vector3(172.8534, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway28"]
+mesh = SubResource("BoxMesh_28")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway28"]
+shape = SubResource("BoxShape_28")
+
+[node name="Runway29" type="StaticBody3D" parent="Level"]
+position = Vector3(173.7824, -3.0282, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway29"]
+mesh = SubResource("BoxMesh_29")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway29"]
+shape = SubResource("BoxShape_29")
+
+[node name="Runway30" type="StaticBody3D" parent="Level"]
+position = Vector3(174.8270, -3.0282, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway30"]
+mesh = SubResource("BoxMesh_30")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway30"]
+shape = SubResource("BoxShape_30")
+
+[node name="Runway31" type="StaticBody3D" parent="Level"]
+position = Vector3(176.6850, -3.0718, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway31"]
+mesh = SubResource("BoxMesh_31")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway31"]
+shape = SubResource("BoxShape_31")
+
+[node name="Runway32" type="StaticBody3D" parent="Level"]
+position = Vector3(178.5430, -3.0718, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway32"]
+mesh = SubResource("BoxMesh_32")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway32"]
+shape = SubResource("BoxShape_32")
+
+[node name="Runway33" type="StaticBody3D" parent="Level"]
+position = Vector3(180.4010, -2.9754, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway33"]
+mesh = SubResource("BoxMesh_33")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway33"]
+shape = SubResource("BoxShape_33")
+
+[node name="Runway34" type="StaticBody3D" parent="Level"]
+position = Vector3(182.2590, -3.0873, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway34"]
+mesh = SubResource("BoxMesh_34")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway34"]
+shape = SubResource("BoxShape_34")
+
+[node name="Runway35" type="StaticBody3D" parent="Level"]
+position = Vector3(184.1170, -2.9754, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway35"]
+mesh = SubResource("BoxMesh_35")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway35"]
+shape = SubResource("BoxShape_35")
+
+[node name="Runway36" type="StaticBody3D" parent="Level"]
+position = Vector3(185.9750, -3.0873, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway36"]
+mesh = SubResource("BoxMesh_36")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway36"]
+shape = SubResource("BoxShape_36")
+
+[node name="Runway37" type="StaticBody3D" parent="Level"]
+position = Vector3(187.8325, -3.0284, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway37"]
+mesh = SubResource("BoxMesh_37")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway37"]
+shape = SubResource("BoxShape_37")
+
+[node name="Runway38" type="StaticBody3D" parent="Level"]
+position = Vector3(189.6895, -3.0284, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway38"]
+mesh = SubResource("BoxMesh_38")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway38"]
+shape = SubResource("BoxShape_38")
+
+[node name="Runway39" type="StaticBody3D" parent="Level"]
+position = Vector3(191.5465, -3.0716, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway39"]
+mesh = SubResource("BoxMesh_39")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway39"]
+shape = SubResource("BoxShape_39")
+
+[node name="Runway40" type="StaticBody3D" parent="Level"]
+position = Vector3(193.4035, -3.0716, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway40"]
+mesh = SubResource("BoxMesh_40")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway40"]
+shape = SubResource("BoxShape_40")
+
+[node name="Runway41" type="StaticBody3D" parent="Level"]
+position = Vector3(195.2610, -2.9755, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway41"]
+mesh = SubResource("BoxMesh_41")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway41"]
+shape = SubResource("BoxShape_41")
+
+[node name="Runway42" type="StaticBody3D" parent="Level"]
+position = Vector3(197.1190, -3.0872, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway42"]
+mesh = SubResource("BoxMesh_42")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway42"]
+shape = SubResource("BoxShape_42")
+
+[node name="Runway43" type="StaticBody3D" parent="Level"]
+position = Vector3(198.9770, -2.9755, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway43"]
+mesh = SubResource("BoxMesh_43")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway43"]
+shape = SubResource("BoxShape_43")
+
+[node name="Runway44" type="StaticBody3D" parent="Level"]
+position = Vector3(200.8350, -3.0872, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway44"]
+mesh = SubResource("BoxMesh_44")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway44"]
+shape = SubResource("BoxShape_44")
+
+[node name="Runway45" type="StaticBody3D" parent="Level"]
+position = Vector3(220.1710, -3.1060, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway45"]
+mesh = SubResource("BoxMesh_45")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway45"]
+shape = SubResource("BoxShape_45")
+
+[node name="Runway46" type="StaticBody3D" parent="Level"]
+position = Vector3(221.2705, -3.1341, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway46"]
+mesh = SubResource("BoxMesh_46")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway46"]
+shape = SubResource("BoxShape_46")
+
+[node name="Runway47" type="StaticBody3D" parent="Level"]
+position = Vector3(223.1275, -3.1621, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway47"]
+mesh = SubResource("BoxMesh_47")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway47"]
+shape = SubResource("BoxShape_47")
+
+[node name="Runway48" type="StaticBody3D" parent="Level"]
+position = Vector3(224.9850, -3.0765, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway48"]
+mesh = SubResource("BoxMesh_48")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway48"]
+shape = SubResource("BoxShape_48")
+
+[node name="Runway49" type="StaticBody3D" parent="Level"]
+position = Vector3(226.8430, -3.1029, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway49"]
+mesh = SubResource("BoxMesh_49")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway49"]
+shape = SubResource("BoxShape_49")
+
+[node name="Runway50" type="StaticBody3D" parent="Level"]
+position = Vector3(228.7010, -3.1294, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway50"]
+mesh = SubResource("BoxMesh_50")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway50"]
+shape = SubResource("BoxShape_50")
+
+[node name="Runway51" type="StaticBody3D" parent="Level"]
+position = Vector3(230.5590, -3.1558, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway51"]
+mesh = SubResource("BoxMesh_51")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway51"]
+shape = SubResource("BoxShape_51")
+
+[node name="Runway52" type="StaticBody3D" parent="Level"]
+position = Vector3(232.4170, -2.9760, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway52"]
+mesh = SubResource("BoxMesh_52")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway52"]
+shape = SubResource("BoxShape_52")
+
+[node name="Runway53" type="StaticBody3D" parent="Level"]
+position = Vector3(234.2750, -3.0870, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway53"]
+mesh = SubResource("BoxMesh_53")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway53"]
+shape = SubResource("BoxShape_53")
+
+[node name="Runway54" type="StaticBody3D" parent="Level"]
+position = Vector3(236.1330, -2.9760, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway54"]
+mesh = SubResource("BoxMesh_54")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway54"]
+shape = SubResource("BoxShape_54")
+
+[node name="Runway55" type="StaticBody3D" parent="Level"]
+position = Vector3(237.9910, -3.0870, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway55"]
+mesh = SubResource("BoxMesh_55")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway55"]
+shape = SubResource("BoxShape_55")
+
+[node name="Runway56" type="StaticBody3D" parent="Level"]
+position = Vector3(239.4600, -3.0278, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway56"]
+mesh = SubResource("BoxMesh_56")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway56"]
+shape = SubResource("BoxShape_56")
+
+[node name="Runway57" type="StaticBody3D" parent="Level"]
+position = Vector3(240.3885, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway57"]
+mesh = SubResource("BoxMesh_57")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway57"]
+shape = SubResource("BoxShape_57")
+
+[node name="Runway58" type="StaticBody3D" parent="Level"]
+position = Vector3(241.2965, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway58"]
+mesh = SubResource("BoxMesh_58")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway58"]
+shape = SubResource("BoxShape_58")
+
+[node name="Runway59" type="StaticBody3D" parent="Level"]
+position = Vector3(243.7535, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway59"]
+mesh = SubResource("BoxMesh_59")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway59"]
+shape = SubResource("BoxShape_59")
+
+[node name="Runway60" type="StaticBody3D" parent="Level"]
+position = Vector3(245.2869, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway60"]
+mesh = SubResource("BoxMesh_60")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway60"]
+shape = SubResource("BoxShape_60")
+
+[node name="Runway61" type="StaticBody3D" parent="Level"]
+position = Vector3(246.2154, -3.0722, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway61"]
+mesh = SubResource("BoxMesh_61")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway61"]
+shape = SubResource("BoxShape_61")
+
+[node name="Runway62" type="StaticBody3D" parent="Level"]
+position = Vector3(247.2770, -3.0289, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway62"]
+mesh = SubResource("BoxMesh_62")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway62"]
+shape = SubResource("BoxShape_62")
+
+[node name="Runway63" type="StaticBody3D" parent="Level"]
+position = Vector3(249.1350, -3.0289, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway63"]
+mesh = SubResource("BoxMesh_63")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway63"]
+shape = SubResource("BoxShape_63")
+
+[node name="Runway64" type="StaticBody3D" parent="Level"]
+position = Vector3(250.9930, -3.0711, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway64"]
+mesh = SubResource("BoxMesh_64")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway64"]
+shape = SubResource("BoxShape_64")
+
+[node name="Runway65" type="StaticBody3D" parent="Level"]
+position = Vector3(252.8510, -3.0711, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway65"]
+mesh = SubResource("BoxMesh_65")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway65"]
+shape = SubResource("BoxShape_65")
+
+[node name="Runway66" type="StaticBody3D" parent="Level"]
+position = Vector3(254.7090, -3.0292, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway66"]
+mesh = SubResource("BoxMesh_66")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway66"]
+shape = SubResource("BoxShape_66")
+
+[node name="Runway67" type="StaticBody3D" parent="Level"]
+position = Vector3(256.5670, -3.0292, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway67"]
+mesh = SubResource("BoxMesh_67")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway67"]
+shape = SubResource("BoxShape_67")
+
+[node name="Runway68" type="StaticBody3D" parent="Level"]
+position = Vector3(258.4250, -3.0708, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway68"]
+mesh = SubResource("BoxMesh_68")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway68"]
+shape = SubResource("BoxShape_68")
+
+[node name="Runway69" type="StaticBody3D" parent="Level"]
+position = Vector3(260.2830, -3.0708, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway69"]
+mesh = SubResource("BoxMesh_69")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway69"]
+shape = SubResource("BoxShape_69")
+
+[node name="Runway70" type="StaticBody3D" parent="Level"]
+position = Vector3(282.7520, -3.1612, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway70"]
+mesh = SubResource("BoxMesh_70")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway70"]
+shape = SubResource("BoxShape_70")
+
+[node name="Runway71" type="StaticBody3D" parent="Level"]
+position = Vector3(284.4330, -3.0229, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway71"]
+mesh = SubResource("BoxMesh_71")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway71"]
+shape = SubResource("BoxShape_71")
+
+[node name="Runway72" type="StaticBody3D" parent="Level"]
+position = Vector3(286.2910, -2.9958, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway72"]
+mesh = SubResource("BoxMesh_72")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway72"]
+shape = SubResource("BoxShape_72")
+
+[node name="Runway73" type="StaticBody3D" parent="Level"]
+position = Vector3(288.1490, -2.9688, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway73"]
+mesh = SubResource("BoxMesh_73")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway73"]
+shape = SubResource("BoxShape_73")
+
+[node name="Runway74" type="StaticBody3D" parent="Level"]
+position = Vector3(290.0070, -2.9417, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway74"]
+mesh = SubResource("BoxMesh_74")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway74"]
+shape = SubResource("BoxShape_74")
+
+[node name="Runway75" type="StaticBody3D" parent="Level"]
+position = Vector3(291.8645, -3.0763, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway75"]
+mesh = SubResource("BoxMesh_75")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway75"]
+shape = SubResource("BoxShape_75")
+
+[node name="Runway76" type="StaticBody3D" parent="Level"]
+position = Vector3(293.1325, -3.1027, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway76"]
+mesh = SubResource("BoxMesh_76")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway76"]
+shape = SubResource("BoxShape_76")
+
+[node name="Runway77" type="StaticBody3D" parent="Level"]
+position = Vector3(294.0610, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway77"]
+mesh = SubResource("BoxMesh_77")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway77"]
+shape = SubResource("BoxShape_77")
+
+[node name="Runway78" type="StaticBody3D" parent="Level"]
+position = Vector3(295.2610, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway78"]
+mesh = SubResource("BoxMesh_78")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway78"]
+shape = SubResource("BoxShape_78")
+
+[node name="Runway79" type="StaticBody3D" parent="Level"]
+position = Vector3(297.7180, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway79"]
+mesh = SubResource("BoxMesh_79")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway79"]
+shape = SubResource("BoxShape_79")
+
+[node name="Runway80" type="StaticBody3D" parent="Level"]
+position = Vector3(299.2514, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway80"]
+mesh = SubResource("BoxMesh_80")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway80"]
+shape = SubResource("BoxShape_80")
+
+[node name="Runway81" type="StaticBody3D" parent="Level"]
+position = Vector3(300.1804, -3.0280, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway81"]
+mesh = SubResource("BoxMesh_81")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway81"]
+shape = SubResource("BoxShape_81")
+
+[node name="Runway82" type="StaticBody3D" parent="Level"]
+position = Vector3(301.1510, -3.0280, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway82"]
+mesh = SubResource("BoxMesh_82")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway82"]
+shape = SubResource("BoxShape_82")
+
+[node name="Runway83" type="StaticBody3D" parent="Level"]
+position = Vector3(303.0090, -3.0720, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway83"]
+mesh = SubResource("BoxMesh_83")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway83"]
+shape = SubResource("BoxShape_83")
+
+[node name="Runway84" type="StaticBody3D" parent="Level"]
+position = Vector3(304.8670, -3.0720, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway84"]
+mesh = SubResource("BoxMesh_84")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway84"]
+shape = SubResource("BoxShape_84")
+
+[node name="Runway85" type="StaticBody3D" parent="Level"]
+position = Vector3(306.7250, -3.0291, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway85"]
+mesh = SubResource("BoxMesh_85")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway85"]
+shape = SubResource("BoxShape_85")
+
+[node name="Runway86" type="StaticBody3D" parent="Level"]
+position = Vector3(308.5830, -3.0291, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway86"]
+mesh = SubResource("BoxMesh_86")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway86"]
+shape = SubResource("BoxShape_86")
+
+[node name="Runway87" type="StaticBody3D" parent="Level"]
+position = Vector3(310.4410, -3.0709, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway87"]
+mesh = SubResource("BoxMesh_87")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway87"]
+shape = SubResource("BoxShape_87")
+
+[node name="Runway88" type="StaticBody3D" parent="Level"]
+position = Vector3(312.2990, -3.0709, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway88"]
+mesh = SubResource("BoxMesh_88")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway88"]
+shape = SubResource("BoxShape_88")
+
+[node name="Runway89" type="StaticBody3D" parent="Level"]
+position = Vector3(314.1565, -3.0285, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway89"]
+mesh = SubResource("BoxMesh_89")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway89"]
+shape = SubResource("BoxShape_89")
+
+[node name="Runway90" type="StaticBody3D" parent="Level"]
+position = Vector3(316.0135, -3.0285, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway90"]
+mesh = SubResource("BoxMesh_90")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway90"]
+shape = SubResource("BoxShape_90")
+
+[node name="Runway91" type="StaticBody3D" parent="Level"]
+position = Vector3(317.8705, -3.0715, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway91"]
+mesh = SubResource("BoxMesh_91")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway91"]
+shape = SubResource("BoxShape_91")
+
+[node name="Runway92" type="StaticBody3D" parent="Level"]
+position = Vector3(319.7275, -3.0715, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway92"]
+mesh = SubResource("BoxMesh_92")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway92"]
+shape = SubResource("BoxShape_92")
+
+[node name="Runway93" type="StaticBody3D" parent="Level"]
+position = Vector3(339.1170, -3.0291, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway93"]
+mesh = SubResource("BoxMesh_93")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway93"]
+shape = SubResource("BoxShape_93")
+
+[node name="Runway94" type="StaticBody3D" parent="Level"]
+position = Vector3(340.1625, -3.0709, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway94"]
+mesh = SubResource("BoxMesh_94")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway94"]
+shape = SubResource("BoxShape_94")
+
+[node name="Runway95" type="StaticBody3D" parent="Level"]
+position = Vector3(342.0195, -3.0709, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway95"]
+mesh = SubResource("BoxMesh_95")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway95"]
+shape = SubResource("BoxShape_95")
+
+[node name="Runway96" type="StaticBody3D" parent="Level"]
+position = Vector3(343.8770, -3.0285, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway96"]
+mesh = SubResource("BoxMesh_96")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway96"]
+shape = SubResource("BoxShape_96")
+
+[node name="Runway97" type="StaticBody3D" parent="Level"]
+position = Vector3(345.6090, -3.0285, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway97"]
+mesh = SubResource("BoxMesh_97")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway97"]
+shape = SubResource("BoxShape_97")
+
+[node name="Runway98" type="StaticBody3D" parent="Level"]
+position = Vector3(346.5380, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway98"]
+mesh = SubResource("BoxMesh_98")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway98"]
+shape = SubResource("BoxShape_98")
+
+[node name="Runway99" type="StaticBody3D" parent="Level"]
+position = Vector3(347.5930, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway99"]
+mesh = SubResource("BoxMesh_99")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway99"]
+shape = SubResource("BoxShape_99")
+
+[node name="Runway100" type="StaticBody3D" parent="Level"]
+position = Vector3(348.6670, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway100"]
+mesh = SubResource("BoxMesh_100")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway100"]
+shape = SubResource("BoxShape_100")
+
+[node name="Runway101" type="StaticBody3D" parent="Level"]
+position = Vector3(350.1960, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway101"]
+mesh = SubResource("BoxMesh_101")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway101"]
+shape = SubResource("BoxShape_101")
+
+[node name="Runway102" type="StaticBody3D" parent="Level"]
+position = Vector3(351.3090, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway102"]
+mesh = SubResource("BoxMesh_102")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway102"]
+shape = SubResource("BoxShape_102")
+
+[node name="Runway103" type="StaticBody3D" parent="Level"]
+position = Vector3(352.6584, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway103"]
+mesh = SubResource("BoxMesh_103")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway103"]
+shape = SubResource("BoxShape_103")
+
+[node name="Runway104" type="StaticBody3D" parent="Level"]
+position = Vector3(353.5874, -3.0290, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway104"]
+mesh = SubResource("BoxMesh_104")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway104"]
+shape = SubResource("BoxShape_104")
+
+[node name="Runway105" type="StaticBody3D" parent="Level"]
+position = Vector3(355.0250, -3.0710, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway105"]
+mesh = SubResource("BoxMesh_105")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway105"]
+shape = SubResource("BoxShape_105")
+
+[node name="Runway106" type="StaticBody3D" parent="Level"]
+position = Vector3(356.8830, -3.0710, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway106"]
+mesh = SubResource("BoxMesh_106")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway106"]
+shape = SubResource("BoxShape_106")
+
+[node name="Runway107" type="StaticBody3D" parent="Level"]
+position = Vector3(358.7410, -3.0289, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway107"]
+mesh = SubResource("BoxMesh_107")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway107"]
+shape = SubResource("BoxShape_107")
+
+[node name="Runway108" type="StaticBody3D" parent="Level"]
+position = Vector3(359.8350, -3.0289, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway108"]
+mesh = SubResource("BoxMesh_108")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway108"]
+shape = SubResource("BoxShape_108")
+
+[node name="Runway109" type="StaticBody3D" parent="Level"]
+position = Vector3(360.6380, -3.0289, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway109"]
+mesh = SubResource("BoxMesh_109")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway109"]
+shape = SubResource("BoxShape_109")
+
+[node name="Runway110" type="StaticBody3D" parent="Level"]
+position = Vector3(361.4020, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway110"]
+mesh = SubResource("BoxMesh_110")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway110"]
+shape = SubResource("BoxShape_110")
+
+[node name="Runway111" type="StaticBody3D" parent="Level"]
+position = Vector3(362.4570, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway111"]
+mesh = SubResource("BoxMesh_111")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway111"]
+shape = SubResource("BoxShape_111")
+
+[node name="Runway112" type="StaticBody3D" parent="Level"]
+position = Vector3(363.5310, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway112"]
+mesh = SubResource("BoxMesh_112")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway112"]
+shape = SubResource("BoxShape_112")
+
+[node name="Runway113" type="StaticBody3D" parent="Level"]
+position = Vector3(365.0600, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway113"]
+mesh = SubResource("BoxMesh_113")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway113"]
+shape = SubResource("BoxShape_113")
+
+[node name="Runway114" type="StaticBody3D" parent="Level"]
+position = Vector3(366.1725, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway114"]
+mesh = SubResource("BoxMesh_114")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway114"]
+shape = SubResource("BoxShape_114")
+
+[node name="Runway115" type="StaticBody3D" parent="Level"]
+position = Vector3(367.5219, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway115"]
+mesh = SubResource("BoxMesh_115")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway115"]
+shape = SubResource("BoxShape_115")
+
+[node name="Runway116" type="StaticBody3D" parent="Level"]
+position = Vector3(368.4504, -3.0286, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway116"]
+mesh = SubResource("BoxMesh_116")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway116"]
+shape = SubResource("BoxShape_116")
+
+[node name="Runway117" type="StaticBody3D" parent="Level"]
+position = Vector3(369.8865, -3.0714, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway117"]
+mesh = SubResource("BoxMesh_117")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway117"]
+shape = SubResource("BoxShape_117")
+
+[node name="Runway118" type="StaticBody3D" parent="Level"]
+position = Vector3(371.7435, -3.0714, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway118"]
+mesh = SubResource("BoxMesh_118")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway118"]
+shape = SubResource("BoxShape_118")
+
+[node name="Runway119" type="StaticBody3D" parent="Level"]
+position = Vector3(373.6010, -3.0288, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway119"]
+mesh = SubResource("BoxMesh_119")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway119"]
+shape = SubResource("BoxShape_119")
+
+[node name="Runway120" type="StaticBody3D" parent="Level"]
+position = Vector3(375.4590, -3.0288, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway120"]
+mesh = SubResource("BoxMesh_120")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway120"]
+shape = SubResource("BoxShape_120")
+
+[node name="Runway121" type="StaticBody3D" parent="Level"]
+position = Vector3(377.3170, -3.0712, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway121"]
+mesh = SubResource("BoxMesh_121")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway121"]
+shape = SubResource("BoxShape_121")
+
+[node name="Runway122" type="StaticBody3D" parent="Level"]
+position = Vector3(379.1750, -3.0712, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway122"]
+mesh = SubResource("BoxMesh_122")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway122"]
+shape = SubResource("BoxShape_122")
+
+[node name="Runway123" type="StaticBody3D" parent="Level"]
+position = Vector3(381.0330, -3.0281, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway123"]
+mesh = SubResource("BoxMesh_123")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway123"]
+shape = SubResource("BoxShape_123")
+
+[node name="Runway124" type="StaticBody3D" parent="Level"]
+position = Vector3(382.8910, -3.0281, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway124"]
+mesh = SubResource("BoxMesh_124")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway124"]
+shape = SubResource("BoxShape_124")
+
+[node name="Runway125" type="StaticBody3D" parent="Level"]
+position = Vector3(384.7490, -3.0719, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway125"]
+mesh = SubResource("BoxMesh_125")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway125"]
+shape = SubResource("BoxShape_125")
+
+[node name="Runway126" type="StaticBody3D" parent="Level"]
+position = Vector3(386.6070, -3.0719, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway126"]
+mesh = SubResource("BoxMesh_126")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway126"]
+shape = SubResource("BoxShape_126")
+
+[node name="Runway127" type="StaticBody3D" parent="Level"]
+position = Vector3(388.4645, -3.0196, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway127"]
+mesh = SubResource("BoxMesh_127")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway127"]
+shape = SubResource("BoxShape_127")
+
+[node name="Runway128" type="StaticBody3D" parent="Level"]
+position = Vector3(390.1965, -2.9689, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway128"]
+mesh = SubResource("BoxMesh_128")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway128"]
+shape = SubResource("BoxShape_128")
+
+[node name="Runway129" type="StaticBody3D" parent="Level"]
+position = Vector3(391.1250, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway129"]
+mesh = SubResource("BoxMesh_129")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway129"]
+shape = SubResource("BoxShape_129")
+
+[node name="Runway130" type="StaticBody3D" parent="Level"]
+position = Vector3(392.0750, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway130"]
+mesh = SubResource("BoxMesh_130")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway130"]
+shape = SubResource("BoxShape_130")
+
+[node name="Runway131" type="StaticBody3D" parent="Level"]
+position = Vector3(431.9500, -3.1542, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway131"]
+mesh = SubResource("BoxMesh_131")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway131"]
+shape = SubResource("BoxShape_131")
+
+[node name="Runway132" type="StaticBody3D" parent="Level"]
+position = Vector3(432.0600, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway132"]
+mesh = SubResource("BoxMesh_132")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway132"]
+shape = SubResource("BoxShape_132")
+
+[node name="Runway133" type="StaticBody3D" parent="Level"]
+position = Vector3(433.0100, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway133"]
+mesh = SubResource("BoxMesh_133")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway133"]
+shape = SubResource("BoxShape_133")
+
+[node name="Runway134" type="StaticBody3D" parent="Level"]
+position = Vector3(436.8970, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway134"]
+mesh = SubResource("BoxMesh_134")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway134"]
+shape = SubResource("BoxShape_134")
+
+[node name="Runway135" type="StaticBody3D" parent="Level"]
+position = Vector3(438.1804, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway135"]
+mesh = SubResource("BoxMesh_135")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway135"]
+shape = SubResource("BoxShape_135")
+
+[node name="Runway136" type="StaticBody3D" parent="Level"]
+position = Vector3(439.1094, -2.9881, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway136"]
+mesh = SubResource("BoxMesh_136")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway136"]
+shape = SubResource("BoxShape_136")
+
+[node name="Runway137" type="StaticBody3D" parent="Level"]
+position = Vector3(440.4805, -3.0751, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway137"]
+mesh = SubResource("BoxMesh_137")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway137"]
+shape = SubResource("BoxShape_137")
+
+[node name="Runway138" type="StaticBody3D" parent="Level"]
+position = Vector3(442.3375, -3.1003, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway138"]
+mesh = SubResource("BoxMesh_138")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway138"]
+shape = SubResource("BoxShape_138")
+
+[node name="Runway139" type="StaticBody3D" parent="Level"]
+position = Vector3(444.1945, -3.1254, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway139"]
+mesh = SubResource("BoxMesh_139")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway139"]
+shape = SubResource("BoxShape_139")
+
+[node name="Runway140" type="StaticBody3D" parent="Level"]
+position = Vector3(446.0515, -3.1505, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway140"]
+mesh = SubResource("BoxMesh_140")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway140"]
+shape = SubResource("BoxShape_140")
+
+[node name="Runway141" type="StaticBody3D" parent="Level"]
+position = Vector3(447.9090, -3.0241, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway141"]
+mesh = SubResource("BoxMesh_141")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway141"]
+shape = SubResource("BoxShape_141")
+
+[node name="Runway142" type="StaticBody3D" parent="Level"]
+position = Vector3(449.7670, -2.9981, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway142"]
+mesh = SubResource("BoxMesh_142")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway142"]
+shape = SubResource("BoxShape_142")
+
+[node name="Runway143" type="StaticBody3D" parent="Level"]
+position = Vector3(451.6250, -2.9722, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway143"]
+mesh = SubResource("BoxMesh_143")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway143"]
+shape = SubResource("BoxShape_143")
+
+[node name="Runway144" type="StaticBody3D" parent="Level"]
+position = Vector3(453.4830, -2.9462, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway144"]
+mesh = SubResource("BoxMesh_144")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway144"]
+shape = SubResource("BoxShape_144")
+
+[node name="Runway145" type="StaticBody3D" parent="Level"]
+position = Vector3(455.3410, -3.0189, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway145"]
+mesh = SubResource("BoxMesh_145")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway145"]
+shape = SubResource("BoxShape_145")
+
+[node name="Runway146" type="StaticBody3D" parent="Level"]
+position = Vector3(457.1350, -2.9671, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway146"]
+mesh = SubResource("BoxMesh_146")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway146"]
+shape = SubResource("BoxShape_146")
+
+[node name="Runway147" type="StaticBody3D" parent="Level"]
+position = Vector3(458.0640, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway147"]
+mesh = SubResource("BoxMesh_147")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway147"]
+shape = SubResource("BoxShape_147")
+
+[node name="Runway148" type="StaticBody3D" parent="Level"]
+position = Vector3(459.0140, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway148"]
+mesh = SubResource("BoxMesh_148")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway148"]
+shape = SubResource("BoxShape_148")
+
+[node name="Runway149" type="StaticBody3D" parent="Level"]
+position = Vector3(462.9005, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway149"]
+mesh = SubResource("BoxMesh_149")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway149"]
+shape = SubResource("BoxShape_149")
+
+[node name="Runway150" type="StaticBody3D" parent="Level"]
+position = Vector3(464.1839, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway150"]
+mesh = SubResource("BoxMesh_150")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway150"]
+shape = SubResource("BoxShape_150")
+
+[node name="Runway151" type="StaticBody3D" parent="Level"]
+position = Vector3(465.1124, -3.0886, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway151"]
+mesh = SubResource("BoxMesh_151")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway151"]
+shape = SubResource("BoxShape_151")
+
+[node name="Runway152" type="StaticBody3D" parent="Level"]
+position = Vector3(466.4865, -2.9728, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway152"]
+mesh = SubResource("BoxMesh_152")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway152"]
+shape = SubResource("BoxShape_152")
+
+[node name="Runway153" type="StaticBody3D" parent="Level"]
+position = Vector3(468.3435, -3.0886, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway153"]
+mesh = SubResource("BoxMesh_153")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway153"]
+shape = SubResource("BoxShape_153")
+
+[node name="Runway154" type="StaticBody3D" parent="Level"]
+position = Vector3(470.2010, -2.9763, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway154"]
+mesh = SubResource("BoxMesh_154")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway154"]
+shape = SubResource("BoxShape_154")
+
+[node name="Runway155" type="StaticBody3D" parent="Level"]
+position = Vector3(472.0590, -3.0869, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway155"]
+mesh = SubResource("BoxMesh_155")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway155"]
+shape = SubResource("BoxShape_155")
+
+[node name="Runway156" type="StaticBody3D" parent="Level"]
+position = Vector3(473.9170, -2.9763, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway156"]
+mesh = SubResource("BoxMesh_156")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway156"]
+shape = SubResource("BoxShape_156")
+
+[node name="Runway157" type="StaticBody3D" parent="Level"]
+position = Vector3(475.7750, -3.0869, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway157"]
+mesh = SubResource("BoxMesh_157")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway157"]
+shape = SubResource("BoxShape_157")
+
+[node name="Runway158" type="StaticBody3D" parent="Level"]
+position = Vector3(477.6330, -2.9752, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway158"]
+mesh = SubResource("BoxMesh_158")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway158"]
+shape = SubResource("BoxShape_158")
+
+[node name="Runway159" type="StaticBody3D" parent="Level"]
+position = Vector3(479.2810, -3.0874, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway159"]
+mesh = SubResource("BoxMesh_159")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway159"]
+shape = SubResource("BoxShape_159")
+
+[node name="Runway160" type="StaticBody3D" parent="Level"]
+position = Vector3(484.0000, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/Runway160"]
+mesh = SubResource("BoxMesh_160")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Runway160"]
+shape = SubResource("BoxShape_160")
+
+[node name="BalancePassage01" type="StaticBody3D" parent="Level"]
+position = Vector3(10.0000, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/BalancePassage01"]
+mesh = SubResource("BoxMesh_161")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BalancePassage01"]
+shape = SubResource("BoxShape_161")
+
+[node name="BalanceArea" type="Area3D" parent="Level/BalancePassage01"]
+position = Vector3(0, 1, 0)
+script = ExtResource("1_balance")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BalancePassage01/BalanceArea"]
+shape = SubResource("BoxShape_162")
+
+[node name="Event01_SUSTAINED_BALANCE" type="Marker3D" parent="Events"]
+position = Vector3(10.0000, 0.0000, 0)
+
+[node name="Event02_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(29.0000, 0.0000, 0)
+
+[node name="SafeLowerRoute03" type="StaticBody3D" parent="Level"]
+position = Vector3(45.0000, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute03"]
+mesh = SubResource("BoxMesh_163")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute03"]
+shape = SubResource("BoxShape_163")
+
+[node name="TechnicalRoute03_01" type="StaticBody3D" parent="Level"]
+position = Vector3(42.7405, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute03_01"]
+mesh = SubResource("BoxMesh_164")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute03_01"]
+shape = SubResource("BoxShape_164")
+
+[node name="TechnicalRoute03_02" type="StaticBody3D" parent="Level"]
+position = Vector3(48.0594, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute03_02"]
+mesh = SubResource("BoxMesh_165")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute03_02"]
+shape = SubResource("BoxShape_165")
+
+[node name="ForkStart03" type="Marker3D" parent="Level"]
+position = Vector3(38.0000, 0.0000, 0)
+[node name="ForkMerge03" type="Marker3D" parent="Level"]
+position = Vector3(52.0000, -2.8000, 0)
+
+[node name="Event03_MEDIUM_JUMP" type="Marker3D" parent="Events"]
+position = Vector3(46.0000, 0.0000, 0)
+
+[node name="Event04_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(89.0000, -2.8000, 0)
+
+[node name="AccentZone05" type="Area3D" parent="Level"]
+position = Vector3(101.0520, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone05"]
+shape = SubResource("BoxShape_166")
+
+[node name="Event05_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(101.0520, -2.8000, 0)
+
+[node name="AccentZone06" type="Area3D" parent="Level"]
+position = Vector3(112.2000, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone06"]
+shape = SubResource("BoxShape_167")
+
+[node name="Event06_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(112.2000, -2.8000, 0)
+
+[node name="Event07_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(129.0000, -2.8000, 0)
+
+[node name="SafeLowerRoute08" type="StaticBody3D" parent="Level"]
+position = Vector3(148.7516, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute08"]
+mesh = SubResource("BoxMesh_168")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute08"]
+shape = SubResource("BoxShape_168")
+
+[node name="TechnicalRoute08_01" type="StaticBody3D" parent="Level"]
+position = Vector3(148.4860, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute08_01"]
+mesh = SubResource("BoxMesh_169")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute08_01"]
+shape = SubResource("BoxShape_169")
+
+[node name="ForkStart08" type="Marker3D" parent="Level"]
+position = Vector3(143.4000, 0.0000, 0)
+[node name="ForkMerge08" type="Marker3D" parent="Level"]
+position = Vector3(154.1031, -2.8000, 0)
+
+[node name="Event08_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(145.0000, 0.0000, 0)
+
+[node name="AccentZone09" type="Area3D" parent="Level"]
+position = Vector3(150.3720, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone09"]
+shape = SubResource("BoxShape_170")
+
+[node name="Event09_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(150.3720, -2.8000, 0)
+
+[node name="Event10_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(170.0000, -2.8000, 0)
+
+[node name="AccentZone11" type="Area3D" parent="Level"]
+position = Vector3(175.4480, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone11"]
+shape = SubResource("BoxShape_171")
+
+[node name="Event11_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(175.4480, -2.8000, 0)
+
+[node name="AccentZone12" type="Area3D" parent="Level"]
+position = Vector3(184.8320, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone12"]
+shape = SubResource("BoxShape_172")
+
+[node name="Event12_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(184.8320, -2.8000, 0)
+
+[node name="AccentZone13" type="Area3D" parent="Level"]
+position = Vector3(202.4800, -1.6020, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone13"]
+shape = SubResource("BoxShape_173")
+
+[node name="Event13_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(202.4800, -2.6020, 0)
+
+[node name="SafeLowerRoute14" type="StaticBody3D" parent="Level"]
+position = Vector3(215.2000, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute14"]
+mesh = SubResource("BoxMesh_174")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute14"]
+shape = SubResource("BoxShape_174")
+
+[node name="TechnicalRoute14_01" type="StaticBody3D" parent="Level"]
+position = Vector3(214.9344, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute14_01"]
+mesh = SubResource("BoxMesh_175")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute14_01"]
+shape = SubResource("BoxShape_175")
+
+[node name="ForkStart14" type="Marker3D" parent="Level"]
+position = Vector3(210.4000, 0.0000, 0)
+[node name="ForkMerge14" type="Marker3D" parent="Level"]
+position = Vector3(220.0000, -2.8000, 0)
+
+[node name="Event14_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(212.0000, 0.0000, 0)
+
+[node name="AccentZone15" type="Area3D" parent="Level"]
+position = Vector3(227.5560, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone15"]
+shape = SubResource("BoxShape_176")
+
+[node name="Event15_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(227.5560, -2.8000, 0)
+
+[node name="Event16_SMALL_JUMP" type="Marker3D" parent="Events"]
+position = Vector3(242.4160, -2.8000, 0)
+
+[node name="SafeLowerRoute17" type="StaticBody3D" parent="Level"]
+position = Vector3(277.2000, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute17"]
+mesh = SubResource("BoxMesh_177")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute17"]
+shape = SubResource("BoxShape_177")
+
+[node name="TechnicalRoute17_01" type="StaticBody3D" parent="Level"]
+position = Vector3(275.3000, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute17_01"]
+mesh = SubResource("BoxMesh_178")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute17_01"]
+shape = SubResource("BoxShape_178")
+
+[node name="TechnicalRoute17_02" type="StaticBody3D" parent="Level"]
+position = Vector3(276.4086, 0.0300, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute17_02"]
+mesh = SubResource("BoxMesh_179")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute17_02"]
+shape = SubResource("BoxShape_179")
+
+[node name="TechnicalRoute17_03" type="StaticBody3D" parent="Level"]
+position = Vector3(277.2259, 0.3100, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute17_03"]
+mesh = SubResource("BoxMesh_180")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute17_03"]
+shape = SubResource("BoxShape_180")
+
+[node name="TechnicalRoute17_04" type="StaticBody3D" parent="Level"]
+position = Vector3(278.0431, 0.0300, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute17_04"]
+mesh = SubResource("BoxMesh_181")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute17_04"]
+shape = SubResource("BoxShape_181")
+
+[node name="TechnicalRoute17_05" type="StaticBody3D" parent="Level"]
+position = Vector3(278.8603, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute17_05"]
+mesh = SubResource("BoxMesh_182")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute17_05"]
+shape = SubResource("BoxShape_182")
+
+[node name="ForkStart17" type="Marker3D" parent="Level"]
+position = Vector3(272.4000, 0.0000, 0)
+[node name="ForkMerge17" type="Marker3D" parent="Level"]
+position = Vector3(282.0000, -2.8000, 0)
+
+[node name="Event17_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(274.0000, 0.0000, 0)
+
+[node name="Event18_SMALL_JUMP" type="Marker3D" parent="Events"]
+position = Vector3(296.4720, -2.8000, 0)
+
+[node name="SafeLowerRoute19" type="StaticBody3D" parent="Level"]
+position = Vector3(334.2000, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute19"]
+mesh = SubResource("BoxMesh_183")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute19"]
+shape = SubResource("BoxShape_183")
+
+[node name="TechnicalRoute19_01" type="StaticBody3D" parent="Level"]
+position = Vector3(333.9344, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute19_01"]
+mesh = SubResource("BoxMesh_184")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute19_01"]
+shape = SubResource("BoxShape_184")
+
+[node name="ForkStart19" type="Marker3D" parent="Level"]
+position = Vector3(329.4000, 0.0000, 0)
+[node name="ForkMerge19" type="Marker3D" parent="Level"]
+position = Vector3(339.0000, -2.8000, 0)
+
+[node name="Event19_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(331.0000, 0.0000, 0)
+
+[node name="Event20_SMALL_JUMP" type="Marker3D" parent="Events"]
+position = Vector3(349.4120, -2.8000, 0)
+
+[node name="Event21_SMALL_JUMP" type="Marker3D" parent="Events"]
+position = Vector3(364.2760, -2.8000, 0)
+
+[node name="Event22_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(394.0000, -2.8000, 0)
+
+[node name="SafeLowerRoute23" type="StaticBody3D" parent="Level"]
+position = Vector3(420.1500, -3.0500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/SafeLowerRoute23"]
+mesh = SubResource("BoxMesh_185")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SafeLowerRoute23"]
+shape = SubResource("BoxShape_185")
+
+[node name="TechnicalRoute23_01" type="StaticBody3D" parent="Level"]
+position = Vector3(411.2750, -0.2500, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute23_01"]
+mesh = SubResource("BoxMesh_186")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute23_01"]
+shape = SubResource("BoxShape_186")
+
+[node name="TechnicalRoute23_02" type="StaticBody3D" parent="Level"]
+position = Vector3(413.1750, 0.0300, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute23_02"]
+mesh = SubResource("BoxMesh_187")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute23_02"]
+shape = SubResource("BoxShape_187")
+
+[node name="TechnicalRoute23_03" type="StaticBody3D" parent="Level"]
+position = Vector3(415.0750, 0.3100, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute23_03"]
+mesh = SubResource("BoxMesh_188")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute23_03"]
+shape = SubResource("BoxShape_188")
+
+[node name="TechnicalRoute23_04" type="StaticBody3D" parent="Level"]
+position = Vector3(416.9750, 0.5900, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute23_04"]
+mesh = SubResource("BoxMesh_189")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute23_04"]
+shape = SubResource("BoxShape_189")
+
+[node name="TechnicalRoute23_05" type="StaticBody3D" parent="Level"]
+position = Vector3(423.2531, 0.5900, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalRoute23_05"]
+mesh = SubResource("BoxMesh_190")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalRoute23_05"]
+shape = SubResource("BoxShape_190")
+
+[node name="ForkStart23" type="Marker3D" parent="Level"]
+position = Vector3(408.4000, 0.0000, 0)
+[node name="ForkMerge23" type="Marker3D" parent="Level"]
+position = Vector3(431.9000, -2.8000, 0)
+
+[node name="Event23_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(410.0000, 0.0000, 0)
+
+[node name="Event24_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(435.0000, -2.8000, 0)
+
+[node name="Event25_LARGE_TRAVELLING_LEAP" type="Marker3D" parent="Events"]
+position = Vector3(461.0000, -2.8000, 0)
+
+[node name="AccentZone26" type="Area3D" parent="Level"]
+position = Vector3(467.6480, -1.8000, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AccentZone26"]
+shape = SubResource("BoxShape_191")
+
+[node name="Event26_ACCENT_ACTION" type="Marker3D" parent="Events"]
+position = Vector3(467.6480, -2.8000, 0)
+
+[node name="ClimaxApproachRamp01" type="StaticBody3D" parent="Level"]
+position = Vector3(139.2206, -1.6075, 0)
+rotation = Vector3(0, 0, 0.311318)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/ClimaxApproachRamp01"]
+mesh = SubResource("ClimaxRampMesh_1")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/ClimaxApproachRamp01"]
+shape = SubResource("ClimaxRampShape_1")
+
+[node name="ClimaxApproachRamp02" type="StaticBody3D" parent="Level"]
+position = Vector3(206.1600, -1.6561, 0)
+rotation = Vector3(0, 0, 0.317423)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/ClimaxApproachRamp02"]
+mesh = SubResource("ClimaxRampMesh_2")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/ClimaxApproachRamp02"]
+shape = SubResource("ClimaxRampShape_2")
+
+[node name="ClimaxApproachRamp03" type="StaticBody3D" parent="Level"]
+position = Vector3(266.8671, -1.6528, 0)
+rotation = Vector3(0, 0, 0.246980)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/ClimaxApproachRamp03"]
+mesh = SubResource("ClimaxRampMesh_3")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/ClimaxApproachRamp03"]
+shape = SubResource("ClimaxRampShape_3")
+
+[node name="ClimaxApproachRamp04" type="StaticBody3D" parent="Level"]
+position = Vector3(325.1048, -1.6487, 0)
+rotation = Vector3(0, 0, 0.312131)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/ClimaxApproachRamp04"]
+mesh = SubResource("ClimaxRampMesh_4")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/ClimaxApproachRamp04"]
+shape = SubResource("ClimaxRampShape_4")
+
+[node name="ClimaxApproachRamp05" type="StaticBody3D" parent="Level"]
+position = Vector3(401.7330, -1.6447, 0)
+rotation = Vector3(0, 0, 0.205455)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/ClimaxApproachRamp05"]
+mesh = SubResource("ClimaxRampMesh_5")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/ClimaxApproachRamp05"]
+shape = SubResource("ClimaxRampShape_5")
