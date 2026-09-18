@@ -9,9 +9,11 @@ extends Node3D
 @export var technical_material: Material
 @export var crest_material: Material
 @export var staircase_material: Material
+@export var bridge_material: Material
 @export var trim_material: Material
 
 const SOAR := "SOAR"
+const BRIDGE := "BRIDGE"
 const CREST := "CREST"
 const CRESCENDO_STAIRCASE := "CRESCENDO_STAIRCASE"
 
@@ -37,6 +39,12 @@ const SOAR_ARCH_RISE := 0.10
 const SOAR_ARCH_SAMPLES := 12
 const SOAR_NOSING_HEIGHT := 0.05
 const SOAR_DEPTH_BLEED := 0.06
+
+const BRIDGE_VISUAL_EDGE_DEPTH := 0.16
+const BRIDGE_ARCH_RISE := 0.075
+const BRIDGE_ARCH_SAMPLES := 20
+const BRIDGE_NOSING_HEIGHT := 0.045
+const BRIDGE_DEPTH_BLEED := 0.08
 
 
 func _ready() -> void:
@@ -65,6 +73,105 @@ func _ready() -> void:
 		if branch_variant == null or not branch_variant is Dictionary:
 			continue
 		_skin_branch(event_index + 1, branch_variant)
+
+	_skin_architectural_spans(plan)
+
+
+func _skin_architectural_spans(plan: Dictionary) -> void:
+	var overlays: Dictionary = plan.get("prototype_overlays", {})
+	var spans_variant: Variant = overlays.get("architectural_spans_v1", [])
+	if not spans_variant is Array:
+		return
+	var spans: Array = spans_variant
+	for span_variant: Variant in spans:
+		if not span_variant is Dictionary:
+			continue
+		var span: Dictionary = span_variant
+		if String(span.get("topology", "")) != BRIDGE:
+			continue
+		_skin_bridge_span(plan, span)
+
+
+func _skin_bridge_span(plan: Dictionary, span: Dictionary) -> void:
+	var start_x := float(span["start_x"])
+	var end_x := float(span["end_x"])
+	var runways: Array = plan["surface_plan"]["runway_intervals"]
+	var runway_index := -1
+	for index in range(runways.size()):
+		var runway: Dictionary = runways[index]
+		if (
+			abs(float(runway["start_x"]) - start_x) <= 0.001
+			and abs(float(runway["end_x"]) - end_x) <= 0.001
+		):
+			runway_index = index
+			break
+	if runway_index < 0:
+		push_error("PlatformSkinSystem BRIDGE runway was not found.")
+		return
+
+	var body := generated_level.get_node_or_null(
+		"Level/Runway%02d" % (runway_index + 1)
+	) as StaticBody3D
+	if body == null:
+		push_error("PlatformSkinSystem BRIDGE body was not found.")
+		return
+
+	var mesh_instance := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
+	if mesh_instance == null or not mesh_instance.mesh is BoxMesh:
+		return
+	var base_box := mesh_instance.mesh as BoxMesh
+	_set_collision_visual_hidden(body, true)
+
+	var top_y := base_box.size.y * 0.5
+	var bottom_edge_y := top_y - BRIDGE_VISUAL_EDGE_DEPTH
+	var half_length := base_box.size.x * 0.5
+	var profile := PackedVector2Array()
+	profile.append(Vector2(-half_length, top_y))
+	profile.append(Vector2(half_length, top_y))
+	profile.append(Vector2(half_length, bottom_edge_y))
+	for sample_index in range(BRIDGE_ARCH_SAMPLES, -1, -1):
+		var t := float(sample_index) / float(BRIDGE_ARCH_SAMPLES)
+		var x := lerpf(-half_length, half_length, t)
+		var arch_y := bottom_edge_y + sin(PI * t) * BRIDGE_ARCH_RISE
+		profile.append(Vector2(x, arch_y))
+
+	var shell := MeshInstance3D.new()
+	shell.name = "BridgeGalleryShell"
+	shell.mesh = _build_extruded_profile(
+		profile,
+		base_box.size.z + BRIDGE_DEPTH_BLEED,
+		bridge_material if bridge_material != null else technical_material
+	)
+	body.add_child(shell)
+
+	_add_local_bridge_nosing(
+		body,
+		base_box.size.x,
+		base_box.size.z + BRIDGE_DEPTH_BLEED + 0.04,
+		top_y
+	)
+
+
+func _add_local_bridge_nosing(
+	parent: Node3D,
+	length: float,
+	depth: float,
+	top_y: float
+) -> void:
+	if trim_material == null:
+		return
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(length, BRIDGE_NOSING_HEIGHT, depth)
+	var nosing := MeshInstance3D.new()
+	nosing.name = "BridgeGalleryNosing"
+	nosing.mesh = mesh
+	nosing.material_override = trim_material
+	nosing.position = Vector3(
+		0.0,
+		top_y - BRIDGE_NOSING_HEIGHT * 0.5,
+		0.0
+	)
+	parent.add_child(nosing)
 
 
 func _skin_branch(event_number: int, branch: Dictionary) -> void:

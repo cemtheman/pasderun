@@ -109,6 +109,14 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("_set_collision_visual_hidden(body, true)", SCRIPT)
         self.assertNotIn("CollisionShape3D.new()", SCRIPT)
 
+    def test_bridge_shared_span_has_collisionless_gallery_shell(self) -> None:
+        self.assertIn('const BRIDGE := "BRIDGE"', SCRIPT)
+        self.assertIn("BridgeGalleryShell", SCRIPT)
+        self.assertIn("BridgeGalleryNosing", SCRIPT)
+        self.assertIn("architectural_spans_v1", SCRIPT)
+        self.assertIn("BRIDGE_ARCH_RISE", SCRIPT)
+        self.assertNotIn("CollisionShape3D.new()", SCRIPT)
+
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)
