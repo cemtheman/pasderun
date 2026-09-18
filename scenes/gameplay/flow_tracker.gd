@@ -136,7 +136,10 @@ func _load_geometry_opportunities() -> bool:
 		var movement_class := StringName(source_event["source_class"])
 		var branch: Variant = source_event.get("branch")
 		if branch != null:
-			var technical_gap := _find_segment(branch["routes"]["technical"]["segments"], "MEDIUM_GAP")
+			var technical_gap := _find_technical_gap(branch["routes"]["technical"]["segments"])
+			if technical_gap.is_empty():
+				push_error("FlowTracker fork has no technical gap at %.3f." % float(source_event["source_time"]))
+				return false
 			_fork_events.append({
 				"source_time": float(source_event["source_time"]),
 				"event_x": float(source_event["world"]["event_x"]),
@@ -164,11 +167,16 @@ func _load_geometry_opportunities() -> bool:
 	return true
 
 
-func _find_segment(segments: Array, segment_type: String) -> Dictionary:
+func _find_technical_gap(segments: Array) -> Dictionary:
+	var entry_gap: Dictionary = {}
 	for segment: Dictionary in segments:
-		if String(segment["type"]) == segment_type:
+		var segment_type := String(segment["type"])
+		if segment_type == "ENTRY_GAP":
+			entry_gap = segment
+			continue
+		if segment_type.ends_with("_GAP"):
 			return segment
-	return {}
+	return entry_gap
 
 
 func _track_balance(delta: float, playback_time: float) -> void:
@@ -215,6 +223,9 @@ func _track_forks(playback_time: float) -> void:
 	for event in _fork_events:
 		if event["resolved"] or world_x < float(event["split_x"]):
 			continue
+		if event["route"] == &"" 		and world_x >= float(event["gap_start_x"]) - 0.5 		and world_x <= float(event["gap_end_x"]) + LANDING_SEARCH_X 		and not on_floor:
+			event["gap_airborne"] = true
+
 		if event["route"] == &"" and world_x <= float(event["merge_x"]):
 			var route_threshold := lerpf(float(event["safe_elevation"]), float(event["technical_elevation"]), 0.5)
 			if on_floor and world_y > route_threshold:
