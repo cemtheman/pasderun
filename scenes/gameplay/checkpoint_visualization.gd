@@ -4,9 +4,14 @@ extends Node3D
 
 var _markers: Dictionary = {}
 var _active_index := -1
+var _web_visuals_disabled := OS.has_feature("web")
 
 
 func _ready() -> void:
+	# Web builds keep checkpoint/respawn state but skip runtime-created 3D marker
+	# resources. This mirrors the proven Web-safe diagnostic boundary.
+	if _web_visuals_disabled:
+		return
 	if recovery_manager == null or not recovery_manager.has_signal("checkpoint_changed"):
 		push_error("CheckpointVisualization requires RunRecoveryManager checkpoint_changed.")
 		return

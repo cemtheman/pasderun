@@ -86,6 +86,14 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn('focus_mode = 0\ntext = "II"', RUNTIME)
         self.assertIn('focus_mode = 0\ntext = "RESUME"', RUNTIME)
 
+    def test_checkpoint_3d_visuals_are_disabled_at_creation_boundary_on_web(self) -> None:
+        self.assertIn('_web_visuals_disabled := OS.has_feature("web")', CHECKPOINT)
+        self.assertIn("if _web_visuals_disabled:", CHECKPOINT)
+        ready_start = CHECKPOINT.index("func _ready() -> void:")
+        connect_start = CHECKPOINT.index("recovery_manager.connect(", ready_start)
+        ready_prefix = CHECKPOINT[ready_start:connect_start]
+        self.assertIn("return", ready_prefix)
+
     def test_checkpoint_marker_uses_exact_captured_respawn_position(self) -> None:
         self.assertIn("signal checkpoint_changed", RECOVERY)
         self.assertIn("_checkpoint_position = dancer.global_position", RECOVERY)
