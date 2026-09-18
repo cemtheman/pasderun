@@ -6,6 +6,7 @@ const STATE_NEUTRAL := &"NEUTRAL"
 const STATE_STAGE_WALK := &"STAGE_WALK"
 const STATE_STAGE_BOW := &"STAGE_BOW"
 const STATE_STAGE_READY := &"STAGE_READY"
+const STATE_STAGE_FINAL_BOW := &"STAGE_FINAL_BOW"
 const STATE_TRAVEL := &"TRAVEL"
 const STATE_JUMP := &"JUMP"
 const STATE_AIRBORNE := &"AIRBORNE"
@@ -29,6 +30,7 @@ const VISUAL_STATES := [
 	STATE_STAGE_WALK,
 	STATE_STAGE_BOW,
 	STATE_STAGE_READY,
+	STATE_STAGE_FINAL_BOW,
 	STATE_TRAVEL,
 	STATE_JUMP,
 	STATE_AIRBORNE,
@@ -51,6 +53,7 @@ const LANDING_VISUAL_TIME := 0.22
 
 const TRACK_PATHS := [
 	"Rig:position",
+	"Rig:rotation",
 	"Rig/Pelvis:rotation",
 	"Rig/Pelvis/Torso:rotation",
 	"Rig/Pelvis/Torso/Head:rotation",
@@ -114,6 +117,8 @@ func set_stage_presentation_state(stage: StringName) -> void:
 			next_state = STATE_STAGE_BOW
 		&"READY":
 			next_state = STATE_STAGE_READY
+		&"FINAL_BOW":
+			next_state = STATE_STAGE_FINAL_BOW
 		_:
 			return
 	if _stage_presentation_state == next_state:
@@ -327,6 +332,7 @@ func _build_animation_system() -> void:
 	_add_animation(library, "stage_walk", _stage_walk_animation())
 	_add_animation(library, "stage_bow", _stage_bow_animation())
 	_add_animation(library, "stage_ready", _stage_ready_animation())
+	_add_animation(library, "stage_final_bow", _stage_final_bow_animation())
 	_add_animation(library, "travel", _travel_animation())
 	_add_animation(library, "jump", _jump_animation())
 	_add_animation(library, "airborne", _airborne_animation())
@@ -433,6 +439,7 @@ func _stage_walk_animation() -> Animation:
 func _stage_walk_pose(direction: float) -> Dictionary:
 	return _pose({
 		"Rig:position": Vector3(0.0, -0.010, 0.0),
+		"Rig:rotation": _ry(-0.72),
 		"Rig/Pelvis:rotation": _rz(-0.008 * direction),
 		"Rig/Pelvis/Torso:rotation": _rz(-0.010),
 		"Rig/Pelvis/Torso/Head:rotation": _rz(0.010),
@@ -450,7 +457,10 @@ func _stage_walk_pose(direction: float) -> Dictionary:
 
 
 func _stage_bow_animation() -> Animation:
-	return _animation_from_poses(1.15, [0.0, 0.44, 0.76, 1.15], [
+	# Enter in profile, turn deliberately to the fourth wall, then offer a light
+	# standing reverence before settling into the ready pose.
+	return _animation_from_poses(1.35, [0.0, 0.28, 0.68, 0.94, 1.35], [
+		_stage_fourth_wall_turn_pose(-0.72),
 		_stage_ready_pose(),
 		_pose({
 			"Rig:position": Vector3(0.0, -0.045, 0.0),
@@ -479,7 +489,57 @@ func _stage_bow_animation() -> Animation:
 			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.34),
 		}),
 		_stage_ready_pose(),
+		_stage_ready_pose(),
 	], false)
+
+
+func _stage_fourth_wall_turn_pose(heading_y: float) -> Dictionary:
+	var pose := _stage_ready_pose()
+	pose["Rig:rotation"] = _ry(heading_y)
+	return pose
+
+
+func _stage_final_bow_animation() -> Animation:
+	# Final ceremony: turn to the audience, lower onto one knee, open the arms,
+	# and finish in a deeper sustained reverence.
+	return _animation_from_poses(
+		2.60,
+		[0.0, 0.32, 0.78, 1.30, 1.95, 2.60],
+		[
+			_stage_fourth_wall_turn_pose(0.48),
+			_stage_ready_pose(),
+			_final_kneel_pose(-0.18, -0.16, 0.62),
+			_final_kneel_pose(-0.29, -0.38, 0.92),
+			_final_kneel_pose(-0.34, -0.58, 1.08),
+			_final_kneel_pose(-0.34, -0.58, 1.08),
+		],
+		false
+	)
+
+
+func _final_kneel_pose(
+	root_drop: float,
+	torso_bow: float,
+	arm_open: float
+) -> Dictionary:
+	return _pose({
+		"Rig:position": Vector3(0.0, root_drop, 0.0),
+		"Rig:rotation": _ry(0.0),
+		"Rig/Pelvis:rotation": _rz(-0.035),
+		"Rig/Pelvis/Torso:rotation": _rz(torso_bow),
+		"Rig/Pelvis/Torso/Head:rotation": _rz(-torso_bow * 0.30),
+		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-arm_open),
+		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.22),
+		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(arm_open),
+		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.22),
+		# Front leg remains the supporting foot while the back knee folds down.
+		"Rig/Pelvis/LegFrontHip:rotation": _rz(0.18),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(-0.42),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee/FootFront:rotation": _rz(0.20),
+		"Rig/Pelvis/LegBackHip:rotation": _rz(-0.52),
+		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(-1.30),
+		"Rig/Pelvis/LegBackHip/LegBackKnee/FootBack:rotation": _rz(0.52),
+	})
 
 
 func _stage_ready_animation() -> Animation:
@@ -721,6 +781,10 @@ func _pose(overrides: Dictionary) -> Dictionary:
 	for key in overrides:
 		pose[key] = overrides[key]
 	return pose
+
+
+func _ry(angle: float) -> Vector3:
+	return Vector3(0.0, angle, 0.0)
 
 
 func _rz(angle: float) -> Vector3:

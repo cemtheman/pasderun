@@ -10,8 +10,11 @@ const DANCER_STANDING_OFFSET := 1.5
 enum RunState {
 	PLAYING,
 	DEAD,
+	COMPLETION_CEREMONY,
 	LEVEL_COMPLETE,
 }
+
+const COMPLETION_CEREMONY_DURATION := 2.60
 
 const CHECKPOINTS := [
 	{"id": "START", "x": 0.0},
@@ -48,6 +51,8 @@ var _run_started := false
 var _checkpoint_index := 0
 var _checkpoint_position := Vector3.ZERO
 var _checkpoint_music_time := 0.0
+var _completion_ceremony_elapsed := 0.0
+var _dancer_visual: Node
 
 
 func _ready() -> void:
@@ -69,11 +74,18 @@ func _ready() -> void:
 	_update_checkpoint_status()
 
 
-func _physics_process(_delta: float) -> void:
-	if not _run_started or _state != RunState.PLAYING:
+func _physics_process(delta: float) -> void:
+	if not _run_started:
+		return
+	if _state == RunState.COMPLETION_CEREMONY:
+		_completion_ceremony_elapsed += delta
+		if _completion_ceremony_elapsed >= COMPLETION_CEREMONY_DURATION:
+			_finish_level_complete_state()
+		return
+	if _state != RunState.PLAYING:
 		return
 	if dancer.global_position.x >= completion_trigger.global_position.x:
-		_enter_level_complete_state()
+		_begin_completion_ceremony()
 		return
 	if dancer.global_position.y < DEATH_Y:
 		_enter_dead_state()
@@ -187,17 +199,33 @@ func _continue_from_checkpoint() -> void:
 	_state = RunState.PLAYING
 
 
-func _enter_level_complete_state() -> void:
-	_state = RunState.LEVEL_COMPLETE
+func _begin_completion_ceremony() -> void:
+	_state = RunState.COMPLETION_CEREMONY
+	_completion_ceremony_elapsed = 0.0
 	fork_camera_controller.call("restore_normal_state")
 	fork_camera_controller.call("set_frozen", true)
-	camera_rig.process_mode = Node.PROCESS_MODE_DISABLED
-	dancer.process_mode = Node.PROCESS_MODE_DISABLED
 	audio_player.stop()
 	music_root.process_mode = Node.PROCESS_MODE_DISABLED
 	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
+	game_over_overlay.visible = false
+	level_complete_overlay.visible = false
+
+	if dancer.has_method("begin_stage_ending"):
+		dancer.call("begin_stage_ending")
+	_dancer_visual = dancer.get_node_or_null("DancerVisual")
+	if (
+		_dancer_visual != null
+		and _dancer_visual.has_method("set_stage_presentation_state")
+	):
+		_dancer_visual.call("set_stage_presentation_state", &"FINAL_BOW")
+
+
+func _finish_level_complete_state() -> void:
+	_state = RunState.LEVEL_COMPLETE
+	camera_rig.process_mode = Node.PROCESS_MODE_DISABLED
+	dancer.process_mode = Node.PROCESS_MODE_DISABLED
 	game_over_overlay.visible = false
 	level_complete_overlay.visible = true
 	if next_level_button.disabled:

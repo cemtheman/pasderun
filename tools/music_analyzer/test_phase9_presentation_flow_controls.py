@@ -32,6 +32,29 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
             self.assertIn(token, VISUAL)
         self.assertIn("_stage_bow_animation", VISUAL)
         self.assertIn("_stage_walk_animation", VISUAL)
+        self.assertIn('"Rig:rotation"', VISUAL)
+        self.assertIn("_stage_fourth_wall_turn_pose(-0.72)", VISUAL)
+
+    def test_final_completion_waits_for_large_kneeling_reverence(self) -> None:
+        self.assertIn("COMPLETION_CEREMONY", RECOVERY)
+        self.assertIn("COMPLETION_CEREMONY_DURATION := 2.60", RECOVERY)
+        self.assertIn("_begin_completion_ceremony()", RECOVERY)
+        self.assertIn("_finish_level_complete_state()", RECOVERY)
+        self.assertIn('dancer.call("begin_stage_ending")', RECOVERY)
+        self.assertIn(
+            '_dancer_visual.call("set_stage_presentation_state", &"FINAL_BOW")',
+            RECOVERY,
+        )
+        self.assertIn("STATE_STAGE_FINAL_BOW", VISUAL)
+        self.assertIn("_stage_final_bow_animation", VISUAL)
+        self.assertIn("_final_kneel_pose", VISUAL)
+        self.assertIn('"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(-1.30)', VISUAL)
+
+    def test_final_ceremony_blocks_gameplay_input_but_keeps_grounding(self) -> None:
+        self.assertIn("var stage_ending_mode := false", DANCER)
+        self.assertIn("func begin_stage_ending()", DANCER)
+        self.assertIn("stage_entrance_mode or stage_ending_mode", DANCER)
+        self.assertIn("_physics_process_stage_entrance(delta)", DANCER)
 
     def test_pause_stops_tree_and_audio_without_restarting_music(self) -> None:
         self.assertIn("get_tree().paused = paused", PAUSE)

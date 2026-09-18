@@ -114,6 +114,7 @@ var has_fallen: bool = false
 # Silent prelude: real collision/grounding stays active while gameplay input,
 # stumble logic and auto-run are withheld.
 var stage_entrance_mode := false
+var stage_ending_mode := false
 var stage_entrance_speed := 0.0
 
 
@@ -185,6 +186,14 @@ func end_stage_entrance() -> void:
 	velocity = Vector3.ZERO
 
 
+func begin_stage_ending() -> void:
+	stage_ending_mode = true
+	stage_entrance_speed = 0.0
+	velocity = Vector3.ZERO
+	pressing = false
+	hold_triggered = false
+
+
 func _physics_process_stage_entrance(delta: float) -> void:
 	velocity.x = stage_entrance_speed
 	velocity.z = 0.0
@@ -197,7 +206,7 @@ func _physics_process_stage_entrance(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 
-	if stage_entrance_mode:
+	if stage_entrance_mode or stage_ending_mode:
 		_physics_process_stage_entrance(delta)
 		return
 
@@ -303,7 +312,7 @@ func _physics_process(delta: float) -> void:
 
 func _process(_delta: float) -> void:
 
-	if stage_entrance_mode:
+	if stage_entrance_mode or stage_ending_mode:
 		return
 
 	if not pressing:
@@ -332,7 +341,7 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 
-	if stage_entrance_mode:
+	if stage_entrance_mode or stage_ending_mode:
 		return
 
 	# ---------------------------------------------------------

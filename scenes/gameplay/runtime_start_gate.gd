@@ -19,7 +19,7 @@ enum PreludeState {
 
 @export var entrance_target_x := 0.0
 @export var entrance_speed := 1.55
-@export var bow_duration := 1.15
+@export var bow_duration := 1.35
 
 var _started := false
 var _prelude_state := PreludeState.WALK_IN
