@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 import unittest
 from pathlib import Path
@@ -19,6 +20,83 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         cls.wrapper = WRAPPER.read_text(encoding="utf-8")
         cls.bootstrap = BOOTSTRAP.read_text(encoding="utf-8")
         cls.source_v5 = SOURCE_V5.read_text(encoding="utf-8")
+
+
+    @staticmethod
+    def _matmul(a, b):
+        if isinstance(b[0], (int, float)):
+            return [
+                sum(a[row][k] * b[k] for k in range(3))
+                for row in range(3)
+            ]
+        return [
+            [
+                sum(a[row][k] * b[k][col] for k in range(3))
+                for col in range(3)
+            ]
+            for row in range(3)
+        ]
+
+    @staticmethod
+    def _transpose(m):
+        return [[m[col][row] for col in range(3)] for row in range(3)]
+
+    @staticmethod
+    def _rx(angle):
+        c, s = math.cos(angle), math.sin(angle)
+        return [[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]]
+
+    @staticmethod
+    def _ry(angle):
+        c, s = math.cos(angle), math.sin(angle)
+        return [[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]]
+
+    @staticmethod
+    def _rz(angle):
+        c, s = math.cos(angle), math.sin(angle)
+        return [[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]]
+
+    def test_coordinate_math_preserves_travel_and_stage_facing(self) -> None:
+        base = self._ry(math.pi * 0.5)
+        stage_turn = self._ry(-math.pi * 0.5)
+        visual_front = [0.0, 0.0, 1.0]
+
+        travel_front = self._matmul(base, visual_front)
+        stage_front = self._matmul(self._matmul(base, stage_turn), visual_front)
+
+        self.assertAlmostEqual(travel_front[0], 1.0, places=6)
+        self.assertAlmostEqual(travel_front[2], 0.0, places=6)
+        self.assertAlmostEqual(stage_front[0], 0.0, places=6)
+        self.assertAlmostEqual(stage_front[2], 1.0, places=6)
+
+    def test_stage_conjugation_turns_side_view_bow_toward_audience(self) -> None:
+        stage_turn = self._ry(-math.pi * 0.5)
+        side_view_bow = self._rz(-0.34)
+        oriented = self._matmul(
+            self._matmul(stage_turn, side_view_bow),
+            self._transpose(stage_turn),
+        )
+        up = [0.0, 1.0, 0.0]
+        bowed_up = self._matmul(oriented, up)
+
+        # The original negative Z hinge is no longer a sideways roll: after the
+        # 90 degree stage turn it inclines the trunk toward +Z, the audience.
+        self.assertGreater(bowed_up[2], 0.0)
+        self.assertGreater(bowed_up[1], 0.0)
+
+    def test_stage_conjugation_turns_source_arm_hinge_into_front_port_de_bras(self) -> None:
+        stage_turn = self._ry(-math.pi * 0.5)
+        source_arm = self._rx(0.40)
+        oriented = self._matmul(
+            self._matmul(stage_turn, source_arm),
+            self._transpose(stage_turn),
+        )
+        down = [0.0, -1.0, 0.0]
+        opened = self._matmul(oriented, down)
+
+        # One arm opens along +X; the mirrored source arm opens along -X.
+        self.assertGreater(opened[0], 0.0)
+        self.assertLess(opened[1], 0.0)
 
     def test_wrapper_uses_v2_semantic_retarget(self) -> None:
         self.assertIn(
