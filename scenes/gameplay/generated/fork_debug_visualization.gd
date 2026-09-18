@@ -16,7 +16,7 @@ const MODE_NAMES := ["OFF", "ROUTES", "MARKERS", "LABELS", "ALL"]
 @export var split_color: Color = Color(0.25, 1.0, 0.35, 1.0)
 @export var merge_color: Color = Color(1.0, 0.20, 0.75, 1.0)
 
-var _diagnostic_mode := DiagnosticMode.ALL
+var _diagnostic_mode := DiagnosticMode.MARKERS
 var _route_meshes: Array = []
 var _route_original_materials: Array = []
 var _route_debug_materials: Array = []
@@ -49,7 +49,8 @@ func _ready() -> void:
 		elif node_name.begins_with("ForkMerge") and child is Marker3D:
 			_add_marker(child as Marker3D, "FORK MERGE", merge_color, merge_material)
 
-	set_diagnostic_mode(DiagnosticMode.ALL)
+	# Keep route materials presentation-visible by default; route tinting remains available diagnostically.
+	set_diagnostic_mode(DiagnosticMode.MARKERS)
 
 
 func _debug_material(color: Color) -> StandardMaterial3D:

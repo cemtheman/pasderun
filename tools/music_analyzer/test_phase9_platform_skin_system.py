@@ -54,6 +54,23 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("body.add_child(fascia)", SCRIPT)
         self.assertIn("FASCIA_WIDTH_BLEED", SCRIPT)
 
+    def test_fork_debug_does_not_hide_platform_skins_by_default(self) -> None:
+        debug_script = (
+            ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "var _diagnostic_mode := DiagnosticMode.MARKERS",
+            debug_script,
+        )
+        self.assertIn(
+            "set_diagnostic_mode(DiagnosticMode.MARKERS)",
+            debug_script,
+        )
+        self.assertNotIn(
+            "set_diagnostic_mode(DiagnosticMode.ALL)",
+            debug_script,
+        )
+
     def test_plan_still_contains_both_accepted_topologies(self) -> None:
         self.assertIn('"topology": "CREST"', PLAN)
         self.assertIn('"topology": "CRESCENDO_STAIRCASE"', PLAN)
