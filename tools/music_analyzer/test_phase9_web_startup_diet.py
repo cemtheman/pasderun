@@ -9,6 +9,11 @@ FORK = (ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd").read_tex
 HUD = (ROOT / "scenes/gameplay/ascii_debug_hud.gd").read_text(encoding="utf-8")
 TAP = (ROOT / "scenes/gameplay/tap_timing_debug.gd").read_text(encoding="utf-8")
 EXPORT = (ROOT / "export_presets.cfg").read_text(encoding="utf-8")
+PARALLAX_IMPORTS = [
+    (ROOT / "assets/visuals/parallax/graceful_opening_far_city_v0_1.png.import").read_text(encoding="utf-8"),
+    (ROOT / "assets/visuals/parallax/graceful_opening_mid_palace_frame_v0_1.png.import").read_text(encoding="utf-8"),
+    (ROOT / "assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png.import").read_text(encoding="utf-8"),
+]
 
 
 class Phase9WebStartupDietTests(unittest.TestCase):
@@ -52,6 +57,11 @@ class Phase9WebStartupDietTests(unittest.TestCase):
             '"res://scenes/gameplay/generated/graceful_opening_00_140_bridge.tscn"',
             EXPORT.split("[preset.1]")[0],
         )
+
+    def test_parallax_textures_use_portable_basis_compression(self) -> None:
+        for import_text in PARALLAX_IMPORTS:
+            self.assertIn("compress/mode=4", import_text)
+            self.assertNotIn("compress/mode=2", import_text)
 
     def test_hidden_tap_debug_skips_cue_rendering(self) -> None:
         process_start = TAP.index("func _process(_delta: float) -> void:")
