@@ -28,6 +28,8 @@
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_staircase.tres" id="28_staircase"]
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_trim.tres" id="29_trim"]
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_bridge.tres" id="30_bridge"]
+[ext_resource type="Script" path="res://scenes/gameplay/mainline_continuity_system.gd" id="31_mainline_continuity"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_mainline.tres" id="32_mainline"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -89,6 +91,13 @@ corner_radius_bottom_left = 8
 
 [node name="GeneratedLevel" parent="." unique_id=771723095 instance=ExtResource("7_generated")]
 
+
+[node name="MainlineContinuitySystem" type="Node3D" parent="." node_paths=PackedStringArray("generated_level")]
+script = ExtResource("31_mainline_continuity")
+geometry_plan_path = "res://data/geometry/graceful_opening_00_140_bridge.geometry_plan_v0_1.json"
+generated_level = NodePath("../GeneratedLevel")
+mainline_material = ExtResource("32_mainline")
+trim_material = ExtResource("29_trim")
 
 [node name="PlatformSkinSystem" type="Node3D" parent="." node_paths=PackedStringArray("generated_level")]
 script = ExtResource("24_skin")

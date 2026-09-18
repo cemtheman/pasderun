@@ -83,6 +83,17 @@ class Phase9GracefulOpeningFullPieceRuntimeTests(unittest.TestCase):
             ],
         )
 
+    def test_runtime_includes_collision_aware_mainline_continuity(self) -> None:
+        self.assertIn('name="MainlineContinuitySystem"', self.runtime)
+        self.assertIn(
+            'script = ExtResource("31_mainline_continuity")',
+            self.runtime,
+        )
+        self.assertIn(
+            'mainline_material = ExtResource("32_mainline")',
+            self.runtime,
+        )
+
     def test_runtime_preserves_skin_body_flow_debug_and_recovery_layers(self) -> None:
         for token in (
             'name="PlatformSkinSystem"',
