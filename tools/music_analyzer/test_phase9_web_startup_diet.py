@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FORK = (ROOT / "scenes/gameplay/generated/fork_debug_visualization.gd").read_text(encoding="utf-8")
 HUD = (ROOT / "scenes/gameplay/ascii_debug_hud.gd").read_text(encoding="utf-8")
 TAP = (ROOT / "scenes/gameplay/tap_timing_debug.gd").read_text(encoding="utf-8")
+EXPORT = (ROOT / "export_presets.cfg").read_text(encoding="utf-8")
 
 
 class Phase9WebStartupDietTests(unittest.TestCase):
@@ -31,6 +32,26 @@ class Phase9WebStartupDietTests(unittest.TestCase):
         self.assertIn("if not hud_root.visible:", HUD)
         self.assertIn("return", HUD[HUD.index("if not hud_root.visible:"):])
         self.assertIn("if hud_root.visible:", HUD)
+
+    def test_web_export_prunes_only_known_obsolete_resources(self) -> None:
+        self.assertIn('name="Web"', EXPORT)
+        self.assertIn('export_filter="exclude"', EXPORT)
+        self.assertIn(
+            '"res://assets/visuals/graceful_opening_background_v0_1.png"',
+            EXPORT,
+        )
+        self.assertIn(
+            '"res://scenes/gameplay/generated/graceful_opening_00_120_runtime.tscn"',
+            EXPORT,
+        )
+        self.assertNotIn(
+            '"res://scenes/gameplay/generated/graceful_opening_00_140_runtime.tscn"',
+            EXPORT.split("[preset.1]")[0],
+        )
+        self.assertNotIn(
+            '"res://scenes/gameplay/generated/graceful_opening_00_140_bridge.tscn"',
+            EXPORT.split("[preset.1]")[0],
+        )
 
     def test_hidden_tap_debug_skips_cue_rendering(self) -> None:
         process_start = TAP.index("func _process(_delta: float) -> void:")
