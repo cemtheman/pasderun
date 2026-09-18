@@ -106,7 +106,10 @@ func _input(event: InputEvent) -> void:
 	flow_tracker.process_mode = Node.PROCESS_MODE_INHERIT
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_INHERIT
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_INHERIT
+	# Unlock Web audio synchronously inside the user gesture, but hold playback
+	# at 0 until gameplay is released on the deferred boundary below.
 	audio_player.play(0.0)
+	audio_player.stream_paused = true
 	overlay.visible = false
 
 	# Keep stage-entrance input blocking alive until this event has completely
@@ -121,6 +124,7 @@ func _enable_gameplay_after_start_input() -> void:
 	if _stage_visual != null and _stage_visual.has_method("clear_stage_presentation"):
 		_stage_visual.call("clear_stage_presentation")
 	runtime_started.emit()
+	audio_player.stream_paused = false
 	set_process_input(false)
 
 
