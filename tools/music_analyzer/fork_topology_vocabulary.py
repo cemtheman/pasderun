@@ -14,6 +14,8 @@ CRESCENDO_STAIRCASE = "CRESCENDO_STAIRCASE"
 
 MAJOR_CLIMAX_MINIMUM = 0.93
 CRESCENDO_MINIMUM_DELTA = 0.08
+CREST_MINIMUM_CLIMAX = 0.98
+CREST_MINIMUM_RISE_DELTA = 0.15
 
 TIER_CONTRACT = {
     "SAFE": {
@@ -68,5 +70,21 @@ def classify_topology(
         and float(previous["metrics"]["energy_delta"]) >= CRESCENDO_MINIMUM_DELTA
     ):
         return CRESCENDO_STAIRCASE
+
+    next_window = None
+    if window_index + 1 < len(visual_score["windows"]):
+        candidate = visual_score["windows"][window_index + 1]
+        if abs(float(window["end"]) - float(candidate["start"])) <= 0.01:
+            next_window = candidate
+
+    if (
+        float(window["metrics"]["climax_peak"]) >= CREST_MINIMUM_CLIMAX
+        and window["visual_intent"]["contour"] == "RISE"
+        and float(window["metrics"]["energy_delta"]) >= CREST_MINIMUM_RISE_DELTA
+        and next_window is not None
+        and next_window["visual_intent"]["phrase_role"] == "RELEASE"
+        and next_window["visual_intent"]["contour"] == "FALL"
+    ):
+        return CREST
 
     return SOAR
