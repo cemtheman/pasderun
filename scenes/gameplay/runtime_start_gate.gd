@@ -123,6 +123,10 @@ func _enable_gameplay_after_start_input() -> void:
 	_resolve_stage_visual()
 	if _stage_visual != null and _stage_visual.has_method("clear_stage_presentation"):
 		_stage_visual.call("clear_stage_presentation")
+	# play() was used only to unlock Web audio inside the input gesture.
+	# Rewind once more at the actual gameplay-release boundary so any tiny
+	# browser-side preroll while paused cannot become a persistent start offset.
+	audio_player.seek(0.0)
 	runtime_started.emit()
 	audio_player.stream_paused = false
 	set_process_input(false)
