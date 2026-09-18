@@ -19,6 +19,8 @@ const RETARGET_STATES := {
 @onready var _animation_player: AnimationPlayer = $low_poly_girl/AnimationPlayer
 
 var _source_visual: Node3D
+var _source_rig: Node3D
+var _model_base_transform: Transform3D
 var _bound := false
 var _retarget_active := false
 var _bindings: Array[Dictionary] = []
@@ -30,6 +32,7 @@ var _target_bow_arm_globals: Dictionary = {}
 
 func _ready() -> void:
 	process_priority = 100
+	_model_base_transform = _model_root.transform
 	call_deferred("_try_bind")
 
 
@@ -58,6 +61,7 @@ func _process(_delta: float) -> void:
 		_apply_state_baseline(state)
 		_apply_motion_retarget(state)
 	elif _retarget_active:
+		_model_root.transform = _model_base_transform
 		_retarget_active = false
 
 
@@ -71,6 +75,10 @@ func _try_bind() -> void:
 
 	_source_visual = dancer.get_node_or_null("DancerVisual") as Node3D
 	if _source_visual == null or _skeleton == null or _animation_player == null:
+		return
+
+	_source_rig = _source_visual.get_node_or_null("Rig") as Node3D
+	if _source_rig == null:
 		return
 
 	_bindings = _resolve_bindings()
@@ -284,6 +292,21 @@ func _is_arm_binding(binding: Dictionary) -> bool:
 
 func _apply_state_baseline(state: StringName) -> void:
 	_apply_idle_baseline()
+
+	# DancerVisual's STAGE_BOW deliberately turns its whole Rig toward the
+	# fourth wall. Retargeting only pelvis/limb bones left the imported
+	# ballerina in profile, so otherwise-correct arm motion disappeared behind
+	# the torso from the gameplay camera. Carry the source Rig yaw onto the
+	# imported model root before applying the limb pose.
+	if state == &"STAGE_BOW" and _source_rig != null:
+		var source_yaw := _source_rig.rotation.y
+		_model_root.transform = Transform3D(
+			_model_base_transform.basis * Basis(Vector3.UP, source_yaw),
+			_model_base_transform.origin
+		)
+	else:
+		_model_root.transform = _model_base_transform
+
 	if state != &"STAGE_BOW":
 		return
 
