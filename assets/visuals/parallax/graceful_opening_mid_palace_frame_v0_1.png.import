@@ -17,7 +17,7 @@ dest_files=["res://.godot/imported/graceful_opening_mid_palace_frame_v0_1.png-8e
 
 [params]
 
-compress/mode=2
+compress/mode=4
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
