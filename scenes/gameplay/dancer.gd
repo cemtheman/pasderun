@@ -111,6 +111,11 @@ var normal_mesh_rotation_z: float = 0.0
 
 var has_fallen: bool = false
 
+# Silent prelude: real collision/grounding stays active while gameplay input,
+# stumble logic and auto-run are withheld.
+var stage_entrance_mode := false
+var stage_entrance_speed := 0.0
+
 
 # ---------------------------------------------------------
 # LOCOMOTION INTERRUPTION STATE
@@ -162,7 +167,39 @@ func _ready() -> void:
 	normal_mesh_rotation_z = body_mesh.rotation.z
 
 
+func begin_stage_entrance(speed: float) -> void:
+	stage_entrance_mode = true
+	stage_entrance_speed = maxf(speed, 0.0)
+	velocity = Vector3.ZERO
+	pressing = false
+	hold_triggered = false
+
+
+func set_stage_entrance_speed(speed: float) -> void:
+	stage_entrance_speed = maxf(speed, 0.0)
+
+
+func end_stage_entrance() -> void:
+	stage_entrance_mode = false
+	stage_entrance_speed = 0.0
+	velocity = Vector3.ZERO
+
+
+func _physics_process_stage_entrance(delta: float) -> void:
+	velocity.x = stage_entrance_speed
+	velocity.z = 0.0
+	if not is_on_floor():
+		velocity.y -= gravity * delta
+	else:
+		velocity.y = 0.0
+	move_and_slide()
+
+
 func _physics_process(delta: float) -> void:
+
+	if stage_entrance_mode:
+		_physics_process_stage_entrance(delta)
+		return
 
 	# ---------------------------------------------------------
 	# FALL DETECTION
@@ -266,6 +303,9 @@ func _physics_process(delta: float) -> void:
 
 func _process(_delta: float) -> void:
 
+	if stage_entrance_mode:
+		return
+
 	if not pressing:
 		return
 
@@ -291,6 +331,9 @@ func _process(_delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+
+	if stage_entrance_mode:
+		return
 
 	# ---------------------------------------------------------
 	# TOUCH

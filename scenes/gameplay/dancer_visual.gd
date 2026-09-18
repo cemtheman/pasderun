@@ -3,6 +3,9 @@ extends Node3D
 signal visual_state_changed(state: StringName)
 
 const STATE_NEUTRAL := &"NEUTRAL"
+const STATE_STAGE_WALK := &"STAGE_WALK"
+const STATE_STAGE_BOW := &"STAGE_BOW"
+const STATE_STAGE_READY := &"STAGE_READY"
 const STATE_TRAVEL := &"TRAVEL"
 const STATE_JUMP := &"JUMP"
 const STATE_AIRBORNE := &"AIRBORNE"
@@ -23,6 +26,9 @@ const MUSIC_ACCENT_VISUAL_TIME := 0.22
 
 const VISUAL_STATES := [
 	STATE_NEUTRAL,
+	STATE_STAGE_WALK,
+	STATE_STAGE_BOW,
+	STATE_STAGE_READY,
 	STATE_TRAVEL,
 	STATE_JUMP,
 	STATE_AIRBORNE,
@@ -72,6 +78,7 @@ var _was_on_floor := true
 var _airborne_time := 0.0
 var _landing_time := 0.0
 
+var _stage_presentation_state: StringName = &""
 var _music_expression_enabled := false
 var _music_phrase_state: StringName = STATE_MUSIC_FLOW
 var _music_preparing_action: StringName = &""
@@ -96,6 +103,27 @@ func _physics_process(delta: float) -> void:
 		return
 	_music_accent_remaining = maxf(_music_accent_remaining - delta, 0.0)
 	_set_visual_state(_resolve_visual_state(delta))
+
+
+func set_stage_presentation_state(stage: StringName) -> void:
+	var next_state := &""
+	match stage:
+		&"WALK":
+			next_state = STATE_STAGE_WALK
+		&"BOW":
+			next_state = STATE_STAGE_BOW
+		&"READY":
+			next_state = STATE_STAGE_READY
+		_:
+			return
+	if _stage_presentation_state == next_state:
+		return
+	_stage_presentation_state = next_state
+	_set_visual_state(next_state)
+
+
+func clear_stage_presentation() -> void:
+	_stage_presentation_state = &""
 
 
 func set_music_expression_enabled(enabled: bool) -> void:
@@ -135,6 +163,9 @@ func get_visual_state() -> StringName:
 
 
 func _resolve_visual_state(delta: float) -> StringName:
+	if not _stage_presentation_state.is_empty():
+		return _stage_presentation_state
+
 	if dancer.get("has_fallen") == true:
 		return _current_state
 
@@ -293,6 +324,9 @@ func _build_animation_system() -> void:
 
 	var library := AnimationLibrary.new()
 	_add_animation(library, "neutral", _neutral_animation())
+	_add_animation(library, "stage_walk", _stage_walk_animation())
+	_add_animation(library, "stage_bow", _stage_bow_animation())
+	_add_animation(library, "stage_ready", _stage_ready_animation())
 	_add_animation(library, "travel", _travel_animation())
 	_add_animation(library, "jump", _jump_animation())
 	_add_animation(library, "airborne", _airborne_animation())
@@ -384,6 +418,99 @@ func _blend_time(from_state: StringName, to_state: StringName) -> float:
 	if to_state == STATE_JUMP:
 		return 0.06
 	return 0.12
+
+
+func _stage_walk_animation() -> Animation:
+	return _animation_from_poses(0.96, [0.0, 0.24, 0.48, 0.72, 0.96], [
+		_stage_walk_pose(1.0),
+		_stage_walk_pose(0.0),
+		_stage_walk_pose(-1.0),
+		_stage_walk_pose(0.0),
+		_stage_walk_pose(1.0),
+	], true)
+
+
+func _stage_walk_pose(direction: float) -> Dictionary:
+	return _pose({
+		"Rig:position": Vector3(0.0, -0.010, 0.0),
+		"Rig/Pelvis:rotation": _rz(-0.008 * direction),
+		"Rig/Pelvis/Torso:rotation": _rz(-0.010),
+		"Rig/Pelvis/Torso/Head:rotation": _rz(0.010),
+		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.16),
+		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.12),
+		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.16),
+		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.12),
+		"Rig/Pelvis/LegBackHip:rotation": _rz(0.20 * direction),
+		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.16),
+		"Rig/Pelvis/LegBackHip/LegBackKnee/FootBack:rotation": _rz(-0.06),
+		"Rig/Pelvis/LegFrontHip:rotation": _rz(-0.20 * direction),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.16),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee/FootFront:rotation": _rz(-0.06),
+	})
+
+
+func _stage_bow_animation() -> Animation:
+	return _animation_from_poses(1.15, [0.0, 0.44, 0.76, 1.15], [
+		_stage_ready_pose(),
+		_pose({
+			"Rig:position": Vector3(0.0, -0.045, 0.0),
+			"Rig/Pelvis:rotation": _rz(-0.08),
+			"Rig/Pelvis/Torso:rotation": _rz(-0.48),
+			"Rig/Pelvis/Torso/Head:rotation": _rz(0.16),
+			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.34),
+			"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.18),
+			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.34),
+			"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.18),
+			"Rig/Pelvis/LegBackHip:rotation": _rz(-0.10),
+			"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.30),
+			"Rig/Pelvis/LegFrontHip:rotation": _rz(0.10),
+			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.30),
+		}),
+		_pose({
+			"Rig:position": Vector3(0.0, -0.060, 0.0),
+			"Rig/Pelvis:rotation": _rz(-0.10),
+			"Rig/Pelvis/Torso:rotation": _rz(-0.58),
+			"Rig/Pelvis/Torso/Head:rotation": _rz(0.18),
+			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.40),
+			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.40),
+			"Rig/Pelvis/LegBackHip:rotation": _rz(-0.12),
+			"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.34),
+			"Rig/Pelvis/LegFrontHip:rotation": _rz(0.12),
+			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.34),
+		}),
+		_stage_ready_pose(),
+	], false)
+
+
+func _stage_ready_animation() -> Animation:
+	return _animation_from_poses(1.8, [0.0, 0.9, 1.8], [
+		_stage_ready_pose(),
+		_stage_ready_breath_pose(),
+		_stage_ready_pose(),
+	], true)
+
+
+func _stage_ready_pose() -> Dictionary:
+	return _pose({
+		"Rig/Pelvis/Torso:rotation": _rz(-0.012),
+		"Rig/Pelvis/Torso/Head:rotation": _rz(0.015),
+		"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.24),
+		"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.18),
+		"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.24),
+		"Rig/Pelvis/Torso/ArmFrontShoulder/ArmFrontElbow:rotation": _rz(0.18),
+		"Rig/Pelvis/LegBackHip:rotation": _rz(-0.04),
+		"Rig/Pelvis/LegBackHip/LegBackKnee:rotation": _rz(0.10),
+		"Rig/Pelvis/LegFrontHip:rotation": _rz(0.04),
+		"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.10),
+	})
+
+
+func _stage_ready_breath_pose() -> Dictionary:
+	var pose := _stage_ready_pose()
+	pose["Rig:position"] = Vector3(0.0, 0.012, 0.0)
+	pose["Rig/Pelvis/Torso/ArmBackShoulder:rotation"] = _rz(-0.28)
+	pose["Rig/Pelvis/Torso/ArmFrontShoulder:rotation"] = _rz(0.28)
+	return pose
 
 
 func _neutral_animation() -> Animation:

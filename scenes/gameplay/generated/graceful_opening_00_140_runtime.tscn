@@ -30,6 +30,8 @@
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_bridge.tres" id="30_bridge"]
 [ext_resource type="Script" path="res://scenes/gameplay/mainline_continuity_system.gd" id="31_mainline_continuity"]
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_mainline.tres" id="32_mainline"]
+[ext_resource type="Script" path="res://scenes/gameplay/pause_controller.gd" id="33_pause"]
+[ext_resource type="Script" path="res://scenes/gameplay/checkpoint_visualization.gd" id="34_checkpoint"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -226,7 +228,7 @@ parallax_presentation = NodePath("../CameraRig/Camera3D/ParallaxPresentation")
 debug_label = NodePath("../DebugHUD/HUDRoot/BottomStatusPanel/SpatialStallProbe")
 
 [node name="Dancer" type="CharacterBody3D" parent="." unique_id=681487939 node_paths=PackedStringArray("input_debug_label")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 1.5, 0)
 script = ExtResource("3_dancer")
 input_debug_label = NodePath("../DebugHUD/HUDRoot/LeftPanel/LeftStack/InputDebug")
 
@@ -350,6 +352,77 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "STALL PROBE FRAMING:ON VISUALS:ALL BG:ON"
 
+[node name="PauseController" type="Node" parent="." node_paths=PackedStringArray("pause_button", "pause_overlay", "resume_button", "start_gate", "recovery_manager", "audio_player")]
+process_mode = 3
+script = ExtResource("33_pause")
+pause_button = NodePath("../PauseUI/PauseButton")
+pause_overlay = NodePath("../PauseUI/PauseOverlay")
+resume_button = NodePath("../PauseUI/PauseOverlay/Center/Panel/Actions/Resume")
+start_gate = NodePath("../RuntimeStartGate")
+recovery_manager = NodePath("../RunRecoveryManager")
+audio_player = NodePath("../Music/AudioStreamPlayer")
+
+[node name="PauseUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 90
+
+[node name="PauseButton" type="Button" parent="PauseUI"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 52.0
+grow_horizontal = 0
+text = "II"
+
+[node name="PauseOverlay" type="Control" parent="PauseUI"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="InputBlocker" type="ColorRect" parent="PauseUI/PauseOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.52)
+
+[node name="Center" type="CenterContainer" parent="PauseUI/PauseOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="PauseUI/PauseOverlay/Center"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_game_over")
+
+[node name="Actions" type="VBoxContainer" parent="PauseUI/PauseOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="PauseUI/PauseOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="PauseUI/PauseOverlay/Center/Panel/Actions"]
+layout_mode = 2
+text = "RESUME"
+
 [node name="StartGateOverlay" type="CanvasLayer" parent="."]
 layer = 100
 
@@ -360,7 +433,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0, 0, 0, 0.72)
+color = Color(0, 0, 0, 0.18)
 
 [node name="Prompt" type="Label" parent="StartGateOverlay"]
 anchors_preset = 8
@@ -374,7 +447,7 @@ offset_right = 110.0
 offset_bottom = 22.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "TAP TO START"
+text = "TAP / SPACE TO BEGIN"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -438,6 +511,12 @@ theme_override_constants/separation = 10
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="CheckpointStatus" type="Label" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "RETURN TO START"
 horizontal_alignment = 1
 
 [node name="Continue" type="Button" parent="GameOverOverlay/Center/Panel/Actions"]
@@ -504,7 +583,7 @@ text = "MAIN MENU"
 [node name="SliceCompletion" type="Marker3D" parent="."]
 position = Vector3(560.064, -2.7499, 0)
 
-[node name="RunRecoveryManager" type="Node" parent="." node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button", "completion_trigger", "level_complete_overlay", "next_level_button", "main_menu_button", "next_level_status")]
+[node name="RunRecoveryManager" type="Node" parent="." node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button", "completion_trigger", "level_complete_overlay", "next_level_button", "main_menu_button", "next_level_status", "checkpoint_status_label")]
 script = ExtResource("21_recovery")
 dancer = NodePath("../Dancer")
 camera_rig = NodePath("../CameraRig")
@@ -524,3 +603,8 @@ level_complete_overlay = NodePath("../LevelCompleteOverlay")
 next_level_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevel")
 main_menu_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/MainMenu")
 next_level_status = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevelStatus")
+checkpoint_status_label = NodePath("../GameOverOverlay/Center/Panel/Actions/CheckpointStatus")
+
+[node name="CheckpointVisualization" type="Node3D" parent="." node_paths=PackedStringArray("recovery_manager")]
+script = ExtResource("34_checkpoint")
+recovery_manager = NodePath("../RunRecoveryManager")

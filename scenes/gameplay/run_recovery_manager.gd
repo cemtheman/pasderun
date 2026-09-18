@@ -1,5 +1,7 @@
 extends Node
 
+signal checkpoint_changed(checkpoint_id: String, checkpoint_index: int, checkpoint_position: Vector3)
+
 const DEATH_Y := -6.0
 const RUN_SPEED := 4.0
 const CHECKPOINT_SURFACE_Y := -2.8
@@ -38,6 +40,7 @@ const CHECKPOINTS := [
 @export var next_level_button: Button
 @export var main_menu_button: Button
 @export var next_level_status: Label
+@export var checkpoint_status_label: Label
 @export var next_level_scene: PackedScene
 
 var _state := RunState.PLAYING
@@ -63,6 +66,7 @@ func _ready() -> void:
 	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
 	next_level_button.disabled = next_level_scene == null
 	next_level_status.visible = next_level_scene == null
+	_update_checkpoint_status()
 
 
 func _physics_process(_delta: float) -> void:
@@ -99,6 +103,15 @@ func get_run_state() -> String:
 
 func _on_runtime_started() -> void:
 	_run_started = true
+	_checkpoint_index = 0
+	_checkpoint_position = dancer.global_position
+	_checkpoint_music_time = 0.0
+	_update_checkpoint_status()
+	checkpoint_changed.emit(
+		get_checkpoint_id(),
+		_checkpoint_index,
+		_checkpoint_position
+	)
 
 
 func _update_checkpoint() -> void:
@@ -120,6 +133,23 @@ func _update_checkpoint() -> void:
 	# route geometry or below/above the real runway.
 	_checkpoint_position = dancer.global_position
 	_checkpoint_music_time = dancer.global_position.x / RUN_SPEED
+	_update_checkpoint_status()
+	checkpoint_changed.emit(
+		get_checkpoint_id(),
+		_checkpoint_index,
+		_checkpoint_position
+	)
+
+
+func _checkpoint_display_name() -> String:
+	if _checkpoint_index <= 0:
+		return "START"
+	return "CHECKPOINT %d" % _checkpoint_index
+
+
+func _update_checkpoint_status() -> void:
+	if checkpoint_status_label != null:
+		checkpoint_status_label.text = "RETURN TO %s" % _checkpoint_display_name()
 
 
 func _enter_dead_state() -> void:
@@ -132,6 +162,7 @@ func _enter_dead_state() -> void:
 	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
+	_update_checkpoint_status()
 	game_over_overlay.visible = true
 	continue_button.grab_focus()
 
@@ -240,4 +271,5 @@ func _references_valid() -> bool:
 		and next_level_button != null
 		and main_menu_button != null
 		and next_level_status != null
+		and checkpoint_status_label != null
 	)
