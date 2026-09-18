@@ -70,8 +70,10 @@ class Phase9PresentationFlowControlsTests(unittest.TestCase):
         self.assertIn("_physics_process_stage_entrance(delta)", DANCER)
 
     def test_pause_stops_tree_and_audio_without_restarting_music(self) -> None:
-        self.assertIn("get_tree().paused = paused", PAUSE)
-        self.assertIn("audio_player.stream_paused = paused", PAUSE)
+        self.assertIn("get_tree().paused = true", PAUSE)
+        self.assertIn("get_tree().paused = false", PAUSE)
+        self.assertIn("audio_player.stream_paused = true", PAUSE)
+        self.assertIn("audio_player.stream_paused = false", PAUSE)
         self.assertNotIn("audio_player.stop()", PAUSE)
         self.assertIn("KEY_P", PAUSE)
         self.assertIn("KEY_ESCAPE", PAUSE)
