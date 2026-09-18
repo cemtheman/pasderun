@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Build the strongest 30–60 s climax as a single-input SAFE/TECHNICAL fork.
+"""Build major 30–60 s climaxes as single-input SAFE/TECHNICAL forks.
 
-This is a Phase 9 prototype overlay. The accepted base geometry and Spatial
-Score remain intact. The derived plan replaces only the BUILD approach and the
-selected climax event, then renders a separate Godot scene.
+This Phase 9 overlay keeps the accepted base geometry, Spatial Score and player
+input contract. Only very strong climax jumps are promoted to route choices.
+Each fork gets the latest traversable anticipation ramp that can reach the
+required upper clearance without exceeding the prototype slope limit.
 """
 
 from __future__ import annotations
@@ -35,7 +36,9 @@ from render_spatial_geometry import apply_spatial_score
 SLICE_START_SECONDS = 30.0
 SLICE_END_SECONDS = 60.0
 CLIMAX_LEAD_SECONDS = 0.40
+MAJOR_CLIMAX_MINIMUM = 0.93
 MAX_APPROACH_SLOPE_DEGREES = 20.0
+ACCENT_BODY_CLEARANCE_SECONDS = 0.25
 MIN_INTERVAL_LENGTH = 0.0001
 
 
@@ -43,11 +46,11 @@ def _round(value: float) -> float:
     return round(float(value), 4)
 
 
-def _strongest_climax_jump(
+def _major_climax_jumps(
     visual_score: dict[str, Any],
-) -> tuple[dict[str, Any], dict[str, Any]]:
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     windows = visual_score["windows"]
-    candidates: list[tuple[float, float, dict[str, Any], dict[str, Any]]] = []
+    candidates: list[tuple[float, dict[str, Any], dict[str, Any]]] = []
 
     for anchor in visual_score["event_anchors"]:
         time = float(anchor["time"])
@@ -62,33 +65,16 @@ def _strongest_climax_jump(
         window = windows[int(anchor["window_index"])]
         if window["visual_intent"]["phrase_role"] != "CLIMAX":
             continue
-        candidates.append((
-            float(window["metrics"]["climax_peak"]),
-            float(window["visual_intent"]["intensity"]),
-            anchor,
-            window,
-        ))
+        peak = float(window["metrics"]["climax_peak"])
+        if peak < MAJOR_CLIMAX_MINIMUM:
+            continue
+        candidates.append((time, anchor, window))
 
     if not candidates:
-        raise ValueError("no required climax jump exists in the Phase 9 slice")
+        raise ValueError("no major required climax jump exists in the Phase 9 slice")
 
-    _, _, anchor, window = max(candidates, key=lambda item: (item[0], item[1]))
-    return anchor, window
-
-
-def _previous_build_window(
-    visual_score: dict[str, Any],
-    target_window: dict[str, Any],
-) -> dict[str, Any]:
-    windows = visual_score["windows"]
-    target_index = windows.index(target_window)
-    for index in range(target_index - 1, -1, -1):
-        window = windows[index]
-        if window["visual_intent"]["phrase_role"] == "BUILD":
-            return window
-        if float(target_window["start"]) - float(window["end"]) > 0.05:
-            break
-    raise ValueError("selected climax has no contiguous BUILD approach window")
+    candidates.sort(key=lambda item: item[0])
+    return [(anchor, window) for _, anchor, window in candidates]
 
 
 def _clip_runways_around_overlay(
@@ -146,15 +132,61 @@ def _ramp_surface_y(ramp: dict[str, float], world_x: float) -> float:
     )
 
 
-def build_climax_fork_plan(
-    base_plan: dict[str, Any],
-    spatial_score: dict[str, Any],
+def _latest_traversable_approach(
     visual_score: dict[str, Any],
-) -> dict[str, Any]:
-    output = apply_spatial_score(base_plan, spatial_score)
-    anchor, climax_window = _strongest_climax_jump(visual_score)
-    build_window = _previous_build_window(visual_score, climax_window)
+    intervals: list[dict[str, Any]],
+    split_x: float,
+    technical_y: float,
+    fallback_y: float,
+    minimum_start_x: float,
+) -> tuple[dict[str, Any], float, float]:
+    for window in reversed(visual_score["windows"]):
+        start_x = float(window["start"]) * RUN_SPEED
+        if start_x >= split_x - 1e-6:
+            continue
+        if start_x < minimum_start_x - 1e-6:
+            break
 
+        start_y = _surface_before(intervals, start_x, fallback_y)
+        run = split_x - start_x
+        rise = technical_y - start_y
+        slope_degrees = math.degrees(math.atan2(rise, run))
+        if slope_degrees <= MAX_APPROACH_SLOPE_DEGREES:
+            return window, _round(start_y), _round(slope_degrees)
+
+    raise ValueError("major climax has no non-overlapping traversable anticipation ramp")
+
+
+def _accent_preserving_merge_x(
+    plan: dict[str, Any],
+    target_time: float,
+    base_merge_x: float,
+    drop_distance: float,
+) -> float:
+    merge_x = base_merge_x
+    for event in plan["events"]:
+        event_time = float(event["source_time"])
+        event_x = float(event["world"]["event_x"])
+        if event_time <= target_time or event_x >= base_merge_x:
+            continue
+        if event["source_class"] != "ACCENT_ACTION":
+            continue
+
+        accent_clear_x = event_x + RUN_SPEED * ACCENT_BODY_CLEARANCE_SECONDS
+        merge_x = max(
+            merge_x,
+            accent_clear_x + drop_distance + MERGE_LANDING_MARGIN,
+        )
+    return _round(merge_x)
+
+
+def _apply_climax_fork(
+    output: dict[str, Any],
+    visual_score: dict[str, Any],
+    anchor: dict[str, Any],
+    climax_window: dict[str, Any],
+    minimum_approach_x: float,
+) -> dict[str, Any]:
     target_time = float(anchor["time"])
     target_event = next(
         (event for event in output["events"] if abs(float(event["source_time"]) - target_time) <= 1e-6),
@@ -178,32 +210,54 @@ def build_climax_fork_plan(
     gap_length = float(target_event["geometry"]["gap_length"])
     split_x = _round(event_x - RUN_SPEED * CLIMAX_LEAD_SECONDS)
     gap_end_x = _round(split_x + gap_length)
-    merge_x = _round(event_x + float(target_event["recovery"]["runway_length"]))
-    approach_start_x = _round(float(build_window["start"]) * RUN_SPEED)
 
-    original_spatial_runways = output["surface_plan"]["runway_intervals"]
-    approach_start_y = _surface_before(original_spatial_runways, approach_start_x, safe_y)
+    original_runways = output["surface_plan"]["runway_intervals"]
+    approach_window, approach_start_y, slope_degrees = _latest_traversable_approach(
+        visual_score,
+        original_runways,
+        split_x,
+        technical_y,
+        safe_y,
+        minimum_approach_x,
+    )
+    approach_start_x = _round(float(approach_window["start"]) * RUN_SPEED)
     ramp = {
         "type": "APPROACH_RAMP",
         "start_x": approach_start_x,
         "end_x": split_x,
-        "start_surface_y": _round(approach_start_y),
+        "start_surface_y": approach_start_y,
         "end_surface_y": technical_y,
     }
-
-    run = split_x - approach_start_x
-    rise = technical_y - approach_start_y
-    slope_degrees = math.degrees(math.atan2(rise, run))
-    if slope_degrees > MAX_APPROACH_SLOPE_DEGREES:
-        raise ValueError("climax approach ramp exceeds prototype slope limit")
 
     drop_height = technical_y - safe_y
     drop_seconds = math.sqrt(2.0 * drop_height / GRAVITY)
     drop_distance = RUN_SPEED * drop_seconds
     safe_landing_x = split_x + drop_distance
+
+    base_merge_x = event_x + float(target_event["recovery"]["runway_length"])
+    merge_x = _accent_preserving_merge_x(
+        output,
+        target_time,
+        base_merge_x,
+        drop_distance,
+    )
     technical_drop_x = merge_x - drop_distance - MERGE_LANDING_MARGIN
     if technical_drop_x <= gap_end_x:
         raise ValueError("climax fork cannot contain upper landing and merge")
+
+    next_jump = next(
+        (
+            event for event in output["events"]
+            if float(event["source_time"]) > target_time
+            and (
+                str(event["source_class"]).endswith("_JUMP")
+                or event["source_class"] == "LARGE_TRAVELLING_LEAP"
+            )
+        ),
+        None,
+    )
+    if next_jump is not None and merge_x >= float(next_jump["geometry"]["start_x"]):
+        raise ValueError("climax fork recovery overlaps the next required jump")
 
     safe_standing_root_y = safe_y + DANCER_CAPSULE_HEIGHT / 2.0
     technical_underside_y = technical_y - GROUND_HEIGHT
@@ -213,11 +267,11 @@ def build_climax_fork_plan(
         raise ValueError("climax fork clearance conflicts with controller safety")
 
     output["surface_plan"]["runway_intervals"] = _clip_runways_around_overlay(
-        original_spatial_runways,
+        original_runways,
         approach_start_x,
         merge_x,
     )
-    output["surface_plan"]["ramps"] = [ramp]
+    output["surface_plan"].setdefault("ramps", []).append(ramp)
 
     for event in output["events"]:
         world_x = float(event["world"]["event_x"])
@@ -316,27 +370,58 @@ def build_climax_fork_plan(
         },
     }
     target_event["explanation"].append(
-        "strongest Phase 9 climax converted to a single-input SAFE/TECHNICAL fork"
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork"
     )
     target_event["explanation"].append(
-        "BUILD approach rises on a traversable ramp; climax JUMP selects upper route"
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
     )
 
+    return {
+        "target_time": _round(target_time),
+        "climax_peak": _round(climax_window["metrics"]["climax_peak"]),
+        "intensity": _round(climax_window["visual_intent"]["intensity"]),
+        "approach_window_start": _round(approach_window["start"]),
+        "approach_source_role": approach_window["visual_intent"]["phrase_role"],
+        "approach_ramp": ramp,
+        "approach_slope_degrees": slope_degrees,
+        "split_x": split_x,
+        "merge_x": merge_x,
+        "required_action": "JUMP",
+        "new_required_actions": False,
+    }
+
+
+def build_climax_fork_plan(
+    base_plan: dict[str, Any],
+    spatial_score: dict[str, Any],
+    visual_score: dict[str, Any],
+) -> dict[str, Any]:
+    output = apply_spatial_score(base_plan, spatial_score)
+    output["surface_plan"]["ramps"] = []
+
+    overlays: list[dict[str, Any]] = []
+    minimum_approach_x = float(output["playable_world_extent"]["start_x"])
+    for anchor, climax_window in _major_climax_jumps(visual_score):
+        overlay = _apply_climax_fork(
+            output,
+            visual_score,
+            anchor,
+            climax_window,
+            minimum_approach_x,
+        )
+        overlays.append(overlay)
+        minimum_approach_x = float(overlay["merge_x"])
+
+    strongest = max(
+        overlays,
+        key=lambda item: (float(item["climax_peak"]), float(item["intensity"])),
+    )
     output["source_spatial_score"] = "data/geometry/graceful_opening_30_60.spatial_score_v0_1.json"
     output["source_visual_score"] = "data/music/graceful_opening.visual_score_v0_1.json"
     output["prototype_overlays"] = {
-        "climax_fork_v0_1": {
-            "target_time": _round(target_time),
-            "climax_peak": _round(climax_window["metrics"]["climax_peak"]),
-            "intensity": _round(climax_window["visual_intent"]["intensity"]),
-            "build_window_start": _round(build_window["start"]),
-            "approach_ramp": ramp,
-            "approach_slope_degrees": _round(slope_degrees),
-            "split_x": split_x,
-            "merge_x": merge_x,
-            "required_action": "JUMP",
-            "new_required_actions": False,
-        }
+        # Backward-compatible alias for the already accepted 53 s prototype.
+        "climax_fork_v0_1": strongest,
+        "climax_forks_v0_2": overlays,
     }
     return output
 
