@@ -11,6 +11,7 @@ extends Node3D
 @export var staircase_material: Material
 @export var trim_material: Material
 
+const SOAR := "SOAR"
 const CREST := "CREST"
 const CRESCENDO_STAIRCASE := "CRESCENDO_STAIRCASE"
 
@@ -30,6 +31,12 @@ const STAIR_NOSING_HEIGHT := 0.045
 const STAIR_NOSING_DEPTH_BLEED := 0.08
 const STAIR_LOWER_BAND_HEIGHT := 0.022
 const STAIR_LOWER_BAND_LENGTH_RATIO := 0.72
+
+const SOAR_VISUAL_EDGE_DEPTH := 0.22
+const SOAR_ARCH_RISE := 0.10
+const SOAR_ARCH_SAMPLES := 12
+const SOAR_NOSING_HEIGHT := 0.05
+const SOAR_DEPTH_BLEED := 0.06
 
 
 func _ready() -> void:
@@ -93,6 +100,10 @@ func _skin_branch(event_number: int, branch: Dictionary) -> void:
 
 	if topology == CRESCENDO_STAIRCASE:
 		_add_staircase_architectural_shell(event_number, collision_bodies)
+		return
+
+	if topology == SOAR:
+		_add_soar_architectural_shell(event_number, collision_bodies)
 		return
 
 	for body in collision_bodies:
@@ -266,6 +277,72 @@ func _add_staircase_architectural_shell(
 			bottom_y + STAIR_LOWER_BAND_HEIGHT * 0.5 + 0.018,
 			"TheatricalRiserLowerBand%02d_%02d" % [event_number, body_index + 1]
 		)
+
+
+func _add_soar_architectural_shell(
+	event_number: int,
+	collision_bodies: Array[StaticBody3D]
+) -> void:
+	for body_index in range(collision_bodies.size()):
+		var body := collision_bodies[body_index]
+		var mesh_instance := body.get_node_or_null("MeshInstance3D") as MeshInstance3D
+		if mesh_instance == null or not mesh_instance.mesh is BoxMesh:
+			continue
+		var base_box := mesh_instance.mesh as BoxMesh
+		_set_collision_visual_hidden(body, true)
+
+		var top_y := base_box.size.y * 0.5
+		var bottom_edge_y := top_y - SOAR_VISUAL_EDGE_DEPTH
+		var half_length := base_box.size.x * 0.5
+		var profile := PackedVector2Array()
+		profile.append(Vector2(-half_length, top_y))
+		profile.append(Vector2(half_length, top_y))
+		profile.append(Vector2(half_length, bottom_edge_y))
+		for sample_index in range(SOAR_ARCH_SAMPLES, -1, -1):
+			var t := float(sample_index) / float(SOAR_ARCH_SAMPLES)
+			var x := lerpf(-half_length, half_length, t)
+			var arch_y := bottom_edge_y + sin(PI * t) * SOAR_ARCH_RISE
+			profile.append(Vector2(x, arch_y))
+
+		var shell := MeshInstance3D.new()
+		shell.name = "SoarGalleryShell%02d_%02d" % [event_number, body_index + 1]
+		shell.mesh = _build_extruded_profile(
+			profile,
+			base_box.size.z + SOAR_DEPTH_BLEED,
+			technical_material
+		)
+		body.add_child(shell)
+
+		_add_local_soar_nosing(
+			body,
+			base_box.size.x,
+			base_box.size.z + SOAR_DEPTH_BLEED + 0.04,
+			top_y,
+			"SoarGalleryNosing%02d_%02d" % [event_number, body_index + 1]
+		)
+
+
+func _add_local_soar_nosing(
+	parent: Node3D,
+	length: float,
+	depth: float,
+	top_y: float,
+	node_name: String
+) -> void:
+	if trim_material == null:
+		return
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(length, SOAR_NOSING_HEIGHT, depth)
+	var nosing := MeshInstance3D.new()
+	nosing.name = node_name
+	nosing.mesh = mesh
+	nosing.material_override = trim_material
+	nosing.position = Vector3(
+		0.0,
+		top_y - SOAR_NOSING_HEIGHT * 0.5,
+		0.0
+	)
+	parent.add_child(nosing)
 
 
 func _set_collision_visual_hidden(body: StaticBody3D, hidden: bool) -> void:

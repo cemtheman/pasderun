@@ -100,6 +100,15 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         )
         self.assertNotIn("STAIR_RISER_EXTRA_DEPTH", SCRIPT)
 
+    def test_soar_uses_collisionless_gallery_shell_without_bridging_gaps(self) -> None:
+        self.assertIn('const SOAR := "SOAR"', SCRIPT)
+        self.assertIn("SoarGalleryShell", SCRIPT)
+        self.assertIn("SOAR_ARCH_RISE", SCRIPT)
+        self.assertIn("SOAR_VISUAL_EDGE_DEPTH", SCRIPT)
+        self.assertIn("_add_local_soar_nosing(", SCRIPT)
+        self.assertIn("_set_collision_visual_hidden(body, true)", SCRIPT)
+        self.assertNotIn("CollisionShape3D.new()", SCRIPT)
+
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)
