@@ -1,36 +1,18 @@
 extends Node3D
 
-# Phase 10.2 — classical movement language v1.
+# Phase 10.1 — mannequin-to-ballerina presentation bridge.
 #
-# The accepted Phase 7/9 DancerVisual remains the choreography source of truth.
-# Its procedural mannequin rig keeps running invisibly; selected choreography-
-# rich states are retargeted onto the skinned humanoid instead of falling back
-# to generic stock locomotion. Plain travel and the basic jump family remain on
-# the imported character animations for now, pending their own ballet-specific
-# calibration. Gameplay, collision, timing, route and recovery logic remain
-# owned by Dancer.
+# Do NOT directly copy side-view mannequin joint rotations into the imported
+# humanoid for locomotion/choreography states. The two rigs have different rest
+# bases and forward conventions; axis-level copying is not a valid retarget.
+# Keep this script limited to stage-presentation states that are explicitly
+# calibrated for the humanoid. Gameplay, collision, timing, route and recovery
+# logic remain owned by Dancer.
 
 const RETARGET_STATES := {
-	# Stage presentation.
-	&"STAGE_WALK": true,
 	&"STAGE_BOW": true,
 	&"STAGE_READY": true,
 	&"STAGE_FINAL_BOW": true,
-
-	# Trained mannequin choreography that must not collapse to generic run/idle.
-	&"LOW_TRANSITION": true,
-	&"BALANCE": true,
-	&"STUMBLE": true,
-	&"RECOVERY": true,
-
-	# Phase 9 musical phrase language.
-	&"MUSIC_FLOW": true,
-	&"MUSIC_BUILD": true,
-	&"MUSIC_RELEASE": true,
-	&"MUSIC_PULSE": true,
-	&"MUSIC_CLIMAX": true,
-	&"MUSIC_PREP": true,
-	&"MUSIC_ACCENT": true,
 }
 
 const FRONT_FACING_STATES := {
