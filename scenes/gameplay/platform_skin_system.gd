@@ -10,6 +10,7 @@ extends Node3D
 @export var crest_material: Material
 @export var staircase_material: Material
 @export var bridge_material: Material
+@export var mainline_material: Material
 @export var trim_material: Material
 
 const SOAR := "SOAR"
@@ -46,6 +47,12 @@ const BRIDGE_ARCH_SAMPLES := 20
 const BRIDGE_NOSING_HEIGHT := 0.045
 const BRIDGE_DEPTH_BLEED := 0.08
 
+const MAINLINE_VISUAL_THICKNESS := 0.20
+const MAINLINE_NOSING_HEIGHT := 0.042
+const MAINLINE_DEPTH_BLEED := 0.08
+const MAINLINE_MAX_SMOOTH_DELTA := 0.20
+const MAINLINE_CONTIGUITY_EPSILON := 0.002
+
 
 func _ready() -> void:
 	if generated_level == null:
@@ -75,6 +82,175 @@ func _ready() -> void:
 		_skin_branch(event_index + 1, branch_variant)
 
 	_skin_architectural_spans(plan)
+	_skin_mainline_architecture(plan)
+
+
+func _skin_mainline_architecture(plan: Dictionary) -> void:
+	var runways_variant: Variant = plan.get("surface_plan", {}).get("runway_intervals", [])
+	if not runways_variant is Array:
+		return
+	var runways: Array = runways_variant
+	var excluded_spans := _mainline_excluded_spans(plan)
+	var groups: Array = []
+	var current_group: Array = []
+
+	for runway_index in range(runways.size()):
+		var runway: Dictionary = runways[runway_index]
+		var start_x := float(runway["start_x"])
+		var end_x := float(runway["end_x"])
+		var surface_y := float(runway["surface_y"])
+
+		if _overlaps_any_span(start_x, end_x, excluded_spans):
+			if not current_group.is_empty():
+				groups.append(current_group)
+				current_group = []
+			continue
+
+		if current_group.is_empty():
+			current_group = [{
+				"runway_index": runway_index,
+				"start_x": start_x,
+				"end_x": end_x,
+				"surface_y": surface_y,
+			}]
+			continue
+
+		var previous: Dictionary = current_group[-1]
+		var contiguous := abs(float(previous["end_x"]) - start_x) <= MAINLINE_CONTIGUITY_EPSILON
+		var smooth_delta := abs(float(previous["surface_y"]) - surface_y) <= MAINLINE_MAX_SMOOTH_DELTA
+		if contiguous and smooth_delta:
+			current_group.append({
+				"runway_index": runway_index,
+				"start_x": start_x,
+				"end_x": end_x,
+				"surface_y": surface_y,
+			})
+		else:
+			groups.append(current_group)
+			current_group = [{
+				"runway_index": runway_index,
+				"start_x": start_x,
+				"end_x": end_x,
+				"surface_y": surface_y,
+			}]
+
+	if not current_group.is_empty():
+		groups.append(current_group)
+
+	var level := generated_level.get_node_or_null("Level")
+	if level == null:
+		return
+
+	var shell_index := 0
+	for group_variant: Variant in groups:
+		if not group_variant is Array:
+			continue
+		var group: Array = group_variant
+		if group.is_empty():
+			continue
+		shell_index += 1
+		_add_mainline_group_shell(level, shell_index, group)
+
+
+func _mainline_excluded_spans(plan: Dictionary) -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	var overlays: Dictionary = plan.get("prototype_overlays", {})
+	var spans_variant: Variant = overlays.get("architectural_spans_v1", [])
+	if spans_variant is Array:
+		for span_variant: Variant in spans_variant:
+			if not span_variant is Dictionary:
+				continue
+			var span: Dictionary = span_variant
+			if String(span.get("topology", "")) == BRIDGE:
+				result.append(Vector2(
+					float(span["start_x"]),
+					float(span["end_x"])
+				))
+	return result
+
+
+func _overlaps_any_span(
+	start_x: float,
+	end_x: float,
+	spans: Array[Vector2]
+) -> bool:
+	for span in spans:
+		if end_x > span.x + MAINLINE_CONTIGUITY_EPSILON and start_x < span.y - MAINLINE_CONTIGUITY_EPSILON:
+			return true
+	return false
+
+
+func _add_mainline_group_shell(
+	level: Node,
+	shell_index: int,
+	group: Array
+) -> void:
+	var first: Dictionary = group[0]
+	var last: Dictionary = group[-1]
+	var top_profile := PackedVector2Array()
+	top_profile.append(Vector2(
+		float(first["start_x"]),
+		float(first["surface_y"])
+	))
+
+	for item_variant: Variant in group:
+		var item: Dictionary = item_variant
+		var body := generated_level.get_node_or_null(
+			"Level/Runway%02d" % (int(item["runway_index"]) + 1)
+		) as StaticBody3D
+		if body != null:
+			_set_collision_visual_hidden(body, true)
+		var center_x := (
+			float(item["start_x"]) + float(item["end_x"])
+		) * 0.5
+		top_profile.append(Vector2(
+			center_x,
+			float(item["surface_y"])
+		))
+
+	top_profile.append(Vector2(
+		float(last["end_x"]),
+		float(last["surface_y"])
+	))
+
+	var shell_profile := PackedVector2Array()
+	for point in top_profile:
+		shell_profile.append(point)
+	for point_index in range(top_profile.size() - 1, -1, -1):
+		var point := top_profile[point_index]
+		shell_profile.append(Vector2(
+			point.x,
+			point.y - MAINLINE_VISUAL_THICKNESS
+		))
+
+	var shell := MeshInstance3D.new()
+	shell.name = "MainlineArchitecturalShell%02d" % shell_index
+	shell.mesh = _build_extruded_profile(
+		shell_profile,
+		4.0 + MAINLINE_DEPTH_BLEED,
+		mainline_material if mainline_material != null else technical_material
+	)
+	level.add_child(shell)
+
+	if trim_material == null:
+		return
+	var nosing_profile := PackedVector2Array()
+	for point in top_profile:
+		nosing_profile.append(point)
+	for point_index in range(top_profile.size() - 1, -1, -1):
+		var point := top_profile[point_index]
+		nosing_profile.append(Vector2(
+			point.x,
+			point.y - MAINLINE_NOSING_HEIGHT
+		))
+	var nosing := MeshInstance3D.new()
+	nosing.name = "MainlineGoldenNosing%02d" % shell_index
+	nosing.mesh = _build_extruded_profile(
+		nosing_profile,
+		4.0 + MAINLINE_DEPTH_BLEED + 0.04,
+		trim_material
+	)
+	level.add_child(nosing)
 
 
 func _skin_architectural_spans(plan: Dictionary) -> void:

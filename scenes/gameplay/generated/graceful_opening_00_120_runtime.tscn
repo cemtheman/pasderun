@@ -28,6 +28,7 @@
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_staircase.tres" id="28_staircase"]
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_trim.tres" id="29_trim"]
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_bridge.tres" id="30_bridge"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_mainline.tres" id="31_mainline"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -99,6 +100,7 @@ technical_material = ExtResource("26_technical")
 crest_material = ExtResource("27_crest")
 staircase_material = ExtResource("28_staircase")
 bridge_material = ExtResource("30_bridge")
+mainline_material = ExtResource("31_mainline")
 trim_material = ExtResource("29_trim")
 
 [node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]
