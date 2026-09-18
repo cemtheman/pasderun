@@ -463,10 +463,10 @@ func _stage_bow_animation() -> Animation:
 		_stage_fourth_wall_turn_pose(-0.72),
 		_stage_ready_pose(),
 		_pose({
-			"Rig:position": Vector3(0.0, -0.045, 0.0),
-			"Rig/Pelvis:rotation": _rz(-0.08),
-			"Rig/Pelvis/Torso:rotation": _rz(-0.48),
-			"Rig/Pelvis/Torso/Head:rotation": _rz(0.16),
+			"Rig:position": Vector3(0.0, -0.025, 0.0),
+			"Rig/Pelvis:rotation": _rz(-0.045),
+			"Rig/Pelvis/Torso:rotation": _rz(-0.24),
+			"Rig/Pelvis/Torso/Head:rotation": _rz(0.08),
 			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.34),
 			"Rig/Pelvis/Torso/ArmBackShoulder/ArmBackElbow:rotation": _rz(0.18),
 			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.34),
@@ -477,10 +477,10 @@ func _stage_bow_animation() -> Animation:
 			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.30),
 		}),
 		_pose({
-			"Rig:position": Vector3(0.0, -0.060, 0.0),
-			"Rig/Pelvis:rotation": _rz(-0.10),
-			"Rig/Pelvis/Torso:rotation": _rz(-0.58),
-			"Rig/Pelvis/Torso/Head:rotation": _rz(0.18),
+			"Rig:position": Vector3(0.0, -0.040, 0.0),
+			"Rig/Pelvis:rotation": _rz(-0.060),
+			"Rig/Pelvis/Torso:rotation": _rz(-0.34),
+			"Rig/Pelvis/Torso/Head:rotation": _rz(0.11),
 			"Rig/Pelvis/Torso/ArmBackShoulder:rotation": _rz(-0.40),
 			"Rig/Pelvis/Torso/ArmFrontShoulder:rotation": _rz(0.40),
 			"Rig/Pelvis/LegBackHip:rotation": _rz(-0.12),
@@ -488,7 +488,6 @@ func _stage_bow_animation() -> Animation:
 			"Rig/Pelvis/LegFrontHip:rotation": _rz(0.12),
 			"Rig/Pelvis/LegFrontHip/LegFrontKnee:rotation": _rz(0.34),
 		}),
-		_stage_ready_pose(),
 		_stage_ready_pose(),
 	], false)
 
