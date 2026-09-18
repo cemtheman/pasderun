@@ -21,6 +21,12 @@
 [ext_resource type="Script" path="res://scenes/gameplay/run_recovery_manager.gd" id="21_recovery"]
 [ext_resource type="Script" path="res://scenes/gameplay/mobile_orientation_gate.gd" id="22_orientation"]
 [ext_resource type="Script" path="res://scenes/gameplay/music_choreography_director.gd" id="23_choreo"]
+[ext_resource type="Script" path="res://scenes/gameplay/platform_skin_system.gd" id="24_skin"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_safe.tres" id="25_safe"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_technical.tres" id="26_technical"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_crest.tres" id="27_crest"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_staircase.tres" id="28_staircase"]
+[ext_resource type="Material" path="res://assets/materials/palace_stage_platform_trim.tres" id="29_trim"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -82,6 +88,16 @@ corner_radius_bottom_left = 8
 
 [node name="GeneratedLevel" parent="." unique_id=771723095 instance=ExtResource("7_generated")]
 
+
+[node name="PlatformSkinSystem" type="Node3D" parent="." node_paths=PackedStringArray("generated_level")]
+script = ExtResource("24_skin")
+geometry_plan_path = "res://data/geometry/graceful_opening_00_120_topology_v1_1.geometry_plan_v0_1.json"
+generated_level = NodePath("../GeneratedLevel")
+safe_material = ExtResource("25_safe")
+technical_material = ExtResource("26_technical")
+crest_material = ExtResource("27_crest")
+staircase_material = ExtResource("28_staircase")
+trim_material = ExtResource("29_trim")
 
 [node name="ForkDebugVisualization" type="Node3D" parent="." unique_id=963220687 node_paths=PackedStringArray("generated_level")]
 script = ExtResource("8_debug")

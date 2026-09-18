@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://assets/materials/palace_stage_platform.gdshader" id="1_shader"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/top_color = Color(0.84, 0.73, 0.53, 1)
+shader_parameter/side_color = Color(0.17, 0.02, 0.045, 1)
+shader_parameter/trim_color = Color(0.76, 0.53, 0.22, 1)
+shader_parameter/trim_start = 0.12
+shader_parameter/panel_spacing = 0.72
+shader_parameter/seam_width = 0.038
+shader_parameter/seam_strength = 0.56
+shader_parameter/side_seam_strength = 0.66
