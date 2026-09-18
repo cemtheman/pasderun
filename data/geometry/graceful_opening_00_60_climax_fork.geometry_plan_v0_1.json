@@ -575,23 +575,104 @@
       "source_confidence": 0.7964,
       "world": {
         "event_x": 145.0,
-        "surface_y": -2.8
+        "surface_y": 0.0
       },
       "geometry": {
-        "type": "LARGE_GAP",
-        "scale": "LARGE",
-        "start_x": 143.9,
-        "end_x": 146.1,
-        "gap_length": 2.2,
-        "landing_length": 8.0
+        "type": "ROUTE_FORK",
+        "start_x": 143.4,
+        "end_x": 154.1031
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 8.512
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 9.1031
       },
-      "branch": null,
+      "branch": {
+        "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
+        "split": {
+          "x": 143.4,
+          "shared_surface_y": 0.0,
+          "no_jump_destination": "SAFE",
+          "jump_destination": "TECHNICAL"
+        },
+        "routes": {
+          "safe": {
+            "elevation": -2.8,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LOWER_RUNWAY",
+                "start_x": 143.4,
+                "end_x": 154.1031,
+                "surface_y": -2.8,
+                "collision": true
+              }
+            ],
+            "descent": {
+              "type": "GRAVITY_DROP",
+              "start_x": 143.4,
+              "landing_x": 145.6311,
+              "drop_height": 2.8,
+              "drop_seconds": 0.5578,
+              "standing_root_y": -1.8,
+              "fall_limit_y": -3.0
+            }
+          },
+          "technical": {
+            "elevation": 0.0,
+            "collision_geometry": {
+              "shape": "BOX",
+              "width": 4.0,
+              "thickness": 0.5
+            },
+            "segments": [
+              {
+                "type": "LARGE_GAP",
+                "start_x": 143.4,
+                "end_x": 145.6,
+                "surface_y": 0.0,
+                "collision": false
+              },
+              {
+                "type": "RUNWAY",
+                "start_x": 145.6,
+                "end_x": 151.372,
+                "surface_y": 0.0,
+                "collision": true
+              },
+              {
+                "type": "DROP_MERGE",
+                "start_x": 151.372,
+                "end_x": 154.1031,
+                "from_y": 0.0,
+                "to_y": -2.8,
+                "collision": false
+              }
+            ]
+          }
+        },
+        "clearance": {
+          "capsule_height": 2.0,
+          "capsule_radius": 0.5,
+          "platform_thickness": 0.5,
+          "safety_margin": 0.25,
+          "technical_underside_y": -0.5,
+          "safe_dancer_top_y": -0.8,
+          "valid": true
+        },
+        "merge": {
+          "type": "TECHNICAL_DROP_TO_SAFE",
+          "drop_start_x": 151.372,
+          "x": 154.1031,
+          "surface_y": -2.8,
+          "shared_runway_continues": true
+        }
+      },
       "suppressed_inferences": [
         {
           "class": "MEDIUM_JUMP",
@@ -627,7 +708,9 @@
       "explanation": [
         "derived from LARGE_TRAVELLING_LEAP demand",
         "event centered on music time 36.250",
-        "world X derived by source_time × 4.0"
+        "world X derived by source_time × 4.0",
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
       ]
     },
     {
@@ -1067,8 +1150,8 @@
         "derived from LARGE_TRAVELLING_LEAP demand",
         "event centered on music time 53.000",
         "world X derived by source_time × 4.0",
-        "strongest Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
-        "BUILD approach rises on a traversable ramp; climax JUMP selects upper route"
+        "major Phase 9 climax converted to a single-input SAFE/TECHNICAL fork",
+        "latest traversable anticipation ramp rises into the climax JUMP route choice"
       ]
     },
     {
@@ -1224,62 +1307,7 @@
         "surface_y": -2.739
       },
       {
-        "start_x": 134.888,
-        "end_x": 136.746,
-        "surface_y": -2.824
-      },
-      {
-        "start_x": 136.746,
-        "end_x": 138.604,
-        "surface_y": -2.8479
-      },
-      {
-        "start_x": 138.604,
-        "end_x": 140.462,
-        "surface_y": -2.8719
-      },
-      {
-        "start_x": 140.462,
-        "end_x": 142.0,
-        "surface_y": -2.8959
-      },
-      {
-        "start_x": 142.0,
-        "end_x": 142.32,
-        "surface_y": -2.8
-      },
-      {
-        "start_x": 142.32,
-        "end_x": 143.9,
-        "surface_y": -2.8
-      },
-      {
-        "start_x": 146.1,
-        "end_x": 147.891,
-        "surface_y": -2.8
-      },
-      {
-        "start_x": 147.891,
-        "end_x": 148.6668,
-        "surface_y": -2.8
-      },
-      {
-        "start_x": 148.6668,
-        "end_x": 149.748,
-        "surface_y": -2.7385
-      },
-      {
-        "start_x": 149.748,
-        "end_x": 151.606,
-        "surface_y": -2.7262
-      },
-      {
-        "start_x": 151.606,
-        "end_x": 153.464,
-        "surface_y": -2.8369
-      },
-      {
-        "start_x": 153.464,
+        "start_x": 154.1031,
         "end_x": 155.322,
         "surface_y": -2.7262
       },
@@ -1494,6 +1522,13 @@
     "ramps": [
       {
         "type": "APPROACH_RAMP",
+        "start_x": 134.888,
+        "end_x": 143.4,
+        "start_surface_y": -2.739,
+        "end_surface_y": 0.0
+      },
+      {
+        "type": "APPROACH_RAMP",
         "start_x": 201.764,
         "end_x": 210.4,
         "start_surface_y": -2.8372,
@@ -1508,7 +1543,8 @@
       "target_time": 53.0,
       "climax_peak": 1.0,
       "intensity": 0.8736,
-      "build_window_start": 50.441,
+      "approach_window_start": 50.441,
+      "approach_source_role": "BUILD",
       "approach_ramp": {
         "type": "APPROACH_RAMP",
         "start_x": 201.764,
@@ -1521,6 +1557,46 @@
       "merge_x": 220.0,
       "required_action": "JUMP",
       "new_required_actions": false
-    }
+    },
+    "climax_forks_v0_2": [
+      {
+        "target_time": 36.25,
+        "climax_peak": 0.9356,
+        "intensity": 0.7299,
+        "approach_window_start": 33.722,
+        "approach_source_role": "RELEASE",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 134.888,
+          "end_x": 143.4,
+          "start_surface_y": -2.739,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 17.8372,
+        "split_x": 143.4,
+        "merge_x": 154.1031,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      },
+      {
+        "target_time": 53.0,
+        "climax_peak": 1.0,
+        "intensity": 0.8736,
+        "approach_window_start": 50.441,
+        "approach_source_role": "BUILD",
+        "approach_ramp": {
+          "type": "APPROACH_RAMP",
+          "start_x": 201.764,
+          "end_x": 210.4,
+          "start_surface_y": -2.8372,
+          "end_surface_y": 0.0
+        },
+        "approach_slope_degrees": 18.187,
+        "split_x": 210.4,
+        "merge_x": 220.0,
+        "required_action": "JUMP",
+        "new_required_actions": false
+      }
+    ]
   }
 }
