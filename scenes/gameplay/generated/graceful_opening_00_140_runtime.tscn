@@ -160,6 +160,7 @@ generated_level = NodePath("../../GeneratedLevel")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music" unique_id=32499196]
 stream = ExtResource("4_music")
+playback_type = 1
 
 [node name="MusicTimeline" type="Node" parent="Music" unique_id=1206020740 node_paths=PackedStringArray("audio_player", "debug_label")]
 script = ExtResource("5_timeline")
