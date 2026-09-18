@@ -22,6 +22,8 @@ const FRONT_FACING_STATES := {
 	&"STAGE_FINAL_BOW": true,
 }
 
+const STAGE_BOW_DURATION := 1.35
+
 # Pas de Run stage geometry: gameplay travels along +X. The audience is exactly
 # 90 degrees to the dancer's RIGHT, i.e. +Z in world space.
 const TRAVEL_DIRECTION := Vector3.RIGHT
@@ -36,6 +38,8 @@ var _source_rig: Node3D
 var _model_base_transform: Transform3D
 var _bound := false
 var _retarget_active := false
+var _last_state: StringName = &""
+var _stage_bow_elapsed := 0.0
 var _bindings: Array[Dictionary] = []
 var _target_idle_poses: Dictionary = {}
 var _target_idle_globals: Dictionary = {}
@@ -62,6 +66,13 @@ func _process(_delta: float) -> void:
 	var state := &""
 	if _source_visual.has_method("get_visual_state"):
 		state = StringName(_source_visual.call("get_visual_state"))
+
+	if state != _last_state:
+		if state == &"STAGE_BOW":
+			_stage_bow_elapsed = 0.0
+		_last_state = state
+	elif state == &"STAGE_BOW":
+		_stage_bow_elapsed += _delta
 
 	if RETARGET_STATES.has(state):
 		if not _retarget_active:
@@ -306,9 +317,8 @@ func _is_arm_binding(binding: Dictionary) -> bool:
 func _apply_state_baseline(state: StringName) -> void:
 	_apply_idle_baseline()
 
-	# Stage orientation is relative to travel, never inferred from camera yaw.
-	# Travel is +X; dancer-right is +Z. Restore the accepted gameplay transform,
-	# then aim the imported model's visual +Z front exactly along +Z.
+	# Stage orientation is relative to travel. Pas de Run travels along +X and
+	# the audience is on +Z, exactly 90 degrees to the dancer's right.
 	_model_root.transform = _model_base_transform
 	if FRONT_FACING_STATES.has(state):
 		_model_root.look_at(
@@ -317,15 +327,94 @@ func _apply_state_baseline(state: StringName) -> void:
 			true
 		)
 
-	if state != &"STAGE_BOW":
+	if state == &"STAGE_BOW":
+		var phase := clampf(_stage_bow_elapsed / STAGE_BOW_DURATION, 0.0, 1.0)
+		_apply_reference_reverence_pose(phase)
+	elif state == &"STAGE_READY":
+		_apply_reference_ready_pose()
+
+
+func _apply_reference_reverence_pose(phase: float) -> void:
+	# Reference contract from classical ballet sources: a female révérence reads
+	# as a CURTSY with port de bras, not a male-style forward torso bow.
+	# Keep the spine long, incline the head modestly, open the arms visibly to
+	# the audience, and let the mannequin leg choreography supply the plié.
+	var depth := sin(phase * PI)
+	var open_t := smoothstep(0.0, 0.32, phase)
+
+	# A small vertical drop supports the curtsy without sinking the body through
+	# the stage. The source leg articulation still supplies the knee action.
+	_model_root.position.y = _model_base_transform.origin.y - 0.055 * depth
+
+	var upper_angle := lerpf(1.02, 0.42, open_t)
+	var lower_angle := upper_angle + 0.16
+	_apply_reverence_arm("ArmBackShoulder", upper_angle)
+	_apply_reverence_arm("ArmBackElbow", lower_angle)
+	_apply_reverence_arm("ArmFrontShoulder", -upper_angle)
+	_apply_reverence_arm("ArmFrontElbow", -lower_angle)
+
+	# Classical curtsy posture stays elongated. The torso only yields slightly;
+	# the clearer acknowledgement is the head inclination.
+	_apply_reverence_body("Torso", 0.045 * depth)
+	_apply_reverence_body("Head", 0.13 * depth)
+
+
+func _apply_reference_ready_pose() -> void:
+	# After the curtsy, remain facing the audience in a calm open port de bras
+	# until the start input returns the character to the +X travel direction.
+	_model_root.position.y = _model_base_transform.origin.y
+	_apply_reverence_arm("ArmBackShoulder", 0.42)
+	_apply_reverence_arm("ArmBackElbow", 0.58)
+	_apply_reverence_arm("ArmFrontShoulder", -0.42)
+	_apply_reverence_arm("ArmFrontElbow", -0.58)
+	_apply_reverence_body("Torso", 0.0)
+	_apply_reverence_body("Head", 0.0)
+
+
+func _apply_reverence_arm(label: String, z_angle: float) -> void:
+	var binding := _binding_for_label(label)
+	if binding.is_empty():
+		return
+	var bone_idx: int = binding["bone_idx"]
+
+	var baseline_global: Transform3D
+	if _target_bow_arm_globals.has(bone_idx):
+		baseline_global = _target_bow_arm_globals[bone_idx]
+	elif _target_idle_globals.has(bone_idx):
+		baseline_global = _target_idle_globals[bone_idx]
+	else:
 		return
 
+	var desired_basis := Basis(Vector3(0.0, 0.0, 1.0), z_angle) * baseline_global.basis
+	var current_global := _skeleton.get_bone_global_pose(bone_idx)
+	_skeleton.set_bone_global_pose(
+		bone_idx,
+		Transform3D(desired_basis, current_global.origin)
+	)
+
+
+func _apply_reverence_body(label: String, x_angle: float) -> void:
+	var binding := _binding_for_label(label)
+	if binding.is_empty():
+		return
+	var bone_idx: int = binding["bone_idx"]
+	if not _target_idle_globals.has(bone_idx):
+		return
+
+	var baseline_global: Transform3D = _target_idle_globals[bone_idx]
+	var desired_basis := Basis(Vector3.RIGHT, x_angle) * baseline_global.basis
+	var current_global := _skeleton.get_bone_global_pose(bone_idx)
+	_skeleton.set_bone_global_pose(
+		bone_idx,
+		Transform3D(desired_basis, current_global.origin)
+	)
+
+
+func _binding_for_label(label: String) -> Dictionary:
 	for binding in _bindings:
-		if not _is_arm_binding(binding):
-			continue
-		var bone_idx: int = binding["bone_idx"]
-		if _target_bow_arm_poses.has(bone_idx):
-			_skeleton.set_bone_pose(bone_idx, _target_bow_arm_poses[bone_idx])
+		if String(binding.get("label", "")) == label:
+			return binding
+	return {}
 
 
 func _apply_idle_baseline() -> void:
@@ -333,53 +422,6 @@ func _apply_idle_baseline() -> void:
 		var bone_idx: int = binding["bone_idx"]
 		if _target_idle_poses.has(bone_idx):
 			_skeleton.set_bone_pose(bone_idx, _target_idle_poses[bone_idx])
-
-
-func _is_bow_body_binding(binding: Dictionary) -> bool:
-	var label := String(binding.get("label", ""))
-	return label == "Pelvis" or label == "Torso" or label == "Head"
-
-
-func _apply_stage_bow_body_plane(
-	binding: Dictionary,
-	source_node: Node3D,
-	bone_idx: int,
-	skeleton_basis: Basis,
-	skeleton_basis_inverse: Basis
-) -> bool:
-	if not _is_bow_body_binding(binding):
-		return false
-	if not _target_idle_globals.has(bone_idx):
-		return false
-
-	# The mannequin choreography was authored in side view: its visible forward
-	# reverence is encoded as local/global Z rotation. Once the humanoid turns
-	# 90 degrees toward the audience, copying that Z rotation literally becomes
-	# a sideways body roll. A reverence must incline TOWARD the audience.
-	#
-	# Pas de Run audience side is +Z, so forward inclination is a rotation about
-	# world +X. Negate the mannequin's accumulated Z angle: its bow uses negative
-	# Z values, which become positive X pitch toward +Z.
-	var source_in_rig := (
-		_source_rig.global_transform.basis.inverse()
-		* source_node.global_transform.basis
-	)
-	var bow_angle := -source_in_rig.get_euler().z
-
-	var baseline_global: Transform3D = _target_idle_globals[bone_idx]
-	var baseline_world_basis := skeleton_basis * baseline_global.basis
-	var desired_world_basis := (
-		Basis(Vector3.RIGHT, bow_angle)
-		* baseline_world_basis
-	)
-	var desired_skeleton_basis := skeleton_basis_inverse * desired_world_basis
-
-	var current_global := _skeleton.get_bone_global_pose(bone_idx)
-	_skeleton.set_bone_global_pose(
-		bone_idx,
-		Transform3D(desired_skeleton_basis, current_global.origin)
-	)
-	return true
 
 
 func _apply_motion_retarget(state: StringName) -> void:
@@ -391,44 +433,41 @@ func _apply_motion_retarget(state: StringName) -> void:
 	for binding in _bindings:
 		var source_node: Node3D = binding["source_node"]
 		var bone_idx: int = binding["bone_idx"]
+		var label := String(binding.get("label", ""))
 		if not is_instance_valid(source_node):
 			continue
 		if not _target_idle_globals.has(bone_idx):
 			continue
 
+		# STAGE_BOW / READY use a reference-calibrated female curtsy upper body.
+		# Preserve the trained mannequin lower-body choreography underneath it.
 		if (
 			state == &"STAGE_BOW"
-			and _apply_stage_bow_body_plane(
-				binding,
-				source_node,
-				bone_idx,
-				skeleton_basis,
-				skeleton_basis_inverse
-			)
+			or state == &"STAGE_READY"
 		):
-			continue
+			if (
+				label == "Pelvis"
+				or label == "Torso"
+				or label == "Head"
+				or label.begins_with("Arm")
+			):
+				continue
 
 		# Retarget joint articulation relative to the mannequin Rig itself.
-		# STAGE_BOW rotates that entire source Rig by 90 degrees for presentation;
-		# including that root yaw here would apply the stage turn a second time
-		# through every target bone. Root orientation is handled separately above.
+		# Root presentation yaw is handled separately by the model root.
 		var source_delta_in_rig := (
 			source_rig_basis_inverse
 			* source_node.global_transform.basis
 		)
 
 		var baseline_global: Transform3D = _target_idle_globals[bone_idx]
-		if (
-			state == &"STAGE_BOW"
-			and _is_arm_binding(binding)
-			and _target_bow_arm_globals.has(bone_idx)
-		):
-			baseline_global = _target_bow_arm_globals[bone_idx]
-		var desired_world_basis := skeleton_basis * source_delta_in_rig * baseline_global.basis
+		var desired_world_basis := (
+			skeleton_basis
+			* source_delta_in_rig
+			* baseline_global.basis
+		)
 		var desired_skeleton_basis := skeleton_basis_inverse * desired_world_basis
 
-		# Keep the humanoid rig's own bone positions/lengths. Only orientation is
-		# transferred, so the mannequin can never change collision or proportions.
 		var current_global := _skeleton.get_bone_global_pose(bone_idx)
 		_skeleton.set_bone_global_pose(
 			bone_idx,
