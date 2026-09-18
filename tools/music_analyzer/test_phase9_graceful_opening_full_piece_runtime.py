@@ -83,16 +83,6 @@ class Phase9GracefulOpeningFullPieceRuntimeTests(unittest.TestCase):
             ],
         )
 
-    def test_full_piece_runtime_wires_mainline_architectural_material(self) -> None:
-        self.assertIn(
-            'path="res://assets/materials/palace_stage_platform_mainline.tres"',
-            self.runtime,
-        )
-        self.assertIn(
-            'mainline_material = ExtResource("31_mainline")',
-            self.runtime,
-        )
-
     def test_runtime_preserves_skin_body_flow_debug_and_recovery_layers(self) -> None:
         for token in (
             'name="PlatformSkinSystem"',

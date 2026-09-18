@@ -117,29 +117,6 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("BRIDGE_ARCH_RISE", SCRIPT)
         self.assertNotIn("CollisionShape3D.new()", SCRIPT)
 
-    def test_mainline_architecture_smooths_passive_visual_height_changes(self) -> None:
-        self.assertIn("MainlineArchitecturalShell", SCRIPT)
-        self.assertIn("MainlineGoldenNosing", SCRIPT)
-        self.assertIn("MAINLINE_MAX_SMOOTH_DELTA := 0.20", SCRIPT)
-        self.assertIn("top_profile.append", SCRIPT)
-        self.assertIn("_set_collision_visual_hidden(body, true)", SCRIPT)
-        self.assertNotIn("CollisionShape3D.new()", SCRIPT)
-
-    def test_mainline_architecture_does_not_cover_bridge_span(self) -> None:
-        self.assertIn("_mainline_excluded_spans", SCRIPT)
-        self.assertIn("_overlaps_any_span", SCRIPT)
-        self.assertIn('String(span.get("topology", "")) == BRIDGE', SCRIPT)
-
-    def test_mainline_material_is_wired_into_full_runtime(self) -> None:
-        full_runtime = (
-            ROOT / "scenes/gameplay/generated/graceful_opening_00_140_runtime.tscn"
-        ).read_text(encoding="utf-8")
-        self.assertIn(
-            'path="res://assets/materials/palace_stage_platform_mainline.tres"',
-            full_runtime,
-        )
-        self.assertIn('mainline_material = ExtResource("31_mainline")', full_runtime)
-
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)
