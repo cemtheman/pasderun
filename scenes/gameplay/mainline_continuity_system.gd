@@ -160,6 +160,8 @@ func _flush_group(group: Array) -> void:
 			boundary_y[index + 1]
 		)
 
+	_add_continuous_group_nosing(group, boundary_y)
+
 
 func _runway_body(runway_index: int) -> StaticBody3D:
 	return generated_level.get_node_or_null(
@@ -271,27 +273,126 @@ func _add_shallow_ramp(
 	collision.shape = shape_resource
 	body.add_child(collision)
 
-	if trim_material != null:
-		var trim_resource := BoxMesh.new()
-		trim_resource.size = Vector3(
-			length,
-			TRIM_HEIGHT,
-			GROUND_WIDTH + TRIM_DEPTH_BLEED
-		)
-		var trim := MeshInstance3D.new()
-		trim.name = "MainlineGoldenNosing"
-		trim.mesh = trim_resource
-		trim.material_override = trim_material
-		trim.position = Vector3(
-			0.0,
-			GROUND_HEIGHT * 0.5 - TRIM_HEIGHT * 0.5,
-			0.0
-		)
-		body.add_child(trim)
-
 	var level := generated_level.get_node_or_null("Level")
 	if level != null:
 		level.add_child(body)
+
+
+func _add_continuous_group_nosing(
+	group: Array,
+	boundary_y: Array[float]
+) -> void:
+	if trim_material == null or group.is_empty():
+		return
+	if boundary_y.size() != group.size() + 1:
+		return
+
+	var top_profile := PackedVector2Array()
+	var first: Dictionary = group[0]
+	top_profile.append(Vector2(
+		float(first["start_x"]),
+		boundary_y[0]
+	))
+	for index in range(group.size()):
+		var item: Dictionary = group[index]
+		top_profile.append(Vector2(
+			float(item["end_x"]),
+			boundary_y[index + 1]
+		))
+
+	var ribbon_profile := PackedVector2Array()
+	for point in top_profile:
+		ribbon_profile.append(point)
+	for point_index in range(top_profile.size() - 1, -1, -1):
+		var point := top_profile[point_index]
+		ribbon_profile.append(Vector2(
+			point.x,
+			point.y - TRIM_HEIGHT
+		))
+
+	var level := generated_level.get_node_or_null("Level")
+	if level == null:
+		return
+
+	var ribbon := MeshInstance3D.new()
+	ribbon.name = "MainlineContinuousNosing%02d" % (
+		int(first["runway_index"]) + 1
+	)
+	ribbon.mesh = _build_extruded_profile(
+		ribbon_profile,
+		GROUND_WIDTH + TRIM_DEPTH_BLEED,
+		trim_material
+	)
+	level.add_child(ribbon)
+
+
+func _build_extruded_profile(
+	profile: PackedVector2Array,
+	depth: float,
+	material: Material
+) -> ArrayMesh:
+	var triangulated := Geometry2D.triangulate_polygon(profile)
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	if material != null:
+		surface.set_material(material)
+
+	var front_z := depth * 0.5
+	var back_z := -depth * 0.5
+
+	for triangle_index in range(0, triangulated.size(), 3):
+		var a := profile[triangulated[triangle_index]]
+		var b := profile[triangulated[triangle_index + 1]]
+		var c := profile[triangulated[triangle_index + 2]]
+		_add_triangle(
+			surface,
+			Vector3(a.x, a.y, front_z),
+			Vector3(b.x, b.y, front_z),
+			Vector3(c.x, c.y, front_z)
+		)
+		_add_triangle(
+			surface,
+			Vector3(c.x, c.y, back_z),
+			Vector3(b.x, b.y, back_z),
+			Vector3(a.x, a.y, back_z)
+		)
+
+	for edge_index in range(profile.size()):
+		var next_index := (edge_index + 1) % profile.size()
+		var a := profile[edge_index]
+		var b := profile[next_index]
+		_add_quad(
+			surface,
+			Vector3(a.x, a.y, front_z),
+			Vector3(b.x, b.y, front_z),
+			Vector3(b.x, b.y, back_z),
+			Vector3(a.x, a.y, back_z)
+		)
+
+	surface.generate_normals()
+	return surface.commit()
+
+
+func _add_triangle(
+	surface: SurfaceTool,
+	a: Vector3,
+	b: Vector3,
+	c: Vector3
+) -> void:
+	surface.add_vertex(a)
+	surface.add_vertex(b)
+	surface.add_vertex(c)
+
+
+func _add_quad(
+	surface: SurfaceTool,
+	a: Vector3,
+	b: Vector3,
+	c: Vector3,
+	d: Vector3
+) -> void:
+	_add_triangle(surface, a, b, c)
+	_add_triangle(surface, a, c, d)
 
 
 func _excluded_architectural_spans(plan: Dictionary) -> Array[Vector2]:

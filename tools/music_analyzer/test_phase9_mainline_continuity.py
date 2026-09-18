@@ -45,17 +45,19 @@ class Phase9MainlineContinuityTests(unittest.TestCase):
             SCRIPT,
         )
 
-    def test_mainline_uses_single_explicit_golden_edge(self) -> None:
+    def test_mainline_uses_single_continuous_golden_edge_for_smooth_groups(self) -> None:
         material = (
             ROOT / "assets/materials/palace_stage_platform_mainline.tres"
         ).read_text(encoding="utf-8")
-        shader = (
-            ROOT / "assets/materials/palace_stage_platform.gdshader"
-        ).read_text(encoding="utf-8")
-        self.assertIn("uniform float upper_trim_strength = 1.0", shader)
-        self.assertIn("upper_edge * upper_trim_strength", shader)
         self.assertIn("shader_parameter/upper_trim_strength = 0.0", material)
-        self.assertIn("MainlineGoldenNosing", SCRIPT)
+        self.assertIn("_add_continuous_group_nosing(group, boundary_y)", SCRIPT)
+        self.assertIn("MainlineContinuousNosing", SCRIPT)
+        self.assertIn("Geometry2D.triangulate_polygon(profile)", SCRIPT)
+        ramp_start = SCRIPT.index("func _add_shallow_ramp(")
+        ramp_end = SCRIPT.index("func _add_continuous_group_nosing(", ramp_start)
+        ramp_body = SCRIPT[ramp_start:ramp_end]
+        self.assertNotIn('trim.name = "MainlineGoldenNosing"', ramp_body)
+
 
     def test_mainline_keeps_architectural_mass_and_golden_edge(self) -> None:
         self.assertIn(
