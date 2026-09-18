@@ -3,17 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://td4wtweabmn1"
-path.s3tc="res://.godot/imported/graceful_opening_foreground_stage_v0_1.png-551e42ba8f678b43aae2fe3307311fd0.s3tc.ctex"
-path.etc2="res://.godot/imported/graceful_opening_foreground_stage_v0_1.png-551e42ba8f678b43aae2fe3307311fd0.etc2.ctex"
+path="res://.godot/imported/graceful_opening_foreground_stage_v0_1.png-551e42ba8f678b43aae2fe3307311fd0.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc", "etc2_astc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/visuals/parallax/graceful_opening_foreground_stage_v0_1.png"
-dest_files=["res://.godot/imported/graceful_opening_foreground_stage_v0_1.png-551e42ba8f678b43aae2fe3307311fd0.s3tc.ctex", "res://.godot/imported/graceful_opening_foreground_stage_v0_1.png-551e42ba8f678b43aae2fe3307311fd0.etc2.ctex"]
+dest_files=["res://.godot/imported/graceful_opening_foreground_stage_v0_1.png-551e42ba8f678b43aae2fe3307311fd0.ctex"]
 
 [params]
 
