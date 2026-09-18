@@ -84,6 +84,12 @@ class Phase9PlatformSkinSystemTests(unittest.TestCase):
         self.assertIn("STAIR_RISER_BOTTOM_INSET", SCRIPT)
         self.assertNotIn("STEP_GAP_", SCRIPT)
 
+    def test_v2_1_shell_proportions_are_restrained(self) -> None:
+        self.assertIn("const CREST_SHELL_DEPTH := 0.36", SCRIPT)
+        self.assertIn("const CREST_UNDERSIDE_SWELL := 0.10", SCRIPT)
+        self.assertIn("const STAIR_RISER_BOTTOM_INSET := 0.055", SCRIPT)
+        self.assertIn("TheatricalRiserLowerBand", SCRIPT)
+
     def test_v2_preserves_golden_nosing_signature(self) -> None:
         self.assertIn("_add_absolute_nosing(", SCRIPT)
         self.assertIn("_add_local_nosing(", SCRIPT)

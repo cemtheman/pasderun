@@ -18,15 +18,15 @@ const FASCIA_HEIGHT := 0.12
 const FASCIA_WIDTH_BLEED := 0.08
 const FASCIA_TOP_INSET := 0.035
 
-const CREST_SHELL_DEPTH := 0.52
-const CREST_UNDERSIDE_SWELL := 0.20
+const CREST_SHELL_DEPTH := 0.36
+const CREST_UNDERSIDE_SWELL := 0.10
 const CREST_ARCH_SAMPLES := 18
 const CREST_DEPTH_BLEED := 0.06
 const CREST_NOSING_HEIGHT := 0.055
 
-const STAIR_RISER_EXTRA_DEPTH := 0.12
-const STAIR_RISER_BOTTOM_INSET := 0.14
-const STAIR_NOSING_HEIGHT := 0.065
+const STAIR_RISER_EXTRA_DEPTH := 0.08
+const STAIR_RISER_BOTTOM_INSET := 0.055
+const STAIR_NOSING_HEIGHT := 0.055
 const STAIR_NOSING_DEPTH_BLEED := 0.10
 
 
@@ -257,6 +257,13 @@ func _add_staircase_architectural_shell(
 			top_y,
 			"TheatricalRiserNosing%02d_%02d" % [event_number, body_index + 1]
 		)
+		_add_local_lower_band(
+			body,
+			base_box.size.x * 0.82,
+			base_box.size.z + 0.04,
+			bottom_y + 0.075,
+			"TheatricalRiserLowerBand%02d_%02d" % [event_number, body_index + 1]
+		)
 
 
 func _set_collision_visual_hidden(body: StaticBody3D, hidden: bool) -> void:
@@ -311,6 +318,25 @@ func _add_local_nosing(
 		0.0
 	)
 	parent.add_child(nosing)
+
+
+func _add_local_lower_band(
+	parent: Node3D,
+	length: float,
+	depth: float,
+	center_y: float,
+	node_name: String
+) -> void:
+	if trim_material == null:
+		return
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(length, 0.035, depth)
+	var band := MeshInstance3D.new()
+	band.name = node_name
+	band.mesh = mesh
+	band.material_override = trim_material
+	band.position = Vector3(0.0, center_y, 0.0)
+	parent.add_child(band)
 
 
 func _build_extruded_profile(
