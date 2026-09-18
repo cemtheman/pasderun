@@ -24,16 +24,25 @@ var _route_debug_materials: Array = []
 var _marker_meshes: Array[MeshInstance3D] = []
 var _marker_labels: Array[Label3D] = []
 var _web_labels_disabled := OS.has_feature("web")
+var _initialized := false
 
 
 func _ready() -> void:
+	# Diagnostics default to OFF. Do not allocate debug 3D resources during
+	# startup; initialize them only when the developer explicitly enables V.
 	if generated_level == null:
+		return
+
+
+func _ensure_initialized() -> void:
+	if _initialized or generated_level == null:
 		return
 
 	var level := generated_level.get_node_or_null("Level")
 	if level == null:
 		return
 
+	_initialized = true
 	var safe_material := _debug_material(safe_color)
 	var technical_material := _debug_material(technical_color)
 	var split_material := _debug_material(split_color)
@@ -49,10 +58,6 @@ func _ready() -> void:
 			_add_marker(child as Marker3D, "FORK START", split_color, split_material)
 		elif node_name.begins_with("ForkMerge") and child is Marker3D:
 			_add_marker(child as Marker3D, "FORK MERGE", merge_color, merge_material)
-
-	# Production-facing default: all fork diagnostics are hidden.
-	# Developer diagnostics remain available through the existing V toggle.
-	set_diagnostic_mode(DiagnosticMode.OFF)
 
 
 func _debug_material(color: Color) -> StandardMaterial3D:
@@ -110,6 +115,9 @@ func _add_marker(
 
 func set_diagnostic_mode(mode: int) -> void:
 	_diagnostic_mode = clampi(mode, DiagnosticMode.OFF, DiagnosticMode.ALL)
+	if _diagnostic_mode != DiagnosticMode.OFF:
+		_ensure_initialized()
+
 	var show_routes := (
 		_diagnostic_mode == DiagnosticMode.ROUTES
 		or _diagnostic_mode == DiagnosticMode.ALL
