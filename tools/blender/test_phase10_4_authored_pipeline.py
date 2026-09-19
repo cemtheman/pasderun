@@ -20,11 +20,11 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
             self.builder,
         )
         self.assertIn(
-            'low_poly_girl_native_ik_v3.glb',
+            'low_poly_girl_native_ik_v4.glb',
             self.wrapper,
         )
         self.assertIn(
-            'opening_reverence_native_ik_v3_preview.mp4',
+            'opening_reverence_native_ik_v4_preview.mp4',
             self.wrapper,
         )
 
@@ -59,8 +59,8 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
 
     def test_classical_arm_shapes_are_rounded_and_lowered(self) -> None:
         self.assertIn('"hand_down": 0.68', self.builder)
-        self.assertIn('"hand_down": 0.26', self.builder)
-        self.assertIn('"hand_side": 0.72', self.builder)
+        self.assertIn('"hand_down": 0.34', self.builder)
+        self.assertIn('"hand_side": 0.64', self.builder)
         self.assertIn('"ACK_LOW_OPEN"', self.builder)
         self.assertIn('"LOWERING_SECOND"', self.builder)
         self.assertNotIn('"hand_side": 0.86', self.builder)
@@ -69,6 +69,22 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertIn('"torso_deg": 9.0', self.builder)
         self.assertIn('"chest_deg": 3.0', self.builder)
         self.assertIn('"head_deg": 5.0', self.builder)
+
+    def test_open_arm_phrase_stays_near_frontal_ballet_plane(self) -> None:
+        self.assertIn('"BRAS_BAS": {', self.builder)
+        self.assertIn('"hand_forward": 0.08', self.builder)
+        self.assertIn('"ACK_LOW_OPEN": {', self.builder)
+        self.assertIn('"hand_forward": 0.04', self.builder)
+        self.assertIn('"OPEN": {', self.builder)
+        self.assertIn('"hand_forward": 0.05', self.builder)
+        self.assertIn('"pole_forward": 0.04', self.builder)
+        self.assertIn('"EN_AVANT": {', self.builder)
+        self.assertIn('"hand_forward": 0.34', self.builder)
+
+    def test_second_position_keeps_soft_elbow_reach(self) -> None:
+        self.assertIn('"hand_side": 0.64', self.builder)
+        self.assertIn('"pole_side": 0.92', self.builder)
+        self.assertNotIn('"hand_side": 0.72', self.builder)
 
     def test_reverence_has_cross_behind_and_turnout_targets(self) -> None:
         self.assertIn("ankle += side * hip_width * 1.75 * cross", self.builder)

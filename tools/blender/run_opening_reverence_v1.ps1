@@ -40,10 +40,10 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 }
 
 $inputGlb = Join-Path $Repo "assets\characters\low_poly_girl\low_poly_girl .glb"
-$outputGlb = Join-Path $Repo "build\phase10_4\low_poly_girl_native_ik_v3.glb"
-$report = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v3_report.json"
-$blendOutput = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v3.blend"
-$preview = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v3_preview.mp4"
+$outputGlb = Join-Path $Repo "build\phase10_4\low_poly_girl_native_ik_v4.glb"
+$report = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v4_report.json"
+$blendOutput = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v4.blend"
+$preview = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v4_preview.mp4"
 $script = Join-Path $Repo "tools\blender\build_opening_reverence_v1.py"
 
 Write-Host "Blender: $Blender"

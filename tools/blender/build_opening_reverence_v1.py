@@ -100,34 +100,36 @@ POSES = [
 
 # Classical silhouette targets. Coordinates are expressed as fractions of one
 # shoulder-to-wrist reach in the inferred dancer basis.
+# Bras bas / open / lowering shapes stay close to the frontal ballet plane;
+# only en avant carries a substantial forward component.
 ARM_SHAPES = {
     "BRAS_BAS": {
-        "hand_side": 0.16, "hand_forward": 0.24, "hand_down": 0.68,
-        "pole_side": 0.48, "pole_forward": 0.30, "pole_down": 0.38,
+        "hand_side": 0.16, "hand_forward": 0.08, "hand_down": 0.68,
+        "pole_side": 0.72, "pole_forward": 0.06, "pole_down": 0.52,
     },
     "EN_AVANT": {
-        "hand_side": 0.10, "hand_forward": 0.40, "hand_down": 0.26,
-        "pole_side": 0.48, "pole_forward": 0.34, "pole_down": 0.26,
+        "hand_side": 0.08, "hand_forward": 0.34, "hand_down": 0.34,
+        "pole_side": 0.78, "pole_forward": 0.18, "pole_down": 0.30,
     },
     "OPEN_HALF": {
-        "hand_side": 0.42, "hand_forward": 0.24, "hand_down": 0.20,
-        "pole_side": 0.52, "pole_forward": 0.32, "pole_down": 0.22,
+        "hand_side": 0.40, "hand_forward": 0.08, "hand_down": 0.22,
+        "pole_side": 0.82, "pole_forward": 0.06, "pole_down": 0.30,
     },
     "ACK_LOW_OPEN": {
-        "hand_side": 0.62, "hand_forward": 0.16, "hand_down": 0.38,
-        "pole_side": 0.58, "pole_forward": 0.28, "pole_down": 0.36,
+        "hand_side": 0.64, "hand_forward": 0.04, "hand_down": 0.30,
+        "pole_side": 0.88, "pole_forward": 0.04, "pole_down": 0.34,
     },
     "OPEN": {
-        "hand_side": 0.72, "hand_forward": 0.14, "hand_down": 0.13,
-        "pole_side": 0.66, "pole_forward": 0.28, "pole_down": 0.20,
+        "hand_side": 0.64, "hand_forward": 0.05, "hand_down": 0.14,
+        "pole_side": 0.92, "pole_forward": 0.04, "pole_down": 0.22,
     },
     "LOWERING_SECOND": {
-        "hand_side": 0.46, "hand_forward": 0.16, "hand_down": 0.40,
-        "pole_side": 0.58, "pole_forward": 0.26, "pole_down": 0.34,
+        "hand_side": 0.48, "hand_forward": 0.05, "hand_down": 0.36,
+        "pole_side": 0.84, "pole_forward": 0.04, "pole_down": 0.40,
     },
     "RESOLVE": {
-        "hand_side": 0.16, "hand_forward": 0.22, "hand_down": 0.66,
-        "pole_side": 0.46, "pole_forward": 0.28, "pole_down": 0.38,
+        "hand_side": 0.16, "hand_forward": 0.08, "hand_down": 0.66,
+        "pole_side": 0.72, "pole_forward": 0.06, "pole_down": 0.52,
     },
 }
 
