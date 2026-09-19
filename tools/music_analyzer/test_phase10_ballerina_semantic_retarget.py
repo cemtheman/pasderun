@@ -494,7 +494,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(final_branch)
-        self.assertIn("Preserve the previously authored LARGE closing révérence", final_branch.group(1))
+        self.assertIn("Final bow intentionally remains untouched in this pass.", final_branch.group(1))
         self.assertNotIn("_apply_classical_reverence_upper_body", final_branch.group(1))
         self.assertIn("func _stage_final_bow_animation() -> Animation:", self.visual)
         self.assertIn("_final_kneel_pose(-0.34, -0.58, 1.08)", self.visual)
