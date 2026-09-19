@@ -23,7 +23,7 @@ from mathutils import Matrix, Quaternion, Vector
 
 
 ACTION_NAME = "Opening_Reverence_v1"
-PHASE = "10.4.3"
+PHASE = "10.4.4"
 FPS = 30
 START_FRAME = 0
 END_FRAME = 67
@@ -100,36 +100,37 @@ POSES = [
 
 # Classical silhouette targets. Coordinates are expressed as fractions of one
 # shoulder-to-wrist reach in the inferred dancer basis.
-# Bras bas / open / lowering shapes stay close to the frontal ballet plane;
-# only en avant carries a substantial forward component.
+# Elbow and wrist are authored as explicit ballet landmarks. This removes
+# the indirect hand-target + pole approximation that produced chicken-wing
+# silhouettes in V3/V4. Only en avant carries substantial forward depth.
 ARM_SHAPES = {
     "BRAS_BAS": {
-        "hand_side": 0.16, "hand_forward": 0.08, "hand_down": 0.68,
-        "pole_side": 0.72, "pole_forward": 0.06, "pole_down": 0.52,
+        "wrist_side": 0.12, "wrist_forward": 0.06, "wrist_down": 0.72,
+        "elbow_side": 0.38, "elbow_forward": 0.05, "elbow_down": 0.42,
     },
     "EN_AVANT": {
-        "hand_side": 0.08, "hand_forward": 0.34, "hand_down": 0.34,
-        "pole_side": 0.78, "pole_forward": 0.18, "pole_down": 0.30,
+        "wrist_side": 0.06, "wrist_forward": 0.35, "wrist_down": 0.30,
+        "elbow_side": 0.36, "elbow_forward": 0.22, "elbow_down": 0.20,
     },
     "OPEN_HALF": {
-        "hand_side": 0.40, "hand_forward": 0.08, "hand_down": 0.22,
-        "pole_side": 0.82, "pole_forward": 0.06, "pole_down": 0.30,
+        "wrist_side": 0.42, "wrist_forward": 0.08, "wrist_down": 0.22,
+        "elbow_side": 0.36, "elbow_forward": 0.06, "elbow_down": 0.12,
     },
     "ACK_LOW_OPEN": {
-        "hand_side": 0.64, "hand_forward": 0.04, "hand_down": 0.30,
-        "pole_side": 0.88, "pole_forward": 0.04, "pole_down": 0.34,
+        "wrist_side": 0.58, "wrist_forward": 0.04, "wrist_down": 0.42,
+        "elbow_side": 0.40, "elbow_forward": 0.04, "elbow_down": 0.24,
     },
     "OPEN": {
-        "hand_side": 0.64, "hand_forward": 0.05, "hand_down": 0.14,
-        "pole_side": 0.92, "pole_forward": 0.04, "pole_down": 0.22,
+        "wrist_side": 0.66, "wrist_forward": 0.04, "wrist_down": 0.14,
+        "elbow_side": 0.38, "elbow_forward": 0.04, "elbow_down": 0.08,
     },
     "LOWERING_SECOND": {
-        "hand_side": 0.48, "hand_forward": 0.05, "hand_down": 0.36,
-        "pole_side": 0.84, "pole_forward": 0.04, "pole_down": 0.40,
+        "wrist_side": 0.46, "wrist_forward": 0.05, "wrist_down": 0.42,
+        "elbow_side": 0.36, "elbow_forward": 0.04, "elbow_down": 0.22,
     },
     "RESOLVE": {
-        "hand_side": 0.16, "hand_forward": 0.08, "hand_down": 0.66,
-        "pole_side": 0.72, "pole_forward": 0.06, "pole_down": 0.52,
+        "wrist_side": 0.12, "wrist_forward": 0.06, "wrist_down": 0.72,
+        "elbow_side": 0.38, "elbow_forward": 0.05, "elbow_down": 0.42,
     },
 }
 
@@ -294,6 +295,20 @@ def create_ik_constraint(
     constraint.use_tail = True
     constraint.use_stretch = False
     constraint.iterations = 128
+    return constraint
+
+
+def create_damped_track_constraint(
+    armature: bpy.types.Object,
+    bone_name: str,
+    target: bpy.types.Object,
+) -> bpy.types.Constraint:
+    """Aim a bone's anatomical Y axis at an explicit authored landmark."""
+    pb = armature.pose.bones[bone_name]
+    constraint = pb.constraints.new("DAMPED_TRACK")
+    constraint.name = f"Phase1044_Track_{bone_name}"
+    constraint.target = target
+    constraint.track_axis = "TRACK_Y"
     return constraint
 
 
@@ -468,7 +483,8 @@ def arm_control_points(
     rest: dict[str, Vector],
     pose: dict,
     left: bool,
-) -> tuple[Vector, Vector]:
+) -> tuple[Vector, Vector, Vector]:
+    """Return explicit elbow, wrist and hand-finish ballet landmarks."""
     side = axes["side"]
     up = axes["up"]
     forward = axes["forward"]
@@ -476,32 +492,46 @@ def arm_control_points(
     side_sign = 1.0 if left else -1.0
     shape = ARM_SHAPES[str(pose["arm_shape"])]
 
-    shoulder = pose_head(armature, f"Upper_Arm_{suffix}")
     shoulder_center = (
         pose_head(armature, "Upper_Arm_L")
         + pose_head(armature, "Upper_Arm_R")
     ) * 0.5
-    upper_length = joint_length(rest, f"Upper_Arm_{suffix}", f"Lower_Arm_{suffix}")
-    lower_length = joint_length(rest, f"Lower_Arm_{suffix}", f"Hand_{suffix}")
+    upper_length = joint_length(
+        rest, f"Upper_Arm_{suffix}", f"Lower_Arm_{suffix}"
+    )
+    lower_length = joint_length(
+        rest, f"Lower_Arm_{suffix}", f"Hand_{suffix}"
+    )
+    hand_length = joint_length(
+        rest, f"Hand_{suffix}", f"Middle_{suffix}"
+    )
     reach = upper_length + lower_length
 
-    # ARM_SHAPES are defined from the body/shoulder center. Using each
-    # shoulder as the origin double-counts shoulder width and turns classical
-    # rounded positions into hands-on-hips / near-T-pose silhouettes.
-    hand_target = (
+    elbow_target = (
         shoulder_center
-        + side * side_sign * reach * float(shape["hand_side"])
-        + forward * reach * float(shape["hand_forward"])
-        - up * reach * float(shape["hand_down"])
+        + side * side_sign * reach * float(shape["elbow_side"])
+        + forward * reach * float(shape["elbow_forward"])
+        - up * reach * float(shape["elbow_down"])
+    )
+    wrist_target = (
+        shoulder_center
+        + side * side_sign * reach * float(shape["wrist_side"])
+        + forward * reach * float(shape["wrist_forward"])
+        - up * reach * float(shape["wrist_down"])
     )
 
-    pole_direction = (
-        side * side_sign * float(shape["pole_side"])
-        + forward * float(shape["pole_forward"])
-        - up * float(shape["pole_down"])
+    forearm_tangent = (wrist_target - elbow_target).normalized()
+    inward = -side * side_sign
+    hand_direction = (
+        forearm_tangent * 0.96
+        + inward * 0.10
+        - up * 0.04
     ).normalized()
-    pole_target = shoulder + pole_direction * reach * 1.55
-    return hand_target, pole_target
+    finish_target = (
+        wrist_target
+        + hand_direction * max(hand_length * 1.5, reach * 0.08)
+    )
+    return elbow_target, wrist_target, finish_target
 
 
 def leg_control_points(
@@ -551,14 +581,26 @@ def key_control_landmarks(
     for left in (True, False):
         suffix = "L" if left else "R"
         side_sign = 1.0 if left else -1.0
-        hand_target, arm_pole = arm_control_points(
+        elbow_target, wrist_target, finish_target = arm_control_points(
             armature, axes, rest, pose, left
         )
         set_control_location(
-            controls[f"arm_target_{suffix}"], armature, hand_target, frame
+            controls[f"arm_elbow_{suffix}"],
+            armature,
+            elbow_target,
+            frame,
         )
         set_control_location(
-            controls[f"arm_pole_{suffix}"], armature, arm_pole, frame
+            controls[f"arm_wrist_{suffix}"],
+            armature,
+            wrist_target,
+            frame,
+        )
+        set_control_location(
+            controls[f"arm_finish_{suffix}"],
+            armature,
+            finish_target,
+            frame,
         )
 
         ankle_target, leg_pole = leg_control_points(
@@ -848,10 +890,12 @@ def setup_controls_and_constraints(
     dict[str, Quaternion],
 ]:
     controls: dict[str, bpy.types.Object] = {}
-    ik_constraints: dict[str, tuple[bpy.types.Constraint, str, str]] = {}
+    leg_ik_constraints: dict[
+        str, tuple[bpy.types.Constraint, str, str]
+    ] = {}
 
-    # Capture clean rest orientations before any constraint can evaluate.
-    foot_world_rotations = {}
+    # Capture clean rest foot orientations before constraints evaluate.
+    foot_world_rotations: dict[str, Quaternion] = {}
     for suffix in ("L", "R"):
         foot_pb = armature.pose.bones[f"Foot_{suffix}"]
         foot_world_matrix = armature.matrix_world @ foot_pb.matrix
@@ -860,34 +904,42 @@ def setup_controls_and_constraints(
     for left in (True, False):
         suffix = "L" if left else "R"
 
-        controls[f"arm_target_{suffix}"] = create_control(
-            f"P1043_ArmTarget_{suffix}"
+        controls[f"arm_elbow_{suffix}"] = create_control(
+            f"P1044_ArmElbow_{suffix}"
         )
-        controls[f"arm_pole_{suffix}"] = create_control(
-            f"P1043_ArmPole_{suffix}"
+        controls[f"arm_wrist_{suffix}"] = create_control(
+            f"P1044_ArmWrist_{suffix}"
+        )
+        controls[f"arm_finish_{suffix}"] = create_control(
+            f"P1044_ArmFinish_{suffix}"
         )
         controls[f"leg_target_{suffix}"] = create_control(
-            f"P1043_LegTarget_{suffix}"
+            f"P1044_LegTarget_{suffix}"
         )
         controls[f"leg_pole_{suffix}"] = create_control(
-            f"P1043_LegPole_{suffix}"
+            f"P1044_LegPole_{suffix}"
         )
         controls[f"foot_rotation_{suffix}"] = create_control(
-            f"P1043_FootRotation_{suffix}"
+            f"P1044_FootRotation_{suffix}"
         )
 
-        # Put every control on the current limb before adding IK. Otherwise
-        # Blender evaluates the new constraint against world origin for one
-        # dependency-graph update and can twist the chain before calibration.
+        # Initialize every control from the clean imported rest pose before
+        # adding constraints, so no dependency-graph update can snap a limb
+        # toward world origin.
         set_control_location(
-            controls[f"arm_target_{suffix}"],
+            controls[f"arm_elbow_{suffix}"],
+            armature,
+            pose_head(armature, f"Lower_Arm_{suffix}"),
+        )
+        set_control_location(
+            controls[f"arm_wrist_{suffix}"],
             armature,
             pose_head(armature, f"Hand_{suffix}"),
         )
         set_control_location(
-            controls[f"arm_pole_{suffix}"],
+            controls[f"arm_finish_{suffix}"],
             armature,
-            pose_head(armature, f"Lower_Arm_{suffix}"),
+            pose_head(armature, f"Middle_{suffix}"),
         )
         set_control_location(
             controls[f"leg_target_{suffix}"],
@@ -904,30 +956,36 @@ def setup_controls_and_constraints(
             foot_world_rotations[suffix],
         )
 
-        arm_constraint = create_ik_constraint(
+        # Arms use explicit classical joint landmarks, not IK poles.
+        create_damped_track_constraint(
+            armature,
+            f"Upper_Arm_{suffix}",
+            controls[f"arm_elbow_{suffix}"],
+        )
+        create_damped_track_constraint(
             armature,
             f"Lower_Arm_{suffix}",
-            controls[f"arm_target_{suffix}"],
-            controls[f"arm_pole_{suffix}"],
+            controls[f"arm_wrist_{suffix}"],
         )
-        ik_constraints[f"arm_{suffix}"] = (
-            arm_constraint,
-            f"Upper_Arm_{suffix}",
-            f"Lower_Arm_{suffix}",
+        create_damped_track_constraint(
+            armature,
+            f"Hand_{suffix}",
+            controls[f"arm_finish_{suffix}"],
         )
 
+        # Legs retain Blender native two-bone IK + turnout foot orientation.
         leg_constraint = create_ik_constraint(
             armature,
             f"Lower_Leg_{suffix}",
             controls[f"leg_target_{suffix}"],
             controls[f"leg_pole_{suffix}"],
         )
-        ik_constraints[f"leg_{suffix}"] = (
+        leg_constraint.name = f"Phase1044_LegIK_{suffix}"
+        leg_ik_constraints[f"leg_{suffix}"] = (
             leg_constraint,
             f"Upper_Leg_{suffix}",
             f"Lower_Leg_{suffix}",
         )
-
         create_world_rotation_constraint(
             armature,
             f"Foot_{suffix}",
@@ -935,26 +993,28 @@ def setup_controls_and_constraints(
         )
         bpy.context.view_layer.update()
 
-    # Calibrate pole angles on meaningful non-straight targets. This is the
-    # key difference from guessed Euler/bone-roll authoring.
-    calibration_pose = POSES[2]
+    # Pole calibration is now leg-only. Arm curvature is explicit.
+    calibration_pose = POSES[3]
     clear_pose(armature)
     apply_body_landmark(armature, axes, rest, calibration_pose)
 
     for left in (True, False):
         suffix = "L" if left else "R"
-        hand_target, arm_pole = arm_control_points(
-            armature, axes, rest, calibration_pose, left
+        elbow_target, wrist_target, finish_target = arm_control_points(
+            armature, axes, rest, POSES[2], left
         )
         set_control_location(
-            controls[f"arm_target_{suffix}"], armature, hand_target
+            controls[f"arm_elbow_{suffix}"], armature, elbow_target
         )
         set_control_location(
-            controls[f"arm_pole_{suffix}"], armature, arm_pole
+            controls[f"arm_wrist_{suffix}"], armature, wrist_target
+        )
+        set_control_location(
+            controls[f"arm_finish_{suffix}"], armature, finish_target
         )
 
         ankle_target, leg_pole = leg_control_points(
-            armature, axes, rest, POSES[3], left
+            armature, axes, rest, calibration_pose, left
         )
         set_control_location(
             controls[f"leg_target_{suffix}"], armature, ankle_target
@@ -966,18 +1026,15 @@ def setup_controls_and_constraints(
     bpy.context.view_layer.update()
 
     pole_angles: dict[str, float] = {}
-    for key, (constraint, root_bone, joint_bone) in ik_constraints.items():
+    for key, (constraint, root_bone, joint_bone) in leg_ik_constraints.items():
         suffix = key[-1]
-        kind = key.split("_")[0]
-        target = controls[f"{kind}_target_{suffix}"]
-        pole = controls[f"{kind}_pole_{suffix}"]
         angle = calibrate_pole_angle(
             armature,
             constraint,
             root_bone,
             joint_bone,
-            target,
-            pole,
+            controls[f"leg_target_{suffix}"],
+            controls[f"leg_pole_{suffix}"],
         )
         pole_angles[key] = round(math.degrees(angle), 4)
 
@@ -1047,8 +1104,8 @@ def main() -> None:
 
     configure_object_interpolation(list(controls.values()))
 
-    # Native IK evaluates continuously between controls; bake its visual result
-    # to the imported skeleton and remove all temporary constraints.
+    # Leg IK and explicit arm landmark tracks evaluate continuously between
+    # controls; bake their visual result and remove every authoring constraint.
     scene.frame_set(START_FRAME)
     bake_native_ik(armature)
     remove_controls(controls)
@@ -1088,7 +1145,9 @@ def main() -> None:
 
     report = {
         "phase": PHASE,
-        "authoring_model": "Blender native IK + calibrated poles + visual bake",
+        "authoring_model": (
+            "leg native IK + explicit elbow/wrist/hand Damped Track + visual bake"
+        ),
         "source_glb": str(input_path),
         "output_glb": str(output_path),
         "blend_output": str(blend_output) if blend_output else None,
@@ -1104,7 +1163,8 @@ def main() -> None:
         "actions_before": actions_before,
         "actions_after": [action_summary(a) for a in bpy.data.actions],
         "authored_action": ACTION_NAME,
-        "native_ik_baked": True,
+        "leg_native_ik_baked": True,
+        "arm_landmark_tracks_baked": True,
         "constraints_after_bake": remaining_constraints,
         "temporary_controls_after_bake": remaining_controls,
         "pole_angles_deg": pole_angles,
@@ -1130,10 +1190,13 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    print("PHASE10_4_3=PASS")
+    print("PHASE10_4_4=PASS")
     print(f"ARMATURE={armature.name}")
     print(f"ACTION={ACTION_NAME}")
-    print(f"NATIVE_IK_BAKED={report['native_ik_baked']}")
+    print(f"LEG_NATIVE_IK_BAKED={report['leg_native_ik_baked']}")
+    print(
+        f"ARM_LANDMARK_TRACKS_BAKED={report['arm_landmark_tracks_baked']}"
+    )
     print(f"CONSTRAINTS_AFTER_BAKE={remaining_constraints}")
     print(f"TEMP_CONTROLS_AFTER_BAKE={len(remaining_controls)}")
     print(f"OUTPUT={output_path}")
