@@ -14,7 +14,19 @@ enum RunState {
 	LEVEL_COMPLETE,
 }
 
-const COMPLETION_CEREMONY_DURATION := 2.60
+enum CompletionPhase {
+	NONE,
+	WALK_TO_MARK,
+	FINAL_BOW,
+	EXIT_TURN,
+	EXIT_WALK,
+}
+
+const COMPLETION_WALK_SPEED := 1.45
+const COMPLETION_APPROACH_DISTANCE := 1.60
+const COMPLETION_FINAL_BOW_DURATION := 2.60
+const COMPLETION_EXIT_TURN_DURATION := 0.38
+const COMPLETION_EXIT_WALK_DISTANCE := 3.60
 
 const CHECKPOINTS := [
 	{"id": "START", "x": 0.0},
@@ -51,7 +63,10 @@ var _run_started := false
 var _checkpoint_index := 0
 var _checkpoint_position := Vector3.ZERO
 var _checkpoint_music_time := 0.0
-var _completion_ceremony_elapsed := 0.0
+var _completion_phase := CompletionPhase.NONE
+var _completion_phase_elapsed := 0.0
+var _completion_bow_x := 0.0
+var _completion_exit_x := 0.0
 var _dancer_visual: Node
 
 
@@ -78,9 +93,7 @@ func _physics_process(delta: float) -> void:
 	if not _run_started:
 		return
 	if _state == RunState.COMPLETION_CEREMONY:
-		_completion_ceremony_elapsed += delta
-		if _completion_ceremony_elapsed >= COMPLETION_CEREMONY_DURATION:
-			_finish_level_complete_state()
+		_update_completion_ceremony(delta)
 		return
 	if _state != RunState.PLAYING:
 		return
@@ -201,28 +214,80 @@ func _continue_from_checkpoint() -> void:
 
 func _begin_completion_ceremony() -> void:
 	_state = RunState.COMPLETION_CEREMONY
-	_completion_ceremony_elapsed = 0.0
+	_completion_phase = CompletionPhase.WALK_TO_MARK
+	_completion_phase_elapsed = 0.0
+	_completion_bow_x = dancer.global_position.x + COMPLETION_APPROACH_DISTANCE
+	_completion_exit_x = _completion_bow_x + COMPLETION_EXIT_WALK_DISTANCE
+
 	fork_camera_controller.call("restore_normal_state")
 	fork_camera_controller.call("set_frozen", true)
-	# Let the soundtrack finish naturally through the closing reverence.
-	# Stopping here can audibly cut the final sustain before the ceremony lands.
+
+	# Gameplay scoring/input is finished, but the physical dancer remains active
+	# for the closing stage behavior: run complete -> short walk -> final
+	# révérence -> visible 90° return to +X -> walk through the wing.
 	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
 	game_over_overlay.visible = false
 	level_complete_overlay.visible = false
 
-	if dancer.has_method("begin_stage_ending"):
-		dancer.call("begin_stage_ending")
 	_dancer_visual = dancer.get_node_or_null("DancerVisual")
+	if dancer.has_method("begin_stage_ending"):
+		dancer.call("begin_stage_ending", COMPLETION_WALK_SPEED)
+	_set_completion_stage_visual(&"WALK")
+
+
+func _update_completion_ceremony(delta: float) -> void:
+	_completion_phase_elapsed += delta
+
+	match _completion_phase:
+		CompletionPhase.WALK_TO_MARK:
+			if dancer.global_position.x < _completion_bow_x:
+				return
+			var bow_mark := dancer.global_position
+			bow_mark.x = _completion_bow_x
+			dancer.global_position = bow_mark
+			if dancer.has_method("set_stage_ending_speed"):
+				dancer.call("set_stage_ending_speed", 0.0)
+			_completion_phase = CompletionPhase.FINAL_BOW
+			_completion_phase_elapsed = 0.0
+			_set_completion_stage_visual(&"FINAL_BOW")
+
+		CompletionPhase.FINAL_BOW:
+			if _completion_phase_elapsed < COMPLETION_FINAL_BOW_DURATION:
+				return
+			_completion_phase = CompletionPhase.EXIT_TURN
+			_completion_phase_elapsed = 0.0
+			_set_completion_stage_visual(&"EXIT_TURN")
+
+		CompletionPhase.EXIT_TURN:
+			if _completion_phase_elapsed < COMPLETION_EXIT_TURN_DURATION:
+				return
+			_completion_phase = CompletionPhase.EXIT_WALK
+			_completion_phase_elapsed = 0.0
+			_set_completion_stage_visual(&"WALK")
+			if dancer.has_method("set_stage_ending_speed"):
+				dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)
+
+		CompletionPhase.EXIT_WALK:
+			if dancer.global_position.x < _completion_exit_x:
+				return
+			if dancer.has_method("set_stage_ending_speed"):
+				dancer.call("set_stage_ending_speed", 0.0)
+			_finish_level_complete_state()
+
+
+func _set_completion_stage_visual(stage: StringName) -> void:
 	if (
 		_dancer_visual != null
 		and _dancer_visual.has_method("set_stage_presentation_state")
 	):
-		_dancer_visual.call("set_stage_presentation_state", &"FINAL_BOW")
+		_dancer_visual.call("set_stage_presentation_state", stage)
 
 
 func _finish_level_complete_state() -> void:
+	_completion_phase = CompletionPhase.NONE
+	_completion_phase_elapsed = 0.0
 	_state = RunState.LEVEL_COMPLETE
 	audio_player.stop()
 	music_root.process_mode = Node.PROCESS_MODE_DISABLED
