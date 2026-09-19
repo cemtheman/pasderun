@@ -16,6 +16,7 @@ enum RunState {
 
 enum CompletionPhase {
 	NONE,
+	DECELERATE_TO_WALK,
 	WALK_TO_MARK,
 	FINAL_BOW,
 	EXIT_TURN,
@@ -23,7 +24,8 @@ enum CompletionPhase {
 }
 
 const COMPLETION_WALK_SPEED := 1.45
-const COMPLETION_APPROACH_DISTANCE := 1.60
+const COMPLETION_DECEL_DURATION := 0.90
+const COMPLETION_APPROACH_DISTANCE := 2.20
 const COMPLETION_FINAL_BOW_DURATION := 2.60
 const COMPLETION_EXIT_TURN_DURATION := 0.38
 const COMPLETION_EXIT_WALK_DISTANCE := 7.00
@@ -67,6 +69,8 @@ var _completion_phase := CompletionPhase.NONE
 var _completion_phase_elapsed := 0.0
 var _completion_bow_x := 0.0
 var _completion_exit_x := 0.0
+var _completion_decel_start_x := 0.0
+var _completion_decel_start_speed := RUN_SPEED
 var _dancer_visual: Node
 
 
@@ -84,6 +88,8 @@ func _ready() -> void:
 	next_level_button.pressed.connect(_load_next_level)
 	main_menu_button.pressed.connect(_return_to_main_menu)
 	start_gate.connect("runtime_started", Callable(self, "_on_runtime_started"))
+	if not audio_player.finished.is_connected(_on_music_finished):
+		audio_player.finished.connect(_on_music_finished)
 	next_level_button.disabled = next_level_scene == null
 	next_level_status.visible = next_level_scene == null
 	_update_checkpoint_status()
@@ -97,7 +103,12 @@ func _physics_process(delta: float) -> void:
 		return
 	if _state != RunState.PLAYING:
 		return
-	if dancer.global_position.x >= completion_trigger.global_position.x:
+	# Music is the authoritative end of the choreographic phrase. The spatial
+	# trigger remains only as a safety fallback if the stream has already ended.
+	if (
+		dancer.global_position.x >= completion_trigger.global_position.x
+		and not audio_player.playing
+	):
 		_begin_completion_ceremony()
 		return
 	if dancer.global_position.y < DEATH_Y:
@@ -137,6 +148,12 @@ func _on_runtime_started() -> void:
 		_checkpoint_index,
 		_checkpoint_position
 	)
+
+
+func _on_music_finished() -> void:
+	if not _run_started or _state != RunState.PLAYING:
+		return
+	_begin_completion_ceremony()
 
 
 func _update_checkpoint() -> void:
@@ -213,18 +230,31 @@ func _continue_from_checkpoint() -> void:
 
 
 func _begin_completion_ceremony() -> void:
+	if _state != RunState.PLAYING:
+		return
+
 	_state = RunState.COMPLETION_CEREMONY
-	_completion_phase = CompletionPhase.WALK_TO_MARK
+	_completion_phase = CompletionPhase.DECELERATE_TO_WALK
 	_completion_phase_elapsed = 0.0
-	_completion_bow_x = dancer.global_position.x + COMPLETION_APPROACH_DISTANCE
+	_completion_decel_start_x = dancer.global_position.x
+	_completion_decel_start_speed = maxf(
+		absf(dancer.velocity.x),
+		COMPLETION_WALK_SPEED
+	)
+	# Bow mark is measured from the point where the music actually ends, not
+	# from a late course trigger.
+	_completion_bow_x = (
+		_completion_decel_start_x
+		+ COMPLETION_DECEL_DURATION
+		* 0.5
+		* (_completion_decel_start_speed + COMPLETION_WALK_SPEED)
+		+ COMPLETION_APPROACH_DISTANCE
+	)
 	_completion_exit_x = _completion_bow_x + COMPLETION_EXIT_WALK_DISTANCE
 
 	fork_camera_controller.call("restore_normal_state")
 	fork_camera_controller.call("set_frozen", true)
 
-	# Gameplay scoring/input is finished, but the physical dancer remains active
-	# for the closing stage behavior: run complete -> short walk -> final
-	# révérence -> visible 90° return to +X -> walk through the wing.
 	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
@@ -233,14 +263,46 @@ func _begin_completion_ceremony() -> void:
 
 	_dancer_visual = dancer.get_node_or_null("DancerVisual")
 	if dancer.has_method("begin_stage_ending"):
-		dancer.call("begin_stage_ending", COMPLETION_WALK_SPEED)
-	_set_completion_stage_visual(&"WALK")
+		dancer.call(
+			"begin_stage_ending",
+			_completion_decel_start_speed
+		)
+
+	# Preserve running gait while speed eases down. WALK begins only once body
+	# speed reaches the walk envelope.
+	_set_completion_stage_visual(&"RUN")
 
 
 func _update_completion_ceremony(delta: float) -> void:
 	_completion_phase_elapsed += delta
 
 	match _completion_phase:
+		CompletionPhase.DECELERATE_TO_WALK:
+			var t := clampf(
+				_completion_phase_elapsed / COMPLETION_DECEL_DURATION,
+				0.0,
+				1.0
+			)
+			var eased := smoothstep(0.0, 1.0, t)
+			var speed := lerpf(
+				_completion_decel_start_speed,
+				COMPLETION_WALK_SPEED,
+				eased
+			)
+			if dancer.has_method("set_stage_ending_speed"):
+				dancer.call("set_stage_ending_speed", speed)
+			if t < 1.0:
+				return
+
+			_completion_phase = CompletionPhase.WALK_TO_MARK
+			_completion_phase_elapsed = 0.0
+			_set_completion_stage_visual(&"WALK")
+			if dancer.has_method("set_stage_ending_speed"):
+				dancer.call(
+					"set_stage_ending_speed",
+					COMPLETION_WALK_SPEED
+				)
+
 		CompletionPhase.WALK_TO_MARK:
 			if dancer.global_position.x < _completion_bow_x:
 				return
@@ -267,7 +329,10 @@ func _update_completion_ceremony(delta: float) -> void:
 			_completion_phase_elapsed = 0.0
 			_set_completion_stage_visual(&"WALK")
 			if dancer.has_method("set_stage_ending_speed"):
-				dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)
+				dancer.call(
+					"set_stage_ending_speed",
+					COMPLETION_WALK_SPEED
+				)
 
 		CompletionPhase.EXIT_WALK:
 			if dancer.global_position.x < _completion_exit_x:
