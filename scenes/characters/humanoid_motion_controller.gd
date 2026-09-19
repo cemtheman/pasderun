@@ -1254,26 +1254,26 @@ func _apply_reverence_port_de_bras(
 			# of the lower sternum/upper abdomen.
 			peak_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.52
-				- Vector3.UP * upper_length * 0.30
+				+ outward * upper_length * 0.48
+				- Vector3.UP * upper_length * 0.32
 				+ audience_forward * upper_length * 0.18
 			)
 			peak_hand = (
 				shoulder_center
-				+ outward * reach * 0.10
-				- Vector3.UP * reach * 0.36
+				+ outward * reach * 0.06
+				- Vector3.UP * reach * 0.39
 				+ audience_forward * reach * 0.34
 			)
 			settle_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.50
-				- Vector3.UP * upper_length * 0.32
+				+ outward * upper_length * 0.46
+				- Vector3.UP * upper_length * 0.34
 				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
 				shoulder_center
-				+ outward * reach * 0.08
-				- Vector3.UP * reach * 0.38
+				+ outward * reach * 0.04
+				- Vector3.UP * reach * 0.41
 				+ audience_forward * reach * 0.30
 			)
 		elif final_variant and expressive:
