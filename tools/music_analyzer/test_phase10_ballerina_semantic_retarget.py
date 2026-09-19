@@ -183,7 +183,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.bootstrap,
         )
         self.assertIn(
-            '_play_ballerina_animation(player, &"run", true, 1.0)',
+            '_play_run_from_pending_contact(player, 1.0)',
             self.bootstrap,
         )
         self.assertIn(
@@ -315,7 +315,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIsNotNone(retarget_block)
         self.assertNotIn('&"LOW_TRANSITION": true', retarget_block.group(1))
         self.assertIn(
-            '_play_ballerina_animation(player, &"run", true, 0.92)',
+            '_play_run_from_pending_contact(player, 0.92)',
             self.bootstrap,
         )
 
@@ -464,7 +464,18 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('if state == &"AIRBORNE":', self.retarget)
         self.assertIn('if state != &"LANDING":', self.retarget)
         self.assertIn("var strength := 0.30", self.retarget)
-        self.assertIn("var contact_strength := 0.28", self.retarget)
+        self.assertIn(
+            "var compression_curve := sin(PI * clampf(t / 0.92, 0.0, 1.0))",
+            self.retarget,
+        )
+        self.assertIn(
+            "var leg_strength := 0.48 * impact * compression_curve",
+            self.retarget,
+        )
+        self.assertIn(
+            "var upper_strength := 0.30 * impact * compression_curve",
+            self.retarget,
+        )
 
     def test_stumble_speed_changes_are_continuous_not_state_snaps(self) -> None:
         self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.68", self.dancer)
