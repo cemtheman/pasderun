@@ -184,6 +184,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertNotIn("_rz(", self.controller)
         self.assertNotIn("kneel", self.controller.lower())
         self.assertNotIn("hands_on_hips", self.controller.lower())
+
     def test_phase1031_reverence_profiles_have_distinct_phrasing_and_synced_callers(self) -> None:
         for token in (
             '"place_end": 0.55',
@@ -194,7 +195,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             '"plie_end": 1.55',
             '"rise_end": 2.35',
             '"settle_end": 2.85',
-            "_apply_reverence_phrase(_state_elapsed, OPENING_REVERENCE)",
+            "_apply_opening_reverence_phrase_v1(_state_elapsed)",
             "_apply_reverence_phrase(_state_elapsed, FINAL_REVERENCE)",
         ):
             self.assertIn(token, self.controller)
@@ -203,9 +204,6 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "const COMPLETION_FINAL_BOW_DURATION := 2.85",
             self.recovery,
         )
-
-
-
     def test_prefixed_import_bones_have_safe_suffix_resolution(self) -> None:
         finder = re.search(
             r'func _find_bone\(.*?(?=\n\nfunc |\Z)',
@@ -266,25 +264,20 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
 
 
 
+
     def test_phase1032_uses_audited_ballet_rig_articulation(self) -> None:
         resolver = re.search(
             r'func _resolve_humanoid_bones\(\).*?(?=\n\nfunc |\Z)',
             self.controller,
             re.DOTALL,
         )
-        clavicle = re.search(
-            r'func _apply_reverence_clavicle_support\([^)]*\).*?(?=\n\nfunc |\Z)',
-            self.controller,
-            re.DOTALL,
-        )
-        port = re.search(
+        final_port = re.search(
             r'func _apply_reverence_port_de_bras\([^)]*\).*?(?=\n\nfunc |\Z)',
             self.controller,
             re.DOTALL,
         )
         self.assertIsNotNone(resolver)
-        self.assertIsNotNone(clavicle)
-        self.assertIsNotNone(port)
+        self.assertIsNotNone(final_port)
 
         for token in (
             '"left_clavicle": _find_bone(["leftclavicle", "claviclel", "shoulderl"])',
@@ -296,26 +289,68 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         ):
             self.assertIn(token, resolver.group(0))
 
-        self.assertIn('var expressive: bool = final_variant and left == expressive_left', clavicle.group(0))
-        self.assertIn('var strength := (0.18 if final_variant else 0.12)', clavicle.group(0))
-        self.assertIn('_steer_segment_toward_world_point(', clavicle.group(0))
-        self.assertIn('var middle := _bone_index(', port.group(0))
-        self.assertIn('var hand_finish_direction: Vector3', port.group(0))
-        self.assertIn('var hand_finish_target :=', port.group(0))
-        self.assertIn('var opening_variant: bool = variant == OPENING_REVERENCE', port.group(0))
-        self.assertIn('var final_variant: bool = variant == FINAL_REVERENCE', port.group(0))
-        self.assertIn('var expressive: bool = final_variant and left == expressive_left', port.group(0))
-        self.assertIn('if opening_variant:', port.group(0))
-        self.assertIn('outward * upper_length * 0.48', port.group(0))
-        self.assertIn('- Vector3.UP * upper_length * 0.32', port.group(0))
-        self.assertIn('outward * reach * 0.03', port.group(0))
-        self.assertIn('- Vector3.UP * reach * 0.43', port.group(0))
-        self.assertIn('var hand_floor_ratio := 0.40 if opening_variant else 0.30', port.group(0))
-        self.assertIn('-outward * 0.96', port.group(0))
-        self.assertIn('audience_forward * 0.16', port.group(0))
-        self.assertIn('- Vector3.UP * 0.05', port.group(0))
-        self.assertIn('clampf(hand_finish_strength, 0.16, 0.42)', port.group(0))
-        self.assertIn('_steer_segment_toward_world_point(', port.group(0))
+        self.assertIn('var middle := _bone_index(', final_port.group(0))
+        self.assertIn('var final_variant: bool = variant == FINAL_REVERENCE', final_port.group(0))
+        self.assertIn('elif final_variant and expressive:', final_port.group(0))
+        self.assertIn('elif final_variant:', final_port.group(0))
+
+    def test_phase1033_opening_reverence_is_staggered_motion_phrase(self) -> None:
+        phrase = re.search(
+            r'func _apply_opening_reverence_phrase_v1\([^)]*\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        curve = re.search(
+            r'func _apply_opening_port_de_bras_curve\([^)]*\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        pelvis = re.search(
+            r'func _apply_opening_pelvis_follow\([^)]*\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        epaulement = re.search(
+            r'func _apply_opening_epaulement_phrase\([^)]*\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(phrase)
+        self.assertIsNotNone(curve)
+        self.assertIsNotNone(pelvis)
+        self.assertIsNotNone(epaulement)
+
+        # Legs lead, pelvis follows, torso follows pelvis, head follows torso.
+        for token in (
+            "var placement := smoothstep(0.00, 0.18, u)",
+            "var arm_enavant := smoothstep(0.12, 0.50, u)",
+            "var leg_descent := smoothstep(0.42, 0.68, u)",
+            "var pelvis_descent := smoothstep(0.46, 0.70, u)",
+            "var torso_in := smoothstep(0.52, 0.72, u)",
+            "var head_in := smoothstep(0.58, 0.76, u)",
+            "var leg_rise := smoothstep(0.70, 0.88, u)",
+            "var torso_out := smoothstep(0.76, 0.92, u)",
+            "var head_out := smoothstep(0.82, 0.96, u)",
+            "var arm_resolve := smoothstep(0.78, 1.00, u)",
+        ):
+            self.assertIn(token, phrase.group(0))
+
+        self.assertIn("_apply_opening_pelvis_follow(profile, pelvis_depth)", phrase.group(0))
+        self.assertIn("_apply_opening_clavicle_phrase(profile, arm_enavant, arm_resolve)", phrase.group(0))
+        self.assertIn("_apply_opening_epaulement_phrase(profile, torso_ack, head_ack)", phrase.group(0))
+
+        # Wrist/hand is the continuation of the forearm curve, not an independent angle.
+        self.assertIn(
+            "var forearm_tangent := (hand_target - elbow_target).normalized()",
+            curve.group(0),
+        )
+        self.assertIn("forearm_tangent * hand_axis_length", curve.group(0))
+        self.assertNotIn("hand_finish_direction", curve.group(0))
+
+        # Pelvis depth has its own delayed envelope rather than sharing leg_depth.
+        self.assertIn('var knee_angle := float(profile["plie_angle"]) * pelvis_depth', pelvis.group(0))
+        self.assertIn("torso_ack: float", epaulement.group(0))
+        self.assertIn("head_ack: float", epaulement.group(0))
 
 
     def test_stage_and_music_callers_target_ballerina_directly(self) -> None:

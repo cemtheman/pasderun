@@ -890,7 +890,7 @@ func _apply_opening_reverence() -> void:
 		)
 	)
 	_set_stage_orientation(turn_in * (1.0 - turn_out))
-	_apply_reverence_phrase(_state_elapsed, OPENING_REVERENCE)
+	_apply_opening_reverence_phrase_v1(_state_elapsed)
 	_blend_stage_entry_pose(0.18)
 
 func _apply_stage_ready() -> void:
@@ -959,7 +959,274 @@ func _reverence_profile(variant: StringName) -> Dictionary:
 	}
 
 
+
+func _apply_opening_reverence_phrase_v1(elapsed: float) -> void:
+	var profile := _reverence_profile(OPENING_REVERENCE)
+	var duration := float(profile["duration"])
+	var u := clampf(elapsed / maxf(duration, 0.001), 0.0, 1.0)
+
+	# Révérence Motion Contract v1:
+	# placement -> arm gather/en-avant passage -> knees soften -> pelvis follows
+	# -> torso acknowledges -> head follows -> legs rise -> torso/head recover
+	# -> arms resolve. The overlaps are intentional; nothing starts all at once.
+	var placement := smoothstep(0.00, 0.18, u)
+	var arm_enavant := smoothstep(0.12, 0.50, u)
+	var leg_descent := smoothstep(0.42, 0.68, u)
+	var leg_rise := smoothstep(0.70, 0.88, u)
+	var leg_depth := leg_descent * (1.0 - leg_rise)
+	var pelvis_descent := smoothstep(0.46, 0.70, u)
+	var pelvis_rise := smoothstep(0.72, 0.90, u)
+	var pelvis_depth := pelvis_descent * (1.0 - pelvis_rise)
+	var torso_in := smoothstep(0.52, 0.72, u)
+	var torso_out := smoothstep(0.76, 0.92, u)
+	var torso_ack := torso_in * (1.0 - torso_out)
+	var head_in := smoothstep(0.58, 0.76, u)
+	var head_out := smoothstep(0.82, 0.96, u)
+	var head_ack := head_in * (1.0 - head_out)
+	var arm_resolve := smoothstep(0.78, 1.00, u)
+	var wrist_follow := (
+		smoothstep(0.18, 0.54, u)
+		* (1.0 - smoothstep(0.84, 1.00, u))
+	)
+	var settle := smoothstep(0.84, 1.00, u)
+
+	_apply_reverence_leg_chain(profile, placement, leg_depth, settle)
+	_apply_opening_pelvis_follow(profile, pelvis_depth)
+	_apply_opening_clavicle_phrase(profile, arm_enavant, arm_resolve)
+	_apply_opening_port_de_bras_curve(
+		profile,
+		arm_enavant,
+		arm_resolve,
+		wrist_follow
+	)
+	_apply_opening_epaulement_phrase(profile, torso_ack, head_ack)
+
+
+func _apply_opening_pelvis_follow(
+	profile: Dictionary,
+	pelvis_depth: float
+) -> void:
+	var leg_length := _idle_leg_length()
+	var knee_angle := float(profile["plie_angle"]) * pelvis_depth
+	var derived_drop := leg_length * (1.0 - cos(knee_angle))
+	var max_drop := leg_length * float(profile["root_drop_ratio"])
+	_model_root.position.y = (
+		_model_base_transform.origin.y
+		- minf(derived_drop, max_drop)
+	)
+
+
+func _apply_opening_clavicle_phrase(
+	profile: Dictionary,
+	arm_enavant: float,
+	arm_resolve: float
+) -> void:
+	var support := arm_enavant * (1.0 - arm_resolve)
+	if support <= 0.001:
+		return
+
+	var chest := _bone_index("chest")
+	var chest_position := _bone_world_position(chest)
+	for left in [true, false]:
+		var clavicle := _bone_index("left_clavicle" if left else "right_clavicle")
+		var shoulder := _bone_index("left_upper_arm" if left else "right_upper_arm")
+		if clavicle < 0 or shoulder < 0:
+			continue
+
+		var clavicle_position := _bone_world_position(clavicle)
+		var shoulder_position := _bone_world_position(shoulder)
+		var clavicle_length := maxf(
+			clavicle_position.distance_to(shoulder_position),
+			0.001
+		)
+		var outward := shoulder_position - chest_position
+		outward -= Vector3.UP * outward.dot(Vector3.UP)
+		if outward.length_squared() <= 0.000001:
+			outward = Vector3(-1.0 if left else 1.0, 0.0, 0.0)
+		outward = outward.normalized()
+
+		# Clavicle follows arm elevation; it carries rather than shrugs.
+		var lift := 0.025 + 0.035 * support
+		var target_direction := (
+			outward
+			+ Vector3.UP * lift
+			+ Vector3(0.0, 0.0, 0.06)
+		).normalized()
+		var shoulder_target := (
+			clavicle_position
+			+ target_direction * clavicle_length
+		)
+		_steer_segment_toward_world_point(
+			clavicle,
+			shoulder,
+			shoulder_target,
+			0.12 * support
+		)
+
+
+func _apply_opening_port_de_bras_curve(
+	profile: Dictionary,
+	arm_enavant: float,
+	arm_resolve: float,
+	wrist_follow: float
+) -> void:
+	var left_shoulder := _bone_index("left_upper_arm")
+	var right_shoulder := _bone_index("right_upper_arm")
+	var chest := _bone_index("chest")
+	var chest_position := _bone_world_position(chest)
+	var shoulder_center := chest_position
+	if left_shoulder >= 0 and right_shoulder >= 0:
+		shoulder_center = (
+			_bone_world_position(left_shoulder)
+			+ _bone_world_position(right_shoulder)
+		) * 0.5
+
+	var audience_forward := Vector3(0.0, 0.0, 1.0)
+	for left in [true, false]:
+		var shoulder := left_shoulder if left else right_shoulder
+		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
+		var hand := _bone_index("left_hand" if left else "right_hand")
+		var middle := _bone_index("left_middle" if left else "right_middle")
+		if shoulder < 0 or elbow < 0:
+			continue
+
+		var shoulder_position := _bone_world_position(shoulder)
+		var elbow_position := _bone_world_position(elbow)
+		var outward := shoulder_position - shoulder_center
+		outward -= Vector3.UP * outward.dot(Vector3.UP)
+		if outward.length_squared() <= 0.000001:
+			outward = Vector3(-1.0 if left else 1.0, 0.0, 0.0)
+		outward = outward.normalized()
+
+		var upper_length := maxf(
+			shoulder_position.distance_to(elbow_position),
+			0.001
+		)
+		var forearm_length := upper_length * 0.92
+		if hand >= 0:
+			forearm_length = maxf(
+				elbow_position.distance_to(_bone_world_position(hand)),
+				0.001
+			)
+		var reach := upper_length + forearm_length
+
+		# LOW and EN-AVANT are landmarks on one continuous curve, not poses
+		# commanded independently. Resolution returns through a lower rounded line.
+		var low_elbow := (
+			shoulder_position
+			+ outward * upper_length * 0.34
+			- Vector3.UP * upper_length * 0.44
+			+ audience_forward * upper_length * 0.14
+		)
+		var low_hand := (
+			shoulder_center
+			+ outward * reach * 0.12
+			- Vector3.UP * reach * 0.49
+			+ audience_forward * reach * 0.25
+		)
+		var enavant_elbow := (
+			shoulder_position
+			+ outward * upper_length * 0.48
+			- Vector3.UP * upper_length * 0.32
+			+ audience_forward * upper_length * 0.18
+		)
+		var enavant_hand := (
+			shoulder_center
+			+ outward * reach * 0.03
+			- Vector3.UP * reach * 0.43
+			+ audience_forward * reach * 0.32
+		)
+		var resolve_elbow := (
+			shoulder_position
+			+ outward * upper_length * 0.32
+			- Vector3.UP * upper_length * 0.46
+			+ audience_forward * upper_length * 0.12
+		)
+		var resolve_hand := (
+			shoulder_center
+			+ outward * reach * 0.10
+			- Vector3.UP * reach * 0.50
+			+ audience_forward * reach * 0.22
+		)
+
+		var elbow_target := low_elbow.lerp(enavant_elbow, arm_enavant)
+		var hand_target := low_hand.lerp(enavant_hand, arm_enavant)
+		elbow_target = elbow_target.lerp(resolve_elbow, arm_resolve)
+		hand_target = hand_target.lerp(resolve_hand, arm_resolve)
+
+		_steer_segment_toward_world_point(
+			shoulder,
+			elbow,
+			elbow_target,
+			0.97
+		)
+		if hand >= 0:
+			_steer_segment_toward_world_point(
+				elbow,
+				hand,
+				hand_target,
+				0.97
+			)
+			if middle >= 0:
+				# The hand continues the forearm curve. It no longer receives an
+				# independent wrist angle that can break the port-de-bras line.
+				var forearm_tangent := (hand_target - elbow_target).normalized()
+				var hand_position := _bone_world_position(hand)
+				var middle_position := _bone_world_position(middle)
+				var hand_axis_length := maxf(
+					hand_position.distance_to(middle_position),
+					0.001
+				)
+				var hand_finish_target := (
+					hand_position
+					+ forearm_tangent * hand_axis_length
+				)
+				_steer_segment_toward_world_point(
+					hand,
+					middle,
+					hand_finish_target,
+					0.18 + 0.30 * wrist_follow
+				)
+
+
+func _apply_opening_epaulement_phrase(
+	profile: Dictionary,
+	torso_ack: float,
+	head_ack: float
+) -> void:
+	var expressive_left := bool(profile["expressive_left"])
+	var expressive_side := _audience_pair_side_sign(
+		_bone_index("left_upper_arm"),
+		_bone_index("right_upper_arm")
+	)
+	if not expressive_left:
+		expressive_side = -expressive_side
+
+	# The torso joins after the legs/pelvis; the head joins after the torso.
+	_steer_segment_world_direction(
+		_bone_index("pelvis"),
+		_bone_index("chest"),
+		Vector3(
+			expressive_side * 0.010 * torso_ack,
+			0.999,
+			float(profile["torso_ack"]) * torso_ack
+		).normalized(),
+		0.78
+	)
+	_steer_segment_world_direction(
+		_bone_index("chest"),
+		_bone_index("head"),
+		Vector3(
+			expressive_side * 0.040 * head_ack,
+			0.996,
+			float(profile["head_ack"]) * head_ack
+		).normalized(),
+		0.74
+	)
+
+
 func _apply_reverence_phrase(elapsed: float, variant: StringName) -> void:
+	# Final révérence keeps the accepted Phase 10.3.2 phrase path.
 	var profile := _reverence_profile(variant)
 	var place_end := float(profile["place_end"])
 	var plie_end := float(profile["plie_end"])
