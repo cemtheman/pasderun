@@ -51,8 +51,8 @@ const STAGE_BOW_DURATION := 1.65
 const STAGE_BOW_TURN_TIME := 0.28
 const STAGE_FINAL_BOW_DURATION := 2.60
 const STAGE_FINAL_TURN_TIME := 0.32
-const STUMBLE_DURATION := 0.24
-const RECOVERY_DURATION := 0.62
+const STUMBLE_DURATION := 0.36
+const RECOVERY_DURATION := 0.72
 
 @onready var _model_root: Node3D = $low_poly_girl
 @onready var _skeleton: Skeleton3D = $low_poly_girl/Rig/Skeleton3D
@@ -632,14 +632,14 @@ func _apply_air_motion_overlay(state: StringName) -> void:
 
 	# Compression peaks after contact and is fully released before the next run
 	# step. High drops absorb more deeply; an ordinary jump stays lighter.
-	var impact := 0.58 if was_jump else clampf(
-		0.58 + drop_distance * 0.24,
-		0.58,
-		0.96
+	var impact := 0.52 if was_jump else clampf(
+		0.68 + drop_distance * 0.28,
+		0.68,
+		1.0
 	)
 	var compression_curve := sin(PI * clampf(t / 0.92, 0.0, 1.0))
-	var leg_strength := 0.48 * impact * compression_curve
-	var upper_strength := 0.30 * impact * compression_curve
+	var leg_strength := 0.62 * impact * compression_curve
+	var upper_strength := 0.38 * impact * compression_curve
 
 	var support_left := bool(
 		_animation_player.get_meta("_landing_support_left", false)
@@ -756,14 +756,14 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 	if state == &"STUMBLE":
 		var t := clampf(_state_elapsed / STUMBLE_DURATION, 0.0, 1.0)
 		var impact := smoothstep(0.0, 1.0, t)
-		var torso_strength := 0.42 * smoothstep(0.04, 0.68, t)
-		var trip_leg_strength := 0.50 * smoothstep(0.0, 0.50, t)
-		var arm_strength := 0.34 * smoothstep(0.18, 0.82, t)
+		var torso_strength := 0.62 * smoothstep(0.03, 0.62, t)
+		var trip_leg_strength := 0.68 * smoothstep(0.0, 0.46, t)
+		var arm_strength := 0.54 * smoothstep(0.10, 0.72, t)
 
 		# Keep the CoM moving forward. Only a slight visual lag is needed to read
 		# the caught toe; vertical motion remains owned by CharacterBody3D.
 		_model_root.position += Vector3(
-			-0.050 * impact,
+			-0.080 * impact,
 			0.0,
 			0.0
 		)
@@ -773,7 +773,7 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 		_steer_current_chain_world_direction(
 			"Pelvis",
 			"Torso",
-			Vector3(0.48, 0.87, -0.05).lerp(
+			Vector3(0.58, 0.81, -0.05).lerp(
 				Vector3(0.08, 0.997, 0.0),
 				1.0 - impact
 			).normalized(),
@@ -845,14 +845,14 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 
 	var t := clampf(_state_elapsed / RECOVERY_DURATION, 0.0, 1.0)
 	var release := smoothstep(0.0, 1.0, t)
-	var torso_strength := 0.36 * (1.0 - smoothstep(0.35, 0.90, t))
-	var catch_step_strength := 0.44 * sin(
+	var torso_strength := 0.48 * (1.0 - smoothstep(0.38, 0.94, t))
+	var catch_step_strength := 0.60 * sin(
 		PI * clampf(t / 0.86, 0.0, 1.0)
 	)
-	var arm_strength := 0.28 * (1.0 - smoothstep(0.46, 0.92, t))
+	var arm_strength := 0.42 * (1.0 - smoothstep(0.48, 0.94, t))
 
 	_model_root.position += Vector3(
-		-0.050 * (1.0 - release),
+		-0.080 * (1.0 - release),
 		0.0,
 		0.0
 	)
@@ -1100,7 +1100,7 @@ func _apply_classical_reverence_upper_body(
 	_steer_current_segment_world_direction(
 		_binding_index("ArmBackElbow"),
 		_left_hand_idx,
-		Vector3(-fore_x, fore_y, fore_z).normalized(),
+		Vector3(fore_x, fore_y, fore_z).normalized(),
 		1.0
 	)
 	_steer_current_chain_world_direction(
@@ -1112,7 +1112,7 @@ func _apply_classical_reverence_upper_body(
 	_steer_current_segment_world_direction(
 		_binding_index("ArmFrontElbow"),
 		_right_hand_idx,
-		Vector3(fore_x, fore_y, fore_z).normalized(),
+		Vector3(-fore_x, fore_y, fore_z).normalized(),
 		1.0
 	)
 
