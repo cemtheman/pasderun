@@ -692,11 +692,11 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "RECOVERY_DURATION := 0.72",
             "Vector3(0.48, 0.87, -0.05)",
             "Vector3(0.78, -0.42, -0.18)",
-            "var catch_step_strength := 0.44 * sin(",
+            "var catch_step_strength := 0.60 * sin(",
             "_trip_uses_left_foot",
         ):
             self.assertIn(token, self.retarget)
-        self.assertIn("-0.050 * impact", self.retarget)
+        self.assertIn("-0.080 * impact", self.retarget)
 
 
     def test_large_final_reverence_uses_same_humanoid_anatomy_with_larger_range(self) -> None:
