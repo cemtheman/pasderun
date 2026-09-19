@@ -302,6 +302,7 @@ func _apply_visual_overlay(state: StringName) -> void:
 			_apply_stage_exit_turn()
 
 
+
 func _attach_presentation_helpers() -> void:
 	var capsule := _dancer.get_node_or_null("MeshInstance3D") as GeometryInstance3D
 	if capsule != null:
@@ -310,8 +311,7 @@ func _attach_presentation_helpers() -> void:
 	if _dancer.get_node_or_null("TapVisualFeedback") == null:
 		var tap_feedback := TAP_FEEDBACK_SCRIPT.new()
 		tap_feedback.name = "TapVisualFeedback"
-		_dancer.add_child(tap_feedback)
-
+		_dancer.call_deferred("add_child", tap_feedback)
 
 func _play_native(
 	animation_name: StringName,
@@ -1396,9 +1396,12 @@ func _set_stage_orientation(audience_alpha: float) -> void:
 	_model_root.basis = Basis(travel_q.slerp(audience_q, alpha))
 
 
+
 func _capture_idle_baseline() -> void:
 	var previous_animation := StringName(_animation_player.current_animation)
-	var previous_position := _animation_player.current_animation_position
+	var previous_position := 0.0
+	if previous_animation != &"":
+		previous_position = _animation_player.current_animation_position
 	var previous_speed := _animation_player.speed_scale
 	var was_playing := _animation_player.is_playing()
 
@@ -1417,7 +1420,6 @@ func _capture_idle_baseline() -> void:
 		previous_speed,
 		was_playing
 	)
-
 
 func _apply_idle_baseline() -> void:
 	_model_root.transform = _model_base_transform
@@ -1484,6 +1486,55 @@ func _resolve_humanoid_bones() -> void:
 		"right_toe": _find_bone(["righttoebase", "righttoe", "toer"]),
 	}
 
+	# Stage gestures require a true distal arm joint. Some imported rigs use
+	# opaque/prefixed hand names, so infer the terminal joint from the already
+	# resolved forearm chain only when name resolution failed.
+	if int(_bones["left_hand"]) < 0:
+		_bones["left_hand"] = _infer_distal_joint_from_chain(
+			int(_bones["left_lower_arm"])
+		)
+	if int(_bones["right_hand"]) < 0:
+		_bones["right_hand"] = _infer_distal_joint_from_chain(
+			int(_bones["right_lower_arm"])
+		)
+
+	if int(_bones["left_hand"]) < 0 or int(_bones["right_hand"]) < 0:
+		push_warning(
+			"Humanoid stage hand chain unresolved: left=%s right=%s"
+			% [
+				_bone_debug_name(int(_bones["left_hand"])),
+				_bone_debug_name(int(_bones["right_hand"])),
+			]
+		)
+
+
+
+
+func _infer_distal_joint_from_chain(start_idx: int) -> int:
+	if start_idx < 0:
+		return -1
+
+	var current := start_idx
+	for _depth in range(4):
+		var only_child := -1
+		var child_count := 0
+		for bone_idx in range(_skeleton.get_bone_count()):
+			if _skeleton.get_bone_parent(bone_idx) == current:
+				child_count += 1
+				only_child = bone_idx
+				if child_count > 1:
+					break
+		if child_count != 1:
+			break
+		current = only_child
+
+	return current if current != start_idx else -1
+
+
+func _bone_debug_name(bone_idx: int) -> String:
+	if bone_idx < 0 or bone_idx >= _skeleton.get_bone_count():
+		return "<unresolved>"
+	return "%s[%d]" % [String(_skeleton.get_bone_name(bone_idx)), bone_idx]
 
 
 func _find_bone(aliases: Array[String]) -> int:

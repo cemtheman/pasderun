@@ -211,6 +211,53 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn("normalized.ends_with(alias)", finder.group(0))
 
 
+
+    def test_runtime_initialization_is_error_free_for_empty_animation_and_busy_parent(self) -> None:
+        capture = re.search(
+            r'func _capture_idle_baseline\(\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        helpers = re.search(
+            r'func _attach_presentation_helpers\(\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(capture)
+        self.assertIsNotNone(helpers)
+        self.assertIn('var previous_position := 0.0', capture.group(0))
+        self.assertIn('if previous_animation != &"":', capture.group(0))
+        self.assertIn(
+            'previous_position = _animation_player.current_animation_position',
+            capture.group(0),
+        )
+        self.assertIn(
+            '_dancer.call_deferred("add_child", tap_feedback)',
+            helpers.group(0),
+        )
+        self.assertNotIn('_dancer.add_child(tap_feedback)', helpers.group(0))
+
+    def test_unresolved_hand_uses_forearm_topology_fallback(self) -> None:
+        resolver = re.search(
+            r'func _resolve_humanoid_bones\(\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        infer = re.search(
+            r'func _infer_distal_joint_from_chain\(\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(resolver)
+        self.assertIsNotNone(infer)
+        self.assertIn('if int(_bones["left_hand"]) < 0:', resolver.group(0))
+        self.assertIn('if int(_bones["right_hand"]) < 0:', resolver.group(0))
+        self.assertIn('_infer_distal_joint_from_chain(', resolver.group(0))
+        self.assertIn('_skeleton.get_bone_parent(bone_idx) == current', infer.group(0))
+        self.assertIn('if child_count != 1:', infer.group(0))
+        self.assertIn('return current if current != start_idx else -1', infer.group(0))
+
+
     def test_stage_and_music_callers_target_ballerina_directly(self) -> None:
         for source in (self.start_gate, self.recovery, self.choreo, self.tap):
             self.assertIn("BallerinaVisualV1", source)
