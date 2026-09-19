@@ -7,63 +7,76 @@ BUILDER = ROOT / "tools" / "blender" / "build_opening_reverence_v1.py"
 WRAPPER = ROOT / "tools" / "blender" / "run_opening_reverence_v1.ps1"
 
 
-class Phase104AuthoredPipelineTests(unittest.TestCase):
+class Phase104NativeIKPipelineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.builder = BUILDER.read_text(encoding="utf-8")
         cls.wrapper = WRAPPER.read_text(encoding="utf-8")
 
-    def test_source_glb_is_never_overwritten(self) -> None:
+    def test_source_glb_is_immutable_and_outputs_are_versioned(self) -> None:
         self.assertIn('if input_path == output_path:', self.builder)
-        self.assertIn('raise RuntimeError("Refusing to overwrite the source GLB.")', self.builder)
-        self.assertIn('build\\phase10_4\\low_poly_girl_authored_v3.glb', self.wrapper)
+        self.assertIn(
+            'raise RuntimeError("Refusing to overwrite the source GLB.")',
+            self.builder,
+        )
+        self.assertIn(
+            'low_poly_girl_native_ik_v1.glb',
+            self.wrapper,
+        )
+        self.assertIn(
+            'opening_reverence_native_ik_v1_preview.mp4',
+            self.wrapper,
+        )
 
-    def test_rig_aware_authoring_replaces_guessed_eulers(self) -> None:
-        self.assertIn("def canonical_axes(", self.builder)
-        self.assertIn("def aim_parent_to_child(", self.builder)
-        self.assertIn("def solve_two_bone_joint(", self.builder)
-        self.assertIn("rotation_difference(desired.normalized())", self.builder)
-        self.assertNotIn("from mathutils import Euler", self.builder)
-        self.assertNotIn("def set_rotation_deg(", self.builder)
-        self.assertNotIn('"rot": {', self.builder)
+    def test_native_ik_replaces_custom_two_bone_authoring(self) -> None:
+        self.assertIn('pb.constraints.new("IK")', self.builder)
+        self.assertIn('constraint.chain_count = 2', self.builder)
+        self.assertIn('constraint.pole_target = pole', self.builder)
+        self.assertIn('constraint.use_stretch = False', self.builder)
+        self.assertNotIn('def solve_two_bone_joint(', self.builder)
+        self.assertNotIn('def aim_parent_to_child(', self.builder)
 
-    def test_reverence_phrase_has_reference_landmarks(self) -> None:
+    def test_pole_angle_is_calibrated_from_evaluated_rig(self) -> None:
+        self.assertIn('def calibrate_pole_angle(', self.builder)
+        self.assertIn('pole_alignment_score(', self.builder)
+        self.assertIn('constraint.pole_angle = best_angle', self.builder)
+        self.assertIn('"pole_angles_deg": pole_angles', self.builder)
+
+    def test_native_ik_is_visually_baked_and_cleaned(self) -> None:
+        self.assertIn('bpy.ops.nla.bake', self.builder)
+        self.assertIn('"visual_keying": True', self.builder)
+        self.assertIn('"clear_constraints": True', self.builder)
+        self.assertIn('remove_controls(controls)', self.builder)
+        self.assertIn('"constraints_after_bake": remaining_constraints', self.builder)
+        self.assertIn('"temporary_controls_after_bake": remaining_controls', self.builder)
+
+    def test_phrase_starts_at_frame_zero_and_keeps_reference_landmarks(self) -> None:
+        self.assertIn('START_FRAME = 0', self.builder)
+        self.assertIn('END_FRAME = 67', self.builder)
         for token in (
             '"READY_LOW"', '"BRAS_BAS"', '"EN_AVANT_PASSAGE"',
             '"PLACEMENT_AND_SOFTEN"', '"ACKNOWLEDGEMENT"',
             '"RISE_AND_OPEN"', '"READY_RESOLUTION"',
-            '"arm_shape": "EN_AVANT"',
-            '"arm_shape": "OPEN_HALF"',
-            '"arm_shape": "OPEN"',
         ):
             self.assertIn(token, self.builder)
 
-    def test_leg_chain_is_placement_first_without_explicit_knee_out(self) -> None:
-        self.assertIn("ankle_target += side * hip_width * 1.05 * cross", self.builder)
-        self.assertIn("forward * 0.78", self.builder)
-        self.assertIn("side * side_sign * 0.35", self.builder)
-        self.assertIn("solve_two_bone_joint(", self.builder)
-        self.assertIn("turnout_direction = (", self.builder)
-        self.assertNotIn("knee_outward", self.builder)
-        self.assertNotIn("knee_target +=", self.builder)
+    def test_feet_are_world_oriented_during_leg_ik(self) -> None:
+        self.assertIn('pb.constraints.new("COPY_ROTATION")', self.builder)
+        self.assertIn('constraint.target_space = "WORLD"', self.builder)
+        self.assertIn('constraint.owner_space = "WORLD"', self.builder)
+        self.assertIn('constraint.mix_mode = "REPLACE"', self.builder)
 
-    def test_open_arm_elbow_hint_is_not_outward_collinear(self) -> None:
-        self.assertIn('"elbow_side": 0.46, "elbow_forward": 0.30, "elbow_down": 0.10', self.builder)
-        self.assertIn("The elbow hint is deliberately not collinear with the hand target.", self.builder)
-        self.assertNotIn('"pole_side":', self.builder)
+    def test_preview_is_rendered_automatically(self) -> None:
+        self.assertIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
+        self.assertIn('scene.render.image_settings.file_format = "FFMPEG"', self.builder)
+        self.assertIn('scene.render.ffmpeg.codec = "H264"', self.builder)
+        self.assertIn('bpy.ops.render.render(animation=True)', self.builder)
+        self.assertIn('PHASE 10.4.3 NATIVE IK PASS', self.wrapper)
 
-    def test_hand_continues_forearm_tangent(self) -> None:
-        self.assertIn("tangent = (hand_head - elbow_head).normalized()", self.builder)
-        self.assertIn("finish_direction = (", self.builder)
-        self.assertIn("aim_parent_to_child(", self.builder)
-        self.assertNotIn("hand_finish_direction", self.builder)
-
-    def test_pipeline_reports_geometry_and_validation_error(self) -> None:
-        self.assertIn('"authoring_model": "rig-aware joint targets + two-bone solve"', self.builder)
-        self.assertIn('"canonical_axes":', self.builder)
-        self.assertIn('"max_aim_error":', self.builder)
-        self.assertIn('"landmarks": capture_landmarks(armature)', self.builder)
-        self.assertIn("PHASE 10.4.2.1 PIPELINE PASS", self.wrapper)
+    def test_godot_runtime_is_not_part_of_authoring_pipeline(self) -> None:
+        self.assertNotIn('humanoid_motion_controller.gd', self.builder)
+        self.assertNotIn('ballerina_visual_v_1.tscn', self.builder)
+        self.assertNotIn('build/web', self.wrapper)
 
 
 if __name__ == "__main__":

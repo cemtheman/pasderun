@@ -40,31 +40,51 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 }
 
 $inputGlb = Join-Path $Repo "assets\characters\low_poly_girl\low_poly_girl .glb"
-$outputGlb = Join-Path $Repo "build\phase10_4\low_poly_girl_authored_v3.glb"
-$report = Join-Path $Repo "build\phase10_4\opening_reverence_v3_report.json"
-$blendOutput = Join-Path $Repo "build\phase10_4\opening_reverence_v3.blend"
+$outputGlb = Join-Path $Repo "build\phase10_4\low_poly_girl_native_ik_v1.glb"
+$report = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v1_report.json"
+$blendOutput = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v1.blend"
+$preview = Join-Path $Repo "build\phase10_4\opening_reverence_native_ik_v1_preview.mp4"
 $script = Join-Path $Repo "tools\blender\build_opening_reverence_v1.py"
 
 Write-Host "Blender: $Blender"
 Write-Host "Source:  $inputGlb"
 Write-Host "Output:  $outputGlb"
+Write-Host "Preview: $preview"
 
-& $Blender --background --python $script -- --input $inputGlb --output $outputGlb --report $report --blend-output $blendOutput
+& $Blender --background --python $script -- --input $inputGlb --output $outputGlb --report $report --blend-output $blendOutput --preview $preview
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-if (-not (Test-Path $outputGlb)) { throw "Authored GLB was not created." }
-if (-not (Test-Path $report)) { throw "Rig report was not created." }
+foreach ($path in @($outputGlb, $report, $blendOutput, $preview)) {
+    if (-not (Test-Path $path)) {
+        throw "Expected Phase 10.4.3 output missing: $path"
+    }
+}
 
 $data = Get-Content $report -Raw | ConvertFrom-Json
-if ($data.phase -ne "10.4.2.1") { throw "Expected Phase 10.4.2.1 report." }
-if ($data.authored_action -ne "Opening_Reverence_v1") { throw "Expected authored action was not reported." }
-if (-not $data.required_bones_ok) { throw "Audited rig contract did not validate." }
+if ($data.phase -ne "10.4.3") { throw "Expected Phase 10.4.3 report." }
+if ($data.authored_action -ne "Opening_Reverence_v1") {
+    throw "Expected authored action was not reported."
+}
+if (-not $data.required_bones_ok) {
+    throw "Audited rig contract did not validate."
+}
+if (-not $data.native_ik_baked) {
+    throw "Native IK was not reported as baked."
+}
+if ($data.constraints_after_bake -ne 0) {
+    throw "Constraints survived the bake."
+}
+if ($data.temporary_controls_after_bake.Count -ne 0) {
+    throw "Temporary IK controls survived the bake."
+}
 
 Write-Host ""
-Write-Host "PHASE 10.4.2.1 PIPELINE PASS"
-Write-Host "Action:    $($data.authored_action)"
-Write-Host "Rig:       $($data.armature)"
-Write-Host "Duration:  $($data.duration_seconds)s"
-Write-Host "Aim error: $($data.max_aim_error)"
-Write-Host "Report:    $report"
-Write-Host "GLB:       $outputGlb"
+Write-Host "PHASE 10.4.3 NATIVE IK PASS"
+Write-Host "Action:      $($data.authored_action)"
+Write-Host "Rig:         $($data.armature)"
+Write-Host "Duration:    $($data.duration_seconds)s"
+Write-Host "Native IK:   $($data.native_ik_baked)"
+Write-Host "Constraints: $($data.constraints_after_bake)"
+Write-Host "Report:      $report"
+Write-Host "GLB:         $outputGlb"
+Write-Host "Preview:     $preview"
