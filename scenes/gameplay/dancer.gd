@@ -12,8 +12,8 @@ enum LocomotionState {
 
 const STUMBLE_DURATION := 0.24
 const RECOVERY_DURATION := 0.62
-const STUMBLE_SPEED_MULTIPLIER := 0.45
-const RECOVERY_SPEED_MULTIPLIER := 1.21
+const STUMBLE_SPEED_MULTIPLIER := 0.58
+const RECOVERY_SPEED_MULTIPLIER := 1.08
 const VALID_DROP_MINIMUM := 0.60
 const MAX_TRAVERSABLE_STEP_HEIGHT := 0.45
 const STEP_FORWARD_CLEARANCE := 0.16
@@ -554,9 +554,39 @@ func _update_locomotion_visual(delta: float) -> void:
 
 func _locomotion_speed_multiplier() -> float:
 	if locomotion_state == LocomotionState.STUMBLE:
-		return STUMBLE_SPEED_MULTIPLIER
+		# A real runner does not lose more than half of horizontal speed in one
+		# frame unless they actually fall. Decelerate through the stumble window.
+		var progress := 1.0 - clampf(
+			_locomotion_timer / STUMBLE_DURATION,
+			0.0,
+			1.0
+		)
+		return lerpf(
+			1.0,
+			STUMBLE_SPEED_MULTIPLIER,
+			smoothstep(0.0, 0.72, progress)
+		)
+
 	if locomotion_state == LocomotionState.RECOVERY:
-		return RECOVERY_SPEED_MULTIPLIER
+		# Continue from the stumble speed, accelerate through the emergency catch
+		# step, then settle back to the canonical always-run speed without a pop.
+		var progress := 1.0 - clampf(
+			_locomotion_timer / RECOVERY_DURATION,
+			0.0,
+			1.0
+		)
+		if progress < 0.55:
+			return lerpf(
+				STUMBLE_SPEED_MULTIPLIER,
+				RECOVERY_SPEED_MULTIPLIER,
+				smoothstep(0.0, 1.0, progress / 0.55)
+			)
+		return lerpf(
+			RECOVERY_SPEED_MULTIPLIER,
+			1.0,
+			smoothstep(0.0, 1.0, (progress - 0.55) / 0.45)
+		)
+
 	return 1.0
 
 
