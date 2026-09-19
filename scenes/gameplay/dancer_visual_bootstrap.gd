@@ -120,11 +120,11 @@ func _on_ballerina_visual_state_changed(
 			# translates is exactly what produced the visible foot scraping.
 			_begin_landing_run_contact(player)
 		&"STUMBLE":
-			_play_calibrated_run(player, 0.94)
+			_play_calibrated_run(player, 1.0)
 		&"RECOVERY":
-			_play_calibrated_run(player, 1.03)
+			_play_calibrated_run(player, 1.0)
 		&"LOW_TRANSITION":
-			_play_calibrated_run(player, 0.92)
+			_play_calibrated_run(player, 1.0)
 		&"TRAVEL", &"BALANCE", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
 			_play_calibrated_run(player, 1.0)
 		&"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"STAGE_EXIT_TURN":
@@ -169,9 +169,10 @@ func _begin_landing_run_contact(player: AnimationPlayer) -> void:
 		desired_speed
 	)
 
-	# Contact begins slightly slower for absorption, but the run cycle continues
-	# through stance/toe-off. No paused pose, no same-foot re-contact, no scrape.
-	player.speed_scale = base_scale * 0.78
+	# Contact begins at the calibrated support-foot speed. Absorption comes from
+	# ankle/knee/hip articulation, not from slowing the clip under a translating
+	# root. This keeps the planted foot approximately stationary in world X.
+	player.speed_scale = base_scale
 	var run_animation := player.get_animation(&"run")
 	if run_animation != null:
 		run_animation.loop_mode = Animation.LOOP_LINEAR
