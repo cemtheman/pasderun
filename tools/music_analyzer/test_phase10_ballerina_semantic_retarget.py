@@ -194,26 +194,11 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             '_play_ballerina_animation(player, &"jump_falling", true, 1.0)',
             self.bootstrap,
         )
-        self.assertIn(
-            "_play_grounded_landing_bridge(player)",
-            self.bootstrap,
-        )
-        self.assertIn(
-            'player.has_animation(&"walk_fast")',
-            self.bootstrap,
-        )
-        self.assertNotIn(
-            "_capture_opposite_run_resume(player)",
-            self.bootstrap,
-        )
-        self.assertNotIn(
-            "_resume_run_after_jump(player)",
-            self.bootstrap,
-        )
-        self.assertNotIn(
-            '_play_ballerina_animation(player, &"jump_end", false, 1.0)',
-            self.bootstrap,
-        )
+        self.assertIn("_hold_landing_contact(player)", self.bootstrap)
+        self.assertIn("_play_run_from_pending_contact(player, 1.0)", self.bootstrap)
+        self.assertIn("RUN_CONTACT_SAMPLE_COUNT := 32", self.bootstrap)
+        self.assertIn("_pending_run_contact_phase", self.bootstrap)
+        self.assertIn("_landing_support_left", self.bootstrap)
 
 
     def test_balance_zone_preserves_always_run_visual_contract(self) -> None:
@@ -356,18 +341,29 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.retarget,
         )
 
-    def test_jump_landing_uses_native_contact_segment_without_rebound(self) -> None:
-        self.assertIn("func _play_grounded_landing_bridge", self.bootstrap)
+    def test_jump_landing_plants_contact_then_resumes_on_opposite_foot(self) -> None:
+        self.assertIn("func _hold_landing_contact", self.bootstrap)
+        self.assertIn("func _play_run_from_pending_contact", self.bootstrap)
+        self.assertIn("func _cache_run_contact_phases", self.bootstrap)
         self.assertIn(
-            'player.has_animation(&"jump_end")',
+            "var landing_left := left_y <= right_y",
             self.bootstrap,
         )
         self.assertIn(
-            "HUMANOID_LANDING_CLIP_FRACTION := 0.38",
+            "var next_phase := right_phase if landing_left else left_phase",
             self.bootstrap,
         )
         self.assertIn(
-            "var source_segment := landing.length * HUMANOID_LANDING_CLIP_FRACTION",
+            'player.set_meta("_pending_run_contact_phase", next_phase)',
+            self.bootstrap,
+        )
+        self.assertIn("player.pause()", self.bootstrap)
+        self.assertIn(
+            'player.play(&"run", 0.12)',
+            self.bootstrap,
+        )
+        self.assertIn(
+            'player.seek(',
             self.bootstrap,
         )
         landing_branch = re.search(
@@ -376,13 +372,54 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(landing_branch)
+        self.assertIn("_hold_landing_contact(player)", landing_branch.group(1))
+
+
+    def test_landing_absorption_uses_actual_support_and_drop_context(self) -> None:
+        self.assertIn("get_last_landing_drop_distance", self.dancer)
+        self.assertIn("get_last_landing_was_jump", self.dancer)
         self.assertIn(
-            "_play_grounded_landing_bridge(player)",
-            landing_branch.group(1),
+            '_animation_player.get_meta("_landing_support_left", false)',
+            self.retarget,
         )
-        self.assertNotIn(
-            '_play_ballerina_animation(player, &"run"',
-            landing_branch.group(1),
+        self.assertIn(
+            'var support_hip := "LegBackHip" if support_left else "LegFrontHip"',
+            self.retarget,
+        )
+        self.assertIn(
+            "var impact := 0.58 if was_jump else clampf(",
+            self.retarget,
+        )
+        self.assertIn(
+            "var compression_curve := sin(PI * clampf(t / 0.92, 0.0, 1.0))",
+            self.retarget,
+        )
+        self.assertIn(
+            "Vector3(0.26, -0.964, side).normalized()",
+            self.retarget,
+        )
+        self.assertIn(
+            "Vector3(-0.18, -0.983, side * 0.45).normalized()",
+            self.retarget,
+        )
+
+    def test_trip_uses_actual_lead_foot_and_opposite_leg_for_recovery(self) -> None:
+        self.assertIn("func _capture_trip_side_from_current_run", self.retarget)
+        self.assertIn(
+            "_trip_uses_left_foot = left_world.x > right_world.x",
+            self.retarget,
+        )
+        self.assertIn(
+            'var trip_hip := "LegBackHip" if _trip_uses_left_foot else "LegFrontHip"',
+            self.retarget,
+        )
+        self.assertIn(
+            'var catch_hip := "LegFrontHip" if _trip_uses_left_foot else "LegBackHip"',
+            self.retarget,
+        )
+        self.assertIn(
+            "if state == &\"STUMBLE\":\n\t\t\t_capture_trip_side_from_current_run()",
+            self.retarget,
         )
 
     def test_high_fall_does_not_double_apply_visual_gravity(self) -> None:
@@ -544,8 +581,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
 
     def test_humanoid_trip_uses_target_axis_independent_chain_directions(self) -> None:
-        self.assertIn('_play_ballerina_animation(player, &"run", true, 0.94)', self.bootstrap)
-        self.assertIn('_play_ballerina_animation(player, &"run", true, 1.03)', self.bootstrap)
+        self.assertIn('_play_run_from_pending_contact(player, 0.94)', self.bootstrap)
+        self.assertIn('_play_run_from_pending_contact(player, 1.03)', self.bootstrap)
         self.assertIn('current_world_basis', self.retarget)
         self.assertIn('parent_current.basis.get_rotation_quaternion().slerp', self.retarget)
         for token in (
@@ -559,18 +596,12 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "RECOVERY_DURATION := 0.62",
             "Vector3(0.48, 0.87, -0.05)",
             "Vector3(0.78, -0.42, -0.18)",
-            "Vector3(0.42, -0.90, 0.04)",
-            "_right_toe_idx",
+            "var catch_step_strength := 0.44 * sin(",
+            "_trip_uses_left_foot",
         ):
             self.assertIn(token, self.retarget)
-        self.assertIn(
-            "-0.050 * impact",
-            self.retarget,
-        )
-        self.assertIn(
-            "var catch_step_strength := 0.44 * sin(",
-            self.retarget,
-        )
+        self.assertIn("-0.050 * impact", self.retarget)
+
 
     def test_large_final_reverence_is_not_flattened_by_opening_curtsey_override(self) -> None:
         stage_calibration = re.search(
