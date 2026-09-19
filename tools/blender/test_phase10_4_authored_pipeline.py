@@ -94,6 +94,13 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         )
         self.assertIn('point.interpolation = "LINEAR"', self.builder)
 
+    def test_preview_engine_is_runtime_compatible(self) -> None:
+        self.assertIn("def choose_preview_engine(", self.builder)
+        self.assertIn('"BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "BLENDER_WORKBENCH"', self.builder)
+        self.assertIn('scene.render.bl_rna.properties["engine"]', self.builder)
+        self.assertIn('"preview_engine": preview_engine', self.builder)
+        self.assertNotIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
+
     def test_preview_is_rendered_automatically(self) -> None:
         self.assertIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
         self.assertIn('scene.render.image_settings.file_format = "FFMPEG"', self.builder)

@@ -663,11 +663,25 @@ def add_area_light(
     look_at(obj, target)
 
 
+def choose_preview_engine(scene: bpy.types.Scene) -> str:
+    # Blender has used both BLENDER_EEVEE and BLENDER_EEVEE_NEXT identifiers
+    # across releases/builds. Probe the runtime enum instead of assuming one.
+    engine_property = scene.render.bl_rna.properties["engine"]
+    available = {item.identifier for item in engine_property.enum_items}
+    for candidate in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "BLENDER_WORKBENCH"):
+        if candidate in available:
+            scene.render.engine = candidate
+            return candidate
+    raise RuntimeError(
+        f"No supported preview render engine available: {sorted(available)}"
+    )
+
+
 def configure_preview_scene(
     armature: bpy.types.Object,
     axes: dict[str, Vector],
     preview_path: Path,
-) -> None:
+) -> str:
     scene = bpy.context.scene
     scene.frame_start = START_FRAME
     scene.frame_end = END_FRAME
@@ -675,7 +689,7 @@ def configure_preview_scene(
     scene.render.resolution_x = 720
     scene.render.resolution_y = 720
     scene.render.resolution_percentage = 100
-    scene.render.engine = "BLENDER_EEVEE_NEXT"
+    preview_engine = choose_preview_engine(scene)
     scene.render.image_settings.file_format = "FFMPEG"
     scene.render.ffmpeg.format = "MPEG4"
     scene.render.ffmpeg.codec = "H264"
@@ -731,6 +745,7 @@ def configure_preview_scene(
     material = bpy.data.materials.new("P1043_PreviewFloorMaterial")
     material.diffuse_color = (0.12, 0.12, 0.12, 1.0)
     floor.data.materials.append(material)
+    return preview_engine
 
 
 def render_preview(preview_path: Path) -> None:
@@ -981,8 +996,11 @@ def main() -> None:
 
     export_glb(output_path)
 
+    preview_engine = None
     if preview_path is not None:
-        configure_preview_scene(armature, axes, preview_path)
+        preview_engine = configure_preview_scene(
+            armature, axes, preview_path
+        )
         render_preview(preview_path)
 
     report = {
@@ -992,6 +1010,7 @@ def main() -> None:
         "output_glb": str(output_path),
         "blend_output": str(blend_output) if blend_output else None,
         "preview_output": str(preview_path) if preview_path else None,
+        "preview_engine": preview_engine,
         "armature": armature.name,
         "fps": FPS,
         "start_frame": START_FRAME,
