@@ -3,10 +3,6 @@ extends Node
 const DANCER_VISUAL_SCRIPT := preload("res://scenes/gameplay/dancer_visual_motion_v5.gd")
 const DANCER_TAP_FEEDBACK_SCRIPT := preload("res://scenes/gameplay/dancer_tap_feedback.gd")
 
-var _run_resume_position := 0.0
-var _run_resume_valid := false
-
-
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
 	call_deferred("_attach_existing_dancer")
@@ -112,15 +108,14 @@ func _on_ballerina_visual_state_changed(
 		&"STAGE_WALK":
 			_play_ballerina_animation(player, &"walk", true, 1.0)
 		&"JUMP":
-			_capture_opposite_run_resume(player)
 			_play_ballerina_animation(player, &"jump_start", false, 1.0)
 		&"AIRBORNE":
 			_play_ballerina_animation(player, &"jump_falling", true, 1.0)
 		&"LANDING":
-			# jump_end contains an in-place same-foot rebound that reads as an
-			# unwanted hop in an always-run game. Blend directly back into RUN
-			# and resume on the opposite half-cycle instead.
-			_resume_run_after_jump(player)
+			# Do not enter RUN's flight phase during the 0.22 s landing window.
+			# Use the asset's grounded fast-walk cycle as a short contact bridge;
+			# the next TRAVEL state blends naturally back to RUN.
+			_play_grounded_landing_bridge(player)
 		&"STUMBLE":
 			_play_ballerina_animation(player, &"run", true, 0.88)
 		&"RECOVERY":
@@ -136,39 +131,17 @@ func _on_ballerina_visual_state_changed(
 			_play_ballerina_animation(player, &"idle", true, 1.0)
 
 
-func _capture_opposite_run_resume(player: AnimationPlayer) -> void:
-	if player.current_animation != "run":
-		_run_resume_valid = false
+func _play_grounded_landing_bridge(player: AnimationPlayer) -> void:
+	if player.has_animation(&"walk_fast"):
+		_play_ballerina_animation(player, &"walk_fast", true, 1.08)
+		return
+	if player.has_animation(&"walk"):
+		_play_ballerina_animation(player, &"walk", true, 1.18)
 		return
 
-	var run_animation := player.get_animation(&"run")
-	if run_animation == null or run_animation.length <= 0.0001:
-		_run_resume_valid = false
-		return
-
-	var phase := fmod(player.current_animation_position, run_animation.length)
-	_run_resume_position = fmod(
-		phase + run_animation.length * 0.5,
-		run_animation.length
-	)
-	_run_resume_valid = true
-
-
-func _resume_run_after_jump(player: AnimationPlayer) -> void:
-	_play_ballerina_animation(player, &"run", true, 1.0)
-	if not _run_resume_valid:
-		return
-
-	var run_animation := player.get_animation(&"run")
-	if run_animation == null or run_animation.length <= 0.0001:
-		_run_resume_valid = false
-		return
-
-	player.seek(
-		clampf(_run_resume_position, 0.0, maxf(run_animation.length - 0.001, 0.0)),
-		true
-	)
-	_run_resume_valid = false
+	# Last-resort fallback: stay on a grounded idle rather than selecting RUN
+	# during the landing state and visually launching both feet off the platform.
+	_play_ballerina_animation(player, &"idle", true, 1.0)
 
 
 func _play_ballerina_animation(
