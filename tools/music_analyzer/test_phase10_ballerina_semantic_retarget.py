@@ -300,6 +300,14 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "Vector3(upper_x, upper_y, upper_z).normalized()",
             self.retarget,
         )
+        self.assertIn(
+            "Vector3(fore_x, fore_y, fore_z).normalized()",
+            self.retarget,
+        )
+        self.assertIn(
+            "Vector3(-fore_x, fore_y, fore_z).normalized()",
+            self.retarget,
+        )
 
     def test_low_transition_keeps_phase7_v5_contract_without_full_body_retarget(self) -> None:
         for token in (
@@ -413,7 +421,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.retarget,
         )
         self.assertIn(
-            "var impact := 0.58 if was_jump else clampf(",
+            "var impact := 0.52 if was_jump else clampf(",
             self.retarget,
         )
         self.assertIn(
@@ -455,7 +463,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(stumble)
-        self.assertIn("-0.050 * impact", stumble.group(1))
+        self.assertIn("-0.080 * impact", stumble.group(1))
         self.assertIn("\n\t\t\t0.0,\n\t\t\t0.0\n\t\t)", stumble.group(1))
         self.assertNotIn("9.81", stumble.group(1))
 
@@ -465,7 +473,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(recovery)
-        self.assertIn("-0.050 * (1.0 - release)", recovery.group(1))
+        self.assertIn("-0.080 * (1.0 - release)", recovery.group(1))
         self.assertNotIn("rebound", recovery.group(1))
 
     def test_airborne_and_landing_contact_precede_stumble_visuals(self) -> None:
@@ -495,11 +503,11 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.retarget,
         )
         self.assertIn(
-            "var leg_strength := 0.48 * impact * compression_curve",
+            "var leg_strength := 0.62 * impact * compression_curve",
             self.retarget,
         )
         self.assertIn(
-            "var upper_strength := 0.30 * impact * compression_curve",
+            "var upper_strength := 0.38 * impact * compression_curve",
             self.retarget,
         )
 
@@ -552,10 +560,56 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('"Rig/Pelvis/Torso:rotation": _rz(torso_angle)', self.source_v4)
         self.assertIn("_stumble_catch_pose(-0.075, -0.38)", self.source_v4)
 
-    def test_finale_is_walk_bow_turn_walk_exit_in_that_order(self) -> None:
-        for phase in ("WALK_TO_MARK", "FINAL_BOW", "EXIT_TURN", "EXIT_WALK"):
+    def test_stumble_and_recovery_are_visibly_readable_over_native_gait(self) -> None:
+        self.assertIn("STUMBLE_DURATION := 0.36", self.retarget)
+        self.assertIn("RECOVERY_DURATION := 0.72", self.retarget)
+        self.assertIn(
+            "var torso_strength := 0.62 * smoothstep(0.03, 0.62, t)",
+            self.retarget,
+        )
+        self.assertIn(
+            "var trip_leg_strength := 0.68 * smoothstep(0.0, 0.46, t)",
+            self.retarget,
+        )
+        self.assertIn(
+            "var arm_strength := 0.54 * smoothstep(0.10, 0.72, t)",
+            self.retarget,
+        )
+        self.assertIn("var catch_step_strength := 0.60 * sin(", self.retarget)
+        self.assertIn(
+            "var arm_strength := 0.42 * (1.0 - smoothstep(0.48, 0.94, t))",
+            self.retarget,
+        )
+
+    def test_finale_is_music_end_decelerate_walk_bow_turn_walk_exit(self) -> None:
+        for phase in (
+            "DECELERATE_TO_WALK",
+            "WALK_TO_MARK",
+            "FINAL_BOW",
+            "EXIT_TURN",
+            "EXIT_WALK",
+        ):
             self.assertIn(phase, self.recovery_manager)
 
+        self.assertIn(
+            'audio_player.finished.connect(_on_music_finished)',
+            self.recovery_manager,
+        )
+        self.assertIn("func _on_music_finished() -> void:", self.recovery_manager)
+        self.assertIn(
+            '_set_completion_stage_visual(&"RUN")',
+            self.recovery_manager,
+        )
+        self.assertIn(
+            "COMPLETION_DECEL_DURATION := 0.90",
+            self.recovery_manager,
+        )
+        self.assertIn(
+            "lerpf(",
+            self.recovery_manager,
+        )
+
+        run = self.recovery_manager.index('_set_completion_stage_visual(&"RUN")')
         walk_1 = self.recovery_manager.index('_set_completion_stage_visual(&"WALK")')
         bow = self.recovery_manager.index('_set_completion_stage_visual(&"FINAL_BOW")')
         exit_turn = self.recovery_manager.index('_set_completion_stage_visual(&"EXIT_TURN")')
@@ -563,6 +617,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             '_set_completion_stage_visual(&"WALK")',
             walk_1 + 1,
         )
+        self.assertLess(run, walk_1)
         self.assertLess(walk_1, bow)
         self.assertLess(bow, exit_turn)
         self.assertLess(exit_turn, walk_2)
@@ -570,6 +625,11 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn("COMPLETION_FINAL_BOW_DURATION := 2.60", self.recovery_manager)
         self.assertIn("COMPLETION_EXIT_TURN_DURATION := 0.38", self.recovery_manager)
         self.assertIn("COMPLETION_EXIT_WALK_DISTANCE := 7.00", self.recovery_manager)
+        self.assertIn(
+            "completion_trigger.global_position.x",
+            self.recovery_manager,
+        )
+
 
     def test_finale_exit_turn_returns_audience_facing_to_positive_x(self) -> None:
         self.assertIn('STATE_STAGE_EXIT_TURN := &"STAGE_EXIT_TURN"', self.visual)
@@ -628,8 +688,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "Quaternion(current_direction_world, desired)",
             'state == &"STUMBLE"',
             'state != &"RECOVERY"',
-            "STUMBLE_DURATION := 0.24",
-            "RECOVERY_DURATION := 0.62",
+            "STUMBLE_DURATION := 0.36",
+            "RECOVERY_DURATION := 0.72",
             "Vector3(0.48, 0.87, -0.05)",
             "Vector3(0.78, -0.42, -0.18)",
             "var catch_step_strength := 0.44 * sin(",
