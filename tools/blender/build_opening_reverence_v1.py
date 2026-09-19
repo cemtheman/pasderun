@@ -78,23 +78,23 @@ POSES = [
 ARM_SHAPES = {
     "BRAS_BAS": {
         "hand_side": 0.12, "hand_forward": 0.30, "hand_down": 0.44,
-        "pole_side": 0.92, "pole_forward": 0.15, "pole_down": 0.22,
+        "elbow_side": 0.34, "elbow_forward": 0.20, "elbow_down": 0.28,
     },
     "EN_AVANT": {
         "hand_side": 0.05, "hand_forward": 0.46, "hand_down": 0.10,
-        "pole_side": 0.96, "pole_forward": 0.16, "pole_down": 0.12,
+        "elbow_side": 0.44, "elbow_forward": 0.26, "elbow_down": 0.16,
     },
     "OPEN_HALF": {
         "hand_side": 0.48, "hand_forward": 0.30, "hand_down": 0.10,
-        "pole_side": 0.96, "pole_forward": 0.14, "pole_down": 0.10,
+        "elbow_side": 0.46, "elbow_forward": 0.28, "elbow_down": 0.12,
     },
     "OPEN": {
         "hand_side": 0.88, "hand_forward": 0.14, "hand_down": 0.08,
-        "pole_side": 0.98, "pole_forward": 0.10, "pole_down": 0.08,
+        "elbow_side": 0.46, "elbow_forward": 0.30, "elbow_down": 0.10,
     },
     "RESOLVE": {
         "hand_side": 0.14, "hand_forward": 0.25, "hand_down": 0.46,
-        "pole_side": 0.90, "pole_forward": 0.12, "pole_down": 0.22,
+        "elbow_side": 0.34, "elbow_forward": 0.18, "elbow_down": 0.28,
     },
 }
 
@@ -355,15 +355,18 @@ def apply_leg_chain(
             # Working/right foot travels inward and slightly behind before the
             # plié. No explicit knee-out target exists; turnout comes from the
             # foot line plus the two-bone pole direction.
-            ankle_target += side * hip_width * 0.55 * cross
-            ankle_target -= forward * total_leg * 0.035 * cross
+            ankle_target += side * hip_width * 1.05 * cross
+            ankle_target -= forward * total_leg * 0.045 * cross
 
         length_a = joint_length(rest, hip_name, knee_name)
         length_b = joint_length(rest, knee_name, foot_name)
+        # The knee plane follows the turned-out toe line with only a modest
+        # lateral component. This avoids recreating the old frog/squat pose
+        # through an overly lateral IK pole.
         pole_hint = (
-            side * side_sign * 0.94
-            + forward * 0.24
-            + up * 0.04
+            forward * 0.78
+            + side * side_sign * 0.35
+            - up * 0.15
         ).normalized()
 
         knee_target, reachable_ankle = solve_two_bone_joint(
@@ -423,12 +426,16 @@ def arm_target(
         + forward * reach * float(shape["hand_forward"])
         - up * reach * float(shape["hand_down"])
     )
-    pole = (
-        side * side_sign * float(shape["pole_side"])
-        + forward * float(shape["pole_forward"])
-        - up * float(shape["pole_down"])
+    # The elbow hint is deliberately not collinear with the hand target.
+    # In OPEN, an outward-heavy pole projects behind the torso; this hint
+    # keeps the elbow in the audience-facing half-space while preserving
+    # the rounded classical arm line.
+    elbow_hint = (
+        side * side_sign * float(shape["elbow_side"])
+        + forward * float(shape["elbow_forward"])
+        - up * float(shape["elbow_down"])
     ).normalized()
-    return hand, pole
+    return hand, elbow_hint
 
 
 def apply_arm_chain(
@@ -649,7 +656,7 @@ def main() -> None:
     export_glb(output_path)
 
     report = {
-        "phase": "10.4.2",
+        "phase": "10.4.2.1",
         "authoring_model": "rig-aware joint targets + two-bone solve",
         "source_glb": str(input_path),
         "output_glb": str(output_path),

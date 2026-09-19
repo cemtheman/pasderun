@@ -16,7 +16,7 @@ class Phase104AuthoredPipelineTests(unittest.TestCase):
     def test_source_glb_is_never_overwritten(self) -> None:
         self.assertIn('if input_path == output_path:', self.builder)
         self.assertIn('raise RuntimeError("Refusing to overwrite the source GLB.")', self.builder)
-        self.assertIn('build\\phase10_4\\low_poly_girl_authored_v2.glb', self.wrapper)
+        self.assertIn('build\\phase10_4\\low_poly_girl_authored_v3.glb', self.wrapper)
 
     def test_rig_aware_authoring_replaces_guessed_eulers(self) -> None:
         self.assertIn("def canonical_axes(", self.builder)
@@ -39,11 +39,18 @@ class Phase104AuthoredPipelineTests(unittest.TestCase):
             self.assertIn(token, self.builder)
 
     def test_leg_chain_is_placement_first_without_explicit_knee_out(self) -> None:
-        self.assertIn("ankle_target += side * hip_width * 0.55 * cross", self.builder)
+        self.assertIn("ankle_target += side * hip_width * 1.05 * cross", self.builder)
+        self.assertIn("forward * 0.78", self.builder)
+        self.assertIn("side * side_sign * 0.35", self.builder)
         self.assertIn("solve_two_bone_joint(", self.builder)
         self.assertIn("turnout_direction = (", self.builder)
         self.assertNotIn("knee_outward", self.builder)
         self.assertNotIn("knee_target +=", self.builder)
+
+    def test_open_arm_elbow_hint_is_not_outward_collinear(self) -> None:
+        self.assertIn('"elbow_side": 0.46, "elbow_forward": 0.30, "elbow_down": 0.10', self.builder)
+        self.assertIn("The elbow hint is deliberately not collinear with the hand target.", self.builder)
+        self.assertNotIn('"pole_side":', self.builder)
 
     def test_hand_continues_forearm_tangent(self) -> None:
         self.assertIn("tangent = (hand_head - elbow_head).normalized()", self.builder)
@@ -56,7 +63,7 @@ class Phase104AuthoredPipelineTests(unittest.TestCase):
         self.assertIn('"canonical_axes":', self.builder)
         self.assertIn('"max_aim_error":', self.builder)
         self.assertIn('"landmarks": capture_landmarks(armature)', self.builder)
-        self.assertIn("PHASE 10.4.2 PIPELINE PASS", self.wrapper)
+        self.assertIn("PHASE 10.4.2.1 PIPELINE PASS", self.wrapper)
 
 
 if __name__ == "__main__":
