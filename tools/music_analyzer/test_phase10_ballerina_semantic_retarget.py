@@ -10,7 +10,13 @@ ROOT = Path(__file__).resolve().parents[2]
 RETARGET = ROOT / "scenes/characters/ballerina_motion_retarget_v2.gd"
 WRAPPER = ROOT / "scenes/characters/ballerina_visual_v_1.tscn"
 BOOTSTRAP = ROOT / "scenes/gameplay/dancer_visual_bootstrap.gd"
+SOURCE_V4 = ROOT / "scenes/gameplay/dancer_visual_motion_v4.gd"
 SOURCE_V5 = ROOT / "scenes/gameplay/dancer_visual_motion_v5.gd"
+VISUAL = ROOT / "scenes/gameplay/dancer_visual.gd"
+DANCER = ROOT / "scenes/gameplay/dancer.gd"
+START_GATE = ROOT / "scenes/gameplay/runtime_start_gate.gd"
+RECOVERY_MANAGER = ROOT / "scenes/gameplay/run_recovery_manager.gd"
+COURSE = ROOT / "scenes/gameplay/generated/continuous_technical_course.tscn"
 
 
 class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
@@ -19,7 +25,13 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         cls.retarget = RETARGET.read_text(encoding="utf-8")
         cls.wrapper = WRAPPER.read_text(encoding="utf-8")
         cls.bootstrap = BOOTSTRAP.read_text(encoding="utf-8")
+        cls.source_v4 = SOURCE_V4.read_text(encoding="utf-8")
         cls.source_v5 = SOURCE_V5.read_text(encoding="utf-8")
+        cls.visual = VISUAL.read_text(encoding="utf-8")
+        cls.dancer = DANCER.read_text(encoding="utf-8")
+        cls.start_gate = START_GATE.read_text(encoding="utf-8")
+        cls.recovery_manager = RECOVERY_MANAGER.read_text(encoding="utf-8")
+        cls.course = COURSE.read_text(encoding="utf-8")
 
 
     @staticmethod
@@ -124,11 +136,13 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "STAGE_BOW",
             "STAGE_READY",
             "STAGE_FINAL_BOW",
+            "STAGE_EXIT_TURN",
             "TRAVEL",
             "JUMP",
             "AIRBORNE",
             "LANDING",
             "LOW_TRANSITION",
+            "BALANCE",
             "STUMBLE",
             "RECOVERY",
             "MUSIC_FLOW",
@@ -149,17 +163,25 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         for state in states:
             self.assertIn(f'&"{state}": true', source)
 
-    def test_balance_pose_is_intentionally_not_in_humanoid_library(self) -> None:
+    def test_balance_zone_preserves_always_run_visual_contract(self) -> None:
         block = re.search(
             r"const RETARGET_STATES := \{(.*?)\n\}",
             self.retarget,
             re.DOTALL,
         )
         self.assertIsNotNone(block)
-        self.assertNotIn('&"BALANCE"', block.group(1))
-        self.assertIn("BALANCE is intentionally absent", self.retarget)
-        self.assertIn('&"BALANCE"', self.bootstrap)
-        self.assertIn('_play_ballerina_animation(player, &"idle", true)', self.bootstrap)
+        self.assertIn('&"BALANCE": true', block.group(1))
+        self.assertIn("func _balance_animation() -> Animation:", self.source_v5)
+        balance_override = re.search(
+            r"func _balance_animation\(\) -> Animation:(.*?)(?=\n\n|\Z)",
+            self.source_v5,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(balance_override)
+        self.assertIn("return _travel_animation()", balance_override.group(1))
+        self.assertIn("velocity.x = run_speed * _locomotion_speed_multiplier()", self.dancer)
+        self.assertIn("velocity.z = (", self.dancer)
+        self.assertIn("balance_drift_direction", self.dancer)
 
     def test_root_orientation_uses_source_rig_relative_to_verified_model_base(self) -> None:
         self.assertIn(
@@ -225,6 +247,104 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         ):
             self.assertIn(token, self.source_v5)
         self.assertIn('&"LOW_TRANSITION": true', self.retarget)
+
+    def test_opening_is_walk_then_turn_reverence_then_ready(self) -> None:
+        self.assertIn("@export var entrance_walk_distance := 3.0", self.start_gate)
+        self.assertIn(
+            "entrance_start.x = entrance_target_x - maxf(entrance_walk_distance, 0.0)",
+            self.start_gate,
+        )
+        walk = self.start_gate.index('_set_stage_visual(&"WALK")')
+        bow = self.start_gate.index('_set_stage_visual(&"BOW")')
+        ready = self.start_gate.index('_set_stage_visual(&"READY")')
+        self.assertLess(walk, bow)
+        self.assertLess(bow, ready)
+        self.assertIn('next_state = STATE_STAGE_WALK', self.visual)
+        self.assertIn('next_state = STATE_STAGE_BOW', self.visual)
+
+    def test_running_stumble_is_forward_catch_step_not_a_stop(self) -> None:
+        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.45", self.dancer)
+        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.21", self.dancer)
+        self.assertIn('&"STUMBLE": true', self.retarget)
+        self.assertIn('&"RECOVERY": true', self.retarget)
+        for token in (
+            "_stumble_catch_pose",
+            "_recovery_catch_pose",
+            "_recovery_compress_pose",
+            "_recovery_hop_pose",
+            "_back_contact_pose()",
+            "_front_brush_pose()",
+        ):
+            self.assertIn(token, self.source_v4)
+        # The catch pitches the torso forward along +X while locomotion retains
+        # a non-zero fraction of run speed.
+        self.assertIn('"Rig/Pelvis/Torso:rotation": _rz(torso_angle)', self.source_v4)
+        self.assertIn("_stumble_catch_pose(-0.075, -0.38)", self.source_v4)
+
+    def test_finale_is_walk_bow_turn_walk_exit_in_that_order(self) -> None:
+        for phase in ("WALK_TO_MARK", "FINAL_BOW", "EXIT_TURN", "EXIT_WALK"):
+            self.assertIn(phase, self.recovery_manager)
+
+        walk_1 = self.recovery_manager.index('_set_completion_stage_visual(&"WALK")')
+        bow = self.recovery_manager.index('_set_completion_stage_visual(&"FINAL_BOW")')
+        exit_turn = self.recovery_manager.index('_set_completion_stage_visual(&"EXIT_TURN")')
+        walk_2 = self.recovery_manager.index(
+            '_set_completion_stage_visual(&"WALK")',
+            walk_1 + 1,
+        )
+        self.assertLess(walk_1, bow)
+        self.assertLess(bow, exit_turn)
+        self.assertLess(exit_turn, walk_2)
+        self.assertIn("COMPLETION_APPROACH_DISTANCE := 1.60", self.recovery_manager)
+        self.assertIn("COMPLETION_FINAL_BOW_DURATION := 2.60", self.recovery_manager)
+        self.assertIn("COMPLETION_EXIT_TURN_DURATION := 0.38", self.recovery_manager)
+        self.assertIn("COMPLETION_EXIT_WALK_DISTANCE := 3.60", self.recovery_manager)
+
+    def test_finale_exit_turn_returns_audience_facing_to_positive_x(self) -> None:
+        self.assertIn('STATE_STAGE_EXIT_TURN := &"STAGE_EXIT_TURN"', self.visual)
+        self.assertIn("func _stage_exit_turn_animation() -> Animation:", self.visual)
+        self.assertIn("_stage_ready_pose()", self.visual)
+        self.assertIn("_stage_side_ready_pose()", self.visual)
+
+        base = self._ry(math.pi * 0.5)
+        audience_turn = self._ry(-math.pi * 0.5)
+        visual_front = [0.0, 0.0, 1.0]
+        audience_front = self._matmul(
+            self._matmul(base, audience_turn),
+            visual_front,
+        )
+        exit_front = self._matmul(base, visual_front)
+        self.assertAlmostEqual(audience_front[2], 1.0, places=6)
+        self.assertAlmostEqual(exit_front[0], 1.0, places=6)
+
+    def test_closing_runway_has_room_for_bow_and_wing_exit(self) -> None:
+        self.assertIn('size = Vector3(22, 0.5, 4)', self.course)
+        self.assertIn(
+            '[node name="NeutralClosingRunway" type="StaticBody3D" parent="Level"]\n'
+            'position = Vector3(556, -3.05, 0)',
+            self.course,
+        )
+        self.assertIn(
+            '[node name="BackstageWingCurtain" type="MeshInstance3D" parent="Level"]\n'
+            'position = Vector3(564.5, 0.45, 0)',
+            self.course,
+        )
+        self.assertIn(
+            '[node name="LevelCompleteTrigger" type="Marker3D" parent="Level"]\n'
+            'position = Vector3(560, -2.8, 0)',
+            self.course,
+        )
+        runway_end_x = 556.0 + 22.0 * 0.5
+        exit_x = 560.0 + 1.60 + 3.60
+        self.assertGreater(runway_end_x, exit_x)
+        self.assertGreater(exit_x, 564.5)
+
+    def test_stage_ending_controller_keeps_physics_and_walk_speed_owned_by_dancer(self) -> None:
+        self.assertIn("func begin_stage_ending(speed: float = 0.0) -> void:", self.dancer)
+        self.assertIn("func set_stage_ending_speed(speed: float) -> void:", self.dancer)
+        self.assertIn("velocity.x = stage_entrance_speed", self.dancer)
+        self.assertIn('dancer.call("begin_stage_ending", COMPLETION_WALK_SPEED)', self.recovery_manager)
+        self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
 
     def test_bootstrap_yields_choreography_states_to_retarget_layer(self) -> None:
         self.assertIn("handles_visual_state", self.bootstrap)
