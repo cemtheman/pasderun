@@ -20,11 +20,11 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
             self.builder,
         )
         self.assertIn(
-            'low_poly_girl_native_ik_v1.glb',
+            'low_poly_girl_native_ik_v2.glb',
             self.wrapper,
         )
         self.assertIn(
-            'opening_reverence_native_ik_v1_preview.mp4',
+            'opening_reverence_native_ik_v2_preview.mp4',
             self.wrapper,
         )
 
@@ -51,6 +51,26 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         first_target = setup.index('set_control_location(\n            controls[f"arm_target_{suffix}"]')
         first_constraint = setup.index("arm_constraint = create_ik_constraint(")
         self.assertLess(first_target, first_constraint)
+
+    def test_arm_shapes_are_applied_from_shoulder_center(self) -> None:
+        self.assertIn("shoulder_center = (", self.builder)
+        self.assertIn("hand_target = (\n        shoulder_center", self.builder)
+        self.assertIn("double-counts shoulder width", self.builder)
+
+    def test_reverence_has_cross_behind_and_turnout_targets(self) -> None:
+        self.assertIn("ankle += side * hip_width * 1.75 * cross", self.builder)
+        self.assertIn("ankle -= forward * total_leg * 0.065 * cross", self.builder)
+        self.assertIn('"turnout_deg": 32.0', self.builder)
+        self.assertIn("turnout @ foot_world_rotations[suffix]", self.builder)
+        self.assertIn("side * side_sign * 0.42", self.builder)
+
+    def test_preview_is_fast_visual_qa_not_final_render(self) -> None:
+        self.assertIn(
+            '("BLENDER_WORKBENCH", "BLENDER_EEVEE", "BLENDER_EEVEE_NEXT")',
+            self.builder,
+        )
+        self.assertIn("scene.render.resolution_x = 540", self.builder)
+        self.assertIn("scene.render.resolution_y = 540", self.builder)
 
     def test_pole_angle_is_calibrated_from_evaluated_rig(self) -> None:
         self.assertIn('def calibrate_pole_angle(', self.builder)
@@ -111,7 +131,7 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
 
     def test_preview_engine_is_runtime_compatible(self) -> None:
         self.assertIn("def choose_preview_engine(", self.builder)
-        self.assertIn('"BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "BLENDER_WORKBENCH"', self.builder)
+        self.assertIn('"BLENDER_WORKBENCH", "BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"', self.builder)
         self.assertIn('scene.render.bl_rna.properties["engine"]', self.builder)
         self.assertIn('"preview_engine": preview_engine', self.builder)
         self.assertNotIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)

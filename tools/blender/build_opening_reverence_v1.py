@@ -43,42 +43,49 @@ POSES = [
     {
         "frame": 0, "name": "READY_LOW",
         "arm_shape": "BRAS_BAS", "plie": 0.00, "cross": 0.00,
+        "turnout_deg": 24.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.0,
     },
     {
         "frame": 8, "name": "BRAS_BAS",
         "arm_shape": "BRAS_BAS", "plie": 0.00, "cross": 0.04,
+        "turnout_deg": 24.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.0,
     },
     {
         "frame": 19, "name": "EN_AVANT_PASSAGE",
         "arm_shape": "EN_AVANT", "plie": 0.05, "cross": 0.24,
+        "turnout_deg": 26.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.8,
     },
     {
         "frame": 31, "name": "PLACEMENT_AND_SOFTEN",
         "arm_shape": "OPEN_HALF", "plie": 0.40, "cross": 0.78,
+        "turnout_deg": 30.0,
         "torso_deg": 1.5, "chest_deg": 0.5, "head_deg": 0.5,
         "clavicle_deg": 1.0,
     },
     {
         "frame": 39, "name": "ACKNOWLEDGEMENT",
         "arm_shape": "OPEN", "plie": 0.72, "cross": 1.00,
+        "turnout_deg": 32.0,
         "torso_deg": 4.5, "chest_deg": 1.5, "head_deg": 3.5,
         "clavicle_deg": 1.2,
     },
     {
         "frame": 51, "name": "RISE_AND_OPEN",
         "arm_shape": "OPEN", "plie": 0.18, "cross": 1.00,
+        "turnout_deg": 30.0,
         "torso_deg": 0.8, "chest_deg": 0.4, "head_deg": 0.8,
         "clavicle_deg": 1.0,
     },
     {
         "frame": 67, "name": "READY_RESOLUTION",
         "arm_shape": "RESOLVE", "plie": 0.00, "cross": 0.00,
+        "turnout_deg": 24.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.0,
     },
@@ -453,12 +460,19 @@ def arm_control_points(
     shape = ARM_SHAPES[str(pose["arm_shape"])]
 
     shoulder = pose_head(armature, f"Upper_Arm_{suffix}")
+    shoulder_center = (
+        pose_head(armature, "Upper_Arm_L")
+        + pose_head(armature, "Upper_Arm_R")
+    ) * 0.5
     upper_length = joint_length(rest, f"Upper_Arm_{suffix}", f"Lower_Arm_{suffix}")
     lower_length = joint_length(rest, f"Lower_Arm_{suffix}", f"Hand_{suffix}")
     reach = upper_length + lower_length
 
+    # ARM_SHAPES are defined from the body/shoulder center. Using each
+    # shoulder as the origin double-counts shoulder width and turns classical
+    # rounded positions into hands-on-hips / near-T-pose silhouettes.
     hand_target = (
-        shoulder
+        shoulder_center
         + side * side_sign * reach * float(shape["hand_side"])
         + forward * reach * float(shape["hand_forward"])
         - up * reach * float(shape["hand_down"])
@@ -495,13 +509,13 @@ def leg_control_points(
 
     ankle = rest[f"Foot_{suffix}"].copy()
     if not left:
-        ankle += side * hip_width * 1.05 * cross
-        ankle -= forward * total_leg * 0.045 * cross
+        ankle += side * hip_width * 1.75 * cross
+        ankle -= forward * total_leg * 0.065 * cross
 
     hip = pose_head(armature, f"Upper_Leg_{suffix}")
     pole_direction = (
-        forward * 0.82
-        + side * side_sign * 0.28
+        forward * 0.72
+        + side * side_sign * 0.42
         - up * 0.10
     ).normalized()
     pole = hip + pole_direction * total_leg * 1.25
@@ -514,10 +528,12 @@ def key_control_landmarks(
     rest: dict[str, Vector],
     pose: dict,
     controls: dict[str, bpy.types.Object],
+    foot_world_rotations: dict[str, Quaternion],
 ) -> None:
     frame = int(pose["frame"])
     for left in (True, False):
         suffix = "L" if left else "R"
+        side_sign = 1.0 if left else -1.0
         hand_target, arm_pole = arm_control_points(
             armature, axes, rest, pose, left
         )
@@ -538,8 +554,17 @@ def key_control_landmarks(
             controls[f"leg_pole_{suffix}"], armature, leg_pole, frame
         )
 
-        controls[f"foot_rotation_{suffix}"].keyframe_insert(
-            data_path="rotation_quaternion", frame=frame
+        world_up = (
+            armature.matrix_world.to_3x3() @ axes["up"]
+        ).normalized()
+        turnout = Quaternion(
+            world_up,
+            math.radians(side_sign * float(pose["turnout_deg"])),
+        )
+        set_control_rotation_world(
+            controls[f"foot_rotation_{suffix}"],
+            turnout @ foot_world_rotations[suffix],
+            frame,
         )
 
 
@@ -668,7 +693,7 @@ def choose_preview_engine(scene: bpy.types.Scene) -> str:
     # across releases/builds. Probe the runtime enum instead of assuming one.
     engine_property = scene.render.bl_rna.properties["engine"]
     available = {item.identifier for item in engine_property.enum_items}
-    for candidate in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "BLENDER_WORKBENCH"):
+    for candidate in ("BLENDER_WORKBENCH", "BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"):
         if candidate in available:
             scene.render.engine = candidate
             return candidate
@@ -709,8 +734,8 @@ def configure_preview_scene(
     scene.frame_start = START_FRAME
     scene.frame_end = END_FRAME
     scene.render.fps = FPS
-    scene.render.resolution_x = 720
-    scene.render.resolution_y = 720
+    scene.render.resolution_x = 540
+    scene.render.resolution_y = 540
     scene.render.resolution_percentage = 100
     preview_engine = choose_preview_engine(scene)
     video_output_api = configure_video_output(scene)
@@ -800,7 +825,11 @@ def setup_controls_and_constraints(
     armature: bpy.types.Object,
     axes: dict[str, Vector],
     rest: dict[str, Vector],
-) -> tuple[dict[str, bpy.types.Object], dict[str, float]]:
+) -> tuple[
+    dict[str, bpy.types.Object],
+    dict[str, float],
+    dict[str, Quaternion],
+]:
     controls: dict[str, bpy.types.Object] = {}
     ik_constraints: dict[str, tuple[bpy.types.Constraint, str, str]] = {}
 
@@ -935,7 +964,7 @@ def setup_controls_and_constraints(
         )
         pole_angles[key] = round(math.degrees(angle), 4)
 
-    return controls, pole_angles
+    return controls, pole_angles, foot_world_rotations
 
 
 def main() -> None:
@@ -979,8 +1008,8 @@ def main() -> None:
     scene.frame_start = START_FRAME
     scene.frame_end = END_FRAME
 
-    controls, pole_angles = setup_controls_and_constraints(
-        armature, axes, rest
+    controls, pole_angles, foot_world_rotations = (
+        setup_controls_and_constraints(armature, axes, rest)
     )
 
     # Author body + semantic controls only at choreography landmarks.
@@ -991,7 +1020,12 @@ def main() -> None:
         apply_body_landmark(armature, axes, rest, pose)
         key_body_landmark(armature, frame)
         key_control_landmarks(
-            armature, axes, rest, pose, controls
+            armature,
+            axes,
+            rest,
+            pose,
+            controls,
+            foot_world_rotations,
         )
 
     configure_object_interpolation(list(controls.values()))
@@ -1067,6 +1101,7 @@ def main() -> None:
                 "arm_shape": pose["arm_shape"],
                 "plie": pose["plie"],
                 "cross": pose["cross"],
+                "turnout_deg": pose["turnout_deg"],
             }
             for pose in POSES
         ],
