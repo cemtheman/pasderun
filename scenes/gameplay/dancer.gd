@@ -12,8 +12,8 @@ enum LocomotionState {
 
 const STUMBLE_DURATION := 0.24
 const RECOVERY_DURATION := 0.62
-const STUMBLE_SPEED_MULTIPLIER := 0.58
-const RECOVERY_SPEED_MULTIPLIER := 1.08
+const STUMBLE_SPEED_MULTIPLIER := 0.68
+const RECOVERY_SPEED_MULTIPLIER := 1.05
 const VALID_DROP_MINIMUM := 0.60
 const MAX_TRAVERSABLE_STEP_HEIGHT := 0.45
 const STEP_FORWARD_CLEARANCE := 0.16
@@ -671,7 +671,10 @@ func _attempt_small_step(delta: float) -> bool:
 	# This avoids a one-frame hover and makes the step read as a stumble-through
 	# rather than a miniature jump.
 	move_and_collide(Vector3.DOWN * MAX_TRAVERSABLE_STEP_HEIGHT)
-	velocity.x = run_speed * STUMBLE_SPEED_MULTIPLIER
+
+	# Do not snap horizontal speed here. _trigger_stumble() starts immediately
+	# after this function and _locomotion_speed_multiplier() eases from the
+	# current running velocity into the catch step on subsequent physics frames.
 	return true
 
 
