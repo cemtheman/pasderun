@@ -14,7 +14,11 @@ class Phase105PoseLabTests(unittest.TestCase):
         cls.wrapper = WRAPPER.read_text(encoding="utf-8")
 
     def test_attempt_is_explicitly_one_of_two(self) -> None:
-        self.assertIn('ATTEMPT = "1/2"', self.script)
+        self.assertIn('DEFAULT_ATTEMPT = "1/2"', self.script)
+        self.assertIn(
+            'parser.add_argument("--attempt", default=DEFAULT_ATTEMPT)',
+            self.script,
+        )
         self.assertIn("ATTEMPT 1 OF 2", self.wrapper)
 
     def test_no_animation_or_glb_export(self) -> None:
