@@ -79,6 +79,7 @@ var _left_hand_idx := -1
 var _right_hand_idx := -1
 var _left_toe_idx := -1
 var _right_toe_idx := -1
+var _trip_uses_left_foot := false
 
 
 func _ready() -> void:
@@ -108,6 +109,8 @@ func _process(delta: float) -> void:
 	if state != _last_state:
 		_last_state = state
 		_state_elapsed = 0.0
+		if state == &"STUMBLE":
+			_capture_trip_side_from_current_run()
 	else:
 		_state_elapsed += delta
 
@@ -547,26 +550,66 @@ func _apply_air_motion_overlay(state: StringName) -> void:
 		return
 
 	var t := clampf(_state_elapsed / 0.22, 0.0, 1.0)
-	var contact_strength := 0.28 * (1.0 - smoothstep(0.45, 1.0, t))
-	# Let the native jump_end contact segment absorb through hips/knees. Upper
-	# body stays long but yields slightly forward, with arms opening low for
-	# balance rather than snapping back to the running pump.
+	var drop_distance := 0.0
+	var was_jump := false
+	if _dancer.has_method("get_last_landing_drop_distance"):
+		drop_distance = float(_dancer.call("get_last_landing_drop_distance"))
+	if _dancer.has_method("get_last_landing_was_jump"):
+		was_jump = bool(_dancer.call("get_last_landing_was_jump"))
+
+	# Compression peaks after contact and is fully released before the next run
+	# step. High drops absorb more deeply; an ordinary jump stays lighter.
+	var impact := 0.58 if was_jump else clampf(
+		0.58 + drop_distance * 0.24,
+		0.58,
+		0.96
+	)
+	var compression_curve := sin(PI * clampf(t / 0.92, 0.0, 1.0))
+	var leg_strength := 0.48 * impact * compression_curve
+	var upper_strength := 0.30 * impact * compression_curve
+
+	var support_left := bool(
+		_animation_player.get_meta("_landing_support_left", false)
+	)
+	var support_hip := "LegBackHip" if support_left else "LegFrontHip"
+	var support_knee := "LegBackKnee" if support_left else "LegFrontKnee"
+	var side := -0.04 if support_left else 0.04
+
+	# The landing foot stays planted while the knee travels forward along +X and
+	# the shin folds back toward the foot. This is the running equivalent of a
+	# ballet plié: absorb through ankle/knee/hip, never bounce vertically from
+	# the same support foot.
+	_steer_current_chain_world_direction(
+		support_hip,
+		support_knee,
+		Vector3(0.26, -0.964, side).normalized(),
+		leg_strength
+	)
+	_steer_current_chain_world_direction(
+		support_knee,
+		"FootBack" if support_left else "FootFront",
+		Vector3(-0.18, -0.983, side * 0.45).normalized(),
+		leg_strength
+	)
+
+	# Long torso yields slightly forward over the planted leg. Arms open low and
+	# rounded for balance, then release before the opposite-foot run contact.
 	_steer_current_chain_world_direction(
 		"Pelvis",
 		"Torso",
-		Vector3(0.16, 0.985, 0.0).normalized(),
-		contact_strength
+		Vector3(0.14 + 0.05 * impact, 0.985, 0.0).normalized(),
+		upper_strength
 	)
 	_steer_current_chain_world_direction(
 		"Torso",
 		"Head",
 		Vector3(0.02, 0.999, 0.0).normalized(),
-		contact_strength
+		upper_strength * 0.78
 	)
 	_apply_air_port_de_bras(
-		Vector3(-0.72, -0.28, 0.28),
-		Vector3(0.74, -0.24, 0.26),
-		contact_strength
+		Vector3(-0.70, -0.30, 0.28),
+		Vector3(0.72, -0.27, 0.26),
+		upper_strength
 	)
 
 
@@ -617,6 +660,25 @@ func _apply_air_toe_line(strength: float) -> void:
 	)
 
 
+func _capture_trip_side_from_current_run() -> void:
+	var left_foot_idx := _binding_index("FootBack")
+	var right_foot_idx := _binding_index("FootFront")
+	if left_foot_idx < 0 or right_foot_idx < 0:
+		_trip_uses_left_foot = false
+		return
+
+	var skeleton_world := _skeleton.global_transform
+	var left_pose := _skeleton.get_bone_global_pose(left_foot_idx)
+	var right_pose := _skeleton.get_bone_global_pose(right_foot_idx)
+	var left_world := skeleton_world * left_pose.origin
+	var right_world := skeleton_world * right_pose.origin
+
+	# Gameplay advances along +X, so the foot farther forward at obstacle contact
+	# is the foot most plausibly caught. This keeps trip/recovery synchronized
+	# with the native run gait instead of always forcing the same leg.
+	_trip_uses_left_foot = left_world.x > right_world.x
+
+
 func _apply_running_trip_overlay(state: StringName) -> void:
 	if state == &"STUMBLE":
 		var t := clampf(_state_elapsed / STUMBLE_DURATION, 0.0, 1.0)
@@ -651,24 +713,30 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 			torso_strength * 0.80
 		)
 
-		# Only the caught right/front leg is constrained. The free left leg stays
-		# on the native run clip so it can make a believable reflex catch step.
+		# Constrain whichever foot is actually leading into the obstacle. The
+		# opposite leg stays on the native run clip and remains free to save the
+		# fall with a reflex catch step.
+		var trip_hip := "LegBackHip" if _trip_uses_left_foot else "LegFrontHip"
+		var trip_knee := "LegBackKnee" if _trip_uses_left_foot else "LegFrontKnee"
+		var trip_foot := "FootBack" if _trip_uses_left_foot else "FootFront"
+		var trip_toe := _left_toe_idx if _trip_uses_left_foot else _right_toe_idx
+		var trip_side := 0.03 if _trip_uses_left_foot else -0.03
 		_steer_current_chain_world_direction(
-			"LegFrontHip",
-			"LegFrontKnee",
-			Vector3(0.26, -0.965, -0.01).normalized(),
+			trip_hip,
+			trip_knee,
+			Vector3(0.26, -0.965, trip_side).normalized(),
 			trip_leg_strength
 		)
 		_steer_current_chain_world_direction(
-			"LegFrontKnee",
-			"FootFront",
-			Vector3(0.07, -0.997, 0.0).normalized(),
+			trip_knee,
+			trip_foot,
+			Vector3(0.07, -0.997, trip_side * 0.30).normalized(),
 			trip_leg_strength
 		)
 		_steer_current_segment_world_direction(
-			_binding_index("FootFront"),
-			_right_toe_idx,
-			Vector3(0.95, 0.30, 0.0).normalized(),
+			_binding_index(trip_foot),
+			trip_toe,
+			Vector3(0.95, 0.30, trip_side).normalized(),
 			trip_leg_strength * 0.82
 		)
 
@@ -734,24 +802,29 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 		torso_strength * 0.72
 	)
 
-	# The free left/back leg makes one emergency forward catch step. Its overlay
-	# peaks mid-recovery then disappears, handing the leg back to the native run.
+	# The leg opposite the caught foot makes one emergency forward catch step.
+	# The overlay peaks mid-recovery then disappears into the native run.
+	var catch_hip := "LegFrontHip" if _trip_uses_left_foot else "LegBackHip"
+	var catch_knee := "LegFrontKnee" if _trip_uses_left_foot else "LegBackKnee"
+	var caught_foot := "FootBack" if _trip_uses_left_foot else "FootFront"
+	var caught_toe := _left_toe_idx if _trip_uses_left_foot else _right_toe_idx
+	var catch_side := -0.04 if _trip_uses_left_foot else 0.04
 	_steer_current_chain_world_direction(
-		"LegBackHip",
-		"LegBackKnee",
-		Vector3(0.42, -0.90, 0.04).normalized(),
+		catch_hip,
+		catch_knee,
+		Vector3(0.42, -0.90, catch_side).normalized(),
 		catch_step_strength
 	)
 	_steer_current_chain_world_direction(
-		"LegBackKnee",
-		"FootBack",
-		Vector3(0.24, -0.97, 0.02).normalized(),
+		catch_knee,
+		"FootFront" if _trip_uses_left_foot else "FootBack",
+		Vector3(0.24, -0.97, catch_side * 0.50).normalized(),
 		catch_step_strength
 	)
 	_steer_current_segment_world_direction(
-		_binding_index("FootFront"),
-		_right_toe_idx,
-		Vector3(0.20, -0.98, 0.0).normalized(),
+		_binding_index(caught_foot),
+		caught_toe,
+		Vector3(0.20, -0.98, -catch_side * 0.30).normalized(),
 		0.24 * (1.0 - release)
 	)
 
