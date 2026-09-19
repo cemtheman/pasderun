@@ -243,19 +243,9 @@ func _resolve_visual_state(delta: float) -> StringName:
 	if dancer.get("has_fallen") == true:
 		return _current_state
 
-	var locomotion := &"NORMAL"
-	if dancer.has_method("get_locomotion_state"):
-		locomotion = StringName(dancer.call("get_locomotion_state"))
-
-	if locomotion == STATE_STUMBLE:
-		return STATE_STUMBLE
-	if locomotion == STATE_RECOVERY:
-		return STATE_RECOVERY
-	if dancer.get("in_low_transition") == true:
-		return STATE_LOW_TRANSITION
-	if dancer.get("in_balance_zone") == true:
-		return STATE_BALANCE
-
+	# Physical contact owns the visual hierarchy. Airborne motion must remain
+	# airborne even if gameplay has already queued a stumble, and the first
+	# grounded frames must read as an actual landing/plié before recovery.
 	var grounded := dancer.is_on_floor()
 	if not grounded:
 		if _was_on_floor:
@@ -270,11 +260,24 @@ func _resolve_visual_state(delta: float) -> StringName:
 	if not _was_on_floor:
 		_landing_time = LANDING_VISUAL_TIME
 		_airborne_time = 0.0
-	_was_on_floor = true
+		_was_on_floor = true
 
 	if _landing_time > 0.0:
 		_landing_time = maxf(_landing_time - delta, 0.0)
 		return STATE_LANDING
+
+	var locomotion := &"NORMAL"
+	if dancer.has_method("get_locomotion_state"):
+		locomotion = StringName(dancer.call("get_locomotion_state"))
+
+	if locomotion == STATE_STUMBLE:
+		return STATE_STUMBLE
+	if locomotion == STATE_RECOVERY:
+		return STATE_RECOVERY
+	if dancer.get("in_low_transition") == true:
+		return STATE_LOW_TRANSITION
+	if dancer.get("in_balance_zone") == true:
+		return STATE_BALANCE
 
 	if not _music_expression_enabled:
 		return STATE_TRAVEL
