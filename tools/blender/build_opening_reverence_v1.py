@@ -65,22 +65,29 @@ POSES = [
         "frame": 31, "name": "PLACEMENT_AND_SOFTEN",
         "arm_shape": "OPEN_HALF", "plie": 0.40, "cross": 0.78,
         "turnout_deg": 30.0,
-        "torso_deg": 1.5, "chest_deg": 0.5, "head_deg": 0.5,
+        "torso_deg": 3.0, "chest_deg": 1.0, "head_deg": 0.5,
         "clavicle_deg": 1.0,
     },
     {
         "frame": 39, "name": "ACKNOWLEDGEMENT",
-        "arm_shape": "OPEN", "plie": 0.72, "cross": 1.00,
+        "arm_shape": "ACK_LOW_OPEN", "plie": 0.72, "cross": 1.00,
         "turnout_deg": 32.0,
-        "torso_deg": 4.5, "chest_deg": 1.5, "head_deg": 3.5,
+        "torso_deg": 9.0, "chest_deg": 3.0, "head_deg": 5.0,
         "clavicle_deg": 1.2,
     },
     {
         "frame": 51, "name": "RISE_AND_OPEN",
         "arm_shape": "OPEN", "plie": 0.18, "cross": 1.00,
         "turnout_deg": 30.0,
-        "torso_deg": 0.8, "chest_deg": 0.4, "head_deg": 0.8,
+        "torso_deg": 1.5, "chest_deg": 0.5, "head_deg": 1.0,
         "clavicle_deg": 1.0,
+    },
+    {
+        "frame": 59, "name": "LOWERING_SECOND",
+        "arm_shape": "LOWERING_SECOND", "plie": 0.04, "cross": 0.55,
+        "turnout_deg": 27.0,
+        "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
+        "clavicle_deg": 0.4,
     },
     {
         "frame": 67, "name": "READY_RESOLUTION",
@@ -95,24 +102,32 @@ POSES = [
 # shoulder-to-wrist reach in the inferred dancer basis.
 ARM_SHAPES = {
     "BRAS_BAS": {
-        "hand_side": 0.12, "hand_forward": 0.28, "hand_down": 0.43,
-        "pole_side": 0.46, "pole_forward": 0.34, "pole_down": 0.20,
+        "hand_side": 0.16, "hand_forward": 0.24, "hand_down": 0.68,
+        "pole_side": 0.48, "pole_forward": 0.30, "pole_down": 0.38,
     },
     "EN_AVANT": {
-        "hand_side": 0.05, "hand_forward": 0.45, "hand_down": 0.08,
-        "pole_side": 0.50, "pole_forward": 0.38, "pole_down": 0.12,
+        "hand_side": 0.10, "hand_forward": 0.40, "hand_down": 0.26,
+        "pole_side": 0.48, "pole_forward": 0.34, "pole_down": 0.26,
     },
     "OPEN_HALF": {
-        "hand_side": 0.50, "hand_forward": 0.28, "hand_down": 0.08,
-        "pole_side": 0.52, "pole_forward": 0.38, "pole_down": 0.10,
+        "hand_side": 0.42, "hand_forward": 0.24, "hand_down": 0.20,
+        "pole_side": 0.52, "pole_forward": 0.32, "pole_down": 0.22,
+    },
+    "ACK_LOW_OPEN": {
+        "hand_side": 0.62, "hand_forward": 0.16, "hand_down": 0.38,
+        "pole_side": 0.58, "pole_forward": 0.28, "pole_down": 0.36,
     },
     "OPEN": {
-        "hand_side": 0.86, "hand_forward": 0.16, "hand_down": 0.06,
-        "pole_side": 0.58, "pole_forward": 0.34, "pole_down": 0.08,
+        "hand_side": 0.72, "hand_forward": 0.14, "hand_down": 0.13,
+        "pole_side": 0.66, "pole_forward": 0.28, "pole_down": 0.20,
+    },
+    "LOWERING_SECOND": {
+        "hand_side": 0.46, "hand_forward": 0.16, "hand_down": 0.40,
+        "pole_side": 0.58, "pole_forward": 0.26, "pole_down": 0.34,
     },
     "RESOLVE": {
-        "hand_side": 0.14, "hand_forward": 0.24, "hand_down": 0.44,
-        "pole_side": 0.44, "pole_forward": 0.30, "pole_down": 0.20,
+        "hand_side": 0.16, "hand_forward": 0.22, "hand_down": 0.66,
+        "pole_side": 0.46, "pole_forward": 0.28, "pole_down": 0.38,
     },
 }
 

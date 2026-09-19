@@ -20,11 +20,11 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
             self.builder,
         )
         self.assertIn(
-            'low_poly_girl_native_ik_v2.glb',
+            'low_poly_girl_native_ik_v3.glb',
             self.wrapper,
         )
         self.assertIn(
-            'opening_reverence_native_ik_v2_preview.mp4',
+            'opening_reverence_native_ik_v3_preview.mp4',
             self.wrapper,
         )
 
@@ -56,6 +56,19 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertIn("shoulder_center = (", self.builder)
         self.assertIn("hand_target = (\n        shoulder_center", self.builder)
         self.assertIn("double-counts shoulder width", self.builder)
+
+    def test_classical_arm_shapes_are_rounded_and_lowered(self) -> None:
+        self.assertIn('"hand_down": 0.68', self.builder)
+        self.assertIn('"hand_down": 0.26', self.builder)
+        self.assertIn('"hand_side": 0.72', self.builder)
+        self.assertIn('"ACK_LOW_OPEN"', self.builder)
+        self.assertIn('"LOWERING_SECOND"', self.builder)
+        self.assertNotIn('"hand_side": 0.86', self.builder)
+
+    def test_acknowledgement_has_visible_torso_head_wave(self) -> None:
+        self.assertIn('"torso_deg": 9.0', self.builder)
+        self.assertIn('"chest_deg": 3.0', self.builder)
+        self.assertIn('"head_deg": 5.0', self.builder)
 
     def test_reverence_has_cross_behind_and_turnout_targets(self) -> None:
         self.assertIn("ankle += side * hip_width * 1.75 * cross", self.builder)
@@ -97,7 +110,7 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         for token in (
             '"READY_LOW"', '"BRAS_BAS"', '"EN_AVANT_PASSAGE"',
             '"PLACEMENT_AND_SOFTEN"', '"ACKNOWLEDGEMENT"',
-            '"RISE_AND_OPEN"', '"READY_RESOLUTION"',
+            '"RISE_AND_OPEN"', '"LOWERING_SECOND"', '"READY_RESOLUTION"',
         ):
             self.assertIn(token, self.builder)
 
