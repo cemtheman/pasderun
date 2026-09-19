@@ -1412,10 +1412,10 @@ size = Vector3(9.0520, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_202"]
 material = ExtResource("2_palace")
-size = Vector3(8.0000, 0.5000, 4.0000)
+size = Vector3(12.0000, 0.5000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="BoxShape_202"]
-size = Vector3(8.0000, 0.5000, 4.0000)
+size = Vector3(12.0000, 0.5000, 4.0000)
 
 [sub_resource type="BoxMesh" id="BoxMesh_203"]
 material = ExtResource("2_palace")
