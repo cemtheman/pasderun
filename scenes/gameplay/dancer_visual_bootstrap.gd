@@ -91,10 +91,10 @@ func _on_ballerina_visual_state_changed(
 	external_visual: Node,
 	player: AnimationPlayer
 ) -> void:
-	# Semantic retarget v2 owns choreography-bearing humanoid states. Stop the
-	# imported stock clip immediately so it cannot overwrite Skeleton3D for even
-	# one frame. The fallback map below is still correct if retarget binding ever
-	# fails or a future state is intentionally left to the imported asset.
+	# Full-body retarget is now reserved for slow stage-presentation states.
+	# Locomotion stays on the imported humanoid clips so spine/clavicle/wrist/toe
+	# follow-through remains natural. Stumble/recovery are run clips with a late
+	# procedural overlay applied by BallerinaVisualV1.
 	if (
 		external_visual != null
 		and external_visual.has_method("handles_visual_state")
@@ -104,26 +104,36 @@ func _on_ballerina_visual_state_changed(
 		return
 
 	match state:
-		&"NEUTRAL", &"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"STAGE_EXIT_TURN", &"RECOVERY":
-			_play_ballerina_animation(player, &"idle", true)
+		&"NEUTRAL":
+			_play_ballerina_animation(player, &"idle", true, 1.0)
 		&"STAGE_WALK":
-			_play_ballerina_animation(player, &"walk", true)
+			_play_ballerina_animation(player, &"walk", true, 1.0)
 		&"JUMP":
-			_play_ballerina_animation(player, &"jump_start", false)
+			_play_ballerina_animation(player, &"jump_start", false, 1.0)
 		&"AIRBORNE":
-			_play_ballerina_animation(player, &"jump_falling", true)
+			_play_ballerina_animation(player, &"jump_falling", true, 1.0)
 		&"LANDING":
-			_play_ballerina_animation(player, &"jump_end", false)
-		&"TRAVEL", &"BALANCE", &"LOW_TRANSITION", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
-			_play_ballerina_animation(player, &"run", true)
+			_play_ballerina_animation(player, &"jump_end", false, 1.0)
+		&"STUMBLE":
+			_play_ballerina_animation(player, &"run", true, 0.58)
+		&"RECOVERY":
+			_play_ballerina_animation(player, &"run", true, 1.12)
+		&"LOW_TRANSITION":
+			_play_ballerina_animation(player, &"run", true, 0.92)
+		&"TRAVEL", &"BALANCE", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
+			_play_ballerina_animation(player, &"run", true, 1.0)
+		&"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"STAGE_EXIT_TURN":
+			# These are normally intercepted by handles_visual_state().
+			_play_ballerina_animation(player, &"idle", true, 1.0)
 		_:
-			_play_ballerina_animation(player, &"idle", true)
+			_play_ballerina_animation(player, &"idle", true, 1.0)
 
 
 func _play_ballerina_animation(
 	player: AnimationPlayer,
 	animation_name: StringName,
-	looped: bool
+	looped: bool,
+	speed_scale: float = 1.0
 ) -> void:
 	if not player.has_animation(animation_name):
 		push_warning(
@@ -136,8 +146,8 @@ func _play_ballerina_animation(
 	if animation != null:
 		animation.loop_mode = Animation.LOOP_LINEAR if looped else Animation.LOOP_NONE
 
+	player.speed_scale = speed_scale
 	if player.current_animation == String(animation_name) and player.is_playing():
 		return
 
-	player.speed_scale = 1.0
 	player.play(animation_name, 0.10)
