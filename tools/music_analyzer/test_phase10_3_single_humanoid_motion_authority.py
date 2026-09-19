@@ -300,6 +300,11 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn('var middle := _bone_index(', port.group(0))
         self.assertIn('var hand_finish_direction :=', port.group(0))
         self.assertIn('var hand_finish_target :=', port.group(0))
+        self.assertIn('-outward * (0.74 if expressive else 0.66)', port.group(0))
+        self.assertIn('audience_forward * 0.28', port.group(0))
+        self.assertIn('clampf(hand_finish_strength, 0.16, 0.42)', port.group(0))
+        self.assertIn('outward * upper_length * 0.68', port.group(0))
+        self.assertIn('outward * upper_length * 0.50', port.group(0))
         self.assertIn('_steer_segment_toward_world_point(', port.group(0))
 
 

@@ -1230,15 +1230,15 @@ func _apply_reverence_port_de_bras(
 		)
 		var gathered_elbow := (
 			shoulder_position
-			+ outward * upper_length * 0.56
-			- Vector3.UP * upper_length * 0.10
-			+ audience_forward * upper_length * 0.18
+			+ outward * upper_length * 0.50
+			- Vector3.UP * upper_length * 0.20
+			+ audience_forward * upper_length * 0.16
 		)
 		var gathered_hand := (
 			shoulder_center
-			+ outward * reach * 0.12
-			- Vector3.UP * reach * 0.22
-			+ audience_forward * reach * 0.34
+			+ outward * reach * 0.16
+			- Vector3.UP * reach * 0.26
+			+ audience_forward * reach * 0.28
 		)
 
 		var peak_elbow: Vector3
@@ -1298,52 +1298,52 @@ func _apply_reverence_port_de_bras(
 		elif expressive:
 			peak_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.80
-				+ Vector3.UP * upper_length * 0.08
-				+ audience_forward * upper_length * 0.14
+				+ outward * upper_length * 0.68
+				- Vector3.UP * upper_length * 0.10
+				+ audience_forward * upper_length * 0.16
 			)
 			peak_hand = (
 				shoulder_center
-				+ outward * reach * 0.18
-				- Vector3.UP * reach * 0.08
-				+ audience_forward * reach * 0.38
+				+ outward * reach * 0.34
+				- Vector3.UP * reach * 0.18
+				+ audience_forward * reach * 0.30
 			)
 			settle_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.66
-				- Vector3.UP * upper_length * 0.06
+				+ outward * upper_length * 0.58
+				- Vector3.UP * upper_length * 0.16
 				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
 				shoulder_center
-				+ outward * reach * 0.18
-				- Vector3.UP * reach * 0.20
-				+ audience_forward * reach * 0.36
+				+ outward * reach * 0.28
+				- Vector3.UP * reach * 0.24
+				+ audience_forward * reach * 0.30
 			)
 		else:
 			peak_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.62
-				- Vector3.UP * upper_length * 0.02
+				+ outward * upper_length * 0.50
+				- Vector3.UP * upper_length * 0.16
 				+ audience_forward * upper_length * 0.18
 			)
 			peak_hand = (
 				shoulder_center
-				+ outward * reach * 0.10
-				- Vector3.UP * reach * 0.20
-				+ audience_forward * reach * 0.40
+				+ outward * reach * 0.16
+				- Vector3.UP * reach * 0.26
+				+ audience_forward * reach * 0.32
 			)
 			settle_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.60
-				- Vector3.UP * upper_length * 0.08
+				+ outward * upper_length * 0.50
+				- Vector3.UP * upper_length * 0.18
 				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
 				shoulder_center
-				+ outward * reach * 0.16
-				- Vector3.UP * reach * 0.22
-				+ audience_forward * reach * 0.36
+				+ outward * reach * 0.20
+				- Vector3.UP * reach * 0.26
+				+ audience_forward * reach * 0.30
 			)
 
 		var elbow_target := prep_elbow.lerp(gathered_elbow, upper_gather)
@@ -1379,12 +1379,12 @@ func _apply_reverence_port_de_bras(
 					hand_position.distance_to(middle_position),
 					0.001
 				)
-				var wrist_lift := 0.12
+				var wrist_lift := 0.10
 				if variant == FINAL_REVERENCE and expressive:
-					wrist_lift = 0.20
+					wrist_lift = 0.18
 				var hand_finish_direction := (
-					audience_forward * 0.88
-					- outward * (0.24 if expressive else 0.18)
+					-outward * (0.74 if expressive else 0.66)
+					+ audience_forward * 0.28
 					+ Vector3.UP * wrist_lift
 				).normalized()
 				var hand_finish_target := (
@@ -1392,15 +1392,15 @@ func _apply_reverence_port_de_bras(
 					+ hand_finish_direction * hand_axis_length
 				)
 				var hand_finish_strength := (
-					0.28
-					+ 0.24 * hand_present
-					- 0.08 * hand_resolve
+					0.22
+					+ 0.22 * hand_present
+					- 0.06 * hand_resolve
 				)
 				_steer_segment_toward_world_point(
 					hand,
 					middle,
 					hand_finish_target,
-					clampf(hand_finish_strength, 0.18, 0.50)
+					clampf(hand_finish_strength, 0.16, 0.42)
 				)
 
 func _apply_reverence_epaulement(profile: Dictionary, elapsed: float) -> void:
