@@ -135,14 +135,26 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         ):
             self.assertIn(contract, self.retarget)
 
-    def test_all_choreography_states_are_semantically_retargeted(self) -> None:
-        states = (
-            "NEUTRAL",
-            "STAGE_WALK",
+    def test_native_humanoid_clips_own_dynamic_locomotion(self) -> None:
+        block = re.search(
+            r"const RETARGET_STATES := \{(.*?)\n\}",
+            self.retarget,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(block)
+        source = block.group(1)
+
+        for state in (
             "STAGE_BOW",
             "STAGE_READY",
             "STAGE_FINAL_BOW",
             "STAGE_EXIT_TURN",
+        ):
+            self.assertIn(f'&"{state}": true', source)
+
+        for state in (
+            "NEUTRAL",
+            "STAGE_WALK",
             "TRAVEL",
             "JUMP",
             "AIRBORNE",
@@ -158,16 +170,35 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "MUSIC_CLIMAX",
             "MUSIC_PREP",
             "MUSIC_ACCENT",
+        ):
+            self.assertNotIn(f'&"{state}": true', source)
+
+        self.assertIn('&"STUMBLE": true', self.retarget)
+        self.assertIn('&"RECOVERY": true', self.retarget)
+        self.assertIn("const OVERLAY_STATES := {", self.retarget)
+        self.assertIn("_apply_running_trip_overlay(state)", self.retarget)
+
+        self.assertIn(
+            '_play_ballerina_animation(player, &"walk", true, 1.0)',
+            self.bootstrap,
         )
-        block = re.search(
-            r"const RETARGET_STATES := \{(.*?)\n\}",
-            self.retarget,
-            re.DOTALL,
+        self.assertIn(
+            '_play_ballerina_animation(player, &"run", true, 1.0)',
+            self.bootstrap,
         )
-        self.assertIsNotNone(block)
-        source = block.group(1)
-        for state in states:
-            self.assertIn(f'&"{state}": true', source)
+        self.assertIn(
+            '_play_ballerina_animation(player, &"jump_start", false, 1.0)',
+            self.bootstrap,
+        )
+        self.assertIn(
+            '_play_ballerina_animation(player, &"jump_falling", true, 1.0)',
+            self.bootstrap,
+        )
+        self.assertIn(
+            '_play_ballerina_animation(player, &"jump_end", false, 1.0)',
+            self.bootstrap,
+        )
+
 
     def test_balance_zone_preserves_always_run_visual_contract(self) -> None:
         block = re.search(
@@ -176,7 +207,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(block)
-        self.assertIn('&"BALANCE": true', block.group(1))
+        self.assertNotIn('&"BALANCE": true', block.group(1))
         self.assertIn("func _balance_animation() -> Animation:", self.source_v5)
         balance_override = re.search(
             r"func _balance_animation\(\) -> Animation:(.*?)(?=\n\n|\Z)",
@@ -353,11 +384,15 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
 
     def test_humanoid_trip_uses_target_axis_independent_chain_directions(self) -> None:
+        self.assertIn('_play_ballerina_animation(player, &"run", true, 0.58)', self.bootstrap)
+        self.assertIn('_play_ballerina_animation(player, &"run", true, 1.12)', self.bootstrap)
+        self.assertIn('current_world_basis', self.retarget)
+        self.assertIn('parent_current.basis.get_rotation_quaternion().slerp', self.retarget)
         for token in (
-            "func _apply_running_trip_calibration",
-            "func _set_chain_world_direction",
-            "func _set_optional_segment_world_direction",
-            "Quaternion(baseline_direction_world, desired)",
+            "func _apply_running_trip_overlay",
+            "func _steer_current_chain_world_direction",
+            "func _steer_current_segment_world_direction",
+            "Quaternion(current_direction_world, desired)",
             'state == &"STUMBLE"',
             'state != &"RECOVERY"',
             "STUMBLE_DURATION := 0.24",
