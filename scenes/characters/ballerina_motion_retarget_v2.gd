@@ -489,101 +489,213 @@ func _apply_semantic_motion_retarget(state: StringName) -> void:
 		)
 
 
-func _apply_running_trip_overlay(state: StringName) -> void:
-	if state == &"STUMBLE":
-		var t := clampf(_state_elapsed / STUMBLE_DURATION, 0.0, 1.0)
-		var impact := smoothstep(0.0, 1.0, t)
-		var trip_strength := 0.62 * smoothstep(0.0, 0.34, t)
-
-		# Forward momentum survives the toe catch. CharacterBody3D is the ONLY
-		# owner of vertical motion/gravity. Do not add a second visual Y drop here:
-		# on high platform falls that double-counted gravity and made the skinned
-		# feet/body penetrate the landing surface. Keep only a small X lag.
-		_model_root.position += Vector3(
-			-0.075 * impact,
-			0.0,
-			0.0
-		)
-
-		# Trunk: CoM continues +X while the head counter-extends to preserve the
-		# horizon. A small Z component prevents a perfectly planar mannequin fall.
+func _apply_air_motion_overlay(state: StringName) -> void:
+	# Preserve the imported jump/fall/landing clips as the motion base. These
+	# small overlays only refine line, head carriage and port de bras; legs remain
+	# native during flight/contact so the body keeps believable weight.
+	if state == &"JUMP":
+		var t := clampf(_state_elapsed / 0.16, 0.0, 1.0)
+		var strength := 0.30 * smoothstep(0.0, 0.70, t)
 		_steer_current_chain_world_direction(
 			"Pelvis",
 			"Torso",
-			Vector3(0.62, 0.77, -0.10).lerp(
-				Vector3(0.18, 0.98, 0.0),
-				1.0 - impact
-			).normalized(),
-			trip_strength
+			Vector3(0.10, 0.995, 0.0).normalized(),
+			strength
 		)
 		_steer_current_chain_world_direction(
 			"Torso",
 			"Head",
-			Vector3(0.20, 0.98, 0.02).normalized(),
-			trip_strength
+			Vector3(0.02, 0.999, 0.0).normalized(),
+			strength
+		)
+		_apply_air_port_de_bras(
+			Vector3(-0.82, 0.26, 0.18),
+			Vector3(0.84, 0.34, 0.16),
+			strength
+		)
+		_apply_air_toe_line(0.24 * strength / 0.30)
+		return
+
+	if state == &"AIRBORNE":
+		var descent := clampf(maxf(-_dancer.velocity.y, 0.0) / 7.0, 0.0, 1.0)
+		var strength := 0.30
+		var back_arm := Vector3(-0.86, 0.18, 0.22).lerp(
+			Vector3(-0.72, -0.10, 0.34),
+			descent
+		).normalized()
+		var front_arm := Vector3(0.88, 0.28, 0.18).lerp(
+			Vector3(0.74, -0.06, 0.32),
+			descent
+		).normalized()
+		_steer_current_chain_world_direction(
+			"Pelvis",
+			"Torso",
+			Vector3(0.08, 0.997, 0.0).normalized(),
+			strength
+		)
+		_steer_current_chain_world_direction(
+			"Torso",
+			"Head",
+			Vector3(0.01, 1.0, 0.0).normalized(),
+			strength
+		)
+		_apply_air_port_de_bras(back_arm, front_arm, strength)
+		_apply_air_toe_line(0.28)
+		return
+
+	if state != &"LANDING":
+		return
+
+	var t := clampf(_state_elapsed / 0.22, 0.0, 1.0)
+	var contact_strength := 0.28 * (1.0 - smoothstep(0.45, 1.0, t))
+	# Let the native jump_end contact segment absorb through hips/knees. Upper
+	# body stays long but yields slightly forward, with arms opening low for
+	# balance rather than snapping back to the running pump.
+	_steer_current_chain_world_direction(
+		"Pelvis",
+		"Torso",
+		Vector3(0.16, 0.985, 0.0).normalized(),
+		contact_strength
+	)
+	_steer_current_chain_world_direction(
+		"Torso",
+		"Head",
+		Vector3(0.02, 0.999, 0.0).normalized(),
+		contact_strength
+	)
+	_apply_air_port_de_bras(
+		Vector3(-0.72, -0.28, 0.28),
+		Vector3(0.74, -0.24, 0.26),
+		contact_strength
+	)
+
+
+func _apply_air_port_de_bras(
+	back_upper_direction: Vector3,
+	front_upper_direction: Vector3,
+	strength: float
+) -> void:
+	_steer_current_chain_world_direction(
+		"ArmBackShoulder",
+		"ArmBackElbow",
+		back_upper_direction.normalized(),
+		strength
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("ArmBackElbow"),
+		_left_hand_idx,
+		(back_upper_direction + Vector3(-0.10, -0.18, 0.18)).normalized(),
+		strength * 0.86
+	)
+	_steer_current_chain_world_direction(
+		"ArmFrontShoulder",
+		"ArmFrontElbow",
+		front_upper_direction.normalized(),
+		strength
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("ArmFrontElbow"),
+		_right_hand_idx,
+		(front_upper_direction + Vector3(0.10, -0.18, 0.18)).normalized(),
+		strength * 0.86
+	)
+
+
+func _apply_air_toe_line(strength: float) -> void:
+	var weight := clampf(strength, 0.0, 0.30)
+	_steer_current_segment_world_direction(
+		_binding_index("FootBack"),
+		_left_toe_idx,
+		Vector3(-0.08, -0.995, 0.02).normalized(),
+		weight
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("FootFront"),
+		_right_toe_idx,
+		Vector3(0.10, -0.994, 0.02).normalized(),
+		weight
+	)
+
+
+func _apply_running_trip_overlay(state: StringName) -> void:
+	if state == &"STUMBLE":
+		var t := clampf(_state_elapsed / STUMBLE_DURATION, 0.0, 1.0)
+		var impact := smoothstep(0.0, 1.0, t)
+		var torso_strength := 0.42 * smoothstep(0.04, 0.68, t)
+		var trip_leg_strength := 0.50 * smoothstep(0.0, 0.50, t)
+		var arm_strength := 0.34 * smoothstep(0.18, 0.82, t)
+
+		# Keep the CoM moving forward. Only a slight visual lag is needed to read
+		# the caught toe; vertical motion remains owned by CharacterBody3D.
+		_model_root.position += Vector3(
+			-0.050 * impact,
+			0.0,
+			0.0
 		)
 
-		# Right/front foot is the tripping foot. It is caught in front of the CoM
-		# while the left/back leg is stranded behind and cannot rescue the first
-		# impact in time.
+		# Toe catch -> forward pitch. Head counter-extends so the gaze does not
+		# collapse with the chest.
+		_steer_current_chain_world_direction(
+			"Pelvis",
+			"Torso",
+			Vector3(0.48, 0.87, -0.05).lerp(
+				Vector3(0.08, 0.997, 0.0),
+				1.0 - impact
+			).normalized(),
+			torso_strength
+		)
+		_steer_current_chain_world_direction(
+			"Torso",
+			"Head",
+			Vector3(0.12, 0.992, 0.0).normalized(),
+			torso_strength * 0.80
+		)
+
+		# Only the caught right/front leg is constrained. The free left leg stays
+		# on the native run clip so it can make a believable reflex catch step.
 		_steer_current_chain_world_direction(
 			"LegFrontHip",
 			"LegFrontKnee",
-			Vector3(0.38, -0.92, -0.02).normalized(),
-			trip_strength
+			Vector3(0.26, -0.965, -0.01).normalized(),
+			trip_leg_strength
 		)
 		_steer_current_chain_world_direction(
 			"LegFrontKnee",
 			"FootFront",
-			Vector3(0.08, -0.995, 0.0).normalized(),
-			trip_strength
+			Vector3(0.07, -0.997, 0.0).normalized(),
+			trip_leg_strength
 		)
-		_steer_current_chain_world_direction(
-			"LegBackHip",
-			"LegBackKnee",
-			Vector3(-0.38, -0.92, 0.08).normalized(),
-			trip_strength
-		)
-		_steer_current_chain_world_direction(
-			"LegBackKnee",
-			"FootBack",
-			Vector3(-0.12, -0.99, 0.04).normalized(),
-			trip_strength
+		_steer_current_segment_world_direction(
+			_binding_index("FootFront"),
+			_right_toe_idx,
+			Vector3(0.95, 0.30, 0.0).normalized(),
+			trip_leg_strength * 0.82
 		)
 
-		# Reflex brace: both arms thrust forward, but asymmetrically. The right
-		# elbow folds more sharply; the left arm opens laterally for counter-torque.
+		# Human bracing is delayed and asymmetric, not an instant mirrored flail.
 		_steer_current_chain_world_direction(
 			"ArmFrontShoulder",
 			"ArmFrontElbow",
-			Vector3(0.90, -0.28, -0.25).normalized(),
-			trip_strength
+			Vector3(0.78, -0.42, -0.18).normalized(),
+			arm_strength
 		)
 		_steer_current_segment_world_direction(
 			_binding_index("ArmFrontElbow"),
 			_right_hand_idx,
-			Vector3(0.05, -0.96, -0.28).normalized(),
-			trip_strength
+			Vector3(0.50, -0.78, -0.20).normalized(),
+			arm_strength * 0.82
 		)
 		_steer_current_chain_world_direction(
 			"ArmBackShoulder",
 			"ArmBackElbow",
-			Vector3(0.76, -0.38, 0.52).normalized(),
-			trip_strength
+			Vector3(0.56, -0.54, 0.40).normalized(),
+			arm_strength
 		)
 		_steer_current_segment_world_direction(
 			_binding_index("ArmBackElbow"),
 			_left_hand_idx,
-			Vector3(0.42, -0.78, 0.46).normalized(),
-			trip_strength
-		)
-
-		# Dorsiflex the caught forefoot if the imported rig exposes a toe/ball bone.
-		_steer_current_segment_world_direction(
-			_binding_index("FootFront"),
-			_right_toe_idx,
-			Vector3(0.98, 0.18, 0.0).normalized(),
-			trip_strength
+			Vector3(0.26, -0.86, 0.36).normalized(),
+			arm_strength * 0.82
 		)
 		return
 
@@ -592,113 +704,80 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 
 	var t := clampf(_state_elapsed / RECOVERY_DURATION, 0.0, 1.0)
 	var release := smoothstep(0.0, 1.0, t)
-	var custom_strength := 0.60 * (1.0 - smoothstep(0.52, 0.92, t))
+	var torso_strength := 0.36 * (1.0 - smoothstep(0.35, 0.90, t))
+	var catch_step_strength := 0.44 * sin(
+		PI * clampf(t / 0.86, 0.0, 1.0)
+	)
+	var arm_strength := 0.28 * (1.0 - smoothstep(0.46, 0.92, t))
 
-	# Return only the horizontal catch offset. Vertical placement remains exactly
-	# aligned with the gameplay capsule/floor contact; landing absorption is
-	# expressed by knees/hips, never by sinking the whole mesh through the floor.
 	_model_root.position += Vector3(
-		-0.075 * (1.0 - release),
+		-0.050 * (1.0 - release),
 		0.0,
 		0.0
 	)
 
-	# Emergency step. The caught right foot unhooks and trails; the free left leg
-	# drives high and forward to get a foot back in front of the falling CoM.
-	var torso_dir := Vector3(0.60, 0.79, -0.08).lerp(
-		Vector3(0.10, 0.995, 0.0),
-		release
-	).normalized()
-	var head_dir := Vector3(0.18, 0.98, 0.02).lerp(
-		Vector3(0.02, 1.0, 0.0),
-		release
-	).normalized()
-	_steer_current_chain_world_direction("Pelvis", "Torso", torso_dir, custom_strength)
-	_steer_current_chain_world_direction("Torso", "Head", head_dir, custom_strength)
+	# Torso returns over the support base continuously; there is no recovery
+	# "snap" back to vertical.
+	_steer_current_chain_world_direction(
+		"Pelvis",
+		"Torso",
+		Vector3(0.42, 0.90, -0.04).lerp(
+			Vector3(0.05, 0.999, 0.0),
+			release
+		).normalized(),
+		torso_strength
+	)
+	_steer_current_chain_world_direction(
+		"Torso",
+		"Head",
+		Vector3(0.08, 0.996, 0.0).normalized(),
+		torso_strength * 0.72
+	)
 
-	var left_thigh := Vector3(0.50, -0.84, 0.08).lerp(
-		Vector3(0.24, -0.97, 0.02),
-		smoothstep(0.28, 0.72, t)
-	).normalized()
-	var left_shin := Vector3(0.32, -0.94, 0.05).lerp(
-		Vector3(0.08, -0.997, 0.0),
-		smoothstep(0.30, 0.76, t)
-	).normalized()
+	# The free left/back leg makes one emergency forward catch step. Its overlay
+	# peaks mid-recovery then disappears, handing the leg back to the native run.
 	_steer_current_chain_world_direction(
 		"LegBackHip",
 		"LegBackKnee",
-		left_thigh,
-		custom_strength
+		Vector3(0.42, -0.90, 0.04).normalized(),
+		catch_step_strength
 	)
 	_steer_current_chain_world_direction(
 		"LegBackKnee",
 		"FootBack",
-		left_shin,
-		custom_strength
+		Vector3(0.24, -0.97, 0.02).normalized(),
+		catch_step_strength
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("FootFront"),
+		_right_toe_idx,
+		Vector3(0.20, -0.98, 0.0).normalized(),
+		0.24 * (1.0 - release)
 	)
 
-	var right_thigh := Vector3(-0.34, -0.94, -0.02).lerp(
-		Vector3(0.18, -0.98, -0.01),
-		smoothstep(0.22, 0.80, t)
-	).normalized()
-	var right_shin := Vector3(-0.14, -0.99, 0.0).lerp(
-		Vector3(0.02, -1.0, 0.0),
-		smoothstep(0.25, 0.82, t)
-	).normalized()
-	_steer_current_chain_world_direction(
-		"LegFrontHip",
-		"LegFrontKnee",
-		right_thigh,
-		custom_strength
-	)
-	_steer_current_chain_world_direction(
-		"LegFrontKnee",
-		"FootFront",
-		right_shin,
-		custom_strength
-	)
-
-	# Asymmetric arm recovery generates counter-torque instead of a mirrored
-	# cartoon flail. The override fades before RECOVERY ends so the accepted
-	# run-cycle brush/contact can reconnect without a visible pop.
 	_steer_current_chain_world_direction(
 		"ArmFrontShoulder",
 		"ArmFrontElbow",
-		Vector3(0.66, -0.66, -0.28).lerp(
-			Vector3(0.32, -0.92, -0.18),
-			release
-		).normalized(),
-		custom_strength
+		Vector3(0.56, -0.70, -0.18).normalized(),
+		arm_strength
 	)
 	_steer_current_segment_world_direction(
 		_binding_index("ArmFrontElbow"),
 		_right_hand_idx,
-		Vector3(0.25, -0.94, -0.22).normalized(),
-		custom_strength
+		Vector3(0.32, -0.90, -0.16).normalized(),
+		arm_strength * 0.80
 	)
 	_steer_current_chain_world_direction(
 		"ArmBackShoulder",
 		"ArmBackElbow",
-		Vector3(-0.24, -0.72, 0.65).lerp(
-			Vector3(0.22, -0.95, 0.20),
-			release
-		).normalized(),
-		custom_strength
+		Vector3(-0.10, -0.80, 0.52).normalized(),
+		arm_strength
 	)
 	_steer_current_segment_world_direction(
 		_binding_index("ArmBackElbow"),
 		_left_hand_idx,
-		Vector3(0.05, -0.90, 0.43).normalized(),
-		custom_strength
-	)
-
-	# Once the trapped foot releases, return from dorsiflexion toward a pointed
-	# travelling foot before handing control fully back to the source recovery.
-	_steer_current_segment_world_direction(
-		_binding_index("FootFront"),
-		_right_toe_idx,
-		Vector3(0.98, -0.18, 0.0).normalized(),
-		custom_strength
+		Vector3(0.04, -0.94, 0.32).normalized(),
+		arm_strength * 0.80
 	)
 
 
@@ -781,39 +860,189 @@ func _binding_index(label: String) -> int:
 func _apply_stage_presentation_calibration(state: StringName) -> void:
 	match state:
 		&"STAGE_BOW":
-			# Restore the accepted Phase 10.1 opening curtsy exactly: the dancer
-			# turns to +Z through the source Rig, keeps a long torso, opens the
-			# arms from her own T-pose morphology and lets the legs provide plié.
-			var phase := clampf(_state_elapsed / STAGE_BOW_DURATION, 0.0, 1.0)
+			# Complete the 90° +X -> +Z turn first. The reverence itself starts
+			# only after the audience-facing orientation is established.
+			var phase := clampf(
+				(_state_elapsed - STAGE_BOW_TURN_TIME)
+				/ maxf(STAGE_BOW_DURATION - STAGE_BOW_TURN_TIME, 0.001),
+				0.0,
+				1.0
+			)
 			_apply_classical_reverence_upper_body(phase, false)
 		&"STAGE_READY":
 			_apply_classical_reverence_upper_body(1.0, false)
 		&"STAGE_FINAL_BOW":
-			# Final bow intentionally remains untouched in this pass.
+			# Final bow remains a separate next-stage quality pass.
 			pass
 
 
-func _apply_classical_reverence_upper_body(phase: float, final_reverence: bool) -> void:
+func _apply_classical_reverence_upper_body(
+	phase: float,
+	final_reverence: bool
+) -> void:
 	if final_reverence:
 		return
 
-	# Accepted Phase 10.1 female révérence: curtsy + port de bras, not a torso
-	# bow. The motion descends and rises once, while the arms settle into the
-	# calm open ready position used before the run begins.
-	var depth := sin(clampf(phase, 0.0, 1.0) * PI)
-	var open_t := smoothstep(0.0, 0.32, phase)
+	var eased := smoothstep(0.0, 1.0, clampf(phase, 0.0, 1.0))
+	var depth := sin(eased * PI)
+	var knee_angle := 0.52 * depth
+	var c := cos(knee_angle)
+	var s := sin(knee_angle)
 
-	_model_root.position.y = _model_base_transform.origin.y - 0.055 * depth
+	# True front-facing demi-plié geometry. With the dancer facing +Z, knees
+	# travel toward +Z over the toes while the shins angle back toward the feet.
+	# This shortens the vertical leg projection, so the pelvis/body visibly
+	# descends instead of keeping straight knees and merely moving the root.
+	var outward := 0.11 * depth
+	_steer_current_chain_world_direction(
+		"LegBackHip",
+		"LegBackKnee",
+		Vector3(-outward, -c, s).normalized(),
+		1.0
+	)
+	_steer_current_chain_world_direction(
+		"LegBackKnee",
+		"FootBack",
+		Vector3(-outward * 0.45, -c, -s).normalized(),
+		1.0
+	)
+	_steer_current_chain_world_direction(
+		"LegFrontHip",
+		"LegFrontKnee",
+		Vector3(outward, -c, s).normalized(),
+		1.0
+	)
+	_steer_current_chain_world_direction(
+		"LegFrontKnee",
+		"FootFront",
+		Vector3(outward * 0.45, -c, -s).normalized(),
+		1.0
+	)
 
-	var upper_angle := lerpf(1.02, 0.42, open_t)
-	var lower_angle := upper_angle + 0.16
-	_apply_accepted_reverence_arm("ArmBackShoulder", upper_angle)
-	_apply_accepted_reverence_arm("ArmBackElbow", lower_angle)
-	_apply_accepted_reverence_arm("ArmFrontShoulder", -upper_angle)
-	_apply_accepted_reverence_arm("ArmFrontElbow", -lower_angle)
+	var leg_shortening := _opening_leg_vertical_shortening(knee_angle)
+	_model_root.position.y = (
+		_model_base_transform.origin.y
+		- leg_shortening
+	)
 
-	_apply_accepted_reverence_body("Torso", 0.045 * depth)
-	_apply_accepted_reverence_body("Head", 0.13 * depth)
+	# Port de bras stays rounded throughout. At the deepest plié the arms open
+	# toward a soft second position; on the rise they return to a calm low-open
+	# preparation instead of forming a rigid horizontal T.
+	var gesture := depth
+	var left_upper := Vector3(-0.62, -0.64, 0.34).lerp(
+		Vector3(-0.92, -0.22, 0.28),
+		gesture
+	).normalized()
+	var right_upper := Vector3(0.62, -0.64, 0.34).lerp(
+		Vector3(0.92, -0.22, 0.28),
+		gesture
+	).normalized()
+	var left_forearm := Vector3(-0.28, -0.88, 0.38).lerp(
+		Vector3(-0.74, -0.30, 0.60),
+		gesture
+	).normalized()
+	var right_forearm := Vector3(0.28, -0.88, 0.38).lerp(
+		Vector3(0.74, -0.30, 0.60),
+		gesture
+	).normalized()
+
+	_steer_current_chain_world_direction(
+		"ArmBackShoulder",
+		"ArmBackElbow",
+		left_upper,
+		1.0
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("ArmBackElbow"),
+		_left_hand_idx,
+		left_forearm,
+		1.0
+	)
+	_steer_current_chain_world_direction(
+		"ArmFrontShoulder",
+		"ArmFrontElbow",
+		right_upper,
+		1.0
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("ArmFrontElbow"),
+		_right_hand_idx,
+		right_forearm,
+		1.0
+	)
+
+	# Long classical torso with only a small head acknowledgement.
+	_steer_current_chain_world_direction(
+		"Pelvis",
+		"Torso",
+		Vector3(0.0, 0.999, 0.035 * depth).normalized(),
+		0.80
+	)
+	_steer_current_chain_world_direction(
+		"Torso",
+		"Head",
+		Vector3(0.0, 0.997, 0.075 * depth).normalized(),
+		0.72
+	)
+
+	# Feet stay turnout-aware and directed toward the audience; no pointe rise is
+	# introduced during a plié.
+	_steer_current_segment_world_direction(
+		_binding_index("FootBack"),
+		_left_toe_idx,
+		Vector3(-0.18, -0.02, 0.98).normalized(),
+		0.65 * depth
+	)
+	_steer_current_segment_world_direction(
+		_binding_index("FootFront"),
+		_right_toe_idx,
+		Vector3(0.18, -0.02, 0.98).normalized(),
+		0.65 * depth
+	)
+
+
+func _opening_leg_vertical_shortening(angle: float) -> float:
+	if angle <= 0.0001:
+		return 0.0
+
+	var totals: Array[float] = []
+	for labels in [
+		["LegBackHip", "LegBackKnee", "FootBack"],
+		["LegFrontHip", "LegFrontKnee", "FootFront"],
+	]:
+		var hip_idx := _binding_index(labels[0])
+		var knee_idx := _binding_index(labels[1])
+		var foot_idx := _binding_index(labels[2])
+		if (
+			hip_idx < 0
+			or knee_idx < 0
+			or foot_idx < 0
+			or not _target_idle_globals.has(hip_idx)
+			or not _target_idle_globals.has(knee_idx)
+			or not _target_idle_globals.has(foot_idx)
+		):
+			continue
+
+		var hip: Transform3D = _target_idle_globals[hip_idx]
+		var knee: Transform3D = _target_idle_globals[knee_idx]
+		var foot: Transform3D = _target_idle_globals[foot_idx]
+		totals.append(
+			(knee.origin - hip.origin).length()
+			+ (foot.origin - knee.origin).length()
+		)
+
+	var leg_length := 0.90
+	if not totals.is_empty():
+		leg_length = 0.0
+		for total in totals:
+			leg_length += total
+		leg_length /= float(totals.size())
+
+	return clampf(
+		leg_length * (1.0 - cos(angle)),
+		0.0,
+		0.14
+	)
 
 
 func _apply_accepted_reverence_arm(label: String, z_angle: float) -> void:
