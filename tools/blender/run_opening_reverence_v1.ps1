@@ -82,7 +82,7 @@ if ($data.temporary_controls_after_bake.Count -ne 0) {
 }
 
 Write-Host ""
-Write-Host "PHASE 10.4.5 HYBRID AUTHORING PASS"
+Write-Host "PHASE 10.4.5 ROLL-STABLE ARMS PASS"
 Write-Host "Action:      $($data.authored_action)"
 Write-Host "Rig:         $($data.armature)"
 Write-Host "Duration:    $($data.duration_seconds)s"
