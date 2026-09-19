@@ -707,7 +707,9 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
 
     def test_bootstrap_yields_choreography_states_to_retarget_layer(self) -> None:
         self.assertIn("handles_visual_state", self.bootstrap)
-        self.assertIn("player.stop()", self.bootstrap)
+        self.assertIn("player.pause()", self.bootstrap)
+        self.assertIn("_capture_stage_entry_pose()", self.retarget)
+        self.assertIn("_blend_stage_entry_pose(state)", self.retarget)
         self.assertIn(
             'Callable(self, "_on_ballerina_visual_state_changed").bind(external_visual, player)',
             self.bootstrap,
