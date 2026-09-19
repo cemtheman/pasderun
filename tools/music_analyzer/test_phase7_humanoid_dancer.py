@@ -98,12 +98,16 @@ class Phase7HumanoidDancerTests(unittest.TestCase):
         self.assertIsNotNone(resolver)
         source = resolver.group(0)
         ordering = [
+            # Physical contact now has priority over queued locomotion recovery.
+            # A real jump/fall must remain airborne until floor contact, and the
+            # first grounded frames must read as landing/plié before stumble or
+            # recovery visuals can take over.
+            'not grounded',
+            'STATE_LANDING',
             'locomotion == STATE_STUMBLE',
             'locomotion == STATE_RECOVERY',
             'in_low_transition',
             'in_balance_zone',
-            'not grounded',
-            'STATE_LANDING',
             'STATE_TRAVEL',
         ]
         positions = [source.index(token) for token in ordering]
