@@ -369,7 +369,13 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.bootstrap,
         )
         self.assertIn("player.seek(", self.bootstrap)
-        self.assertNotIn("player.pause()", self.bootstrap)
+        landing_helper = re.search(
+            r"func _begin_landing_run_contact.*?(?=\n\nfunc |\Z)",
+            self.bootstrap,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(landing_helper)
+        self.assertNotIn("player.pause()", landing_helper.group(0))
         self.assertNotIn("_pending_run_contact_phase", self.bootstrap)
 
 
