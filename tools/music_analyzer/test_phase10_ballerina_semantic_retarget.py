@@ -334,22 +334,51 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.retarget,
         )
 
-    def test_jump_landing_resumes_opposite_run_half_cycle_without_jump_end_hop(self) -> None:
-        self.assertIn("func _capture_opposite_run_resume", self.bootstrap)
-        self.assertIn("run_animation.length * 0.5", self.bootstrap)
-        self.assertIn("func _resume_run_after_jump", self.bootstrap)
-        self.assertIn("player.seek(", self.bootstrap)
+    def test_jump_landing_uses_grounded_contact_bridge_without_rebound(self) -> None:
+        self.assertIn("func _play_grounded_landing_bridge", self.bootstrap)
+        self.assertIn(
+            'player.has_animation(&"walk_fast")',
+            self.bootstrap,
+        )
+        self.assertIn(
+            '_play_ballerina_animation(player, &"walk_fast", true, 1.08)',
+            self.bootstrap,
+        )
         landing_branch = re.search(
             r'&"LANDING":(.*?)(?=\n\t\t&"|\n\t\t_:)',
             self.bootstrap,
             re.DOTALL,
         )
         self.assertIsNotNone(landing_branch)
-        self.assertIn("_resume_run_after_jump(player)", landing_branch.group(1))
-        self.assertNotIn(
-            '_play_ballerina_animation(player, &"jump_end"',
+        self.assertIn(
+            "_play_grounded_landing_bridge(player)",
             landing_branch.group(1),
         )
+        self.assertNotIn("jump_end", landing_branch.group(1))
+        self.assertNotIn(
+            '_play_ballerina_animation(player, &"run"',
+            landing_branch.group(1),
+        )
+
+    def test_high_fall_does_not_double_apply_visual_gravity(self) -> None:
+        stumble = re.search(
+            r'if state == &"STUMBLE":(.*?)(?=\n\tif state != &"RECOVERY":)',
+            self.retarget,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(stumble)
+        self.assertIn("-0.075 * impact", stumble.group(1))
+        self.assertIn("\n\t\t\t0.0,\n\t\t\t0.0\n\t\t)", stumble.group(1))
+        self.assertNotIn("9.81", stumble.group(1))
+
+        recovery = re.search(
+            r'if state != &"RECOVERY":.*?(var t :=.*?)(?=\n\nfunc _steer_current_chain_world_direction)',
+            self.retarget,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(recovery)
+        self.assertIn("-0.075 * (1.0 - release)", recovery.group(1))
+        self.assertNotIn("rebound", recovery.group(1))
 
     def test_stumble_speed_changes_are_continuous_not_state_snaps(self) -> None:
         self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.58", self.dancer)
