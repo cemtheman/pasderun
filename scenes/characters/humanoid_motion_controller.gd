@@ -979,6 +979,7 @@ func _apply_reverence_phrase(elapsed: float, variant: StringName) -> void:
 	_apply_reverence_epaulement(profile, elapsed)
 
 
+
 func _apply_reverence_leg_chain(
 	profile: Dictionary,
 	placement: float,
@@ -995,49 +996,25 @@ func _apply_reverence_leg_chain(
 	var turnout := float(profile["turnout"])
 	var working_cross := float(profile["working_cross"]) * placement
 	var knee_angle := float(profile["plie_angle"]) * depth
-	var c := cos(knee_angle)
-	var s := sin(knee_angle)
-
-	for left in [true, false]:
-		var side := left_leg_side if left else right_leg_side
-		var is_working := left != support_left
-		var hip := _bone_index("left_upper_leg" if left else "right_upper_leg")
-		var knee := _bone_index("left_lower_leg" if left else "right_lower_leg")
-		var foot := _bone_index("left_foot" if left else "right_foot")
-		var toe := _bone_index("left_toe" if left else "right_toe")
-		var cross_bias := working_cross if is_working else 0.0
-		var leg_strength := 0.84 + 0.16 * depth
-
-		# Femoral turnout opens the knee while the working leg may cross slightly.
-		# The shin folds back toward the planted foot instead of faking a pelvis dip.
-		_steer_segment_world_direction(
-			hip,
-			knee,
-			Vector3(
-				side * (turnout - cross_bias),
-				-c,
-				s * (1.04 if is_working else 1.0)
-			).normalized(),
-			leg_strength
-		)
-		_steer_segment_world_direction(
-			knee,
-			foot,
-			Vector3(
-				-side * turnout * 0.48,
-				-c,
-				-s
-			).normalized(),
-			leg_strength
-		)
-		_steer_segment_world_direction(
-			foot,
-			toe,
-			Vector3(side * (0.24 + turnout), -0.06, 0.968).normalized(),
-			0.44 + 0.24 * placement
-		)
-
 	var leg_length := _idle_leg_length()
+
+	var left_foot := _bone_index("left_foot")
+	var right_foot := _bone_index("right_foot")
+	var left_toe := _bone_index("left_toe")
+	var right_toe := _bone_index("right_toe")
+	var left_foot_target := _bone_world_position(left_foot)
+	var right_foot_target := _bone_world_position(right_foot)
+	var left_toe_length := maxf(
+		_bone_world_position(left_foot).distance_to(_bone_world_position(left_toe)),
+		0.001
+	)
+	var right_toe_length := maxf(
+		_bone_world_position(right_foot).distance_to(_bone_world_position(right_toe)),
+		0.001
+	)
+
+	# Lower the pelvis because the leg chain folds, while preserving the original
+	# floor contact points as explicit world-space targets.
 	var derived_drop := leg_length * (1.0 - cos(knee_angle))
 	var max_drop := leg_length * float(profile["root_drop_ratio"])
 	_model_root.position.y = (
@@ -1053,6 +1030,67 @@ func _apply_reverence_leg_chain(
 		* (1.0 - settle)
 	)
 
+	var audience_forward := Vector3(0.0, 0.0, 1.0)
+	for left in [true, false]:
+		var side := left_leg_side if left else right_leg_side
+		var is_working := left != support_left
+		var hip := _bone_index("left_upper_leg" if left else "right_upper_leg")
+		var knee := _bone_index("left_lower_leg" if left else "right_lower_leg")
+		var foot := left_foot if left else right_foot
+		var toe := left_toe if left else right_toe
+		if hip < 0 or knee < 0 or foot < 0:
+			continue
+
+		var outward := Vector3(side, 0.0, 0.0)
+		var floor_target := left_foot_target if left else right_foot_target
+		if is_working:
+			# A small crossed placement gives readable weight transfer without
+			# turning the bow into a large travelling step.
+			floor_target += -outward * working_cross * leg_length
+
+		var hip_position := _bone_world_position(hip)
+		var knee_target := hip_position.lerp(floor_target, 0.52)
+		knee_target += (
+			outward
+			* leg_length
+			* (0.055 * placement + 0.19 * depth + 0.10 * turnout)
+		)
+		knee_target += (
+			audience_forward
+			* leg_length
+			* (0.025 * placement + 0.045 * depth)
+		)
+		knee_target += Vector3.UP * leg_length * 0.035 * depth
+
+		# Audience readability comes from the knee moving visibly OUT over the
+		# turned-out toe while the shin folds back toward the planted foot.
+		_steer_segment_toward_world_point(
+			hip,
+			knee,
+			knee_target,
+			0.96
+		)
+		_steer_segment_toward_world_point(
+			knee,
+			foot,
+			floor_target,
+			0.98
+		)
+
+		if toe >= 0:
+			var toe_length := left_toe_length if left else right_toe_length
+			var toe_direction := (
+				outward * (0.50 + turnout)
+				+ audience_forward * 0.82
+				- Vector3.UP * 0.035
+			).normalized()
+			var toe_target := floor_target + toe_direction * toe_length
+			_steer_segment_toward_world_point(
+				foot,
+				toe,
+				toe_target,
+				0.82
+			)
 
 
 func _apply_reverence_port_de_bras(
@@ -1071,23 +1109,30 @@ func _apply_reverence_port_de_bras(
 	var upper_resolve := smoothstep(plie_end + 0.05, rise_end, elapsed)
 	var hand_resolve := smoothstep(plie_end + 0.12, rise_end + 0.10, elapsed)
 
+	var left_shoulder := _bone_index("left_upper_arm")
+	var right_shoulder := _bone_index("right_upper_arm")
 	var chest := _bone_index("chest")
 	var head := _bone_index("head")
 	var chest_position := _bone_world_position(chest)
 	var head_position := _bone_world_position(head)
+	var shoulder_center := chest_position
+	if left_shoulder >= 0 and right_shoulder >= 0:
+		shoulder_center = (
+			_bone_world_position(left_shoulder)
+			+ _bone_world_position(right_shoulder)
+		) * 0.5
 
 	for left in [true, false]:
 		var expressive := left == expressive_left
-		var shoulder := _bone_index("left_upper_arm" if left else "right_upper_arm")
+		var shoulder := left_shoulder if left else right_shoulder
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
 		var hand := _bone_index("left_hand" if left else "right_hand")
-		if shoulder < 0 or elbow < 0 or hand < 0:
+		if shoulder < 0 or elbow < 0:
 			continue
 
 		var shoulder_position := _bone_world_position(shoulder)
 		var elbow_position := _bone_world_position(elbow)
-		var hand_position := _bone_world_position(hand)
-		var outward := shoulder_position - chest_position
+		var outward := shoulder_position - shoulder_center
 		outward -= Vector3.UP * outward.dot(Vector3.UP)
 		if outward.length_squared() <= 0.000001:
 			var fallback_side := -1.0 if left else 1.0
@@ -1098,144 +1143,143 @@ func _apply_reverence_port_de_bras(
 			shoulder_position.distance_to(elbow_position),
 			0.001
 		)
-		var forearm_length := maxf(
-			elbow_position.distance_to(hand_position),
-			0.001
-		)
+		var forearm_length := upper_length * 0.92
+		if hand >= 0:
+			forearm_length = maxf(
+				elbow_position.distance_to(_bone_world_position(hand)),
+				0.001
+			)
 		var reach := upper_length + forearm_length
 		var audience_forward := Vector3(0.0, 0.0, 1.0)
 
-		# Targets are WORLD POSITIONS derived from this humanoid's actual shoulder,
-		# chest and arm lengths. Hand height and centre-return are explicit.
 		var prep_elbow := (
 			shoulder_position
-			+ outward * upper_length * 0.38
-			- Vector3.UP * upper_length * 0.46
-			+ audience_forward * upper_length * 0.18
+			+ outward * upper_length * 0.36
+			- Vector3.UP * upper_length * 0.42
+			+ audience_forward * upper_length * 0.16
 		)
 		var prep_hand := (
-			chest_position
-			+ outward * reach * 0.28
-			- Vector3.UP * reach * 0.34
-			+ audience_forward * reach * 0.30
+			shoulder_center
+			+ outward * reach * 0.20
+			- Vector3.UP * reach * 0.46
+			+ audience_forward * reach * 0.28
 		)
 		var gathered_elbow := (
 			shoulder_position
-			+ outward * upper_length * 0.54
-			- Vector3.UP * upper_length * 0.14
-			+ audience_forward * upper_length * 0.20
+			+ outward * upper_length * 0.56
+			- Vector3.UP * upper_length * 0.10
+			+ audience_forward * upper_length * 0.18
 		)
 		var gathered_hand := (
-			chest_position
-			+ outward * reach * 0.24
-			- Vector3.UP * reach * 0.18
-			+ audience_forward * reach * 0.38
+			shoulder_center
+			+ outward * reach * 0.12
+			- Vector3.UP * reach * 0.22
+			+ audience_forward * reach * 0.34
 		)
 
 		var peak_elbow: Vector3
 		var peak_hand: Vector3
 		var settle_elbow: Vector3
 		var settle_hand: Vector3
-
 		if variant == FINAL_REVERENCE and expressive:
 			peak_elbow = (
 				shoulder_position
 				+ outward * upper_length * 0.48
-				+ Vector3.UP * upper_length * 0.66
-				+ audience_forward * upper_length * 0.14
+				+ Vector3.UP * upper_length * 0.68
+				+ audience_forward * upper_length * 0.12
 			)
 			peak_hand = (
 				head_position
-				+ outward * reach * 0.16
-				+ Vector3.UP * reach * 0.20
-				+ audience_forward * reach * 0.24
+				+ outward * reach * 0.14
+				+ Vector3.UP * reach * 0.14
+				+ audience_forward * reach * 0.22
 			)
 			settle_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.68
-				- Vector3.UP * upper_length * 0.08
-				+ audience_forward * upper_length * 0.18
+				+ outward * upper_length * 0.70
+				- Vector3.UP * upper_length * 0.04
+				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
-				chest_position
-				+ outward * reach * 0.32
-				- Vector3.UP * reach * 0.14
-				+ audience_forward * reach * 0.36
+				shoulder_center
+				+ outward * reach * 0.20
+				- Vector3.UP * reach * 0.18
+				+ audience_forward * reach * 0.34
 			)
 		elif variant == FINAL_REVERENCE:
 			peak_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.90
-				+ Vector3.UP * upper_length * 0.04
-				+ audience_forward * upper_length * 0.12
+				+ outward * upper_length * 0.92
+				+ Vector3.UP * upper_length * 0.08
+				+ audience_forward * upper_length * 0.10
 			)
 			peak_hand = (
-				chest_position
-				+ outward * reach * 0.58
-				- Vector3.UP * reach * 0.02
-				+ audience_forward * reach * 0.34
+				shoulder_center
+				+ outward * reach * 0.54
+				+ Vector3.UP * reach * 0.02
+				+ audience_forward * reach * 0.30
 			)
 			settle_elbow = (
 				shoulder_position
 				+ outward * upper_length * 0.72
-				- Vector3.UP * upper_length * 0.10
-				+ audience_forward * upper_length * 0.18
+				- Vector3.UP * upper_length * 0.06
+				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
-				chest_position
-				+ outward * reach * 0.34
-				- Vector3.UP * reach * 0.14
-				+ audience_forward * reach * 0.36
+				shoulder_center
+				+ outward * reach * 0.24
+				- Vector3.UP * reach * 0.18
+				+ audience_forward * reach * 0.34
 			)
 		elif expressive:
 			peak_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.78
-				+ Vector3.UP * upper_length * 0.04
-				+ audience_forward * upper_length * 0.16
+				+ outward * upper_length * 0.80
+				+ Vector3.UP * upper_length * 0.08
+				+ audience_forward * upper_length * 0.14
 			)
 			peak_hand = (
-				chest_position
-				+ outward * reach * 0.34
-				- Vector3.UP * reach * 0.06
-				+ audience_forward * reach * 0.40
+				shoulder_center
+				+ outward * reach * 0.18
+				- Vector3.UP * reach * 0.08
+				+ audience_forward * reach * 0.38
 			)
 			settle_elbow = (
 				shoulder_position
-				+ outward * upper_length * 0.64
-				- Vector3.UP * upper_length * 0.10
-				+ audience_forward * upper_length * 0.18
+				+ outward * upper_length * 0.66
+				- Vector3.UP * upper_length * 0.06
+				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
-				chest_position
-				+ outward * reach * 0.30
-				- Vector3.UP * reach * 0.16
-				+ audience_forward * reach * 0.38
+				shoulder_center
+				+ outward * reach * 0.18
+				- Vector3.UP * reach * 0.20
+				+ audience_forward * reach * 0.36
 			)
 		else:
 			peak_elbow = (
 				shoulder_position
 				+ outward * upper_length * 0.62
-				- Vector3.UP * upper_length * 0.08
-				+ audience_forward * upper_length * 0.20
+				- Vector3.UP * upper_length * 0.02
+				+ audience_forward * upper_length * 0.18
 			)
 			peak_hand = (
-				chest_position
-				+ outward * reach * 0.22
-				- Vector3.UP * reach * 0.10
-				+ audience_forward * reach * 0.42
+				shoulder_center
+				+ outward * reach * 0.10
+				- Vector3.UP * reach * 0.20
+				+ audience_forward * reach * 0.40
 			)
 			settle_elbow = (
 				shoulder_position
 				+ outward * upper_length * 0.60
-				- Vector3.UP * upper_length * 0.12
-				+ audience_forward * upper_length * 0.18
+				- Vector3.UP * upper_length * 0.08
+				+ audience_forward * upper_length * 0.16
 			)
 			settle_hand = (
-				chest_position
-				+ outward * reach * 0.28
-				- Vector3.UP * reach * 0.16
-				+ audience_forward * reach * 0.38
+				shoulder_center
+				+ outward * reach * 0.16
+				- Vector3.UP * reach * 0.22
+				+ audience_forward * reach * 0.36
 			)
 
 		var elbow_target := prep_elbow.lerp(gathered_elbow, upper_gather)
@@ -1245,18 +1289,25 @@ func _apply_reverence_port_de_bras(
 		hand_target = hand_target.lerp(peak_hand, hand_present)
 		hand_target = hand_target.lerp(settle_hand, hand_resolve)
 
+		# Once the presentation opens, the hand may not collapse to waist level.
+		# This is a world-space silhouette constraint, not a guessed local Euler.
+		if hand_present > 0.20:
+			var classical_hand_floor := shoulder_center.y - reach * 0.30
+			hand_target.y = maxf(hand_target.y, classical_hand_floor)
+
 		_steer_segment_toward_world_point(
 			shoulder,
 			elbow,
 			elbow_target,
-			0.96
+			0.97
 		)
-		_steer_segment_toward_world_point(
-			elbow,
-			hand,
-			hand_target,
-			0.94
-		)
+		if hand >= 0:
+			_steer_segment_toward_world_point(
+				elbow,
+				hand,
+				hand_target,
+				0.97
+			)
 
 func _apply_reverence_epaulement(profile: Dictionary, elapsed: float) -> void:
 	var place_end := float(profile["place_end"])
@@ -1434,19 +1485,32 @@ func _resolve_humanoid_bones() -> void:
 	}
 
 
+
 func _find_bone(aliases: Array[String]) -> int:
 	var normalized_aliases: Array[String] = []
 	for alias in aliases:
 		normalized_aliases.append(_normalize_bone_name(alias))
 
+	# Exact names remain authoritative so existing successfully resolved gait
+	# chains cannot silently remap.
 	for bone_idx in range(_skeleton.get_bone_count()):
 		var normalized := _normalize_bone_name(
 			String(_skeleton.get_bone_name(bone_idx))
 		)
 		if normalized in normalized_aliases:
 			return bone_idx
-	return -1
 
+	# Imported rigs often prepend an Armature/Rig/mixamorig1 namespace. Only use
+	# a sufficiently specific suffix fallback after exact matching failed.
+	for bone_idx in range(_skeleton.get_bone_count()):
+		var normalized := _normalize_bone_name(
+			String(_skeleton.get_bone_name(bone_idx))
+		)
+		for alias in normalized_aliases:
+			if alias.length() >= 6 and normalized.ends_with(alias):
+				return bone_idx
+
+	return -1
 
 func _normalize_bone_name(value: String) -> String:
 	return (

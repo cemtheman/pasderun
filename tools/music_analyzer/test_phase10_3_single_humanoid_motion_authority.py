@@ -147,6 +147,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertNotIn("_animation_player.pause", stumble.group(0))
         self.assertNotIn("_animation_player.pause", recovery.group(0))
 
+
     def test_reverence_uses_current_humanoid_geometry_not_local_euler_guesses(self) -> None:
         for token in (
             'const OPENING_REVERENCE := &"OPENING_REVERENCE"',
@@ -160,16 +161,17 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "Quaternion(current_direction_world, desired)",
             'var knee_angle := float(profile["plie_angle"]) * depth',
             "var derived_drop := leg_length * (1.0 - cos(knee_angle))",
-            "var shoulder_position := _bone_world_position(shoulder)",
-            "var chest_position := _bone_world_position(chest)",
-            "var elbow_target :=",
-            "var hand_target :=",
+            "var left_foot_target := _bone_world_position(left_foot)",
+            "var knee_target := hip_position.lerp(floor_target, 0.52)",
+            "var toe_target := floor_target + toe_direction * toe_length",
+            "var shoulder_center := chest_position",
+            "var classical_hand_floor := shoulder_center.y - reach * 0.30",
+            "hand_target.y = maxf(hand_target.y, classical_hand_floor)",
         ):
             self.assertIn(token, self.controller)
         self.assertIn('"plie_angle": 0.62', self.controller)
         self.assertIn('"plie_angle": 0.78', self.controller)
-        self.assertNotIn("var upper_arm_outward :=", self.controller)
-        self.assertNotIn("var forearm_inward :=", self.controller)
+        self.assertNotIn("Vector3(side * (turnout - cross_bias), -c, s)", self.controller)
         self.assertNotIn("_rx(", self.controller)
         self.assertNotIn("_ry(", self.controller)
         self.assertNotIn("_rz(", self.controller)
@@ -194,6 +196,19 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "const COMPLETION_FINAL_BOW_DURATION := 2.85",
             self.recovery,
         )
+
+
+
+    def test_prefixed_import_bones_have_safe_suffix_resolution(self) -> None:
+        finder = re.search(
+            r'func _find_bone\(.*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(finder)
+        self.assertIn("if normalized in normalized_aliases:", finder.group(0))
+        self.assertIn("alias.length() >= 6", finder.group(0))
+        self.assertIn("normalized.ends_with(alias)", finder.group(0))
 
 
     def test_stage_and_music_callers_target_ballerina_directly(self) -> None:
