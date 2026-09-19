@@ -114,7 +114,7 @@ func _process(delta: float) -> void:
 
 		_apply_idle_baseline()
 		_apply_source_root_transform()
-		_apply_semantic_motion_retarget()
+		_apply_semantic_motion_retarget(state)
 		_apply_stage_presentation_calibration(state)
 		return
 
@@ -407,7 +407,7 @@ func _apply_source_root_transform() -> void:
 	)
 
 
-func _apply_semantic_motion_retarget() -> void:
+func _apply_semantic_motion_retarget(state: StringName) -> void:
 	var rig_frame := _source_rig.transform.basis.orthonormalized()
 	var rig_frame_inverse := rig_frame.inverse()
 
@@ -426,10 +426,24 @@ func _apply_semantic_motion_retarget() -> void:
 	for binding in _bindings:
 		var source_node: Node3D = binding["source_node"]
 		var bone_idx: int = binding["bone_idx"]
+		var label := String(binding["label"])
 		if not is_instance_valid(source_node):
 			continue
 		if not _target_idle_globals.has(bone_idx):
 			continue
+
+		# Opening révérence was already visually accepted in Phase 10.1. Keep its
+		# long-spine/T-pose-derived upper body and let only the mannequin legs
+		# supply the plié. Retargeting pelvis/torso/head/arms underneath that pose
+		# is what made the new opening look twisted and mechanical.
+		if state == &"STAGE_BOW" or state == &"STAGE_READY":
+			if (
+				label == "Pelvis"
+				or label == "Torso"
+				or label == "Head"
+				or label.begins_with("Arm")
+			):
+				continue
 
 		# The mannequin's joints have identity rest bases. Removing Rig's current
 		# world basis therefore gives the complete articulated pose in Rig space.
@@ -478,13 +492,14 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 	if state == &"STUMBLE":
 		var t := clampf(_state_elapsed / STUMBLE_DURATION, 0.0, 1.0)
 		var impact := smoothstep(0.0, 1.0, t)
+		var trip_strength := 0.62 * smoothstep(0.0, 0.34, t)
 
 		# Forward momentum survives the toe catch. The CharacterBody already
 		# decelerates to 45% run speed; this small counter-offset keeps the
 		# visually trapped foot near the obstacle while the CoM pitches past it.
 		_model_root.position += Vector3(
-			-0.14 * impact,
-			-0.065 * impact,
+			-0.075 * impact,
+			-0.5 * 9.81 * pow(minf(t, 0.24), 2.0) * 0.23,
 			0.0
 		)
 
@@ -497,13 +512,13 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 				Vector3(0.18, 0.98, 0.0),
 				1.0 - impact
 			).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_chain_world_direction(
 			"Torso",
 			"Head",
 			Vector3(0.20, 0.98, 0.02).normalized(),
-			1.0
+			trip_strength
 		)
 
 		# Right/front foot is the tripping foot. It is caught in front of the CoM
@@ -513,25 +528,25 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 			"LegFrontHip",
 			"LegFrontKnee",
 			Vector3(0.38, -0.92, -0.02).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_chain_world_direction(
 			"LegFrontKnee",
 			"FootFront",
 			Vector3(0.08, -0.995, 0.0).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_chain_world_direction(
 			"LegBackHip",
 			"LegBackKnee",
 			Vector3(-0.38, -0.92, 0.08).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_chain_world_direction(
 			"LegBackKnee",
 			"FootBack",
 			Vector3(-0.12, -0.99, 0.04).normalized(),
-			1.0
+			trip_strength
 		)
 
 		# Reflex brace: both arms thrust forward, but asymmetrically. The right
@@ -540,25 +555,25 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 			"ArmFrontShoulder",
 			"ArmFrontElbow",
 			Vector3(0.90, -0.28, -0.25).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_segment_world_direction(
 			_binding_index("ArmFrontElbow"),
 			_right_hand_idx,
 			Vector3(0.05, -0.96, -0.28).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_chain_world_direction(
 			"ArmBackShoulder",
 			"ArmBackElbow",
 			Vector3(0.76, -0.38, 0.52).normalized(),
-			1.0
+			trip_strength
 		)
 		_steer_current_segment_world_direction(
 			_binding_index("ArmBackElbow"),
 			_left_hand_idx,
 			Vector3(0.42, -0.78, 0.46).normalized(),
-			1.0
+			trip_strength
 		)
 
 		# Dorsiflex the caught forefoot if the imported rig exposes a toe/ball bone.
@@ -566,7 +581,7 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 			_binding_index("FootFront"),
 			_right_toe_idx,
 			Vector3(0.98, 0.18, 0.0).normalized(),
-			1.0
+			trip_strength
 		)
 		return
 
@@ -575,15 +590,15 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 
 	var t := clampf(_state_elapsed / RECOVERY_DURATION, 0.0, 1.0)
 	var release := smoothstep(0.0, 1.0, t)
-	var custom_strength := 1.0 - smoothstep(0.58, 1.0, t)
+	var custom_strength := 0.60 * (1.0 - smoothstep(0.52, 0.92, t))
 
 	# The body is still forward of the original support base at recovery start.
 	# Return the counter-offset gradually while adding a small rebound rather than
 	# teleporting the visual root back onto the gameplay capsule.
 	var rebound := 0.030 * sin(PI * clampf((t - 0.22) / 0.60, 0.0, 1.0))
 	_model_root.position += Vector3(
-		-0.14 * (1.0 - release),
-		-0.065 * (1.0 - release) + rebound,
+		-0.075 * (1.0 - release),
+		-0.032 * (1.0 - release) + rebound,
 		0.0
 	)
 
@@ -600,12 +615,12 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 	_steer_current_chain_world_direction("Pelvis", "Torso", torso_dir, custom_strength)
 	_steer_current_chain_world_direction("Torso", "Head", head_dir, custom_strength)
 
-	var left_thigh := Vector3(0.72, -0.62, 0.08).lerp(
-		Vector3(0.28, -0.96, 0.02),
+	var left_thigh := Vector3(0.50, -0.84, 0.08).lerp(
+		Vector3(0.24, -0.97, 0.02),
 		smoothstep(0.28, 0.72, t)
 	).normalized()
-	var left_shin := Vector3(0.46, -0.88, 0.05).lerp(
-		Vector3(0.10, -0.995, 0.0),
+	var left_shin := Vector3(0.32, -0.94, 0.05).lerp(
+		Vector3(0.08, -0.997, 0.0),
 		smoothstep(0.30, 0.76, t)
 	).normalized()
 	_steer_current_chain_world_direction(
@@ -765,49 +780,83 @@ func _binding_index(label: String) -> int:
 func _apply_stage_presentation_calibration(state: StringName) -> void:
 	match state:
 		&"STAGE_BOW":
-			var bow_phase := clampf(
-				(_state_elapsed - STAGE_BOW_TURN_TIME)
-				/ (STAGE_BOW_DURATION - STAGE_BOW_TURN_TIME),
-				0.0,
-				1.0
-			)
-			_apply_classical_reverence_upper_body(sin(bow_phase * PI), false)
+			# Restore the accepted Phase 10.1 opening curtsy exactly: the dancer
+			# turns to +Z through the source Rig, keeps a long torso, opens the
+			# arms from her own T-pose morphology and lets the legs provide plié.
+			var phase := clampf(_state_elapsed / STAGE_BOW_DURATION, 0.0, 1.0)
+			_apply_classical_reverence_upper_body(phase, false)
 		&"STAGE_READY":
-			_apply_classical_reverence_upper_body(0.0, false)
+			_apply_classical_reverence_upper_body(1.0, false)
 		&"STAGE_FINAL_BOW":
-			# Preserve the previously authored LARGE closing révérence in full.
-			# v2 frame conjugation already turns its side-view articulation into
-			# the audience plane correctly; do not flatten its kneel/torso/arms
-			# back into the lighter opening curtsey.
+			# Final bow intentionally remains untouched in this pass.
 			pass
 
 
-func _apply_classical_reverence_upper_body(depth: float, final_reverence: bool) -> void:
-	# Female classical révérence is a curtsey with port de bras, not a male-style
-	# torso fold. Keep the trunk long and let the leg/plié articulation carry the
-	# acknowledgement. The hidden mannequin still supplies the lower-body timing.
-	_reset_global_basis_to_idle("Torso")
-	_reset_global_basis_to_idle("Head")
-
-	if not _tpose_available:
+func _apply_classical_reverence_upper_body(phase: float, final_reverence: bool) -> void:
+	if final_reverence:
 		return
 
-	var shoulder_drop := 0.34 + depth * (0.16 if final_reverence else 0.10)
-	var elbow_drop := shoulder_drop + 0.12
+	# Accepted Phase 10.1 female révérence: curtsy + port de bras, not a torso
+	# bow. The motion descends and rises once, while the arms settle into the
+	# calm open ready position used before the run begins.
+	var depth := sin(clampf(phase, 0.0, 1.0) * PI)
+	var open_t := smoothstep(0.0, 0.32, phase)
 
-	_apply_lowered_tpose_chain(
-		"ArmBackShoulder",
-		"ArmBackElbow",
-		_left_hand_idx,
-		shoulder_drop,
-		elbow_drop
+	_model_root.position.y = _model_base_transform.origin.y - 0.055 * depth
+
+	var upper_angle := lerpf(1.02, 0.42, open_t)
+	var lower_angle := upper_angle + 0.16
+	_apply_accepted_reverence_arm("ArmBackShoulder", upper_angle)
+	_apply_accepted_reverence_arm("ArmBackElbow", lower_angle)
+	_apply_accepted_reverence_arm("ArmFrontShoulder", -upper_angle)
+	_apply_accepted_reverence_arm("ArmFrontElbow", -lower_angle)
+
+	_apply_accepted_reverence_body("Torso", 0.045 * depth)
+	_apply_accepted_reverence_body("Head", 0.13 * depth)
+
+
+func _apply_accepted_reverence_arm(label: String, z_angle: float) -> void:
+	var binding := _binding(label)
+	if binding.is_empty():
+		return
+	var bone_idx: int = binding["bone_idx"]
+
+	var baseline: Transform3D
+	if _target_tpose_globals.has(bone_idx):
+		baseline = _target_tpose_globals[bone_idx]
+	elif _target_idle_globals.has(bone_idx):
+		baseline = _target_idle_globals[bone_idx]
+	else:
+		return
+
+	var desired_basis := (
+		Basis(Vector3(0.0, 0.0, 1.0), z_angle)
+		* baseline.basis
+	).orthonormalized()
+	var current := _skeleton.get_bone_global_pose(bone_idx)
+	_skeleton.set_bone_global_pose(
+		bone_idx,
+		Transform3D(desired_basis, current.origin)
 	)
-	_apply_lowered_tpose_chain(
-		"ArmFrontShoulder",
-		"ArmFrontElbow",
-		_right_hand_idx,
-		shoulder_drop,
-		elbow_drop
+
+
+func _apply_accepted_reverence_body(label: String, x_angle: float) -> void:
+	var binding := _binding(label)
+	if binding.is_empty():
+		return
+	var bone_idx: int = binding["bone_idx"]
+	if not _target_idle_globals.has(bone_idx):
+		return
+
+	var baseline: Transform3D = _target_idle_globals[bone_idx]
+	var desired_basis := (
+		Basis(Vector3.RIGHT, x_angle)
+		* baseline.basis
+	).orthonormalized()
+	var current := _skeleton.get_bone_global_pose(bone_idx)
+	_skeleton.set_bone_global_pose(
+		bone_idx,
+		Transform3D(desired_basis, current.origin)
 	)
 
 
