@@ -31,8 +31,12 @@ const RETARGET_STATES := {
 }
 
 const OVERLAY_STATES := {
-	# These states keep the imported RUN clip alive and add only the emergency
-	# body mechanics that the stock asset does not provide.
+	# Dynamic movement keeps the imported humanoid clip as its natural base.
+	# These overlays only shape ballet line, contact absorption and emergency
+	# balance without rebuilding the full skeleton from mannequin poses.
+	&"JUMP": true,
+	&"AIRBORNE": true,
+	&"LANDING": true,
 	&"STUMBLE": true,
 	&"RECOVERY": true,
 }
@@ -128,7 +132,10 @@ func _process(delta: float) -> void:
 
 	if OVERLAY_STATES.has(state):
 		_model_root.transform = _model_base_transform
-		_apply_running_trip_overlay(state)
+		if state == &"JUMP" or state == &"AIRBORNE" or state == &"LANDING":
+			_apply_air_motion_overlay(state)
+		else:
+			_apply_running_trip_overlay(state)
 
 
 func _try_bind() -> void:
@@ -432,18 +439,12 @@ func _apply_semantic_motion_retarget(state: StringName) -> void:
 		if not _target_idle_globals.has(bone_idx):
 			continue
 
-		# Opening révérence was already visually accepted in Phase 10.1. Keep its
-		# long-spine/T-pose-derived upper body and let only the mannequin legs
-		# supply the plié. Retargeting pelvis/torso/head/arms underneath that pose
-		# is what made the new opening look twisted and mechanical.
+		# Opening révérence is authored directly on the humanoid. The source Rig
+		# still supplies the verified +X -> +Z stage turn, but no mannequin limb
+		# articulation is transferred during BOW/READY. This avoids reverse-knee
+		# silhouettes and lets both knees track anatomically toward the audience.
 		if state == &"STAGE_BOW" or state == &"STAGE_READY":
-			if (
-				label == "Pelvis"
-				or label == "Torso"
-				or label == "Head"
-				or label.begins_with("Arm")
-			):
-				continue
+			continue
 
 		# The mannequin's joints have identity rest bases. Removing Rig's current
 		# world basis therefore gives the complete articulated pose in Rig space.
