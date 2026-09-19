@@ -47,7 +47,7 @@ const OVERLAY_STATES := {
 # deliberate: the mannequin remains choreography reference, not a frame-by-frame
 # puppeteer for a skeleton with different proportions and intermediate joints.
 
-const STAGE_BOW_DURATION := 1.35
+const STAGE_BOW_DURATION := 1.65
 const STAGE_BOW_TURN_TIME := 0.28
 const STAGE_FINAL_BOW_DURATION := 2.60
 const STAGE_FINAL_TURN_TIME := 0.32
