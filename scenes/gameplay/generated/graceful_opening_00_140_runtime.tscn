@@ -32,6 +32,7 @@
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform_mainline.tres" id="32_mainline"]
 [ext_resource type="Script" path="res://scenes/gameplay/pause_controller.gd" id="33_pause"]
 [ext_resource type="Script" path="res://scenes/gameplay/checkpoint_visualization.gd" id="34_checkpoint"]
+[ext_resource type="PackedScene" uid="uid://d2xptha2qy11b" path="res://scenes/characters/ballerina_visual_v_1.tscn" id="35_ballerina"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_far"]
 shading_mode = 0
@@ -85,6 +86,14 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StandardMaterial3D" id="Material_backstage_curtain_phase10"]
+albedo_color = Color(0.23, 0.025, 0.055, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="Mesh_backstage_curtain_phase10"]
+material = SubResource("Material_backstage_curtain_phase10")
+size = Vector3(1.4, 7, 0.35)
+
 [node name="GracefulOpening0140Runtime" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=342073125]
@@ -92,6 +101,12 @@ corner_radius_bottom_left = 8
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1777819294]
 
 [node name="GeneratedLevel" parent="." unique_id=771723095 instance=ExtResource("7_generated")]
+
+[node name="BackstageWingCurtain" type="MeshInstance3D" parent="."]
+position = Vector3(568, 0.45, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_backstage_curtain_phase10")
+
 
 
 [node name="MainlineContinuitySystem" type="Node3D" parent="." node_paths=PackedStringArray("generated_level")]
@@ -238,6 +253,10 @@ mesh = SubResource("CapsuleMesh_runtime")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Dancer" unique_id=761921886]
 shape = SubResource("CapsuleShape_runtime")
+
+[node name="BallerinaVisualV1" parent="Dancer" instance=ExtResource("35_ballerina")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
 
 [node name="DebugHUD" type="CanvasLayer" parent="." unique_id=1243432770 node_paths=PackedStringArray("hud_root", "start_gate", "performance_label")]
 script = ExtResource("12_ascii_hud")
