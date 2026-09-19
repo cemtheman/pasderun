@@ -3,7 +3,7 @@ extends Node
 const DANCER_VISUAL_SCRIPT := preload("res://scenes/gameplay/dancer_visual_motion_v5.gd")
 const DANCER_TAP_FEEDBACK_SCRIPT := preload("res://scenes/gameplay/dancer_tap_feedback.gd")
 const HUMANOID_LANDING_WINDOW := 0.22
-const HUMANOID_LANDING_CLIP_FRACTION := 0.38
+const RUN_CONTACT_SAMPLE_COUNT := 32
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
@@ -114,18 +114,20 @@ func _on_ballerina_visual_state_changed(
 		&"AIRBORNE":
 			_play_ballerina_animation(player, &"jump_falling", true, 1.0)
 		&"LANDING":
-			# Do not enter RUN's flight phase during the 0.22 s landing window.
-			# Use the asset's grounded fast-walk cycle as a short contact bridge;
-			# the next TRAVEL state blends naturally back to RUN.
-			_play_grounded_landing_bridge(player)
+			# Freeze the native RUN cycle on the actual landing-foot contact.
+			# The landing overlay supplies plié/absorption without playing a
+			# rebound clip. The next run-family state resumes on the OPPOSITE
+			# contact, so the dancer steps through rather than hopping twice on
+			# the foot that just landed.
+			_hold_landing_contact(player)
 		&"STUMBLE":
-			_play_ballerina_animation(player, &"run", true, 0.94)
+			_play_run_from_pending_contact(player, 0.94)
 		&"RECOVERY":
-			_play_ballerina_animation(player, &"run", true, 1.03)
+			_play_run_from_pending_contact(player, 1.03)
 		&"LOW_TRANSITION":
-			_play_ballerina_animation(player, &"run", true, 0.92)
+			_play_run_from_pending_contact(player, 0.92)
 		&"TRAVEL", &"BALANCE", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
-			_play_ballerina_animation(player, &"run", true, 1.0)
+			_play_run_from_pending_contact(player, 1.0)
 		&"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"STAGE_EXIT_TURN":
 			# These are normally intercepted by handles_visual_state().
 			_play_ballerina_animation(player, &"idle", true, 1.0)
@@ -133,35 +135,149 @@ func _on_ballerina_visual_state_changed(
 			_play_ballerina_animation(player, &"idle", true, 1.0)
 
 
-func _play_grounded_landing_bridge(player: AnimationPlayer) -> void:
-	# Use only the CONTACT/ABSORPTION beginning of the native landing clip.
-	# Playing the full clip produced the same-foot rebound seen in QA, while
-	# switching directly to RUN selected a flight phase. Truncating the native
-	# clip keeps its natural knee/hip compression and hands control back to RUN
-	# before the rebound portion begins.
-	if player.has_animation(&"jump_end"):
-		var landing := player.get_animation(&"jump_end")
-		if landing != null and landing.length > 0.0001:
-			var source_segment := landing.length * HUMANOID_LANDING_CLIP_FRACTION
-			var speed := source_segment / HUMANOID_LANDING_WINDOW
-			_play_ballerina_animation(
-				player,
-				&"jump_end",
-				false,
-				maxf(speed, 0.10)
-			)
-			return
-
-	if player.has_animation(&"walk_fast"):
-		_play_ballerina_animation(player, &"walk_fast", true, 1.08)
-		return
-	if player.has_animation(&"walk"):
-		_play_ballerina_animation(player, &"walk", true, 1.18)
+func _hold_landing_contact(player: AnimationPlayer) -> void:
+	if not player.has_animation(&"run"):
+		_play_ballerina_animation(player, &"idle", true, 1.0)
 		return
 
-	# Last-resort fallback: stay grounded rather than selecting RUN while the
-	# physics body is still in its landing-contact window.
-	_play_ballerina_animation(player, &"idle", true, 1.0)
+	var skeleton := player.get_parent().get_node_or_null("Rig/Skeleton3D") as Skeleton3D
+	if skeleton == null:
+		_play_ballerina_animation(player, &"walk", true, 1.0)
+		return
+
+	var left_foot := _find_humanoid_bone(skeleton, ["leftfoot", "footl"])
+	var right_foot := _find_humanoid_bone(skeleton, ["rightfoot", "footr"])
+	if left_foot < 0 or right_foot < 0:
+		_play_ballerina_animation(player, &"walk", true, 1.0)
+		return
+
+	# Read the support foot BEFORE changing the currently displayed falling pose.
+	var left_y := skeleton.get_bone_global_pose(left_foot).origin.y
+	var right_y := skeleton.get_bone_global_pose(right_foot).origin.y
+	var landing_left := left_y <= right_y
+
+	_cache_run_contact_phases(player, skeleton, left_foot, right_foot)
+	var left_phase := float(player.get_meta("_run_left_contact_phase", 0.0))
+	var right_phase := float(player.get_meta("_run_right_contact_phase", 0.0))
+	var landing_phase := left_phase if landing_left else right_phase
+	var next_phase := right_phase if landing_left else left_phase
+
+	player.set_meta("_landing_support_left", landing_left)
+	player.set_meta("_pending_run_contact_phase", next_phase)
+	player.set_meta("_pending_run_contact_valid", true)
+
+	# A contact pose, not an animation clip: no vertical rebound can occur here.
+	player.speed_scale = 1.0
+	player.play(&"run", 0.08)
+	player.seek(landing_phase, true)
+	player.pause()
+
+
+func _play_run_from_pending_contact(
+	player: AnimationPlayer,
+	speed_scale: float
+) -> void:
+	var pending := bool(player.get_meta("_pending_run_contact_valid", false))
+	if not pending:
+		_play_ballerina_animation(player, &"run", true, speed_scale)
+		return
+
+	var run_animation := player.get_animation(&"run")
+	if run_animation == null or run_animation.length <= 0.0001:
+		player.set_meta("_pending_run_contact_valid", false)
+		_play_ballerina_animation(player, &"run", true, speed_scale)
+		return
+
+	var phase := float(player.get_meta("_pending_run_contact_phase", 0.0))
+	player.set_meta("_pending_run_contact_valid", false)
+	player.speed_scale = speed_scale
+	run_animation.loop_mode = Animation.LOOP_LINEAR
+	player.play(&"run", 0.12)
+	player.seek(
+		clampf(phase, 0.0, maxf(run_animation.length - 0.001, 0.0)),
+		true
+	)
+
+
+func _cache_run_contact_phases(
+	player: AnimationPlayer,
+	skeleton: Skeleton3D,
+	left_foot: int,
+	right_foot: int
+) -> void:
+	if (
+		player.has_meta("_run_left_contact_phase")
+		and player.has_meta("_run_right_contact_phase")
+	):
+		return
+
+	var run_animation := player.get_animation(&"run")
+	if run_animation == null or run_animation.length <= 0.0001:
+		player.set_meta("_run_left_contact_phase", 0.0)
+		player.set_meta("_run_right_contact_phase", 0.0)
+		return
+
+	var left_best_phase := 0.0
+	var right_best_phase := run_animation.length * 0.5
+	var left_best_score := INF
+	var right_best_score := INF
+
+	player.play(&"run", 0.0)
+	for sample_index in range(RUN_CONTACT_SAMPLE_COUNT):
+		var phase := (
+			run_animation.length
+			* float(sample_index)
+			/ float(RUN_CONTACT_SAMPLE_COUNT)
+		)
+		player.seek(phase, true)
+		player.advance(0.0)
+
+		var left_y := skeleton.get_bone_global_pose(left_foot).origin.y
+		var right_y := skeleton.get_bone_global_pose(right_foot).origin.y
+
+		# Contact wants one foot distinctly lower than the other. The score uses
+		# relative height, so pelvis bob/root height cannot bias phase selection.
+		var left_score := left_y - right_y
+		var right_score := right_y - left_y
+		if left_score < left_best_score:
+			left_best_score = left_score
+			left_best_phase = phase
+		if right_score < right_best_score:
+			right_best_score = right_score
+			right_best_phase = phase
+
+	player.set_meta("_run_left_contact_phase", left_best_phase)
+	player.set_meta("_run_right_contact_phase", right_best_phase)
+
+
+func _find_humanoid_bone(
+	skeleton: Skeleton3D,
+	aliases: Array[String]
+) -> int:
+	var normalized_aliases: Array[String] = []
+	for alias in aliases:
+		normalized_aliases.append(_normalize_bone_name(alias))
+
+	for bone_index in range(skeleton.get_bone_count()):
+		var normalized_name := _normalize_bone_name(
+			String(skeleton.get_bone_name(bone_index))
+		)
+		if normalized_name in normalized_aliases:
+			return bone_index
+
+	return -1
+
+
+func _normalize_bone_name(value: String) -> String:
+	return (
+		value.to_lower()
+		.replace("mixamorig", "")
+		.replace(":", "")
+		.replace("_", "")
+		.replace(".", "")
+		.replace("-", "")
+		.replace(" ", "")
+	)
 
 
 func _play_ballerina_animation(
