@@ -167,7 +167,8 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "var knee_target := hip_position.lerp(floor_target, 0.52)",
             "var toe_target := floor_target + toe_direction * toe_length",
             "var shoulder_center := chest_position",
-            "var classical_hand_floor := shoulder_center.y - reach * 0.30",
+            "var hand_floor_ratio := 0.40 if opening_variant else 0.30",
+            "var classical_hand_floor := (",
             "hand_target.y = maxf(hand_target.y, classical_hand_floor)",
         ):
             self.assertIn(token, self.controller)
@@ -299,7 +300,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn('var strength := (0.18 if final_variant else 0.12)', clavicle.group(0))
         self.assertIn('_steer_segment_toward_world_point(', clavicle.group(0))
         self.assertIn('var middle := _bone_index(', port.group(0))
-        self.assertIn('var hand_finish_direction :=', port.group(0))
+        self.assertIn('var hand_finish_direction: Vector3', port.group(0))
         self.assertIn('var hand_finish_target :=', port.group(0))
         self.assertIn('var opening_variant: bool = variant == OPENING_REVERENCE', port.group(0))
         self.assertIn('var final_variant: bool = variant == FINAL_REVERENCE', port.group(0))
