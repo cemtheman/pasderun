@@ -115,35 +115,77 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn("_capture_trip_side_from_current_gait", self.controller)
         self.assertIn("var catch_left := not _trip_uses_left_foot", self.controller)
 
+
     def test_stumble_is_readable_human_reaction(self) -> None:
-        self.assertIn("STUMBLE_TORSO_PITCH := deg_to_rad(30.0)", self.controller)
+        self.assertIn("STUMBLE_TORSO_PITCH := deg_to_rad(32.0)", self.controller)
         self.assertIn("STUMBLE_DURATION := 0.36", self.controller)
         self.assertIn("RECOVERY_DURATION := 0.72", self.controller)
-        self.assertIn("var catch_left := not _trip_uses_left_foot", self.controller)
+
         stumble = re.search(
             r'func _apply_stumble_overlay\(\).*?(?=\n\nfunc |\Z)',
             self.controller,
             re.DOTALL,
         )
+        recovery = re.search(
+            r'func _apply_recovery_overlay\(\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
         self.assertIsNotNone(stumble)
+        self.assertIsNotNone(recovery)
+        self.assertIn("var foot_catch := smoothstep(0.0, 0.24, t)", stumble.group(0))
         self.assertIn("sin(STUMBLE_TORSO_PITCH)", stumble.group(0))
-        self.assertIn("Vector3(-0.14, 0.990, 0.0)", stumble.group(0))
+        self.assertIn("same_side_as_catch", stumble.group(0))
+        self.assertIn("var catch_left := not _trip_uses_left_foot", recovery.group(0))
+        self.assertIn("var catch_advance :=", recovery.group(0))
+        self.assertIn("var support_accept :=", recovery.group(0))
+        self.assertNotIn("_animation_player.seek", stumble.group(0))
+        self.assertNotIn("_animation_player.seek", recovery.group(0))
+        self.assertNotIn("_animation_player.pause", stumble.group(0))
+        self.assertNotIn("_animation_player.pause", recovery.group(0))
 
     def test_reverence_uses_current_humanoid_geometry_not_local_euler_guesses(self) -> None:
         for token in (
+            'const OPENING_REVERENCE := &"OPENING_REVERENCE"',
+            'const FINAL_REVERENCE := &"FINAL_REVERENCE"',
+            "func _reverence_profile",
+            "func _apply_reverence_phrase",
+            "func _apply_reverence_leg_chain",
+            "func _apply_reverence_port_de_bras",
+            "func _apply_reverence_epaulement",
             "Quaternion(current_direction_world, desired)",
-            "_audience_pair_side_sign",
-            "Vector3(side * upper_out, upper_y, upper_z)",
-            "Vector3(-side * fore_in, fore_y, fore_z)",
-            "derived_drop := leg_length * (1.0 - cos(knee_angle))",
-            "Vector3(side * turnout, -c, s)",
-            "Vector3(-side * turnout * 0.55, -c, -s)",
+            'var knee_angle := float(profile["plie_angle"]) * depth',
+            "var derived_drop := leg_length * (1.0 - cos(knee_angle))",
+            "var upper_arm_outward :=",
+            "var forearm_inward :=",
         ):
             self.assertIn(token, self.controller)
         self.assertNotIn("_rx(", self.controller)
         self.assertNotIn("_ry(", self.controller)
         self.assertNotIn("_rz(", self.controller)
         self.assertNotIn("kneel", self.controller.lower())
+        self.assertNotIn("hands_on_hips", self.controller.lower())
+
+    def test_phase1031_reverence_profiles_have_distinct_phrasing_and_synced_callers(self) -> None:
+        for token in (
+            '"place_end": 0.55',
+            '"plie_end": 1.35',
+            '"rise_end": 1.95',
+            '"settle_end": 2.25',
+            '"place_end": 0.60',
+            '"plie_end": 1.55',
+            '"rise_end": 2.35',
+            '"settle_end": 2.85',
+            "_apply_reverence_phrase(_state_elapsed, OPENING_REVERENCE)",
+            "_apply_reverence_phrase(_state_elapsed, FINAL_REVERENCE)",
+        ):
+            self.assertIn(token, self.controller)
+        self.assertIn("@export var bow_duration := 2.25", self.start_gate)
+        self.assertIn(
+            "const COMPLETION_FINAL_BOW_DURATION := 2.85",
+            self.recovery,
+        )
+
 
     def test_stage_and_music_callers_target_ballerina_directly(self) -> None:
         for source in (self.start_gate, self.recovery, self.choreo, self.tap):
