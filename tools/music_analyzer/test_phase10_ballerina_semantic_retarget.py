@@ -173,8 +173,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         ):
             self.assertNotIn(f'&"{state}": true', source)
 
-        self.assertIn('&"STUMBLE": true', self.retarget)
-        self.assertIn('&"RECOVERY": true', self.retarget)
+        for state in ("JUMP", "AIRBORNE", "LANDING", "STUMBLE", "RECOVERY"):
+            self.assertIn(f'&"{state}": true', self.retarget)
         self.assertIn("const OVERLAY_STATES := {", self.retarget)
         self.assertIn("_apply_running_trip_overlay(state)", self.retarget)
 
@@ -283,22 +283,34 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn("_source_rig.position * _motion_scale", self.retarget)
         self.assertIn("target_span / source_span", self.retarget)
 
-    def test_reverence_uses_tpose_port_de_bras_and_long_trunk(self) -> None:
-        self.assertIn('&"_T-Pose"', self.retarget)
+    def test_reverence_uses_anatomical_front_plie_and_rounded_port_de_bras(self) -> None:
         self.assertIn("_apply_classical_reverence_upper_body", self.retarget)
+        self.assertIn("var knee_angle := 0.52 * depth", self.retarget)
         self.assertIn(
-            'var upper_angle := lerpf(1.02, 0.42, open_t)',
+            'Vector3(-outward, -c, s).normalized()',
             self.retarget,
         )
         self.assertIn(
-            '_apply_accepted_reverence_body("Torso", 0.045 * depth)',
+            'Vector3(outward, -c, s).normalized()',
             self.retarget,
         )
         self.assertIn(
-            '_apply_accepted_reverence_body("Head", 0.13 * depth)',
+            'Vector3(-outward * 0.45, -c, -s).normalized()',
             self.retarget,
         )
-        self.assertIn("_apply_accepted_reverence_arm", self.retarget)
+        self.assertIn("_opening_leg_vertical_shortening(knee_angle)", self.retarget)
+        self.assertIn(
+            "Vector3(-0.62, -0.64, 0.34).lerp(",
+            self.retarget,
+        )
+        self.assertIn(
+            "Vector3(-0.92, -0.22, 0.28)",
+            self.retarget,
+        )
+        self.assertIn(
+            'Vector3(0.0, 0.999, 0.035 * depth).normalized()',
+            self.retarget,
+        )
 
     def test_low_transition_keeps_phase7_v5_contract_without_full_body_retarget(self) -> None:
         for token in (
@@ -322,40 +334,40 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.bootstrap,
         )
 
-    def test_opening_reverence_restores_accepted_phase10_1_upper_body_contract(self) -> None:
+    def test_opening_reverence_is_humanoid_authored_after_audience_turn(self) -> None:
         self.assertIn(
             'if state == &"STAGE_BOW" or state == &"STAGE_READY":',
             self.retarget,
         )
         self.assertIn(
-            'label == "Pelvis"',
+            "no mannequin limb\n\t\t# articulation is transferred during BOW/READY",
             self.retarget,
         )
         self.assertIn(
-            'label.begins_with("Arm")',
+            "(_state_elapsed - STAGE_BOW_TURN_TIME)",
             self.retarget,
         )
         self.assertIn(
-            'var upper_angle := lerpf(1.02, 0.42, open_t)',
+            "/ maxf(STAGE_BOW_DURATION - STAGE_BOW_TURN_TIME, 0.001)",
             self.retarget,
         )
         self.assertIn(
-            '_apply_accepted_reverence_body("Torso", 0.045 * depth)',
-            self.retarget,
-        )
-        self.assertIn(
-            '_apply_accepted_reverence_body("Head", 0.13 * depth)',
+            "_apply_classical_reverence_upper_body(phase, false)",
             self.retarget,
         )
 
-    def test_jump_landing_uses_grounded_contact_bridge_without_rebound(self) -> None:
+    def test_jump_landing_uses_native_contact_segment_without_rebound(self) -> None:
         self.assertIn("func _play_grounded_landing_bridge", self.bootstrap)
         self.assertIn(
-            'player.has_animation(&"walk_fast")',
+            'player.has_animation(&"jump_end")',
             self.bootstrap,
         )
         self.assertIn(
-            '_play_ballerina_animation(player, &"walk_fast", true, 1.08)',
+            "HUMANOID_LANDING_CLIP_FRACTION := 0.38",
+            self.bootstrap,
+        )
+        self.assertIn(
+            "var source_segment := landing.length * HUMANOID_LANDING_CLIP_FRACTION",
             self.bootstrap,
         )
         landing_branch = re.search(
@@ -368,7 +380,6 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "_play_grounded_landing_bridge(player)",
             landing_branch.group(1),
         )
-        self.assertNotIn("jump_end", landing_branch.group(1))
         self.assertNotIn(
             '_play_ballerina_animation(player, &"run"',
             landing_branch.group(1),
@@ -381,7 +392,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(stumble)
-        self.assertIn("-0.075 * impact", stumble.group(1))
+        self.assertIn("-0.050 * impact", stumble.group(1))
         self.assertIn("\n\t\t\t0.0,\n\t\t\t0.0\n\t\t)", stumble.group(1))
         self.assertNotIn("9.81", stumble.group(1))
 
@@ -391,12 +402,36 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(recovery)
-        self.assertIn("-0.075 * (1.0 - release)", recovery.group(1))
+        self.assertIn("-0.050 * (1.0 - release)", recovery.group(1))
         self.assertNotIn("rebound", recovery.group(1))
 
+    def test_airborne_and_landing_contact_precede_stumble_visuals(self) -> None:
+        resolver = re.search(
+            r"func _resolve_visual_state.*?(?=\n\nfunc |\Z)",
+            self.visual,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(resolver)
+        source = resolver.group(0)
+        airborne = source.index("if not grounded:")
+        landing = source.index("if _landing_time > 0.0:")
+        stumble = source.index("if locomotion == STATE_STUMBLE:")
+        self.assertLess(airborne, stumble)
+        self.assertLess(landing, stumble)
+
+    def test_jump_and_fall_add_only_low_strength_ballet_line_over_native_clips(self) -> None:
+        self.assertIn("func _apply_air_motion_overlay", self.retarget)
+        self.assertIn("func _apply_air_port_de_bras", self.retarget)
+        self.assertIn("func _apply_air_toe_line", self.retarget)
+        self.assertIn('if state == &"JUMP":', self.retarget)
+        self.assertIn('if state == &"AIRBORNE":', self.retarget)
+        self.assertIn('if state != &"LANDING":', self.retarget)
+        self.assertIn("var strength := 0.30", self.retarget)
+        self.assertIn("var contact_strength := 0.28", self.retarget)
+
     def test_stumble_speed_changes_are_continuous_not_state_snaps(self) -> None:
-        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.58", self.dancer)
-        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.08", self.dancer)
+        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.68", self.dancer)
+        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.05", self.dancer)
         self.assertIn(
             "_locomotion_timer / STUMBLE_DURATION",
             self.dancer,
@@ -509,8 +544,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
 
     def test_humanoid_trip_uses_target_axis_independent_chain_directions(self) -> None:
-        self.assertIn('_play_ballerina_animation(player, &"run", true, 0.88)', self.bootstrap)
-        self.assertIn('_play_ballerina_animation(player, &"run", true, 1.04)', self.bootstrap)
+        self.assertIn('_play_ballerina_animation(player, &"run", true, 0.94)', self.bootstrap)
+        self.assertIn('_play_ballerina_animation(player, &"run", true, 1.03)', self.bootstrap)
         self.assertIn('current_world_basis', self.retarget)
         self.assertIn('parent_current.basis.get_rotation_quaternion().slerp', self.retarget)
         for token in (
@@ -522,18 +557,18 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             'state != &"RECOVERY"',
             "STUMBLE_DURATION := 0.24",
             "RECOVERY_DURATION := 0.62",
-            "Vector3(0.62, 0.77, -0.10)",
-            "Vector3(0.90, -0.28, -0.25)",
-            "Vector3(0.50, -0.84, 0.08)",
+            "Vector3(0.48, 0.87, -0.05)",
+            "Vector3(0.78, -0.42, -0.18)",
+            "Vector3(0.42, -0.90, 0.04)",
             "_right_toe_idx",
         ):
             self.assertIn(token, self.retarget)
         self.assertIn(
-            "-0.075 * impact",
+            "-0.050 * impact",
             self.retarget,
         )
         self.assertIn(
-            "custom_strength := 0.60 * (1.0 - smoothstep(0.52, 0.92, t))",
+            "var catch_step_strength := 0.44 * sin(",
             self.retarget,
         )
 
