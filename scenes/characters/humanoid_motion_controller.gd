@@ -970,7 +970,8 @@ func _apply_opening_reverence_phrase_v1(elapsed: float) -> void:
 	# -> torso acknowledges -> head follows -> legs rise -> torso/head recover
 	# -> arms resolve. The overlaps are intentional; nothing starts all at once.
 	var placement := smoothstep(0.00, 0.18, u)
-	var arm_enavant := smoothstep(0.12, 0.50, u)
+	var arm_enavant := smoothstep(0.08, 0.30, u)
+	var arm_open := smoothstep(0.34, 0.64, u)
 	var leg_descent := smoothstep(0.42, 0.68, u)
 	var leg_rise := smoothstep(0.70, 0.88, u)
 	var leg_depth := leg_descent * (1.0 - leg_rise)
@@ -992,10 +993,16 @@ func _apply_opening_reverence_phrase_v1(elapsed: float) -> void:
 
 	_apply_reverence_leg_chain(profile, placement, leg_depth, settle)
 	_apply_opening_pelvis_follow(profile, pelvis_depth)
-	_apply_opening_clavicle_phrase(profile, arm_enavant, arm_resolve)
+	_apply_opening_clavicle_phrase(
+		profile,
+		arm_enavant,
+		arm_open,
+		arm_resolve
+	)
 	_apply_opening_port_de_bras_curve(
 		profile,
 		arm_enavant,
+		arm_open,
 		arm_resolve,
 		wrist_follow
 	)
@@ -1019,9 +1026,13 @@ func _apply_opening_pelvis_follow(
 func _apply_opening_clavicle_phrase(
 	profile: Dictionary,
 	arm_enavant: float,
+	arm_open: float,
 	arm_resolve: float
 ) -> void:
-	var support := arm_enavant * (1.0 - arm_resolve)
+	var support := (
+		maxf(arm_enavant * 0.72, arm_open)
+		* (1.0 - arm_resolve)
+	)
 	if support <= 0.001:
 		return
 
@@ -1067,6 +1078,7 @@ func _apply_opening_clavicle_phrase(
 func _apply_opening_port_de_bras_curve(
 	profile: Dictionary,
 	arm_enavant: float,
+	arm_open: float,
 	arm_resolve: float,
 	wrist_follow: float
 ) -> void:
@@ -1110,47 +1122,62 @@ func _apply_opening_port_de_bras_curve(
 			)
 		var reach := upper_length + forearm_length
 
-		# LOW and EN-AVANT are landmarks on one continuous curve, not poses
-		# commanded independently. Resolution returns through a lower rounded line.
+		# LOW -> EN-AVANT -> OPEN are successive landmarks on one continuous
+		# curve. The arms visibly travel before and during the plié instead of
+		# holding one waist-level shape.
 		var low_elbow := (
 			shoulder_position
-			+ outward * upper_length * 0.34
-			- Vector3.UP * upper_length * 0.44
-			+ audience_forward * upper_length * 0.14
+			+ outward * upper_length * 0.32
+			- Vector3.UP * upper_length * 0.48
+			+ audience_forward * upper_length * 0.12
 		)
 		var low_hand := (
 			shoulder_center
-			+ outward * reach * 0.12
-			- Vector3.UP * reach * 0.49
-			+ audience_forward * reach * 0.25
+			+ outward * reach * 0.10
+			- Vector3.UP * reach * 0.56
+			+ audience_forward * reach * 0.22
 		)
 		var enavant_elbow := (
 			shoulder_position
-			+ outward * upper_length * 0.48
-			- Vector3.UP * upper_length * 0.32
+			+ outward * upper_length * 0.50
+			- Vector3.UP * upper_length * 0.18
 			+ audience_forward * upper_length * 0.18
 		)
 		var enavant_hand := (
 			shoulder_center
-			+ outward * reach * 0.03
-			- Vector3.UP * reach * 0.43
-			+ audience_forward * reach * 0.32
+			+ outward * reach * 0.05
+			- Vector3.UP * reach * 0.28
+			+ audience_forward * reach * 0.34
+		)
+		var open_elbow := (
+			shoulder_position
+			+ outward * upper_length * 0.82
+			- Vector3.UP * upper_length * 0.10
+			+ audience_forward * upper_length * 0.14
+		)
+		var open_hand := (
+			shoulder_center
+			+ outward * reach * 0.68
+			- Vector3.UP * reach * 0.18
+			+ audience_forward * reach * 0.24
 		)
 		var resolve_elbow := (
 			shoulder_position
-			+ outward * upper_length * 0.32
+			+ outward * upper_length * 0.34
 			- Vector3.UP * upper_length * 0.46
 			+ audience_forward * upper_length * 0.12
 		)
 		var resolve_hand := (
 			shoulder_center
 			+ outward * reach * 0.10
-			- Vector3.UP * reach * 0.50
-			+ audience_forward * reach * 0.22
+			- Vector3.UP * reach * 0.52
+			+ audience_forward * reach * 0.20
 		)
 
 		var elbow_target := low_elbow.lerp(enavant_elbow, arm_enavant)
 		var hand_target := low_hand.lerp(enavant_hand, arm_enavant)
+		elbow_target = elbow_target.lerp(open_elbow, arm_open)
+		hand_target = hand_target.lerp(open_hand, arm_open)
 		elbow_target = elbow_target.lerp(resolve_elbow, arm_resolve)
 		hand_target = hand_target.lerp(resolve_hand, arm_resolve)
 

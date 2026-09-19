@@ -323,7 +323,8 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         # Legs lead, pelvis follows, torso follows pelvis, head follows torso.
         for token in (
             "var placement := smoothstep(0.00, 0.18, u)",
-            "var arm_enavant := smoothstep(0.12, 0.50, u)",
+            "var arm_enavant := smoothstep(0.08, 0.30, u)",
+            "var arm_open := smoothstep(0.34, 0.64, u)",
             "var leg_descent := smoothstep(0.42, 0.68, u)",
             "var pelvis_descent := smoothstep(0.46, 0.70, u)",
             "var torso_in := smoothstep(0.52, 0.72, u)",
@@ -336,10 +337,19 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             self.assertIn(token, phrase.group(0))
 
         self.assertIn("_apply_opening_pelvis_follow(profile, pelvis_depth)", phrase.group(0))
-        self.assertIn("_apply_opening_clavicle_phrase(profile, arm_enavant, arm_resolve)", phrase.group(0))
+        self.assertIn("arm_open,", phrase.group(0))
+        self.assertIn("_apply_opening_clavicle_phrase(", phrase.group(0))
         self.assertIn("_apply_opening_epaulement_phrase(profile, torso_ack, head_ack)", phrase.group(0))
 
         # Wrist/hand is the continuation of the forearm curve, not an independent angle.
+        self.assertIn("var enavant_hand := (", curve.group(0))
+        self.assertIn("- Vector3.UP * reach * 0.28", curve.group(0))
+        self.assertIn("var open_elbow := (", curve.group(0))
+        self.assertIn("outward * upper_length * 0.82", curve.group(0))
+        self.assertIn("var open_hand := (", curve.group(0))
+        self.assertIn("outward * reach * 0.68", curve.group(0))
+        self.assertIn("elbow_target = elbow_target.lerp(open_elbow, arm_open)", curve.group(0))
+        self.assertIn("hand_target = hand_target.lerp(open_hand, arm_open)", curve.group(0))
         self.assertIn(
             "var forearm_tangent := (hand_target - elbow_target).normalized()",
             curve.group(0),
