@@ -723,6 +723,7 @@ func _apply_stumble_overlay() -> void:
 		)
 
 
+
 func _apply_recovery_overlay() -> void:
 	var t := clampf(_state_elapsed / RECOVERY_DURATION, 0.0, 1.0)
 	var release := smoothstep(0.0, 1.0, t)
@@ -746,48 +747,73 @@ func _apply_recovery_overlay() -> void:
 		0.78 * torso_strength
 	)
 
-	# The opposite/free leg must visibly solve the fall. Native RUN continues in
-	# real time, so there is no phase teleport and no repeated support foot.
+	# The opposite/free leg solves the fall with one clearly advanced catch step.
+	# Native RUN remains live underneath: no pause, seek or phase teleport.
 	var catch_left := not _trip_uses_left_foot
 	var side := _travel_pair_side_sign(catch_left)
+	var catch_hip := _bone_index(
+		"left_upper_leg" if catch_left else "right_upper_leg"
+	)
+	var catch_knee := _bone_index(
+		"left_lower_leg" if catch_left else "right_lower_leg"
+	)
+	var catch_foot := _bone_index(
+		"left_foot" if catch_left else "right_foot"
+	)
+	var other_foot := _bone_index(
+		"right_foot" if catch_left else "left_foot"
+	)
+	var pelvis := _bone_index("pelvis")
+	var leg_length := _idle_leg_length()
 	var catch_advance := (
-		smoothstep(0.0, 0.24, t)
-		* (1.0 - smoothstep(0.56, 0.88, t))
+		smoothstep(0.0, 0.20, t)
+		* (1.0 - smoothstep(0.72, 0.94, t))
 	)
 	var support_accept := (
-		smoothstep(0.18, 0.55, t)
-		* (1.0 - smoothstep(0.72, 1.0, t))
+		smoothstep(0.26, 0.50, t)
+		* (1.0 - smoothstep(0.84, 1.0, t))
 	)
 	var catch_strength := clampf(
-		0.96 * catch_advance + 0.70 * support_accept,
+		1.00 * catch_advance + 0.82 * support_accept,
 		0.0,
 		1.0
 	)
-	var accept_alpha := smoothstep(0.30, 0.68, t)
-	var upper_target := Vector3(0.66, -0.748, side * 0.06).lerp(
-		Vector3(0.18, -0.982, side * 0.04),
-		accept_alpha
-	).normalized()
-	var lower_target := Vector3(0.50, -0.864, side * 0.04).lerp(
-		Vector3(-0.08, -0.995, side * 0.02),
-		accept_alpha
-	).normalized()
-	_steer_segment_world_direction(
-		_bone_index("left_upper_leg" if catch_left else "right_upper_leg"),
-		_bone_index("left_lower_leg" if catch_left else "right_lower_leg"),
-		upper_target,
+	var accept_alpha := smoothstep(0.34, 0.66, t)
+
+	var pelvis_position := _bone_world_position(pelvis)
+	var catch_hip_position := _bone_world_position(catch_hip)
+	var catch_foot_position := _bone_world_position(catch_foot)
+	var other_foot_position := _bone_world_position(other_foot)
+	var floor_y := minf(catch_foot_position.y, other_foot_position.y)
+	var catch_forward := lerpf(0.64, 0.30, accept_alpha) * leg_length
+	var catch_foot_target := Vector3(
+		pelvis_position.x + catch_forward,
+		floor_y,
+		pelvis_position.z + side * 0.045 * leg_length
+	)
+	var catch_knee_target := catch_hip_position.lerp(catch_foot_target, 0.52)
+	catch_knee_target += Vector3(
+		0.08 * leg_length,
+		0.14 * leg_length,
+		side * 0.015 * leg_length
+	)
+
+	_steer_segment_toward_world_point(
+		catch_hip,
+		catch_knee,
+		catch_knee_target,
 		catch_strength
 	)
-	_steer_segment_world_direction(
-		_bone_index("left_lower_leg" if catch_left else "right_lower_leg"),
-		_bone_index("left_foot" if catch_left else "right_foot"),
-		lower_target,
+	_steer_segment_toward_world_point(
+		catch_knee,
+		catch_foot,
+		catch_foot_target,
 		catch_strength
 	)
 
-	# Balance-correction arms fade later than the initial foot catch so recovery
-	# reads as support acceptance, not an instant return to perfect run posture.
-	var arm_recovery_strength := 0.62 * (1.0 - smoothstep(0.34, 0.96, t))
+	# Balance-correction arms resolve after support acceptance rather than
+	# vanishing on the first recovery frame.
+	var arm_recovery_strength := 0.66 * (1.0 - smoothstep(0.42, 0.98, t))
 	for left in [true, false]:
 		var same_side_as_catch := left == _trip_uses_left_foot
 		var arm_side := _travel_pair_side_sign(left)
@@ -905,9 +931,9 @@ func _reverence_profile(variant: StringName) -> Dictionary:
 			"plie_end": 1.55,
 			"rise_end": 2.35,
 			"settle_end": 2.85,
-			"plie_angle": 0.70,
-			"turnout": 0.16,
-			"root_drop_ratio": 0.20,
+			"plie_angle": 0.78,
+			"turnout": 0.17,
+			"root_drop_ratio": 0.22,
 			"working_cross": 0.070,
 			"weight_shift": 0.034,
 			"torso_ack": 0.075,
@@ -921,9 +947,9 @@ func _reverence_profile(variant: StringName) -> Dictionary:
 		"plie_end": 1.35,
 		"rise_end": 1.95,
 		"settle_end": 2.25,
-		"plie_angle": 0.54,
-		"turnout": 0.12,
-		"root_drop_ratio": 0.15,
+		"plie_angle": 0.62,
+		"turnout": 0.13,
+		"root_drop_ratio": 0.17,
 		"working_cross": 0.050,
 		"weight_shift": 0.024,
 		"torso_ack": 0.050,
@@ -1028,6 +1054,7 @@ func _apply_reverence_leg_chain(
 	)
 
 
+
 func _apply_reverence_port_de_bras(
 	profile: Dictionary,
 	elapsed: float,
@@ -1038,77 +1065,198 @@ func _apply_reverence_port_de_bras(
 	var rise_end := float(profile["rise_end"])
 	var expressive_left := bool(profile["expressive_left"])
 	var upper_gather := smoothstep(0.10, place_end * 0.92, elapsed)
-	var fore_gather := smoothstep(0.16, place_end, elapsed)
+	var hand_gather := smoothstep(0.16, place_end, elapsed)
 	var upper_present := smoothstep(place_end * 0.62, plie_end - 0.12, elapsed)
-	var fore_present := smoothstep(place_end * 0.78, plie_end + 0.02, elapsed)
+	var hand_present := smoothstep(place_end * 0.78, plie_end + 0.02, elapsed)
 	var upper_resolve := smoothstep(plie_end + 0.05, rise_end, elapsed)
-	var fore_resolve := smoothstep(plie_end + 0.12, rise_end + 0.10, elapsed)
+	var hand_resolve := smoothstep(plie_end + 0.12, rise_end + 0.10, elapsed)
 
-	var left_arm_side := _audience_pair_side_sign(
-		_bone_index("left_upper_arm"),
-		_bone_index("right_upper_arm")
-	)
-	var right_arm_side := -left_arm_side
+	var chest := _bone_index("chest")
+	var head := _bone_index("head")
+	var chest_position := _bone_world_position(chest)
+	var head_position := _bone_world_position(head)
 
 	for left in [true, false]:
-		var side := left_arm_side if left else right_arm_side
 		var expressive := left == expressive_left
 		var shoulder := _bone_index("left_upper_arm" if left else "right_upper_arm")
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
 		var hand := _bone_index("left_hand" if left else "right_hand")
+		if shoulder < 0 or elbow < 0 or hand < 0:
+			continue
 
-		var prep_upper := Vector3(side * 0.30, -0.90, 0.31).normalized()
-		var prep_fore := Vector3(-side * 0.26, -0.86, 0.42).normalized()
-		var first_upper := Vector3(side * 0.48, -0.68, 0.39).normalized()
-		var first_fore := Vector3(-side * 0.43, -0.48, 0.50).normalized()
+		var shoulder_position := _bone_world_position(shoulder)
+		var elbow_position := _bone_world_position(elbow)
+		var hand_position := _bone_world_position(hand)
+		var outward := shoulder_position - chest_position
+		outward -= Vector3.UP * outward.dot(Vector3.UP)
+		if outward.length_squared() <= 0.000001:
+			var fallback_side := -1.0 if left else 1.0
+			outward = Vector3(fallback_side, 0.0, 0.0)
+		outward = outward.normalized()
 
-		var peak_upper: Vector3
-		var peak_fore: Vector3
-		var settle_upper: Vector3
-		var settle_fore: Vector3
+		var upper_length := maxf(
+			shoulder_position.distance_to(elbow_position),
+			0.001
+		)
+		var forearm_length := maxf(
+			elbow_position.distance_to(hand_position),
+			0.001
+		)
+		var reach := upper_length + forearm_length
+		var audience_forward := Vector3(0.0, 0.0, 1.0)
+
+		# Targets are WORLD POSITIONS derived from this humanoid's actual shoulder,
+		# chest and arm lengths. Hand height and centre-return are explicit.
+		var prep_elbow := (
+			shoulder_position
+			+ outward * upper_length * 0.38
+			- Vector3.UP * upper_length * 0.46
+			+ audience_forward * upper_length * 0.18
+		)
+		var prep_hand := (
+			chest_position
+			+ outward * reach * 0.28
+			- Vector3.UP * reach * 0.34
+			+ audience_forward * reach * 0.30
+		)
+		var gathered_elbow := (
+			shoulder_position
+			+ outward * upper_length * 0.54
+			- Vector3.UP * upper_length * 0.14
+			+ audience_forward * upper_length * 0.20
+		)
+		var gathered_hand := (
+			chest_position
+			+ outward * reach * 0.24
+			- Vector3.UP * reach * 0.18
+			+ audience_forward * reach * 0.38
+		)
+
+		var peak_elbow: Vector3
+		var peak_hand: Vector3
+		var settle_elbow: Vector3
+		var settle_hand: Vector3
+
 		if variant == FINAL_REVERENCE and expressive:
-			peak_upper = Vector3(side * 0.42, 0.74, 0.36).normalized()
-			peak_fore = Vector3(-side * 0.36, 0.58, 0.47).normalized()
-			settle_upper = Vector3(side * 0.64, -0.34, 0.34).normalized()
-			settle_fore = Vector3(-side * 0.42, -0.34, 0.46).normalized()
+			peak_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.48
+				+ Vector3.UP * upper_length * 0.66
+				+ audience_forward * upper_length * 0.14
+			)
+			peak_hand = (
+				head_position
+				+ outward * reach * 0.16
+				+ Vector3.UP * reach * 0.20
+				+ audience_forward * reach * 0.24
+			)
+			settle_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.68
+				- Vector3.UP * upper_length * 0.08
+				+ audience_forward * upper_length * 0.18
+			)
+			settle_hand = (
+				chest_position
+				+ outward * reach * 0.32
+				- Vector3.UP * reach * 0.14
+				+ audience_forward * reach * 0.36
+			)
 		elif variant == FINAL_REVERENCE:
-			peak_upper = Vector3(side * 0.92, -0.10, 0.25).normalized()
-			peak_fore = Vector3(-side * 0.40, -0.18, 0.43).normalized()
-			settle_upper = Vector3(side * 0.74, -0.28, 0.30).normalized()
-			settle_fore = Vector3(-side * 0.42, -0.34, 0.44).normalized()
+			peak_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.90
+				+ Vector3.UP * upper_length * 0.04
+				+ audience_forward * upper_length * 0.12
+			)
+			peak_hand = (
+				chest_position
+				+ outward * reach * 0.58
+				- Vector3.UP * reach * 0.02
+				+ audience_forward * reach * 0.34
+			)
+			settle_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.72
+				- Vector3.UP * upper_length * 0.10
+				+ audience_forward * upper_length * 0.18
+			)
+			settle_hand = (
+				chest_position
+				+ outward * reach * 0.34
+				- Vector3.UP * reach * 0.14
+				+ audience_forward * reach * 0.36
+			)
 		elif expressive:
-			peak_upper = Vector3(side * 0.78, -0.28, 0.32).normalized()
-			peak_fore = Vector3(-side * 0.50, -0.30, 0.47).normalized()
-			settle_upper = Vector3(side * 0.62, -0.50, 0.36).normalized()
-			settle_fore = Vector3(-side * 0.40, -0.46, 0.48).normalized()
+			peak_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.78
+				+ Vector3.UP * upper_length * 0.04
+				+ audience_forward * upper_length * 0.16
+			)
+			peak_hand = (
+				chest_position
+				+ outward * reach * 0.34
+				- Vector3.UP * reach * 0.06
+				+ audience_forward * reach * 0.40
+			)
+			settle_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.64
+				- Vector3.UP * upper_length * 0.10
+				+ audience_forward * upper_length * 0.18
+			)
+			settle_hand = (
+				chest_position
+				+ outward * reach * 0.30
+				- Vector3.UP * reach * 0.16
+				+ audience_forward * reach * 0.38
+			)
 		else:
-			peak_upper = Vector3(side * 0.50, -0.58, 0.40).normalized()
-			peak_fore = Vector3(-side * 0.44, -0.44, 0.50).normalized()
-			settle_upper = Vector3(side * 0.56, -0.54, 0.38).normalized()
-			settle_fore = Vector3(-side * 0.40, -0.48, 0.48).normalized()
+			peak_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.62
+				- Vector3.UP * upper_length * 0.08
+				+ audience_forward * upper_length * 0.20
+			)
+			peak_hand = (
+				chest_position
+				+ outward * reach * 0.22
+				- Vector3.UP * reach * 0.10
+				+ audience_forward * reach * 0.42
+			)
+			settle_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.60
+				- Vector3.UP * upper_length * 0.12
+				+ audience_forward * upper_length * 0.18
+			)
+			settle_hand = (
+				chest_position
+				+ outward * reach * 0.28
+				- Vector3.UP * reach * 0.16
+				+ audience_forward * reach * 0.38
+			)
 
-		# Anatomical contract: UPPER ARM OPENS OUTWARD while FOREARM CURVES TO
-		# CENTRE. Their timing also differs so the elbow never becomes the gesture.
-		var upper_arm_outward := prep_upper.lerp(first_upper, upper_gather)
-		upper_arm_outward = upper_arm_outward.lerp(peak_upper, upper_present)
-		upper_arm_outward = upper_arm_outward.lerp(settle_upper, upper_resolve)
-		var forearm_inward := prep_fore.lerp(first_fore, fore_gather)
-		forearm_inward = forearm_inward.lerp(peak_fore, fore_present)
-		forearm_inward = forearm_inward.lerp(settle_fore, fore_resolve)
+		var elbow_target := prep_elbow.lerp(gathered_elbow, upper_gather)
+		elbow_target = elbow_target.lerp(peak_elbow, upper_present)
+		elbow_target = elbow_target.lerp(settle_elbow, upper_resolve)
+		var hand_target := prep_hand.lerp(gathered_hand, hand_gather)
+		hand_target = hand_target.lerp(peak_hand, hand_present)
+		hand_target = hand_target.lerp(settle_hand, hand_resolve)
 
-		_steer_segment_world_direction(
+		_steer_segment_toward_world_point(
 			shoulder,
 			elbow,
-			upper_arm_outward.normalized(),
-			0.94
+			elbow_target,
+			0.96
 		)
-		_steer_segment_world_direction(
+		_steer_segment_toward_world_point(
 			elbow,
 			hand,
-			forearm_inward.normalized(),
-			0.92
+			hand_target,
+			0.94
 		)
-
 
 func _apply_reverence_epaulement(profile: Dictionary, elapsed: float) -> void:
 	var place_end := float(profile["place_end"])
@@ -1372,6 +1520,24 @@ func _idle_leg_length() -> float:
 	for value in lengths:
 		total += value
 	return total / float(lengths.size())
+
+
+func _steer_segment_toward_world_point(
+	parent_idx: int,
+	child_idx: int,
+	target_world_position: Vector3,
+	strength: float
+) -> void:
+	if parent_idx < 0 or child_idx < 0:
+		return
+	var parent_world_position := _bone_world_position(parent_idx)
+	var desired_world_direction := target_world_position - parent_world_position
+	_steer_segment_world_direction(
+		parent_idx,
+		child_idx,
+		desired_world_direction,
+		strength
+	)
 
 
 func _steer_segment_world_direction(

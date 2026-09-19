@@ -116,6 +116,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn("var catch_left := not _trip_uses_left_foot", self.controller)
 
 
+
     def test_stumble_is_readable_human_reaction(self) -> None:
         self.assertIn("STUMBLE_TORSO_PITCH := deg_to_rad(32.0)", self.controller)
         self.assertIn("STUMBLE_DURATION := 0.36", self.controller)
@@ -137,8 +138,10 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn("sin(STUMBLE_TORSO_PITCH)", stumble.group(0))
         self.assertIn("same_side_as_catch", stumble.group(0))
         self.assertIn("var catch_left := not _trip_uses_left_foot", recovery.group(0))
-        self.assertIn("var catch_advance :=", recovery.group(0))
-        self.assertIn("var support_accept :=", recovery.group(0))
+        self.assertIn("var catch_foot_target := Vector3(", recovery.group(0))
+        self.assertIn("var catch_knee_target :=", recovery.group(0))
+        self.assertIn("_steer_segment_toward_world_point(", recovery.group(0))
+        self.assertIn("var floor_y := minf(", recovery.group(0))
         self.assertNotIn("_animation_player.seek", stumble.group(0))
         self.assertNotIn("_animation_player.seek", recovery.group(0))
         self.assertNotIn("_animation_player.pause", stumble.group(0))
@@ -153,19 +156,25 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "func _apply_reverence_leg_chain",
             "func _apply_reverence_port_de_bras",
             "func _apply_reverence_epaulement",
+            "func _steer_segment_toward_world_point",
             "Quaternion(current_direction_world, desired)",
             'var knee_angle := float(profile["plie_angle"]) * depth',
             "var derived_drop := leg_length * (1.0 - cos(knee_angle))",
-            "var upper_arm_outward :=",
-            "var forearm_inward :=",
+            "var shoulder_position := _bone_world_position(shoulder)",
+            "var chest_position := _bone_world_position(chest)",
+            "var elbow_target :=",
+            "var hand_target :=",
         ):
             self.assertIn(token, self.controller)
+        self.assertIn('"plie_angle": 0.62', self.controller)
+        self.assertIn('"plie_angle": 0.78', self.controller)
+        self.assertNotIn("var upper_arm_outward :=", self.controller)
+        self.assertNotIn("var forearm_inward :=", self.controller)
         self.assertNotIn("_rx(", self.controller)
         self.assertNotIn("_ry(", self.controller)
         self.assertNotIn("_rz(", self.controller)
         self.assertNotIn("kneel", self.controller.lower())
         self.assertNotIn("hands_on_hips", self.controller.lower())
-
     def test_phase1031_reverence_profiles_have_distinct_phrasing_and_synced_callers(self) -> None:
         for token in (
             '"place_end": 0.55',
