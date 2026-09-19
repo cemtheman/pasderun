@@ -494,12 +494,13 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 		var impact := smoothstep(0.0, 1.0, t)
 		var trip_strength := 0.62 * smoothstep(0.0, 0.34, t)
 
-		# Forward momentum survives the toe catch. The CharacterBody now eases
-		# toward 58% run speed; this small counter-offset keeps the
-		# visually trapped foot near the obstacle while the CoM pitches past it.
+		# Forward momentum survives the toe catch. CharacterBody3D is the ONLY
+		# owner of vertical motion/gravity. Do not add a second visual Y drop here:
+		# on high platform falls that double-counted gravity and made the skinned
+		# feet/body penetrate the landing surface. Keep only a small X lag.
 		_model_root.position += Vector3(
 			-0.075 * impact,
-			-0.5 * 9.81 * pow(minf(t, 0.24), 2.0) * 0.23,
+			0.0,
 			0.0
 		)
 
@@ -592,13 +593,12 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 	var release := smoothstep(0.0, 1.0, t)
 	var custom_strength := 0.60 * (1.0 - smoothstep(0.52, 0.92, t))
 
-	# The body is still forward of the original support base at recovery start.
-	# Return the counter-offset gradually while adding a small rebound rather than
-	# teleporting the visual root back onto the gameplay capsule.
-	var rebound := 0.030 * sin(PI * clampf((t - 0.22) / 0.60, 0.0, 1.0))
+	# Return only the horizontal catch offset. Vertical placement remains exactly
+	# aligned with the gameplay capsule/floor contact; landing absorption is
+	# expressed by knees/hips, never by sinking the whole mesh through the floor.
 	_model_root.position += Vector3(
 		-0.075 * (1.0 - release),
-		-0.032 * (1.0 - release) + rebound,
+		0.0,
 		0.0
 	)
 
