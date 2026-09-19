@@ -274,7 +274,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('_reset_global_basis_to_idle("Head")', self.retarget)
         self.assertIn("_downward_rotation_about_visual_front", self.retarget)
 
-    def test_low_transition_keeps_phase7_v5_foot_preserving_contract(self) -> None:
+    def test_low_transition_keeps_phase7_v5_contract_without_full_body_retarget(self) -> None:
         for token in (
             "_low_front_support_pose_v5",
             "_low_back_brush_pose_v5",
@@ -283,7 +283,18 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "pelvis can descend without shortening",
         ):
             self.assertIn(token, self.source_v5)
-        self.assertIn('&"LOW_TRANSITION": true', self.retarget)
+
+        retarget_block = re.search(
+            r"const RETARGET_STATES := \{(.*?)\n\}",
+            self.retarget,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(retarget_block)
+        self.assertNotIn('&"LOW_TRANSITION": true', retarget_block.group(1))
+        self.assertIn(
+            '_play_ballerina_animation(player, &"run", true, 0.92)',
+            self.bootstrap,
+        )
 
     def test_opening_is_walk_then_turn_reverence_then_ready(self) -> None:
         self.assertIn("@export var entrance_walk_distance := 3.0", self.start_gate)
