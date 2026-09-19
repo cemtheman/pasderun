@@ -115,6 +115,8 @@ func set_stage_presentation_state(stage: StringName) -> void:
 	var next_state := &""
 	var front_facing := false
 	match stage:
+		&"RUN":
+			next_state = STATE_TRAVEL
 		&"WALK":
 			next_state = STATE_STAGE_WALK
 		&"BOW":
