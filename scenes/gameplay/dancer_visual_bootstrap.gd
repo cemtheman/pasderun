@@ -122,9 +122,9 @@ func _on_ballerina_visual_state_changed(
 			# and resume on the opposite half-cycle instead.
 			_resume_run_after_jump(player)
 		&"STUMBLE":
-			_play_ballerina_animation(player, &"run", true, 0.58)
+			_play_ballerina_animation(player, &"run", true, 0.88)
 		&"RECOVERY":
-			_play_ballerina_animation(player, &"run", true, 1.12)
+			_play_ballerina_animation(player, &"run", true, 1.04)
 		&"LOW_TRANSITION":
 			_play_ballerina_animation(player, &"run", true, 0.92)
 		&"TRAVEL", &"BALANCE", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
