@@ -1260,9 +1260,9 @@ func _apply_reverence_port_de_bras(
 			)
 			peak_hand = (
 				shoulder_center
-				+ outward * reach * 0.06
-				- Vector3.UP * reach * 0.39
-				+ audience_forward * reach * 0.34
+				+ outward * reach * 0.03
+				- Vector3.UP * reach * 0.43
+				+ audience_forward * reach * 0.32
 			)
 			settle_elbow = (
 				shoulder_position
@@ -1272,9 +1272,9 @@ func _apply_reverence_port_de_bras(
 			)
 			settle_hand = (
 				shoulder_center
-				+ outward * reach * 0.04
-				- Vector3.UP * reach * 0.41
-				+ audience_forward * reach * 0.30
+				+ outward * reach * 0.02
+				- Vector3.UP * reach * 0.45
+				+ audience_forward * reach * 0.28
 			)
 		elif final_variant and expressive:
 			peak_elbow = (
@@ -1419,9 +1419,9 @@ func _apply_reverence_port_de_bras(
 				var hand_finish_direction: Vector3
 				if opening_variant:
 					hand_finish_direction = (
-						-outward * 0.92
-						+ audience_forward * 0.18
-						+ Vector3.UP * 0.04
+						-outward * 0.96
+						+ audience_forward * 0.16
+						- Vector3.UP * 0.05
 					).normalized()
 				else:
 					hand_finish_direction = (
