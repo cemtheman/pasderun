@@ -116,6 +116,14 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertIn('"preview_engine": preview_engine', self.builder)
         self.assertNotIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
 
+    def test_preview_creates_world_when_factory_scene_has_none(self) -> None:
+        self.assertIn("if scene.world is None:", self.builder)
+        self.assertIn(
+            'scene.world = bpy.data.worlds.new("P1043_PreviewWorld")',
+            self.builder,
+        )
+        self.assertIn("scene.world.color = (0.035, 0.035, 0.035)", self.builder)
+
     def test_preview_is_rendered_automatically(self) -> None:
         self.assertIn("preview_engine = choose_preview_engine(scene)", self.builder)
         self.assertIn("video_output_api = configure_video_output(scene)", self.builder)

@@ -757,6 +757,8 @@ def configure_preview_scene(
         2.0,
     )
 
+    if scene.world is None:
+        scene.world = bpy.data.worlds.new("P1043_PreviewWorld")
     scene.world.color = (0.035, 0.035, 0.035)
 
     bpy.ops.mesh.primitive_plane_add(
