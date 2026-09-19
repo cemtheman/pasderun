@@ -22,8 +22,9 @@ extends Node3D
 # sole owner of gameplay translation, collision, timing and route logic.
 
 const RETARGET_STATES := {
-	# Full-body procedural retarget is reserved for slow stage-presentation
-	# states only. Natural locomotion must stay on the imported humanoid clips.
+	# Stage states are intercepted so imported locomotion clips cannot fight the
+	# authored presentation. Only the SOURCE ROOT turn is reused; mannequin limb
+	# articulation is never copied into the humanoid.
 	&"STAGE_BOW": true,
 	&"STAGE_READY": true,
 	&"STAGE_FINAL_BOW": true,
@@ -121,7 +122,6 @@ func _process(delta: float) -> void:
 
 		_apply_idle_baseline()
 		_apply_source_root_transform()
-		_apply_semantic_motion_retarget(state)
 		_apply_stage_presentation_calibration(state)
 		return
 
@@ -933,8 +933,8 @@ func _binding_index(label: String) -> int:
 func _apply_stage_presentation_calibration(state: StringName) -> void:
 	match state:
 		&"STAGE_BOW":
-			# Complete the 90° +X -> +Z turn first. The reverence itself starts
-			# only after the audience-facing orientation is established.
+			# Turn fully toward the +Z audience first; then perform a compact
+			# classical révérence. No limb pose is inherited from the mannequin.
 			var phase := clampf(
 				(_state_elapsed - STAGE_BOW_TURN_TIME)
 				/ maxf(STAGE_BOW_DURATION - STAGE_BOW_TURN_TIME, 0.001),
@@ -945,7 +945,19 @@ func _apply_stage_presentation_calibration(state: StringName) -> void:
 		&"STAGE_READY":
 			_apply_classical_reverence_upper_body(1.0, false)
 		&"STAGE_FINAL_BOW":
-			# Final bow remains a separate next-stage quality pass.
+			# The closing révérence uses the same anatomical rules as the
+			# opening but with a deeper plié, broader port de bras and slightly
+			# larger head/torso acknowledgement.
+			var phase := clampf(
+				(_state_elapsed - STAGE_FINAL_TURN_TIME)
+				/ maxf(STAGE_FINAL_BOW_DURATION - STAGE_FINAL_TURN_TIME, 0.001),
+				0.0,
+				1.0
+			)
+			_apply_classical_reverence_upper_body(phase, true)
+		&"STAGE_EXIT_TURN":
+			# Idle baseline + source-root yaw gives a clean side turn before the
+			# native calibrated walk resumes.
 			pass
 
 
@@ -953,124 +965,113 @@ func _apply_classical_reverence_upper_body(
 	phase: float,
 	final_reverence: bool
 ) -> void:
-	if final_reverence:
-		return
-
-	var eased := smoothstep(0.0, 1.0, clampf(phase, 0.0, 1.0))
-	var depth := sin(eased * PI)
-	var knee_angle := 0.52 * depth
+	var p := smoothstep(0.0, 1.0, clampf(phase, 0.0, 1.0))
+	var depth := sin(p * PI)
+	var knee_max := 0.70 if final_reverence else 0.48
+	var knee_angle := knee_max * depth
 	var c := cos(knee_angle)
 	var s := sin(knee_angle)
 
-	# True front-facing demi-plié geometry. With the dancer facing +Z, knees
-	# travel toward +Z over the toes while the shins angle back toward the feet.
-	# This shortens the vertical leg projection, so the pelvis/body visibly
-	# descends instead of keeping straight knees and merely moving the root.
-	var outward := 0.11 * depth
+	# FRONT-FACING PLIÉ, audience = +Z.
+	# Femurs travel forward toward +Z; shins fold back toward the planted feet.
+	# The two sides are exact mirrors in X so no arm/leg can appear "reversed".
+	var turnout := (0.13 if final_reverence else 0.095) * depth
 	_steer_current_chain_world_direction(
 		"LegBackHip",
 		"LegBackKnee",
-		Vector3(-outward, -c, s).normalized(),
+		Vector3(-turnout, -c, s).normalized(),
 		1.0
 	)
 	_steer_current_chain_world_direction(
 		"LegBackKnee",
 		"FootBack",
-		Vector3(-outward * 0.45, -c, -s).normalized(),
+		Vector3(-turnout * 0.40, -c, -s).normalized(),
 		1.0
 	)
 	_steer_current_chain_world_direction(
 		"LegFrontHip",
 		"LegFrontKnee",
-		Vector3(outward, -c, s).normalized(),
+		Vector3(turnout, -c, s).normalized(),
 		1.0
 	)
 	_steer_current_chain_world_direction(
 		"LegFrontKnee",
 		"FootFront",
-		Vector3(outward * 0.45, -c, -s).normalized(),
+		Vector3(turnout * 0.40, -c, -s).normalized(),
 		1.0
 	)
 
 	var leg_shortening := _opening_leg_vertical_shortening(knee_angle)
+	var max_drop := 0.18 if final_reverence else 0.12
 	_model_root.position.y = (
 		_model_base_transform.origin.y
-		- leg_shortening
+		- minf(leg_shortening, max_drop)
 	)
 
-	# Port de bras stays rounded throughout. At the deepest plié the arms open
-	# toward a soft second position; on the rise they return to a calm low-open
-	# preparation instead of forming a rigid horizontal T.
-	var gesture := depth
-	var left_upper := Vector3(-0.62, -0.64, 0.34).lerp(
-		Vector3(-0.92, -0.22, 0.28),
-		gesture
-	).normalized()
-	var right_upper := Vector3(0.62, -0.64, 0.34).lerp(
-		Vector3(0.92, -0.22, 0.28),
-		gesture
-	).normalized()
-	var left_forearm := Vector3(-0.28, -0.88, 0.38).lerp(
-		Vector3(-0.74, -0.30, 0.60),
-		gesture
-	).normalized()
-	var right_forearm := Vector3(0.28, -0.88, 0.38).lerp(
-		Vector3(0.74, -0.30, 0.60),
-		gesture
-	).normalized()
+	# Rounded port de bras. Start/end in a quiet bras-bas shape and open through
+	# second position at the deepest plié. Both sides are mirrored exactly.
+	var arm_open := depth
+	var upper_x := lerpf(0.54, 0.91 if final_reverence else 0.84, arm_open)
+	var upper_y := lerpf(-0.72, -0.20 if final_reverence else -0.27, arm_open)
+	var upper_z := lerpf(0.31, 0.31, arm_open)
+	var fore_x := lerpf(0.30, 0.72 if final_reverence else 0.62, arm_open)
+	var fore_y := lerpf(-0.88, -0.34 if final_reverence else -0.42, arm_open)
+	var fore_z := lerpf(0.34, 0.60 if final_reverence else 0.54, arm_open)
 
 	_steer_current_chain_world_direction(
 		"ArmBackShoulder",
 		"ArmBackElbow",
-		left_upper,
+		Vector3(-upper_x, upper_y, upper_z).normalized(),
 		1.0
 	)
 	_steer_current_segment_world_direction(
 		_binding_index("ArmBackElbow"),
 		_left_hand_idx,
-		left_forearm,
+		Vector3(-fore_x, fore_y, fore_z).normalized(),
 		1.0
 	)
 	_steer_current_chain_world_direction(
 		"ArmFrontShoulder",
 		"ArmFrontElbow",
-		right_upper,
+		Vector3(upper_x, upper_y, upper_z).normalized(),
 		1.0
 	)
 	_steer_current_segment_world_direction(
 		_binding_index("ArmFrontElbow"),
 		_right_hand_idx,
-		right_forearm,
+		Vector3(fore_x, fore_y, fore_z).normalized(),
 		1.0
 	)
 
-	# Long classical torso with only a small head acknowledgement.
+	# Classical épaulement stays restrained here: long spine, small acknowledgement
+	# toward +Z, no waist collapse. Final révérence is larger but still upright.
+	var torso_z := (0.075 if final_reverence else 0.035) * depth
+	var head_z := (0.135 if final_reverence else 0.070) * depth
 	_steer_current_chain_world_direction(
 		"Pelvis",
 		"Torso",
-		Vector3(0.0, 0.999, 0.035 * depth).normalized(),
-		0.80
+		Vector3(0.0, 0.997, torso_z).normalized(),
+		0.82
 	)
 	_steer_current_chain_world_direction(
 		"Torso",
 		"Head",
-		Vector3(0.0, 0.997, 0.075 * depth).normalized(),
-		0.72
+		Vector3(0.0, 0.994, head_z).normalized(),
+		0.76
 	)
 
-	# Feet stay turnout-aware and directed toward the audience; no pointe rise is
-	# introduced during a plié.
+	# Keep feet long and turnout-aware without rising onto pointe during plié.
 	_steer_current_segment_world_direction(
 		_binding_index("FootBack"),
 		_left_toe_idx,
-		Vector3(-0.18, -0.02, 0.98).normalized(),
-		0.65 * depth
+		Vector3(-0.18, -0.03, 0.98).normalized(),
+		0.62 * depth
 	)
 	_steer_current_segment_world_direction(
 		_binding_index("FootFront"),
 		_right_toe_idx,
-		Vector3(0.18, -0.02, 0.98).normalized(),
-		0.65 * depth
+		Vector3(0.18, -0.03, 0.98).normalized(),
+		0.62 * depth
 	)
 
 
