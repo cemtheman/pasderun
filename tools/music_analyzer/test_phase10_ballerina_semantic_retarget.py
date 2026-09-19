@@ -378,9 +378,15 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         )
 
     def test_large_final_reverence_is_not_flattened_by_opening_curtsey_override(self) -> None:
-        final_branch = re.search(
-            r'&"STAGE_FINAL_BOW":(.*?)(?=\n\t\t&"|\n\nfunc )',
+        stage_calibration = re.search(
+            r"func _apply_stage_presentation_calibration.*?(?=\n\nfunc |\Z)",
             self.retarget,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(stage_calibration)
+        final_branch = re.search(
+            r'\t\t&"STAGE_FINAL_BOW":(.*?)(?=\n\t\t&"|\Z)',
+            stage_calibration.group(0),
             re.DOTALL,
         )
         self.assertIsNotNone(final_branch)
