@@ -58,6 +58,11 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertIn('constraint.pole_angle = best_angle', self.builder)
         self.assertIn('"pole_angles_deg": pole_angles', self.builder)
 
+    def test_blender_52_pose_selection_uses_operator_api(self) -> None:
+        self.assertIn('bpy.ops.pose.select_all(action="SELECT")', self.builder)
+        self.assertIn('bpy.ops.object.select_all(action="DESELECT")', self.builder)
+        self.assertNotIn('.select = True', self.builder)
+
     def test_native_ik_is_visually_baked_and_cleaned(self) -> None:
         self.assertIn('bpy.ops.nla.bake', self.builder)
         self.assertIn('"visual_keying": True', self.builder)

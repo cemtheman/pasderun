@@ -559,12 +559,14 @@ def configure_object_interpolation(objects: list[bpy.types.Object]) -> None:
 
 
 def select_armature_bones_for_bake(armature: bpy.types.Object) -> None:
+    # Blender 5.2 removed direct Bone.select mutation. Select the armature's
+    # pose bones through the pose operator instead; this keeps the bake path
+    # compatible without changing the authored motion or IK solution.
+    bpy.ops.object.select_all(action="DESELECT")
     bpy.context.view_layer.objects.active = armature
     armature.select_set(True)
     bpy.ops.object.mode_set(mode="POSE")
-    bpy.ops.pose.select_all(action="DESELECT")
-    for bone_name in REQUIRED_BONES:
-        armature.data.bones[bone_name].select = True
+    bpy.ops.pose.select_all(action="SELECT")
 
 
 def bake_native_ik(armature: bpy.types.Object) -> None:
