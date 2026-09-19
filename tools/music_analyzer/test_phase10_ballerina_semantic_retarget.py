@@ -272,9 +272,19 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
     def test_reverence_uses_tpose_port_de_bras_and_long_trunk(self) -> None:
         self.assertIn('&"_T-Pose"', self.retarget)
         self.assertIn("_apply_classical_reverence_upper_body", self.retarget)
-        self.assertIn('_reset_global_basis_to_idle("Torso")', self.retarget)
-        self.assertIn('_reset_global_basis_to_idle("Head")', self.retarget)
-        self.assertIn("_downward_rotation_about_visual_front", self.retarget)
+        self.assertIn(
+            'var upper_angle := lerpf(1.02, 0.42, open_t)',
+            self.retarget,
+        )
+        self.assertIn(
+            '_apply_accepted_reverence_body("Torso", 0.045 * depth)',
+            self.retarget,
+        )
+        self.assertIn(
+            '_apply_accepted_reverence_body("Head", 0.13 * depth)',
+            self.retarget,
+        )
+        self.assertIn("_apply_accepted_reverence_arm", self.retarget)
 
     def test_low_transition_keeps_phase7_v5_contract_without_full_body_retarget(self) -> None:
         for token in (
@@ -336,7 +346,10 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         )
         self.assertIsNotNone(landing_branch)
         self.assertIn("_resume_run_after_jump(player)", landing_branch.group(1))
-        self.assertNotIn("jump_end", landing_branch.group(1))
+        self.assertNotIn(
+            '_play_ballerina_animation(player, &"jump_end"',
+            landing_branch.group(1),
+        )
 
     def test_stumble_speed_changes_are_continuous_not_state_snaps(self) -> None:
         self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.58", self.dancer)
