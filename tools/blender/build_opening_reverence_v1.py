@@ -23,10 +23,10 @@ from mathutils import Matrix, Quaternion, Vector
 
 
 ACTION_NAME = "Opening_Reverence_v1"
-PHASE = "10.4.5"
+PHASE = "10.5.2"
 FPS = 30
 START_FRAME = 0
-END_FRAME = 67
+END_FRAME = 120
 
 REQUIRED_BONES = [
     "Hips", "Spine", "Spine 1", "Chest", "Neck", "Head",
@@ -48,49 +48,49 @@ POSES = [
         "clavicle_deg": 0.0,
     },
     {
-        "frame": 8, "name": "BRAS_BAS",
+        "frame": 14, "name": "BRAS_BAS",
         "arm_shape": "BRAS_BAS", "plie": 0.00, "cross": 0.04,
         "turnout_deg": 24.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.0,
     },
     {
-        "frame": 19, "name": "EN_AVANT_PASSAGE",
+        "frame": 34, "name": "EN_AVANT_PASSAGE",
         "arm_shape": "EN_AVANT", "plie": 0.05, "cross": 0.24,
         "turnout_deg": 26.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.8,
     },
     {
-        "frame": 31, "name": "PLACEMENT_AND_SOFTEN",
+        "frame": 56, "name": "PLACEMENT_AND_SOFTEN",
         "arm_shape": "OPEN_HALF", "plie": 0.40, "cross": 0.78,
         "turnout_deg": 30.0,
         "torso_deg": 3.0, "chest_deg": 1.0, "head_deg": 0.5,
         "clavicle_deg": 1.0,
     },
     {
-        "frame": 39, "name": "ACKNOWLEDGEMENT",
-        "arm_shape": "ACK_LOW_OPEN", "plie": 0.72, "cross": 1.00,
+        "frame": 72, "name": "ACKNOWLEDGEMENT",
+        "arm_shape": "ACK_LOW_OPEN", "plie": 0.86, "cross": 1.00,
         "turnout_deg": 32.0,
-        "torso_deg": 9.0, "chest_deg": 3.0, "head_deg": 5.0,
+        "torso_deg": 11.0, "chest_deg": 4.0, "head_deg": 6.0,
         "clavicle_deg": 1.2,
     },
     {
-        "frame": 51, "name": "RISE_AND_OPEN",
+        "frame": 94, "name": "RISE_AND_OPEN",
         "arm_shape": "OPEN", "plie": 0.18, "cross": 1.00,
         "turnout_deg": 30.0,
         "torso_deg": 1.5, "chest_deg": 0.5, "head_deg": 1.0,
         "clavicle_deg": 1.0,
     },
     {
-        "frame": 59, "name": "LOWERING_SECOND",
+        "frame": 108, "name": "LOWERING_SECOND",
         "arm_shape": "LOWERING_SECOND", "plie": 0.04, "cross": 0.55,
         "turnout_deg": 27.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
         "clavicle_deg": 0.4,
     },
     {
-        "frame": 67, "name": "READY_RESOLUTION",
+        "frame": 120, "name": "READY_RESOLUTION",
         "arm_shape": "RESOLVE", "plie": 0.00, "cross": 0.00,
         "turnout_deg": 24.0,
         "torso_deg": 0.0, "chest_deg": 0.0, "head_deg": 0.0,
@@ -470,7 +470,9 @@ def apply_body_landmark(
     cross = float(pose["cross"])
 
     support_shift = side * hip_width * 0.085 * cross
-    pelvis_drop = -up * total_leg * 0.082 * plie
+    # A classical révérence needs a visible vertical descent. The previous
+    # 8.2% factor read almost upright in the static evidence sheet.
+    pelvis_drop = -up * total_leg * 0.145 * plie
     translate_pose_bone_world(
         armature.pose.bones["Hips"],
         support_shift + pelvis_drop,
@@ -1265,7 +1267,7 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    print("PHASE10_4_5=PASS")
+    print("PHASE10_5_2_FINAL_ATTEMPT=PASS")
     print(f"ARMATURE={armature.name}")
     print(f"ACTION={ACTION_NAME}")
     print(f"LEG_NATIVE_IK_BAKED={report['leg_native_ik_baked']}")

@@ -27,7 +27,7 @@ import build_opening_reverence_v1 as core  # noqa: E402
 
 
 PHASE = "10.5"
-ATTEMPT = "1/2"
+ATTEMPT = "2/2"
 POSE_NAMES = (
     "BRAS_BAS",
     "EN_AVANT_PASSAGE",
@@ -234,6 +234,14 @@ def main() -> None:
         raise RuntimeError(f"glTF import failed: {result}")
 
     armature = core.find_armature()
+
+    # Critical Attempt-1 finding: the imported GLB can carry an active Action.
+    # In background render evaluation that Action re-applies after direct
+    # pose-matrix edits, making every arm row look identical. Pose lab must
+    # evaluate only the authored static pose.
+    if armature.animation_data is not None:
+        armature.animation_data_clear()
+
     missing = [
         name for name in core.REQUIRED_BONES
         if name not in armature.pose.bones
