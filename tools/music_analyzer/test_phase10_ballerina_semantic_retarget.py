@@ -194,8 +194,22 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             '_play_ballerina_animation(player, &"jump_falling", true, 1.0)',
             self.bootstrap,
         )
-        self.assertIn("_capture_opposite_run_resume(player)", self.bootstrap)
-        self.assertIn("_resume_run_after_jump(player)", self.bootstrap)
+        self.assertIn(
+            "_play_grounded_landing_bridge(player)",
+            self.bootstrap,
+        )
+        self.assertIn(
+            'player.has_animation(&"walk_fast")',
+            self.bootstrap,
+        )
+        self.assertNotIn(
+            "_capture_opposite_run_resume(player)",
+            self.bootstrap,
+        )
+        self.assertNotIn(
+            "_resume_run_after_jump(player)",
+            self.bootstrap,
+        )
         self.assertNotIn(
             '_play_ballerina_animation(player, &"jump_end", false, 1.0)',
             self.bootstrap,
