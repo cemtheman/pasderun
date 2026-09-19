@@ -931,9 +931,9 @@ func _reverence_profile(variant: StringName) -> Dictionary:
 			"plie_end": 1.55,
 			"rise_end": 2.35,
 			"settle_end": 2.85,
-			"plie_angle": 0.78,
-			"turnout": 0.17,
-			"root_drop_ratio": 0.22,
+			"plie_angle": 0.62,
+			"turnout": 0.15,
+			"root_drop_ratio": 0.18,
 			"working_cross": 0.070,
 			"weight_shift": 0.034,
 			"torso_ack": 0.075,
@@ -947,9 +947,9 @@ func _reverence_profile(variant: StringName) -> Dictionary:
 		"plie_end": 1.35,
 		"rise_end": 1.95,
 		"settle_end": 2.25,
-		"plie_angle": 0.62,
-		"turnout": 0.13,
-		"root_drop_ratio": 0.17,
+		"plie_angle": 0.50,
+		"turnout": 0.12,
+		"root_drop_ratio": 0.14,
 		"working_cross": 0.050,
 		"weight_shift": 0.024,
 		"torso_ack": 0.050,
@@ -975,6 +975,7 @@ func _apply_reverence_phrase(elapsed: float, variant: StringName) -> void:
 	var settle := smoothstep(rise_end, settle_end, elapsed)
 
 	_apply_reverence_leg_chain(profile, placement, depth, settle)
+	_apply_reverence_clavicle_support(profile, elapsed, variant)
 	_apply_reverence_port_de_bras(profile, elapsed, variant)
 	_apply_reverence_epaulement(profile, elapsed)
 
@@ -1053,7 +1054,7 @@ func _apply_reverence_leg_chain(
 		knee_target += (
 			outward
 			* leg_length
-			* (0.055 * placement + 0.19 * depth + 0.10 * turnout)
+			* (0.045 * placement + 0.145 * depth + 0.075 * turnout)
 		)
 		knee_target += (
 			audience_forward
@@ -1080,9 +1081,9 @@ func _apply_reverence_leg_chain(
 		if toe >= 0:
 			var toe_length := left_toe_length if left else right_toe_length
 			var toe_direction := (
-				outward * (0.50 + turnout)
-				+ audience_forward * 0.82
-				- Vector3.UP * 0.035
+				outward * (0.30 + turnout * 0.60)
+				+ audience_forward * 0.95
+				- Vector3.UP * 0.025
 			).normalized()
 			var toe_target := floor_target + toe_direction * toe_length
 			_steer_segment_toward_world_point(
@@ -1091,6 +1092,68 @@ func _apply_reverence_leg_chain(
 				toe_target,
 				0.82
 			)
+
+
+
+func _apply_reverence_clavicle_support(
+	profile: Dictionary,
+	elapsed: float,
+	variant: StringName
+) -> void:
+	var place_end := float(profile["place_end"])
+	var plie_end := float(profile["plie_end"])
+	var rise_end := float(profile["rise_end"])
+	var expressive_left := bool(profile["expressive_left"])
+	var final_variant: bool = variant == FINAL_REVERENCE
+	var engage := smoothstep(0.18, place_end + 0.10, elapsed)
+	var release := smoothstep(plie_end + 0.16, rise_end + 0.06, elapsed)
+	var phrase_alpha := engage * (1.0 - release)
+	if phrase_alpha <= 0.001:
+		return
+
+	var chest := _bone_index("chest")
+	var chest_position := _bone_world_position(chest)
+	for left in [true, false]:
+		var clavicle := _bone_index("left_clavicle" if left else "right_clavicle")
+		var shoulder := _bone_index("left_upper_arm" if left else "right_upper_arm")
+		if clavicle < 0 or shoulder < 0:
+			continue
+
+		var expressive: bool = left == expressive_left
+		var clavicle_position := _bone_world_position(clavicle)
+		var shoulder_position := _bone_world_position(shoulder)
+		var clavicle_length := maxf(
+			clavicle_position.distance_to(shoulder_position),
+			0.001
+		)
+		var outward := shoulder_position - chest_position
+		outward -= Vector3.UP * outward.dot(Vector3.UP)
+		if outward.length_squared() <= 0.000001:
+			outward = Vector3(-1.0 if left else 1.0, 0.0, 0.0)
+		outward = outward.normalized()
+
+		# The clavicle carries the arm without becoming a visible shrug.
+		var lift := 0.075
+		if expressive:
+			lift += 0.025
+		if final_variant:
+			lift += 0.015
+		var target_direction := (
+			outward
+			+ Vector3.UP * lift
+			+ Vector3(0.0, 0.0, 0.08)
+		).normalized()
+		var shoulder_target := (
+			clavicle_position
+			+ target_direction * clavicle_length
+		)
+		var strength := (0.18 if final_variant else 0.15) * phrase_alpha
+		_steer_segment_toward_world_point(
+			clavicle,
+			shoulder,
+			shoulder_target,
+			strength
+		)
 
 
 func _apply_reverence_port_de_bras(
@@ -1127,6 +1190,7 @@ func _apply_reverence_port_de_bras(
 		var shoulder := left_shoulder if left else right_shoulder
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
 		var hand := _bone_index("left_hand" if left else "right_hand")
+		var middle := _bone_index("left_middle" if left else "right_middle")
 		if shoulder < 0 or elbow < 0:
 			continue
 
@@ -1308,6 +1372,36 @@ func _apply_reverence_port_de_bras(
 				hand_target,
 				0.97
 			)
+			if middle >= 0:
+				var hand_position := _bone_world_position(hand)
+				var middle_position := _bone_world_position(middle)
+				var hand_axis_length := maxf(
+					hand_position.distance_to(middle_position),
+					0.001
+				)
+				var wrist_lift := 0.12
+				if variant == FINAL_REVERENCE and expressive:
+					wrist_lift = 0.20
+				var hand_finish_direction := (
+					audience_forward * 0.88
+					- outward * (0.24 if expressive else 0.18)
+					+ Vector3.UP * wrist_lift
+				).normalized()
+				var hand_finish_target := (
+					hand_position
+					+ hand_finish_direction * hand_axis_length
+				)
+				var hand_finish_strength := (
+					0.28
+					+ 0.24 * hand_present
+					- 0.08 * hand_resolve
+				)
+				_steer_segment_toward_world_point(
+					hand,
+					middle,
+					hand_finish_target,
+					clampf(hand_finish_strength, 0.18, 0.50)
+				)
 
 func _apply_reverence_epaulement(profile: Dictionary, elapsed: float) -> void:
 	var place_end := float(profile["place_end"])
@@ -1470,20 +1564,24 @@ func _resolve_humanoid_bones() -> void:
 		"pelvis": _find_bone(["hips", "pelvis"]),
 		"chest": _find_bone(["upperchest", "chest", "spine2", "spine02", "spine1", "spine01", "spine"]),
 		"head": _find_bone(["head"]),
+		"left_clavicle": _find_bone(["leftclavicle", "claviclel", "shoulderl"]),
+		"right_clavicle": _find_bone(["rightclavicle", "clavicler", "shoulderr"]),
 		"left_upper_arm": _find_bone(["leftupperarm", "upperarml", "leftarm", "arml"]),
 		"left_lower_arm": _find_bone(["leftlowerarm", "lowerarml", "leftforearm", "forearml"]),
 		"left_hand": _find_bone(["lefthand", "handl"]),
+		"left_middle": _find_bone(["leftmiddle", "middlel", "middlefingerl"]),
 		"right_upper_arm": _find_bone(["rightupperarm", "upperarmr", "rightarm", "armr"]),
 		"right_lower_arm": _find_bone(["rightlowerarm", "lowerarmr", "rightforearm", "forearmr"]),
 		"right_hand": _find_bone(["righthand", "handr"]),
+		"right_middle": _find_bone(["rightmiddle", "middler", "middlefingerr"]),
 		"left_upper_leg": _find_bone(["leftupperleg", "upperlegl", "leftupleg", "leftthigh", "thighl"]),
 		"left_lower_leg": _find_bone(["leftlowerleg", "lowerlegl", "leftleg", "leftcalf", "calfl", "leftshin", "shinl"]),
 		"left_foot": _find_bone(["leftfoot", "footl"]),
-		"left_toe": _find_bone(["lefttoebase", "lefttoe", "toel"]),
+		"left_toe": _find_bone(["lefttoebase", "lefttoe", "lefttoes", "toesl", "toel"]),
 		"right_upper_leg": _find_bone(["rightupperleg", "upperlegr", "rightupleg", "rightthigh", "thighr"]),
 		"right_lower_leg": _find_bone(["rightlowerleg", "lowerlegr", "rightleg", "rightcalf", "calfr", "rightshin", "shinr"]),
 		"right_foot": _find_bone(["rightfoot", "footr"]),
-		"right_toe": _find_bone(["righttoebase", "righttoe", "toer"]),
+		"right_toe": _find_bone(["righttoebase", "righttoe", "righttoes", "toesr", "toer"]),
 	}
 
 	# Stage gestures require a true distal arm joint. Some imported rigs use

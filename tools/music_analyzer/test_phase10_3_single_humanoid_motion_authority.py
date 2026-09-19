@@ -148,6 +148,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertNotIn("_animation_player.pause", recovery.group(0))
 
 
+
     def test_reverence_uses_current_humanoid_geometry_not_local_euler_guesses(self) -> None:
         for token in (
             'const OPENING_REVERENCE := &"OPENING_REVERENCE"',
@@ -155,6 +156,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "func _reverence_profile",
             "func _apply_reverence_phrase",
             "func _apply_reverence_leg_chain",
+            "func _apply_reverence_clavicle_support",
             "func _apply_reverence_port_de_bras",
             "func _apply_reverence_epaulement",
             "func _steer_segment_toward_world_point",
@@ -169,8 +171,12 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             "hand_target.y = maxf(hand_target.y, classical_hand_floor)",
         ):
             self.assertIn(token, self.controller)
+        self.assertIn('"plie_angle": 0.50', self.controller)
         self.assertIn('"plie_angle": 0.62', self.controller)
-        self.assertIn('"plie_angle": 0.78', self.controller)
+        self.assertIn(
+            "0.045 * placement + 0.145 * depth + 0.075 * turnout",
+            self.controller,
+        )
         self.assertNotIn("Vector3(side * (turnout - cross_bias), -c, s)", self.controller)
         self.assertNotIn("_rx(", self.controller)
         self.assertNotIn("_ry(", self.controller)
@@ -256,6 +262,45 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
         self.assertIn('_skeleton.get_bone_parent(bone_idx) == current', infer.group(0))
         self.assertIn('if child_count != 1:', infer.group(0))
         self.assertIn('return current if current != start_idx else -1', infer.group(0))
+
+
+
+    def test_phase1032_uses_audited_ballet_rig_articulation(self) -> None:
+        resolver = re.search(
+            r'func _resolve_humanoid_bones\(\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        clavicle = re.search(
+            r'func _apply_reverence_clavicle_support\([^)]*\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        port = re.search(
+            r'func _apply_reverence_port_de_bras\([^)]*\).*?(?=\n\nfunc |\Z)',
+            self.controller,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(resolver)
+        self.assertIsNotNone(clavicle)
+        self.assertIsNotNone(port)
+
+        for token in (
+            '"left_clavicle": _find_bone(["leftclavicle", "claviclel", "shoulderl"])',
+            '"right_clavicle": _find_bone(["rightclavicle", "clavicler", "shoulderr"])',
+            '"left_middle": _find_bone(["leftmiddle", "middlel", "middlefingerl"])',
+            '"right_middle": _find_bone(["rightmiddle", "middler", "middlefingerr"])',
+            '"lefttoes", "toesl"',
+            '"righttoes", "toesr"',
+        ):
+            self.assertIn(token, resolver.group(0))
+
+        self.assertIn('var strength := (0.18 if final_variant else 0.15)', clavicle.group(0))
+        self.assertIn('_steer_segment_toward_world_point(', clavicle.group(0))
+        self.assertIn('var middle := _bone_index(', port.group(0))
+        self.assertIn('var hand_finish_direction :=', port.group(0))
+        self.assertIn('var hand_finish_target :=', port.group(0))
+        self.assertIn('_steer_segment_toward_world_point(', port.group(0))
 
 
     def test_stage_and_music_callers_target_ballerina_directly(self) -> None:
