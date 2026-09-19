@@ -415,13 +415,15 @@ func _cache_run_contact_phases(
 
 		var left_y := skeleton.get_bone_global_pose(left_foot).origin.y
 		var right_y := skeleton.get_bone_global_pose(right_foot).origin.y
-		var left_score := left_y - right_y
-		var right_score := right_y - left_y
-		if left_score < left_best_score:
-			left_best_score = left_score
+
+		# True contact is the absolute LOWEST point of each foot's own cycle.
+		# Relative left-vs-right height can falsely select the instant when the
+		# opposite foot is merely very high, which caused the wrong stance phase.
+		if left_y < left_best_score:
+			left_best_score = left_y
 			left_best_phase = phase
-		if right_score < right_best_score:
-			right_best_score = right_score
+		if right_y < right_best_score:
+			right_best_score = right_y
 			right_best_phase = phase
 
 	player.set_meta("_run_left_contact_phase", left_best_phase)
