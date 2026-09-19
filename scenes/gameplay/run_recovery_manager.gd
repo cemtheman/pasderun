@@ -25,7 +25,7 @@ enum CompletionPhase {
 
 const COMPLETION_WALK_SPEED := 1.45
 const COMPLETION_DECEL_DURATION := 0.90
-const COMPLETION_APPROACH_DISTANCE := 2.20
+const COMPLETION_APPROACH_DISTANCE := 1.60
 const COMPLETION_FINAL_BOW_DURATION := 2.60
 const COMPLETION_EXIT_TURN_DURATION := 0.38
 const COMPLETION_EXIT_WALK_DISTANCE := 7.00
@@ -241,15 +241,21 @@ func _begin_completion_ceremony() -> void:
 		absf(dancer.velocity.x),
 		COMPLETION_WALK_SPEED
 	)
-	# Bow mark is measured from the point where the music actually ends, not
-	# from a late course trigger.
-	_completion_bow_x = (
+	# Music end starts the run->walk transition immediately, but the actual
+	# révérence still belongs at the authored closing-stage mark near the wing.
+	# If music ends unusually late, preserve at least a short walk before bowing.
+	var minimum_bow_x := (
 		_completion_decel_start_x
 		+ COMPLETION_DECEL_DURATION
 		* 0.5
 		* (_completion_decel_start_speed + COMPLETION_WALK_SPEED)
 		+ COMPLETION_APPROACH_DISTANCE
 	)
+	var authored_bow_x := (
+		completion_trigger.global_position.x
+		+ COMPLETION_APPROACH_DISTANCE
+	)
+	_completion_bow_x = maxf(minimum_bow_x, authored_bow_x)
 	_completion_exit_x = _completion_bow_x + COMPLETION_EXIT_WALK_DISTANCE
 
 	fork_camera_controller.call("restore_normal_state")
