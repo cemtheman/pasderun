@@ -85,8 +85,8 @@ class Phase7HumanoidDancerTests(unittest.TestCase):
 
     def test_phase6_gameplay_constants_remain_in_dancer(self) -> None:
         for contract in (
-            'STUMBLE_DURATION := 0.24',
-            'RECOVERY_DURATION := 0.62',
+            'STUMBLE_DURATION := 0.36',
+            'RECOVERY_DURATION := 0.72',
             'STUMBLE_SPEED_MULTIPLIER := 0.68',
             'RECOVERY_SPEED_MULTIPLIER := 1.05',
             '@export var run_speed: float = 4.0',
