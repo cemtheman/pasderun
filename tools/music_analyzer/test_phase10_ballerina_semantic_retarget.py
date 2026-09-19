@@ -670,12 +670,22 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertGreater(runway_end_x, exit_x)
         self.assertGreater(exit_x, 568.0)
 
-    def test_stage_ending_controller_keeps_physics_and_walk_speed_owned_by_dancer(self) -> None:
+    def test_stage_ending_controller_keeps_physics_and_deceleration_owned_by_dancer(self) -> None:
         self.assertIn("func begin_stage_ending(speed: float = 0.0) -> void:", self.dancer)
         self.assertIn("func set_stage_ending_speed(speed: float) -> void:", self.dancer)
         self.assertIn("velocity.x = stage_entrance_speed", self.dancer)
-        self.assertIn('dancer.call("begin_stage_ending", COMPLETION_WALK_SPEED)', self.recovery_manager)
-        self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
+        self.assertIn(
+            '"begin_stage_ending",\n\t\t\t_completion_decel_start_speed',
+            self.recovery_manager,
+        )
+        self.assertIn(
+            'dancer.call("set_stage_ending_speed", speed)',
+            self.recovery_manager,
+        )
+        self.assertIn(
+            '"set_stage_ending_speed",\n\t\t\t\t\tCOMPLETION_WALK_SPEED',
+            self.recovery_manager,
+        )
 
     def test_humanoid_trip_uses_target_axis_independent_chain_directions(self) -> None:
         self.assertIn('_play_calibrated_run(player, 1.0)', self.bootstrap)
@@ -690,7 +700,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             'state != &"RECOVERY"',
             "STUMBLE_DURATION := 0.36",
             "RECOVERY_DURATION := 0.72",
-            "Vector3(0.48, 0.87, -0.05)",
+            "Vector3(0.58, 0.81, -0.05)",
             "Vector3(0.78, -0.42, -0.18)",
             "var catch_step_strength := 0.60 * sin(",
             "_trip_uses_left_foot",
