@@ -2,6 +2,8 @@ extends Node
 
 const DANCER_VISUAL_SCRIPT := preload("res://scenes/gameplay/dancer_visual_motion_v5.gd")
 const DANCER_TAP_FEEDBACK_SCRIPT := preload("res://scenes/gameplay/dancer_tap_feedback.gd")
+const HUMANOID_LANDING_WINDOW := 0.22
+const HUMANOID_LANDING_CLIP_FRACTION := 0.38
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
@@ -132,6 +134,24 @@ func _on_ballerina_visual_state_changed(
 
 
 func _play_grounded_landing_bridge(player: AnimationPlayer) -> void:
+	# Use only the CONTACT/ABSORPTION beginning of the native landing clip.
+	# Playing the full clip produced the same-foot rebound seen in QA, while
+	# switching directly to RUN selected a flight phase. Truncating the native
+	# clip keeps its natural knee/hip compression and hands control back to RUN
+	# before the rebound portion begins.
+	if player.has_animation(&"jump_end"):
+		var landing := player.get_animation(&"jump_end")
+		if landing != null and landing.length > 0.0001:
+			var source_segment := landing.length * HUMANOID_LANDING_CLIP_FRACTION
+			var speed := source_segment / HUMANOID_LANDING_WINDOW
+			_play_ballerina_animation(
+				player,
+				&"jump_end",
+				false,
+				maxf(speed, 0.10)
+			)
+			return
+
 	if player.has_animation(&"walk_fast"):
 		_play_ballerina_animation(player, &"walk_fast", true, 1.08)
 		return
@@ -139,8 +159,8 @@ func _play_grounded_landing_bridge(player: AnimationPlayer) -> void:
 		_play_ballerina_animation(player, &"walk", true, 1.18)
 		return
 
-	# Last-resort fallback: stay on a grounded idle rather than selecting RUN
-	# during the landing state and visually launching both feet off the platform.
+	# Last-resort fallback: stay grounded rather than selecting RUN while the
+	# physics body is still in its landing-contact window.
 	_play_ballerina_animation(player, &"idle", true, 1.0)
 
 
