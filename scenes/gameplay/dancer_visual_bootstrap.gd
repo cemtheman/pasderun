@@ -221,7 +221,7 @@ func _current_forward_speed(
 	if stage_speed > 0.05:
 		return stage_speed
 
-	var velocity := dancer.velocity as Vector3
+	var velocity: Vector3 = dancer.velocity
 	if absf(velocity.x) > 0.05:
 		return absf(velocity.x)
 
@@ -346,7 +346,7 @@ func _measure_backward_support_speed(
 		return 0.0
 
 	candidates.sort()
-	var middle := candidates.size() / 2
+	var middle := int(candidates.size() / 2)
 	if candidates.size() % 2 == 1:
 		return candidates[middle]
 	return 0.5 * (
