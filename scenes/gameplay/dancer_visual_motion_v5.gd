@@ -86,6 +86,14 @@ func _low_articulated_pose_v5(
 	})
 
 
+# Pas de Run is an always-run game. BALANCE remains a gameplay condition that
+# adds Z-axis drift/recentering, but it must never replace locomotion with a
+# stationary retiré pose. Keep the semantic BALANCE state for diagnostics and
+# input priority while presenting the same travelling cycle as normal running.
+func _balance_animation() -> Animation:
+	return _travel_animation()
+
+
 # Phase 9 musical choreography: the world keeps travelling at the accepted
 # gameplay speed, while grounded presentation changes phrase shape. Physical
 # gameplay states (jump, airborne, landing, low transition, balance, stumble)
