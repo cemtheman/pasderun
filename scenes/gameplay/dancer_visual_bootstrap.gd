@@ -119,9 +119,9 @@ func _on_ballerina_visual_state_changed(
 			# the next TRAVEL state blends naturally back to RUN.
 			_play_grounded_landing_bridge(player)
 		&"STUMBLE":
-			_play_ballerina_animation(player, &"run", true, 0.88)
+			_play_ballerina_animation(player, &"run", true, 0.94)
 		&"RECOVERY":
-			_play_ballerina_animation(player, &"run", true, 1.04)
+			_play_ballerina_animation(player, &"run", true, 1.03)
 		&"LOW_TRANSITION":
 			_play_ballerina_animation(player, &"run", true, 0.92)
 		&"TRAVEL", &"BALANCE", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
