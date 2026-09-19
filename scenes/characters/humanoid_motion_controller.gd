@@ -1119,7 +1119,7 @@ func _apply_reverence_clavicle_support(
 		if clavicle < 0 or shoulder < 0:
 			continue
 
-		var expressive: bool = left == expressive_left
+		var expressive: bool = final_variant and left == expressive_left
 		var clavicle_position := _bone_world_position(clavicle)
 		var shoulder_position := _bone_world_position(shoulder)
 		var clavicle_length := maxf(
@@ -1133,11 +1133,11 @@ func _apply_reverence_clavicle_support(
 		outward = outward.normalized()
 
 		# The clavicle carries the arm without becoming a visible shrug.
-		var lift := 0.075
+		var lift := 0.035
+		if final_variant:
+			lift = 0.090
 		if expressive:
 			lift += 0.025
-		if final_variant:
-			lift += 0.015
 		var target_direction := (
 			outward
 			+ Vector3.UP * lift
@@ -1147,7 +1147,7 @@ func _apply_reverence_clavicle_support(
 			clavicle_position
 			+ target_direction * clavicle_length
 		)
-		var strength := (0.18 if final_variant else 0.15) * phrase_alpha
+		var strength := (0.18 if final_variant else 0.12) * phrase_alpha
 		_steer_segment_toward_world_point(
 			clavicle,
 			shoulder,
@@ -1165,6 +1165,8 @@ func _apply_reverence_port_de_bras(
 	var plie_end := float(profile["plie_end"])
 	var rise_end := float(profile["rise_end"])
 	var expressive_left := bool(profile["expressive_left"])
+	var opening_variant: bool = variant == OPENING_REVERENCE
+	var final_variant: bool = variant == FINAL_REVERENCE
 	var upper_gather := smoothstep(0.10, place_end * 0.92, elapsed)
 	var hand_gather := smoothstep(0.16, place_end, elapsed)
 	var upper_present := smoothstep(place_end * 0.62, plie_end - 0.12, elapsed)
@@ -1186,7 +1188,7 @@ func _apply_reverence_port_de_bras(
 		) * 0.5
 
 	for left in [true, false]:
-		var expressive: bool = left == expressive_left
+		var expressive: bool = final_variant and left == expressive_left
 		var shoulder := left_shoulder if left else right_shoulder
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
 		var hand := _bone_index("left_hand" if left else "right_hand")
@@ -1245,7 +1247,36 @@ func _apply_reverence_port_de_bras(
 		var peak_hand: Vector3
 		var settle_elbow: Vector3
 		var settle_hand: Vector3
-		if variant == FINAL_REVERENCE and expressive:
+		if opening_variant:
+			# North Star: symmetric fifth-position-en-avant family.
+			# Shoulders stay quiet; elbows sit clearly below shoulder level;
+			# forearms return inward to create one continuous oval in front
+			# of the lower sternum/upper abdomen.
+			peak_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.52
+				- Vector3.UP * upper_length * 0.30
+				+ audience_forward * upper_length * 0.18
+			)
+			peak_hand = (
+				shoulder_center
+				+ outward * reach * 0.10
+				- Vector3.UP * reach * 0.36
+				+ audience_forward * reach * 0.34
+			)
+			settle_elbow = (
+				shoulder_position
+				+ outward * upper_length * 0.50
+				- Vector3.UP * upper_length * 0.32
+				+ audience_forward * upper_length * 0.16
+			)
+			settle_hand = (
+				shoulder_center
+				+ outward * reach * 0.08
+				- Vector3.UP * reach * 0.38
+				+ audience_forward * reach * 0.30
+			)
+		elif final_variant and expressive:
 			peak_elbow = (
 				shoulder_position
 				+ outward * upper_length * 0.48
@@ -1270,7 +1301,7 @@ func _apply_reverence_port_de_bras(
 				- Vector3.UP * reach * 0.18
 				+ audience_forward * reach * 0.34
 			)
-		elif variant == FINAL_REVERENCE:
+		elif final_variant:
 			peak_elbow = (
 				shoulder_position
 				+ outward * upper_length * 0.92
@@ -1356,7 +1387,10 @@ func _apply_reverence_port_de_bras(
 		# Once the presentation opens, the hand may not collapse to waist level.
 		# This is a world-space silhouette constraint, not a guessed local Euler.
 		if hand_present > 0.20:
-			var classical_hand_floor := shoulder_center.y - reach * 0.30
+			var hand_floor_ratio := 0.40 if opening_variant else 0.30
+			var classical_hand_floor := (
+				shoulder_center.y - reach * hand_floor_ratio
+			)
 			hand_target.y = maxf(hand_target.y, classical_hand_floor)
 
 		_steer_segment_toward_world_point(
@@ -1380,13 +1414,21 @@ func _apply_reverence_port_de_bras(
 					0.001
 				)
 				var wrist_lift := 0.10
-				if variant == FINAL_REVERENCE and expressive:
+				if final_variant and expressive:
 					wrist_lift = 0.18
-				var hand_finish_direction := (
-					-outward * (0.74 if expressive else 0.66)
-					+ audience_forward * 0.28
-					+ Vector3.UP * wrist_lift
-				).normalized()
+				var hand_finish_direction: Vector3
+				if opening_variant:
+					hand_finish_direction = (
+						-outward * 0.92
+						+ audience_forward * 0.18
+						+ Vector3.UP * 0.04
+					).normalized()
+				else:
+					hand_finish_direction = (
+						-outward * (0.74 if expressive else 0.66)
+						+ audience_forward * 0.28
+						+ Vector3.UP * wrist_lift
+					).normalized()
 				var hand_finish_target := (
 					hand_position
 					+ hand_finish_direction * hand_axis_length
