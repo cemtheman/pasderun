@@ -409,6 +409,12 @@ theme_override_font_sizes/font_size = 28
 text = "GAME OVER"
 horizontal_alignment = 1
 
+[node name="CheckpointStatus" type="Label" parent="GameOverOverlay/Center/Panel/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "RETURN TO START"
+horizontal_alignment = 1
+
 [node name="Continue" type="Button" parent="GameOverOverlay/Center/Panel/Actions" unique_id=1783588190]
 layout_mode = 2
 text = "CONTINUE"
@@ -468,7 +474,7 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "MAIN MENU"
 
-[node name="RunRecoveryManager" type="Node" parent="." unique_id=1148247016 node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button", "completion_trigger", "level_complete_overlay", "next_level_button", "main_menu_button", "next_level_status")]
+[node name="RunRecoveryManager" type="Node" parent="." unique_id=1148247016 node_paths=PackedStringArray("dancer", "camera_rig", "fork_camera_controller", "start_gate", "music_root", "audio_player", "flow_tracker", "tap_timing_debug", "accent_runtime_trace", "game_over_overlay", "continue_button", "restart_button", "exit_button", "completion_trigger", "level_complete_overlay", "next_level_button", "main_menu_button", "next_level_status", "checkpoint_status_label")]
 script = ExtResource("22_1bq7u")
 dancer = NodePath("../Dancer")
 camera_rig = NodePath("../CameraRig")
@@ -488,3 +494,4 @@ level_complete_overlay = NodePath("../LevelCompleteOverlay")
 next_level_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevel")
 main_menu_button = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/MainMenu")
 next_level_status = NodePath("../LevelCompleteOverlay/Center/Panel/Actions/NextLevelStatus")
+checkpoint_status_label = NodePath("../GameOverOverlay/Center/Panel/Actions/CheckpointStatus")
