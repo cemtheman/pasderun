@@ -178,12 +178,9 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn("const OVERLAY_STATES := {", self.retarget)
         self.assertIn("_apply_running_trip_overlay(state)", self.retarget)
 
+        self.assertIn("_play_calibrated_walk(player)", self.bootstrap)
         self.assertIn(
-            '_play_ballerina_animation(player, &"walk", true, 1.0)',
-            self.bootstrap,
-        )
-        self.assertIn(
-            '_play_run_from_pending_contact(player, 1.0)',
+            '_play_calibrated_run(player, 1.0)',
             self.bootstrap,
         )
         self.assertIn(
@@ -194,11 +191,11 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             '_play_ballerina_animation(player, &"jump_falling", true, 1.0)',
             self.bootstrap,
         )
-        self.assertIn("_hold_landing_contact(player)", self.bootstrap)
-        self.assertIn("_play_run_from_pending_contact(player, 1.0)", self.bootstrap)
+        self.assertIn("_begin_landing_run_contact(player)", self.bootstrap)
         self.assertIn("RUN_CONTACT_SAMPLE_COUNT := 32", self.bootstrap)
-        self.assertIn("_pending_run_contact_phase", self.bootstrap)
+        self.assertIn("GAIT_SAMPLE_COUNT := 32", self.bootstrap)
         self.assertIn("_landing_support_left", self.bootstrap)
+        self.assertIn("_calibrated_gait_scale", self.bootstrap)
 
 
     def test_balance_zone_preserves_always_run_visual_contract(self) -> None:
@@ -268,32 +265,39 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn("_source_rig.position * _motion_scale", self.retarget)
         self.assertIn("target_span / source_span", self.retarget)
 
-    def test_reverence_uses_anatomical_front_plie_and_rounded_port_de_bras(self) -> None:
+    def test_reverence_uses_anatomical_mirrored_plie_and_port_de_bras(self) -> None:
         self.assertIn("_apply_classical_reverence_upper_body", self.retarget)
-        self.assertIn("var knee_angle := 0.52 * depth", self.retarget)
         self.assertIn(
-            'Vector3(-outward, -c, s).normalized()',
+            "var knee_max := 0.70 if final_reverence else 0.48",
             self.retarget,
         )
         self.assertIn(
-            'Vector3(outward, -c, s).normalized()',
+            'Vector3(-turnout, -c, s).normalized()',
             self.retarget,
         )
         self.assertIn(
-            'Vector3(-outward * 0.45, -c, -s).normalized()',
+            'Vector3(turnout, -c, s).normalized()',
+            self.retarget,
+        )
+        self.assertIn(
+            'Vector3(-turnout * 0.40, -c, -s).normalized()',
+            self.retarget,
+        )
+        self.assertIn(
+            'Vector3(turnout * 0.40, -c, -s).normalized()',
             self.retarget,
         )
         self.assertIn("_opening_leg_vertical_shortening(knee_angle)", self.retarget)
         self.assertIn(
-            "Vector3(-0.62, -0.64, 0.34).lerp(",
+            "var upper_x := lerpf(0.54, 0.91 if final_reverence else 0.84, arm_open)",
             self.retarget,
         )
         self.assertIn(
-            "Vector3(-0.92, -0.22, 0.28)",
+            "Vector3(-upper_x, upper_y, upper_z).normalized()",
             self.retarget,
         )
         self.assertIn(
-            'Vector3(0.0, 0.999, 0.035 * depth).normalized()',
+            "Vector3(upper_x, upper_y, upper_z).normalized()",
             self.retarget,
         )
 
@@ -315,7 +319,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIsNotNone(retarget_block)
         self.assertNotIn('&"LOW_TRANSITION": true', retarget_block.group(1))
         self.assertIn(
-            '_play_run_from_pending_contact(player, 0.92)',
+            '_play_calibrated_run(player, 1.0)',
             self.bootstrap,
         )
 
@@ -341,39 +345,55 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.retarget,
         )
 
-    def test_jump_landing_plants_contact_then_resumes_on_opposite_foot(self) -> None:
-        self.assertIn("func _hold_landing_contact", self.bootstrap)
-        self.assertIn("func _play_run_from_pending_contact", self.bootstrap)
+    def test_jump_landing_begins_on_actual_support_and_continues_run_cycle(self) -> None:
+        self.assertIn("func _begin_landing_run_contact", self.bootstrap)
         self.assertIn("func _cache_run_contact_phases", self.bootstrap)
         self.assertIn(
             "var landing_left := left_y <= right_y",
             self.bootstrap,
         )
         self.assertIn(
-            "var next_phase := right_phase if landing_left else left_phase",
+            "var landing_phase := left_phase if landing_left else right_phase",
             self.bootstrap,
         )
         self.assertIn(
-            'player.set_meta("_pending_run_contact_phase", next_phase)',
-            self.bootstrap,
-        )
-        self.assertIn("player.pause()", self.bootstrap)
-        self.assertIn(
-            'player.play(&"run", 0.12)',
+            'player.set_meta("_landing_support_left", landing_left)',
             self.bootstrap,
         )
         self.assertIn(
-            'player.seek(',
+            "player.speed_scale = base_scale",
             self.bootstrap,
         )
-        landing_branch = re.search(
-            r'&"LANDING":(.*?)(?=\n\t\t&"|\n\t\t_:)',
+        self.assertIn(
+            'player.play(&"run", 0.08)',
             self.bootstrap,
-            re.DOTALL,
         )
-        self.assertIsNotNone(landing_branch)
-        self.assertIn("_hold_landing_contact(player)", landing_branch.group(1))
+        self.assertIn("player.seek(", self.bootstrap)
+        self.assertNotIn("player.pause()", self.bootstrap)
+        self.assertNotIn("_pending_run_contact_phase", self.bootstrap)
 
+
+    def test_walk_and_run_cadence_are_calibrated_to_world_speed(self) -> None:
+        self.assertIn("func _play_calibrated_walk", self.bootstrap)
+        self.assertIn("func _play_calibrated_run", self.bootstrap)
+        self.assertIn("func _calibrated_gait_scale", self.bootstrap)
+        self.assertIn("func _measure_backward_support_speed", self.bootstrap)
+        self.assertIn(
+            "desired_world_speed / backward_speed",
+            self.bootstrap,
+        )
+        self.assertIn(
+            "if vx < -0.05:",
+            self.bootstrap,
+        )
+        self.assertIn(
+            "_sync_native_run_speed(state)",
+            self.retarget,
+        )
+        self.assertIn(
+            "desired_speed / backward_speed",
+            self.retarget,
+        )
 
     def test_landing_absorption_uses_actual_support_and_drop_context(self) -> None:
         self.assertIn("get_last_landing_drop_distance", self.dancer)
@@ -592,8 +612,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
 
     def test_humanoid_trip_uses_target_axis_independent_chain_directions(self) -> None:
-        self.assertIn('_play_run_from_pending_contact(player, 0.94)', self.bootstrap)
-        self.assertIn('_play_run_from_pending_contact(player, 1.03)', self.bootstrap)
+        self.assertIn('_play_calibrated_run(player, 1.0)', self.bootstrap)
         self.assertIn('current_world_basis', self.retarget)
         self.assertIn('parent_current.basis.get_rotation_quaternion().slerp', self.retarget)
         for token in (
@@ -614,7 +633,7 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn("-0.050 * impact", self.retarget)
 
 
-    def test_large_final_reverence_is_not_flattened_by_opening_curtsey_override(self) -> None:
+    def test_large_final_reverence_uses_same_humanoid_anatomy_with_larger_range(self) -> None:
         stage_calibration = re.search(
             r"func _apply_stage_presentation_calibration.*?(?=\n\nfunc |\Z)",
             self.retarget,
@@ -627,10 +646,23 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(final_branch)
-        self.assertIn("Final bow remains a separate next-stage quality pass.", final_branch.group(1))
-        self.assertNotIn("_apply_classical_reverence_upper_body", final_branch.group(1))
-        self.assertIn("func _stage_final_bow_animation() -> Animation:", self.visual)
-        self.assertIn("_final_kneel_pose(-0.34, -0.58, 1.08)", self.visual)
+        self.assertIn(
+            "_apply_classical_reverence_upper_body(phase, true)",
+            final_branch.group(1),
+        )
+        self.assertIn(
+            "var knee_max := 0.70 if final_reverence else 0.48",
+            self.retarget,
+        )
+        self.assertIn(
+            "var max_drop := 0.18 if final_reverence else 0.12",
+            self.retarget,
+        )
+        self.assertNotIn(
+            "_apply_semantic_motion_retarget(state)",
+            self.retarget,
+        )
+
 
     def test_ballerina_test_scene_has_live_completion_manager_contract(self) -> None:
         self.assertIn(
