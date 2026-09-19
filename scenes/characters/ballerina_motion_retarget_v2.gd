@@ -74,6 +74,7 @@ var _binding_by_label: Dictionary = {}
 var _target_idle_poses: Dictionary = {}
 var _target_idle_globals: Dictionary = {}
 var _target_tpose_globals: Dictionary = {}
+var _stage_entry_globals: Dictionary = {}
 var _tpose_available := false
 
 var _left_hand_idx := -1
@@ -110,6 +111,8 @@ func _process(delta: float) -> void:
 	if state != _last_state:
 		_last_state = state
 		_state_elapsed = 0.0
+		if RETARGET_STATES.has(state):
+			_capture_stage_entry_pose()
 		if state == &"STUMBLE":
 			_capture_trip_side_from_current_run()
 	else:
@@ -123,6 +126,7 @@ func _process(delta: float) -> void:
 		_apply_idle_baseline()
 		_apply_source_root_transform()
 		_apply_stage_presentation_calibration(state)
+		_blend_stage_entry_pose(state)
 		return
 
 	# Locomotion is evaluated by the imported AnimationPlayer. This script runs
@@ -141,6 +145,47 @@ func _process(delta: float) -> void:
 			_apply_air_motion_overlay(state)
 		else:
 			_apply_running_trip_overlay(state)
+
+
+func _capture_stage_entry_pose() -> void:
+	_stage_entry_globals.clear()
+	for bone_idx in range(_skeleton.get_bone_count()):
+		_stage_entry_globals[bone_idx] = _skeleton.get_bone_global_pose(bone_idx)
+
+
+func _blend_stage_entry_pose(state: StringName) -> void:
+	if _stage_entry_globals.is_empty():
+		return
+
+	var blend_duration := 0.18
+	if state == &"STAGE_BOW":
+		blend_duration = STAGE_BOW_TURN_TIME
+	elif state == &"STAGE_FINAL_BOW":
+		blend_duration = STAGE_FINAL_TURN_TIME
+	elif state == &"STAGE_EXIT_TURN":
+		blend_duration = 0.30
+
+	var alpha := smoothstep(
+		0.0,
+		1.0,
+		clampf(_state_elapsed / maxf(blend_duration, 0.001), 0.0, 1.0)
+	)
+	if alpha >= 0.999:
+		return
+
+	for bone_idx in range(_skeleton.get_bone_count()):
+		if not _stage_entry_globals.has(bone_idx):
+			continue
+		var entry: Transform3D = _stage_entry_globals[bone_idx]
+		var target := _skeleton.get_bone_global_pose(bone_idx)
+		var blended_quat := entry.basis.get_rotation_quaternion().slerp(
+			target.basis.get_rotation_quaternion(),
+			alpha
+		)
+		_skeleton.set_bone_global_pose(
+			bone_idx,
+			Transform3D(Basis(blended_quat), target.origin)
+		)
 
 
 func _sync_native_run_speed(state: StringName) -> void:
