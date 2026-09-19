@@ -91,10 +91,10 @@ func _on_ballerina_visual_state_changed(
 	external_visual: Node,
 	player: AnimationPlayer
 ) -> void:
-	# Semantic retarget v2 owns every choreography-bearing humanoid state.
-	# Stop the imported stock clip immediately so it cannot overwrite the
-	# Skeleton3D for even one frame. States intentionally not handled by the
-	# retarget layer (currently BALANCE) use the imported fallback below.
+	# Semantic retarget v2 owns choreography-bearing humanoid states. Stop the
+	# imported stock clip immediately so it cannot overwrite Skeleton3D for even
+	# one frame. The fallback map below is still correct if retarget binding ever
+	# fails or a future state is intentionally left to the imported asset.
 	if (
 		external_visual != null
 		and external_visual.has_method("handles_visual_state")
@@ -104,7 +104,7 @@ func _on_ballerina_visual_state_changed(
 		return
 
 	match state:
-		&"NEUTRAL", &"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"BALANCE", &"RECOVERY":
+		&"NEUTRAL", &"STAGE_READY", &"STAGE_BOW", &"STAGE_FINAL_BOW", &"STAGE_EXIT_TURN", &"RECOVERY":
 			_play_ballerina_animation(player, &"idle", true)
 		&"STAGE_WALK":
 			_play_ballerina_animation(player, &"walk", true)
@@ -114,7 +114,7 @@ func _on_ballerina_visual_state_changed(
 			_play_ballerina_animation(player, &"jump_falling", true)
 		&"LANDING":
 			_play_ballerina_animation(player, &"jump_end", false)
-		&"TRAVEL", &"LOW_TRANSITION", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
+		&"TRAVEL", &"BALANCE", &"LOW_TRANSITION", &"MUSIC_FLOW", &"MUSIC_BUILD", &"MUSIC_RELEASE", &"MUSIC_PULSE", &"MUSIC_CLIMAX", &"MUSIC_PREP", &"MUSIC_ACCENT":
 			_play_ballerina_animation(player, &"run", true)
 		_:
 			_play_ballerina_animation(player, &"idle", true)
