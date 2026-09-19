@@ -94,6 +94,21 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         )
         self.assertIn('point.interpolation = "LINEAR"', self.builder)
 
+    def test_blender_5_video_output_uses_media_type(self) -> None:
+        self.assertIn("def configure_video_output(", self.builder)
+        self.assertIn('image_settings.media_type = "VIDEO"', self.builder)
+        self.assertIn('image_settings.file_format = "FFMPEG"', self.builder)
+        self.assertIn('"video_output_api": video_output_api', self.builder)
+        self.assertNotIn(
+            'scene.render.image_settings.file_format = "FFMPEG"',
+            self.builder,
+        )
+
+    def test_video_output_is_preflighted_before_glb_export(self) -> None:
+        preflight = self.builder.index("configure_video_output(scene)")
+        export = self.builder.index("export_glb(output_path)")
+        self.assertLess(preflight, export)
+
     def test_preview_engine_is_runtime_compatible(self) -> None:
         self.assertIn("def choose_preview_engine(", self.builder)
         self.assertIn('"BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "BLENDER_WORKBENCH"', self.builder)
@@ -103,7 +118,7 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
 
     def test_preview_is_rendered_automatically(self) -> None:
         self.assertIn("preview_engine = choose_preview_engine(scene)", self.builder)
-        self.assertIn('scene.render.image_settings.file_format = "FFMPEG"', self.builder)
+        self.assertIn("video_output_api = configure_video_output(scene)", self.builder)
         self.assertIn('scene.render.ffmpeg.codec = "H264"', self.builder)
         self.assertIn('bpy.ops.render.render(animation=True)', self.builder)
         self.assertIn('PHASE 10.4.3 NATIVE IK PASS', self.wrapper)

@@ -677,11 +677,34 @@ def choose_preview_engine(scene: bpy.types.Scene) -> str:
     )
 
 
+def configure_video_output(scene: bpy.types.Scene) -> str:
+    """Configure Blender video output across pre-5.x and 5.x APIs."""
+    image_settings = scene.render.image_settings
+
+    media_property = image_settings.bl_rna.properties.get("media_type")
+    if media_property is not None:
+        media_values = {item.identifier for item in media_property.enum_items}
+        if "VIDEO" in media_values:
+            image_settings.media_type = "VIDEO"
+            return "MEDIA_TYPE_VIDEO"
+
+    format_property = image_settings.bl_rna.properties.get("file_format")
+    if format_property is not None:
+        format_values = {item.identifier for item in format_property.enum_items}
+        if "FFMPEG" in format_values:
+            image_settings.file_format = "FFMPEG"
+            return "FILE_FORMAT_FFMPEG"
+
+    raise RuntimeError(
+        "Blender build exposes neither media_type=VIDEO nor file_format=FFMPEG."
+    )
+
+
 def configure_preview_scene(
     armature: bpy.types.Object,
     axes: dict[str, Vector],
     preview_path: Path,
-) -> str:
+) -> tuple[str, str]:
     scene = bpy.context.scene
     scene.frame_start = START_FRAME
     scene.frame_end = END_FRAME
@@ -690,7 +713,7 @@ def configure_preview_scene(
     scene.render.resolution_y = 720
     scene.render.resolution_percentage = 100
     preview_engine = choose_preview_engine(scene)
-    scene.render.image_settings.file_format = "FFMPEG"
+    video_output_api = configure_video_output(scene)
     scene.render.ffmpeg.format = "MPEG4"
     scene.render.ffmpeg.codec = "H264"
     scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
@@ -745,7 +768,7 @@ def configure_preview_scene(
     material = bpy.data.materials.new("P1043_PreviewFloorMaterial")
     material.diffuse_color = (0.12, 0.12, 0.12, 1.0)
     floor.data.materials.append(material)
-    return preview_engine
+    return preview_engine, video_output_api
 
 
 def render_preview(preview_path: Path) -> None:
@@ -990,6 +1013,12 @@ def main() -> None:
             f"Temporary controls survived bake: {remaining_controls}"
         )
 
+    # Fail fast on Blender video-output API compatibility before paying the
+    # cost of GLB export. Full preview scene creation still happens afterward
+    # so camera/light/floor helpers never enter the exported asset.
+    if preview_path is not None:
+        configure_video_output(scene)
+
     if blend_output is not None:
         blend_output.parent.mkdir(parents=True, exist_ok=True)
         bpy.ops.wm.save_as_mainfile(filepath=str(blend_output))
@@ -997,8 +1026,9 @@ def main() -> None:
     export_glb(output_path)
 
     preview_engine = None
+    video_output_api = None
     if preview_path is not None:
-        preview_engine = configure_preview_scene(
+        preview_engine, video_output_api = configure_preview_scene(
             armature, axes, preview_path
         )
         render_preview(preview_path)
@@ -1011,6 +1041,7 @@ def main() -> None:
         "blend_output": str(blend_output) if blend_output else None,
         "preview_output": str(preview_path) if preview_path else None,
         "preview_engine": preview_engine,
+        "video_output_api": video_output_api,
         "armature": armature.name,
         "fps": FPS,
         "start_frame": START_FRAME,
