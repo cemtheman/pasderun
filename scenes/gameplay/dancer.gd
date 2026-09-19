@@ -127,6 +127,8 @@ var last_stumble_reason: StringName = &""
 var _locomotion_timer := 0.0
 var _jump_in_progress := false
 var _airborne_origin_y := 0.0
+var _last_landing_drop_distance := 0.0
+var _last_landing_was_jump := false
 
 
 # ---------------------------------------------------------
@@ -511,6 +513,14 @@ func get_locomotion_state() -> StringName:
 	return StringName(LocomotionState.keys()[locomotion_state])
 
 
+func get_last_landing_drop_distance() -> float:
+	return _last_landing_drop_distance
+
+
+func get_last_landing_was_jump() -> bool:
+	return _last_landing_was_jump
+
+
 func reset_locomotion_state() -> void:
 	locomotion_state = LocomotionState.NORMAL
 	last_stumble_reason = &""
@@ -634,7 +644,12 @@ func _handle_motion_outcome(
 			_trigger_stumble(&"PLATFORM_EDGE")
 
 	if not was_on_floor and is_on_floor():
-		var drop_distance := _airborne_origin_y - global_position.y
+		var drop_distance := maxf(
+			_airborne_origin_y - global_position.y,
+			0.0
+		)
+		_last_landing_drop_distance = drop_distance
+		_last_landing_was_jump = _jump_in_progress
 		if not _jump_in_progress and drop_distance >= VALID_DROP_MINIMUM:
 			_trigger_stumble(&"LOWER_ROUTE_DROP")
 		_jump_in_progress = false
