@@ -2,7 +2,7 @@ extends Node
 
 # Phase 9 music-to-body bridge. This node never moves the CharacterBody and never
 # invokes gameplay actions. It only selects presentation phrases and preparation
-# states on DancerVisual. The player still owns jump/tap/hold/swipe decisions.
+# states on BallerinaVisualV1. The player still owns jump/tap/hold/swipe decisions.
 
 const ACTIVATION_TIME := 30.0
 const PREPARATION_ACTION := &"JUMP"
@@ -63,7 +63,7 @@ func _process(_delta: float) -> void:
 func _resolve_visual() -> void:
 	if is_instance_valid(_visual):
 		return
-	_visual = dancer.get_node_or_null("DancerVisual")
+	_visual = dancer.get_node_or_null("BallerinaVisualV1")
 
 
 func _load_visual_score() -> void:

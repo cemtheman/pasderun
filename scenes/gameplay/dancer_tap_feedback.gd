@@ -4,7 +4,7 @@ extends Node3D
 # - native: the accepted short gold 3D ring pulse
 # - Web: no 3D feedback geometry at all. Toggling a MeshInstance3D into the
 #   render list caused a visible browser stall. Web therefore uses only a short
-#   transform pulse on the already-rendered articulated dancer visual.
+#   transform pulse on the already-rendered imported ballerina visual.
 # Gameplay Tap, musicality and Flow remain untouched.
 const PULSE_DURATION := 0.18
 const PULSE_START_SCALE := 0.72
@@ -30,7 +30,7 @@ func _ready() -> void:
 
 	_web_mode = OS.has_feature("web")
 	if _web_mode:
-		_web_visual = dancer.get_node_or_null("DancerVisual") as Node3D
+		_web_visual = dancer.get_node_or_null("BallerinaVisualV1") as Node3D
 		if _web_visual != null:
 			_web_base_scale = _web_visual.scale
 	else:

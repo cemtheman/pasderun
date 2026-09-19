@@ -141,7 +141,7 @@ func _enable_gameplay_after_start_input() -> void:
 func _resolve_stage_visual() -> void:
 	if is_instance_valid(_stage_visual):
 		return
-	_stage_visual = dancer.get_node_or_null("DancerVisual")
+	_stage_visual = dancer.get_node_or_null("BallerinaVisualV1")
 
 
 func _set_stage_visual(stage: StringName) -> void:

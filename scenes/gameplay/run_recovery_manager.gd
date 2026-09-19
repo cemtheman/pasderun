@@ -71,7 +71,7 @@ var _completion_bow_x := 0.0
 var _completion_exit_x := 0.0
 var _completion_decel_start_x := 0.0
 var _completion_decel_start_speed := RUN_SPEED
-var _dancer_visual: Node
+var _ballerina_visual: Node
 
 
 func _ready() -> void:
@@ -269,7 +269,7 @@ func _begin_completion_ceremony() -> void:
 	game_over_overlay.visible = false
 	level_complete_overlay.visible = false
 
-	_dancer_visual = dancer.get_node_or_null("DancerVisual")
+	_ballerina_visual = dancer.get_node_or_null("BallerinaVisualV1")
 	if dancer.has_method("begin_stage_ending"):
 		dancer.call(
 			"begin_stage_ending",
@@ -353,10 +353,10 @@ func _update_completion_ceremony(delta: float) -> void:
 
 func _set_completion_stage_visual(stage: StringName) -> void:
 	if (
-		_dancer_visual != null
-		and _dancer_visual.has_method("set_stage_presentation_state")
+		_ballerina_visual != null
+		and _ballerina_visual.has_method("set_stage_presentation_state")
 	):
-		_dancer_visual.call("set_stage_presentation_state", stage)
+		_ballerina_visual.call("set_stage_presentation_state", stage)
 
 
 func _finish_level_complete_state() -> void:

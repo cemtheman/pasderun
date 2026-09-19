@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://d2xptha2qy11b"]
 
 [ext_resource type="PackedScene" uid="uid://dkn0c1s1txhef" path="res://assets/characters/low_poly_girl/low_poly_girl .glb" id="1_ogapk"]
-[ext_resource type="Script" path="res://scenes/characters/ballerina_motion_retarget_v2.gd" id="2_retarget"]
+[ext_resource type="Script" path="res://scenes/characters/humanoid_motion_controller.gd" id="2_motion"]
 
 [node name="BallerinaVisualV1" type="Node3D" unique_id=29026648]
-script = ExtResource("2_retarget")
+script = ExtResource("2_motion")
 
 [node name="low_poly_girl" parent="." unique_id=1495159258 instance=ExtResource("1_ogapk")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)

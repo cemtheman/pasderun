@@ -15,10 +15,6 @@ run/main_scene="res://scenes/gameplay/generated/graceful_opening_00_140_runtime.
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
-[autoload]
-
-DancerVisualBootstrap="*res://scenes/gameplay/dancer_visual_bootstrap.gd"
-
 [display]
 
 window/stretch/mode="canvas_items"
