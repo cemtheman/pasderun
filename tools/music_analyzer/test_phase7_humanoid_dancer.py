@@ -23,7 +23,10 @@ class Phase7HumanoidDancerTests(unittest.TestCase):
     def test_visual_bootstrap_is_registered_without_touching_main_scene_contract(self) -> None:
         self.assertIn('[autoload]', self.project)
         self.assertIn('DancerVisualBootstrap="*res://scenes/gameplay/dancer_visual_bootstrap.gd"', self.project)
-        self.assertIn('run/main_scene="uid://wrse8kqkd211"', self.project)
+        self.assertIn(
+            'run/main_scene="res://scenes/gameplay/generated/graceful_opening_00_140_runtime.tscn"',
+            self.project,
+        )
 
     def test_capsule_collision_is_not_removed_or_replaced(self) -> None:
         self.assertIn('CollisionShape3D', (ROOT / "scenes/gameplay/generated/graceful_opening_00_30_runtime.tscn").read_text(encoding="utf-8"))
