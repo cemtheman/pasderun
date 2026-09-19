@@ -82,6 +82,13 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertIn('constraint.owner_space = "WORLD"', self.builder)
         self.assertIn('constraint.mix_mode = "REPLACE"', self.builder)
 
+    def test_baked_action_preserves_visual_samples(self) -> None:
+        self.assertIn(
+            "Native IK has already been evaluated and visually sampled every frame.",
+            self.builder,
+        )
+        self.assertIn('point.interpolation = "LINEAR"', self.builder)
+
     def test_preview_is_rendered_automatically(self) -> None:
         self.assertIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
         self.assertIn('scene.render.image_settings.file_format = "FFMPEG"', self.builder)

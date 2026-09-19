@@ -607,14 +607,14 @@ def temporary_controls_remaining() -> list[str]:
 
 
 def configure_action_interpolation(action: bpy.types.Action) -> None:
+    # Native IK has already been evaluated and visually sampled every frame.
+    # LINEAR playback preserves those baked samples instead of re-curving them.
     fcurves = getattr(action, "fcurves", None)
     if fcurves is None:
         return
     for curve in fcurves:
         for point in curve.keyframe_points:
-            point.interpolation = "BEZIER"
-            point.handle_left_type = "AUTO_CLAMPED"
-            point.handle_right_type = "AUTO_CLAMPED"
+            point.interpolation = "LINEAR"
 
 
 def export_glb(output_path: Path) -> None:
