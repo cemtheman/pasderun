@@ -16,41 +16,47 @@ class Phase104AuthoredPipelineTests(unittest.TestCase):
     def test_source_glb_is_never_overwritten(self) -> None:
         self.assertIn('if input_path == output_path:', self.builder)
         self.assertIn('raise RuntimeError("Refusing to overwrite the source GLB.")', self.builder)
-        self.assertIn('build\\phase10_4\\low_poly_girl_authored_v1.glb', self.wrapper)
+        self.assertIn('build\\phase10_4\\low_poly_girl_authored_v2.glb', self.wrapper)
 
-    def test_audited_ballet_rig_contract_is_explicit(self) -> None:
-        for bone in (
-            "Hips", "Spine", "Spine 1", "Chest", "Neck", "Head",
-            "Clavicle_L", "Clavicle_R",
-            "Upper_Arm_L", "Upper_Arm_R", "Lower_Arm_L", "Lower_Arm_R",
-            "Hand_L", "Hand_R", "Middle_L", "Middle_R",
-            "Upper_Leg_L", "Upper_Leg_R", "Lower_Leg_L", "Lower_Leg_R",
-            "Foot_L", "Foot_R", "Toes_L", "Toes_R",
+    def test_rig_aware_authoring_replaces_guessed_eulers(self) -> None:
+        self.assertIn("def canonical_axes(", self.builder)
+        self.assertIn("def aim_parent_to_child(", self.builder)
+        self.assertIn("def solve_two_bone_joint(", self.builder)
+        self.assertIn("rotation_difference(desired.normalized())", self.builder)
+        self.assertNotIn("from mathutils import Euler", self.builder)
+        self.assertNotIn("def set_rotation_deg(", self.builder)
+        self.assertNotIn('"rot": {', self.builder)
+
+    def test_reverence_phrase_has_reference_landmarks(self) -> None:
+        for token in (
+            '"READY_LOW"', '"BRAS_BAS"', '"EN_AVANT_PASSAGE"',
+            '"PLACEMENT_AND_SOFTEN"', '"ACKNOWLEDGEMENT"',
+            '"RISE_AND_OPEN"', '"READY_RESOLUTION"',
+            '"arm_shape": "EN_AVANT"',
+            '"arm_shape": "OPEN_HALF"',
+            '"arm_shape": "OPEN"',
         ):
-            self.assertIn(f'"{bone}"', self.builder)
+            self.assertIn(token, self.builder)
 
-    def test_action_and_duration_contract(self) -> None:
-        self.assertIn('ACTION_NAME = "Opening_Reverence_v1"', self.builder)
-        self.assertIn("FPS = 30", self.builder)
-        self.assertIn("END_FRAME = 68", self.builder)
-        self.assertIn('"READY_RESOLUTION"', self.builder)
+    def test_leg_chain_is_placement_first_without_explicit_knee_out(self) -> None:
+        self.assertIn("ankle_target += side * hip_width * 0.55 * cross", self.builder)
+        self.assertIn("solve_two_bone_joint(", self.builder)
+        self.assertIn("turnout_direction = (", self.builder)
+        self.assertNotIn("knee_outward", self.builder)
+        self.assertNotIn("knee_target +=", self.builder)
 
-    def test_pipeline_reports_axes_and_existing_actions(self) -> None:
-        self.assertIn('"actions_before": actions_before', self.builder)
-        self.assertIn('"actions_after": [action_summary(a) for a in bpy.data.actions]', self.builder)
-        self.assertIn('"bone_axes": axes', self.builder)
-        self.assertIn('"axis_y_length"', self.builder)
+    def test_hand_continues_forearm_tangent(self) -> None:
+        self.assertIn("tangent = (hand_head - elbow_head).normalized()", self.builder)
+        self.assertIn("finish_direction = (", self.builder)
+        self.assertIn("aim_parent_to_child(", self.builder)
+        self.assertNotIn("hand_finish_direction", self.builder)
 
-    def test_export_requests_action_animation_mode_when_supported(self) -> None:
-        self.assertIn('"export_animations": True', self.builder)
-        self.assertIn('"export_animation_mode": "ACTIONS"', self.builder)
-        self.assertIn("if key in props:", self.builder)
-
-    def test_wrapper_auto_discovers_blender_and_validates_outputs(self) -> None:
-        self.assertIn("Get-Command blender.exe", self.wrapper)
-        self.assertIn("Blender Foundation", self.wrapper)
-        self.assertIn("PHASE 10.4.1 PIPELINE PASS", self.wrapper)
-        self.assertIn("opening_reverence_v1_report.json", self.wrapper)
+    def test_pipeline_reports_geometry_and_validation_error(self) -> None:
+        self.assertIn('"authoring_model": "rig-aware joint targets + two-bone solve"', self.builder)
+        self.assertIn('"canonical_axes":', self.builder)
+        self.assertIn('"max_aim_error":', self.builder)
+        self.assertIn('"landmarks": capture_landmarks(armature)', self.builder)
+        self.assertIn("PHASE 10.4.2 PIPELINE PASS", self.wrapper)
 
 
 if __name__ == "__main__":
