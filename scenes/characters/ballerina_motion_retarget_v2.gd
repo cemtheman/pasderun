@@ -494,8 +494,8 @@ func _apply_running_trip_overlay(state: StringName) -> void:
 		var impact := smoothstep(0.0, 1.0, t)
 		var trip_strength := 0.62 * smoothstep(0.0, 0.34, t)
 
-		# Forward momentum survives the toe catch. The CharacterBody already
-		# decelerates to 45% run speed; this small counter-offset keeps the
+		# Forward momentum survives the toe catch. The CharacterBody now eases
+		# toward 58% run speed; this small counter-offset keeps the
 		# visually trapped foot near the obstacle while the CoM pitches past it.
 		_model_root.position += Vector3(
 			-0.075 * impact,
