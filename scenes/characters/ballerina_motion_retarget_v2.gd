@@ -144,7 +144,7 @@ func _process(delta: float) -> void:
 
 
 func _sync_native_run_speed(state: StringName) -> void:
-	if state in [&"JUMP", &"AIRBORNE", &"LANDING"]:
+	if state in [&"JUMP", &"AIRBORNE"]:
 		return
 	if _animation_player.current_animation != "run":
 		return
