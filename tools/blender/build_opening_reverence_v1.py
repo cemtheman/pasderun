@@ -23,7 +23,7 @@ from mathutils import Matrix, Quaternion, Vector
 
 
 ACTION_NAME = "Opening_Reverence_v1"
-PHASE = "10.4.4"
+PHASE = "10.4.5"
 FPS = 30
 START_FRAME = 0
 END_FRAME = 67
@@ -298,18 +298,74 @@ def create_ik_constraint(
     return constraint
 
 
-def create_damped_track_constraint(
+def choose_roll_axis(
     armature: bpy.types.Object,
     bone_name: str,
-    target: bpy.types.Object,
-) -> bpy.types.Constraint:
-    """Aim a bone's anatomical Y axis at an explicit authored landmark."""
+    reference_normal: Vector,
+) -> tuple[str, float]:
+    """Choose the rest transverse axis that best represents arm-plane roll."""
+    basis = armature.data.bones[bone_name].matrix_local.to_3x3()
+    candidates = {
+        "X": basis.col[0].normalized(),
+        "Z": basis.col[2].normalized(),
+    }
+    axis_name = max(
+        candidates,
+        key=lambda name: abs(candidates[name].dot(reference_normal)),
+    )
+    alignment = candidates[axis_name].dot(reference_normal)
+    return axis_name, 1.0 if alignment >= 0.0 else -1.0
+
+
+def set_roll_stable_bone_frame(
+    armature: bpy.types.Object,
+    bone_name: str,
+    target_head: Vector,
+    plane_normal: Vector,
+    reference_normal: Vector,
+) -> None:
+    """Aim bone Y at target while explicitly preserving ballet-plane roll."""
     pb = armature.pose.bones[bone_name]
-    constraint = pb.constraints.new("DAMPED_TRACK")
-    constraint.name = f"Phase1044_Track_{bone_name}"
-    constraint.target = target
-    constraint.track_axis = "TRACK_Y"
-    return constraint
+    direction = target_head - pb.head
+    if direction.length <= 0.000001:
+        return
+    y_axis = direction.normalized()
+
+    normal = plane_normal - y_axis * plane_normal.dot(y_axis)
+    if normal.length <= 0.000001:
+        normal = (
+            reference_normal
+            - y_axis * reference_normal.dot(y_axis)
+        )
+    if normal.length <= 0.000001:
+        raise RuntimeError(
+            f"Cannot construct roll-stable frame for {bone_name}."
+        )
+    normal.normalize()
+    if normal.dot(reference_normal) < 0.0:
+        normal = -normal
+
+    roll_axis, roll_sign = choose_roll_axis(
+        armature,
+        bone_name,
+        reference_normal,
+    )
+    transverse = normal * roll_sign
+
+    if roll_axis == "Z":
+        z_axis = transverse
+        x_axis = y_axis.cross(z_axis).normalized()
+        z_axis = x_axis.cross(y_axis).normalized()
+    else:
+        x_axis = transverse
+        z_axis = x_axis.cross(y_axis).normalized()
+        x_axis = y_axis.cross(z_axis).normalized()
+
+    basis = Matrix((x_axis, y_axis, z_axis)).transposed()
+    matrix = basis.to_4x4()
+    matrix.translation = pb.head.copy()
+    pb.matrix = matrix
+    bpy.context.view_layer.update()
 
 
 def create_world_rotation_constraint(
@@ -534,6 +590,86 @@ def arm_control_points(
     return elbow_target, wrist_target, finish_target
 
 
+def apply_arm_landmark_pose(
+    armature: bpy.types.Object,
+    axes: dict[str, Vector],
+    rest: dict[str, Vector],
+    pose: dict,
+) -> None:
+    """Author upper arm, forearm and hand with explicit position + roll."""
+    forward = axes["forward"]
+
+    for left in (True, False):
+        suffix = "L" if left else "R"
+        side_sign = 1.0 if left else -1.0
+        reference_normal = (forward * side_sign).normalized()
+
+        elbow_target, wrist_target, finish_target = arm_control_points(
+            armature,
+            axes,
+            rest,
+            pose,
+            left,
+        )
+
+        shoulder = pose_head(armature, f"Upper_Arm_{suffix}")
+        upper_direction = elbow_target - shoulder
+        forearm_direction = wrist_target - elbow_target
+        plane_normal = upper_direction.cross(forearm_direction)
+        if plane_normal.length <= 0.000001:
+            plane_normal = reference_normal.copy()
+        else:
+            plane_normal.normalize()
+            if plane_normal.dot(reference_normal) < 0.0:
+                plane_normal = -plane_normal
+
+        set_roll_stable_bone_frame(
+            armature,
+            f"Upper_Arm_{suffix}",
+            elbow_target,
+            plane_normal,
+            reference_normal,
+        )
+        set_roll_stable_bone_frame(
+            armature,
+            f"Lower_Arm_{suffix}",
+            wrist_target,
+            plane_normal,
+            reference_normal,
+        )
+        set_roll_stable_bone_frame(
+            armature,
+            f"Hand_{suffix}",
+            finish_target,
+            plane_normal,
+            reference_normal,
+        )
+
+
+def key_arm_landmark_pose(
+    armature: bpy.types.Object,
+    frame: int,
+) -> None:
+    for suffix in ("L", "R"):
+        for bone_name in (
+            f"Upper_Arm_{suffix}",
+            f"Lower_Arm_{suffix}",
+            f"Hand_{suffix}",
+        ):
+            pb = armature.pose.bones[bone_name]
+            pb.rotation_mode = "QUATERNION"
+            pb.keyframe_insert(
+                data_path="rotation_quaternion",
+                frame=frame,
+                group=bone_name,
+            )
+            pb.keyframe_insert(
+                data_path="location",
+                frame=frame,
+                group=bone_name,
+            )
+
+
 def leg_control_points(
     armature: bpy.types.Object,
     axes: dict[str, Vector],
@@ -569,7 +705,7 @@ def leg_control_points(
     return ankle, pole
 
 
-def key_control_landmarks(
+def key_leg_controls(
     armature: bpy.types.Object,
     axes: dict[str, Vector],
     rest: dict[str, Vector],
@@ -581,36 +717,25 @@ def key_control_landmarks(
     for left in (True, False):
         suffix = "L" if left else "R"
         side_sign = 1.0 if left else -1.0
-        elbow_target, wrist_target, finish_target = arm_control_points(
-            armature, axes, rest, pose, left
-        )
-        set_control_location(
-            controls[f"arm_elbow_{suffix}"],
-            armature,
-            elbow_target,
-            frame,
-        )
-        set_control_location(
-            controls[f"arm_wrist_{suffix}"],
-            armature,
-            wrist_target,
-            frame,
-        )
-        set_control_location(
-            controls[f"arm_finish_{suffix}"],
-            armature,
-            finish_target,
-            frame,
-        )
 
         ankle_target, leg_pole = leg_control_points(
-            armature, axes, rest, pose, left
+            armature,
+            axes,
+            rest,
+            pose,
+            left,
         )
         set_control_location(
-            controls[f"leg_target_{suffix}"], armature, ankle_target, frame
+            controls[f"leg_target_{suffix}"],
+            armature,
+            ankle_target,
+            frame,
         )
         set_control_location(
-            controls[f"leg_pole_{suffix}"], armature, leg_pole, frame
+            controls[f"leg_pole_{suffix}"],
+            armature,
+            leg_pole,
+            frame,
         )
 
         world_up = (
@@ -688,7 +813,7 @@ def constraint_count(armature: bpy.types.Object) -> int:
 def temporary_controls_remaining() -> list[str]:
     return sorted(
         obj.name for obj in bpy.data.objects
-        if obj.name.startswith(("P1043_", "P1044_"))
+        if obj.name.startswith(("P1043_", "P1044_", "P1045_"))
     )
 
 
@@ -880,7 +1005,7 @@ def bone_axes_report(armature: bpy.types.Object) -> dict:
     return axes
 
 
-def setup_controls_and_constraints(
+def setup_leg_controls_and_constraints(
     armature: bpy.types.Object,
     axes: dict[str, Vector],
     rest: dict[str, Vector],
@@ -894,7 +1019,6 @@ def setup_controls_and_constraints(
         str, tuple[bpy.types.Constraint, str, str]
     ] = {}
 
-    # Capture clean rest foot orientations before constraints evaluate.
     foot_world_rotations: dict[str, Quaternion] = {}
     for suffix in ("L", "R"):
         foot_pb = armature.pose.bones[f"Foot_{suffix}"]
@@ -904,43 +1028,16 @@ def setup_controls_and_constraints(
     for left in (True, False):
         suffix = "L" if left else "R"
 
-        controls[f"arm_elbow_{suffix}"] = create_control(
-            f"P1044_ArmElbow_{suffix}"
-        )
-        controls[f"arm_wrist_{suffix}"] = create_control(
-            f"P1044_ArmWrist_{suffix}"
-        )
-        controls[f"arm_finish_{suffix}"] = create_control(
-            f"P1044_ArmFinish_{suffix}"
-        )
         controls[f"leg_target_{suffix}"] = create_control(
-            f"P1044_LegTarget_{suffix}"
+            f"P1045_LegTarget_{suffix}"
         )
         controls[f"leg_pole_{suffix}"] = create_control(
-            f"P1044_LegPole_{suffix}"
+            f"P1045_LegPole_{suffix}"
         )
         controls[f"foot_rotation_{suffix}"] = create_control(
-            f"P1044_FootRotation_{suffix}"
+            f"P1045_FootRotation_{suffix}"
         )
 
-        # Initialize every control from the clean imported rest pose before
-        # adding constraints, so no dependency-graph update can snap a limb
-        # toward world origin.
-        set_control_location(
-            controls[f"arm_elbow_{suffix}"],
-            armature,
-            pose_head(armature, f"Lower_Arm_{suffix}"),
-        )
-        set_control_location(
-            controls[f"arm_wrist_{suffix}"],
-            armature,
-            pose_head(armature, f"Hand_{suffix}"),
-        )
-        set_control_location(
-            controls[f"arm_finish_{suffix}"],
-            armature,
-            pose_head(armature, f"Middle_{suffix}"),
-        )
         set_control_location(
             controls[f"leg_target_{suffix}"],
             armature,
@@ -956,31 +1053,13 @@ def setup_controls_and_constraints(
             foot_world_rotations[suffix],
         )
 
-        # Arms use explicit classical joint landmarks, not IK poles.
-        create_damped_track_constraint(
-            armature,
-            f"Upper_Arm_{suffix}",
-            controls[f"arm_elbow_{suffix}"],
-        )
-        create_damped_track_constraint(
-            armature,
-            f"Lower_Arm_{suffix}",
-            controls[f"arm_wrist_{suffix}"],
-        )
-        create_damped_track_constraint(
-            armature,
-            f"Hand_{suffix}",
-            controls[f"arm_finish_{suffix}"],
-        )
-
-        # Legs retain Blender native two-bone IK + turnout foot orientation.
         leg_constraint = create_ik_constraint(
             armature,
             f"Lower_Leg_{suffix}",
             controls[f"leg_target_{suffix}"],
             controls[f"leg_pole_{suffix}"],
         )
-        leg_constraint.name = f"Phase1044_LegIK_{suffix}"
+        leg_constraint.name = f"Phase1045_LegIK_{suffix}"
         leg_ik_constraints[f"leg_{suffix}"] = (
             leg_constraint,
             f"Upper_Leg_{suffix}",
@@ -993,34 +1072,28 @@ def setup_controls_and_constraints(
         )
         bpy.context.view_layer.update()
 
-    # Pole calibration is now leg-only. Arm curvature is explicit.
     calibration_pose = POSES[3]
     clear_pose(armature)
     apply_body_landmark(armature, axes, rest, calibration_pose)
 
     for left in (True, False):
         suffix = "L" if left else "R"
-        elbow_target, wrist_target, finish_target = arm_control_points(
-            armature, axes, rest, POSES[2], left
-        )
-        set_control_location(
-            controls[f"arm_elbow_{suffix}"], armature, elbow_target
-        )
-        set_control_location(
-            controls[f"arm_wrist_{suffix}"], armature, wrist_target
-        )
-        set_control_location(
-            controls[f"arm_finish_{suffix}"], armature, finish_target
-        )
-
         ankle_target, leg_pole = leg_control_points(
-            armature, axes, rest, calibration_pose, left
+            armature,
+            axes,
+            rest,
+            calibration_pose,
+            left,
         )
         set_control_location(
-            controls[f"leg_target_{suffix}"], armature, ankle_target
+            controls[f"leg_target_{suffix}"],
+            armature,
+            ankle_target,
         )
         set_control_location(
-            controls[f"leg_pole_{suffix}"], armature, leg_pole
+            controls[f"leg_pole_{suffix}"],
+            armature,
+            leg_pole,
         )
 
     bpy.context.view_layer.update()
@@ -1083,7 +1156,7 @@ def main() -> None:
     scene.frame_end = END_FRAME
 
     controls, pole_angles, foot_world_rotations = (
-        setup_controls_and_constraints(armature, axes, rest)
+        setup_leg_controls_and_constraints(armature, axes, rest)
     )
 
     # Author body + semantic controls only at choreography landmarks.
@@ -1092,8 +1165,10 @@ def main() -> None:
         scene.frame_set(frame)
         clear_pose(armature)
         apply_body_landmark(armature, axes, rest, pose)
+        apply_arm_landmark_pose(armature, axes, rest, pose)
         key_body_landmark(armature, frame)
-        key_control_landmarks(
+        key_arm_landmark_pose(armature, frame)
+        key_leg_controls(
             armature,
             axes,
             rest,
@@ -1104,8 +1179,8 @@ def main() -> None:
 
     configure_object_interpolation(list(controls.values()))
 
-    # Leg IK and explicit arm landmark tracks evaluate continuously between
-    # controls; bake their visual result and remove every authoring constraint.
+    # Sparse roll-stable arm frames interpolate in the action while leg IK
+    # evaluates through Blender. Bake the combined visual result frame-by-frame.
     scene.frame_set(START_FRAME)
     bake_authoring_constraints(armature)
     remove_controls(controls)
@@ -1146,7 +1221,7 @@ def main() -> None:
     report = {
         "phase": PHASE,
         "authoring_model": (
-            "leg native IK + explicit elbow/wrist/hand Damped Track + visual bake"
+            "leg native IK + explicit roll-stable arm frames + visual bake"
         ),
         "source_glb": str(input_path),
         "output_glb": str(output_path),
@@ -1164,7 +1239,7 @@ def main() -> None:
         "actions_after": [action_summary(a) for a in bpy.data.actions],
         "authored_action": ACTION_NAME,
         "leg_native_ik_baked": True,
-        "arm_landmark_tracks_baked": True,
+        "arm_roll_stable_frames_baked": True,
         "constraints_after_bake": remaining_constraints,
         "temporary_controls_after_bake": remaining_controls,
         "pole_angles_deg": pole_angles,
@@ -1190,12 +1265,12 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    print("PHASE10_4_4=PASS")
+    print("PHASE10_4_5=PASS")
     print(f"ARMATURE={armature.name}")
     print(f"ACTION={ACTION_NAME}")
     print(f"LEG_NATIVE_IK_BAKED={report['leg_native_ik_baked']}")
     print(
-        f"ARM_LANDMARK_TRACKS_BAKED={report['arm_landmark_tracks_baked']}"
+        f"ARM_ROLL_STABLE_FRAMES_BAKED={report['arm_roll_stable_frames_baked']}"
     )
     print(f"CONSTRAINTS_AFTER_BAKE={remaining_constraints}")
     print(f"TEMP_CONTROLS_AFTER_BAKE={len(remaining_controls)}")

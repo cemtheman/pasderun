@@ -40,10 +40,10 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 }
 
 $inputGlb = Join-Path $Repo "assets\characters\low_poly_girl\low_poly_girl .glb"
-$outputGlb = Join-Path $Repo "build\phase10_4\low_poly_girl_hybrid_arms_v1.glb"
-$report = Join-Path $Repo "build\phase10_4\opening_reverence_hybrid_arms_v1_report.json"
-$blendOutput = Join-Path $Repo "build\phase10_4\opening_reverence_hybrid_arms_v1.blend"
-$preview = Join-Path $Repo "build\phase10_4\opening_reverence_hybrid_arms_v1_preview.mp4"
+$outputGlb = Join-Path $Repo "build\phase10_4\low_poly_girl_rollstable_arms_v1.glb"
+$report = Join-Path $Repo "build\phase10_4\opening_reverence_rollstable_arms_v1_report.json"
+$blendOutput = Join-Path $Repo "build\phase10_4\opening_reverence_rollstable_arms_v1.blend"
+$preview = Join-Path $Repo "build\phase10_4\opening_reverence_rollstable_arms_v1_preview.mp4"
 $script = Join-Path $Repo "tools\blender\build_opening_reverence_v1.py"
 
 Write-Host "Blender: $Blender"
@@ -56,12 +56,12 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 foreach ($path in @($outputGlb, $report, $blendOutput, $preview)) {
     if (-not (Test-Path $path)) {
-        throw "Expected Phase 10.4.4 output missing: $path"
+        throw "Expected Phase 10.4.5 output missing: $path"
     }
 }
 
 $data = Get-Content $report -Raw | ConvertFrom-Json
-if ($data.phase -ne "10.4.4") { throw "Expected Phase 10.4.4 report." }
+if ($data.phase -ne "10.4.5") { throw "Expected Phase 10.4.5 report." }
 if ($data.authored_action -ne "Opening_Reverence_v1") {
     throw "Expected authored action was not reported."
 }
@@ -71,8 +71,8 @@ if (-not $data.required_bones_ok) {
 if (-not $data.leg_native_ik_baked) {
     throw "Leg native IK was not reported as baked."
 }
-if (-not $data.arm_landmark_tracks_baked) {
-    throw "Arm landmark tracks were not reported as baked."
+if (-not $data.arm_roll_stable_frames_baked) {
+    throw "Arm roll-stable frames were not reported as baked."
 }
 if ($data.constraints_after_bake -ne 0) {
     throw "Constraints survived the bake."
@@ -82,12 +82,12 @@ if ($data.temporary_controls_after_bake.Count -ne 0) {
 }
 
 Write-Host ""
-Write-Host "PHASE 10.4.4 HYBRID AUTHORING PASS"
+Write-Host "PHASE 10.4.5 HYBRID AUTHORING PASS"
 Write-Host "Action:      $($data.authored_action)"
 Write-Host "Rig:         $($data.armature)"
 Write-Host "Duration:    $($data.duration_seconds)s"
 Write-Host "Leg IK:      $($data.leg_native_ik_baked)"
-Write-Host "Arm tracks:  $($data.arm_landmark_tracks_baked)"
+Write-Host "Arm frames:  $($data.arm_roll_stable_frames_baked)"
 Write-Host "Constraints: $($data.constraints_after_bake)"
 Write-Host "Report:      $report"
 Write-Host "GLB:         $outputGlb"
