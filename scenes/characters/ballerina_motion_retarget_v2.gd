@@ -1029,9 +1029,9 @@ func _apply_stage_presentation_calibration(state: StringName) -> void:
 			)
 			_apply_classical_reverence_upper_body(phase, true)
 		&"STAGE_EXIT_TURN":
-			# Idle baseline + source-root yaw gives a clean side turn before the
-			# native calibrated walk resumes.
-			pass
+			# Keep the quiet post-révérence bras-bas while the root turns back
+			# toward +X; native calibrated walk takes over only after the turn.
+			_apply_classical_reverence_upper_body(1.0, true)
 
 
 func _apply_classical_reverence_upper_body(
