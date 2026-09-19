@@ -259,7 +259,9 @@ func _begin_completion_ceremony() -> void:
 	_completion_exit_x = _completion_bow_x + COMPLETION_EXIT_WALK_DISTANCE
 
 	fork_camera_controller.call("restore_normal_state")
-	fork_camera_controller.call("set_frozen", true)
+	# Keep following the dancer through the music-end deceleration and walk.
+	# Freeze only at the bow mark so the révérence and wing exit share one frame.
+	fork_camera_controller.call("set_frozen", false)
 
 	flow_tracker.process_mode = Node.PROCESS_MODE_DISABLED
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
@@ -319,6 +321,7 @@ func _update_completion_ceremony(delta: float) -> void:
 				dancer.call("set_stage_ending_speed", 0.0)
 			_completion_phase = CompletionPhase.FINAL_BOW
 			_completion_phase_elapsed = 0.0
+			fork_camera_controller.call("set_frozen", true)
 			_set_completion_stage_visual(&"FINAL_BOW")
 
 		CompletionPhase.FINAL_BOW:
