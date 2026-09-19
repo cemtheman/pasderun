@@ -476,17 +476,14 @@ func _apply_idle_baseline() -> void:
 
 
 func _apply_source_root_transform() -> void:
-	# Rig.position is authored in DancerVisual/Dancer coordinates, so the same
-	# vector belongs directly in BallerinaVisual/Dancer coordinates. Rig's local
-	# Y rotation is the presentation turn: identity while travelling, -90° when
-	# the source faces the audience. Multiplying it after the accepted GLB base
-	# transform preserves the already-verified run direction and reproduces the
-	# exact 90° stage turn without camera guesses or duplicated yaw.
+	# Reuse only the source Rig's verified stage YAW. Its authored position was
+	# created for the mannequin's proportions (and final kneel) and used to add a
+	# second vertical/forward translation under the humanoid, corrupting both
+	# opening and final révérence. Humanoid anatomy owns all stage displacement.
 	var source_root_basis := _source_rig.transform.basis.orthonormalized()
-	var source_offset := _source_rig.position * _motion_scale
 	_model_root.transform = Transform3D(
 		(_model_base_transform.basis * source_root_basis).orthonormalized(),
-		_model_base_transform.origin + source_offset
+		_model_base_transform.origin
 	)
 
 
