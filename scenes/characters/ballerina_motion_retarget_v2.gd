@@ -27,11 +27,13 @@ const RETARGET_STATES := {
 	&"STAGE_BOW": true,
 	&"STAGE_READY": true,
 	&"STAGE_FINAL_BOW": true,
+	&"STAGE_EXIT_TURN": true,
 	&"TRAVEL": true,
 	&"JUMP": true,
 	&"AIRBORNE": true,
 	&"LANDING": true,
 	&"LOW_TRANSITION": true,
+	&"BALANCE": true,
 	&"STUMBLE": true,
 	&"RECOVERY": true,
 	&"MUSIC_FLOW": true,
@@ -43,9 +45,10 @@ const RETARGET_STATES := {
 	&"MUSIC_ACCENT": true,
 }
 
-# BALANCE is intentionally absent. The old mannequin retire/balance silhouette
-# is not part of the humanoid movement library. Gameplay balance/drift remains
-# active; visually the ballerina uses the imported idle while Dancer moves her.
+# BALANCE is intentionally kept as a state but dancer_visual_motion_v5 maps its
+# animation to the travelling run cycle. Pas de Run is always-run: balance only
+# adds lateral Z drift/recentering and never changes the dancer into a stationary
+# pose.
 
 const STAGE_BOW_DURATION := 1.35
 const STAGE_BOW_TURN_TIME := 0.28
