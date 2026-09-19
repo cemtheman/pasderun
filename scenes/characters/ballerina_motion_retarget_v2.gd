@@ -133,12 +133,40 @@ func _process(delta: float) -> void:
 		_model_root.transform = _model_base_transform
 		_retarget_active = false
 
+	_sync_native_run_speed(state)
+
 	if OVERLAY_STATES.has(state):
 		_model_root.transform = _model_base_transform
 		if state == &"JUMP" or state == &"AIRBORNE" or state == &"LANDING":
 			_apply_air_motion_overlay(state)
 		else:
 			_apply_running_trip_overlay(state)
+
+
+func _sync_native_run_speed(state: StringName) -> void:
+	if state in [&"JUMP", &"AIRBORNE", &"LANDING"]:
+		return
+	if _animation_player.current_animation != "run":
+		return
+
+	var backward_speed := float(
+		_animation_player.get_meta("_gait_backward_speed_run", 0.0)
+	)
+	if backward_speed <= 0.05:
+		return
+
+	var desired_speed := absf(_dancer.velocity.x)
+	if desired_speed <= 0.05:
+		return
+
+	# Keep the support-foot backward speed matched to CharacterBody translation
+	# every frame. This is what removes the residual scrape as STUMBLE/RECOVERY
+	# change world velocity continuously.
+	_animation_player.speed_scale = clampf(
+		desired_speed / backward_speed,
+		0.62,
+		1.55
+	)
 
 
 func _try_bind() -> void:
