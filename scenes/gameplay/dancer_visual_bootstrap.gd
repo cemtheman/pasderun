@@ -102,7 +102,9 @@ func _on_ballerina_visual_state_changed(
 		and external_visual.has_method("handles_visual_state")
 		and bool(external_visual.call("handles_visual_state", state))
 	):
-		player.stop()
+		# Keep the current native pose frozen so the procedural stage layer can
+		# blend out of the last real walk/run frame instead of popping to idle.
+		player.pause()
 		return
 
 	match state:
