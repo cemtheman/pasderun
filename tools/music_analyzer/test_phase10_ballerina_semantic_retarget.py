@@ -260,10 +260,19 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertNotIn("set_bone_pose_position", self.retarget)
         self.assertNotIn("set_bone_rest", self.retarget)
 
-    def test_source_root_motion_is_scaled_from_body_proportions(self) -> None:
-        self.assertIn("_compute_motion_scale()", self.retarget)
-        self.assertIn("_source_rig.position * _motion_scale", self.retarget)
-        self.assertIn("target_span / source_span", self.retarget)
+    def test_stage_root_reuses_yaw_but_not_mannequin_translation(self) -> None:
+        self.assertIn(
+            "_model_base_transform.basis * source_root_basis",
+            self.retarget,
+        )
+        self.assertIn(
+            "_model_base_transform.origin",
+            self.retarget,
+        )
+        self.assertNotIn(
+            "_source_rig.position * _motion_scale",
+            self.retarget,
+        )
 
     def test_reverence_uses_anatomical_mirrored_plie_and_port_de_bras(self) -> None:
         self.assertIn("_apply_classical_reverence_upper_body", self.retarget)
