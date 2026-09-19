@@ -7,6 +7,7 @@ const STATE_STAGE_WALK := &"STAGE_WALK"
 const STATE_STAGE_BOW := &"STAGE_BOW"
 const STATE_STAGE_READY := &"STAGE_READY"
 const STATE_STAGE_FINAL_BOW := &"STAGE_FINAL_BOW"
+const STATE_STAGE_EXIT_TURN := &"STAGE_EXIT_TURN"
 const STATE_TRAVEL := &"TRAVEL"
 const STATE_JUMP := &"JUMP"
 const STATE_AIRBORNE := &"AIRBORNE"
@@ -32,6 +33,7 @@ const VISUAL_STATES := [
 	STATE_STAGE_BOW,
 	STATE_STAGE_READY,
 	STATE_STAGE_FINAL_BOW,
+	STATE_STAGE_EXIT_TURN,
 	STATE_TRAVEL,
 	STATE_JUMP,
 	STATE_AIRBORNE,
@@ -124,6 +126,8 @@ func set_stage_presentation_state(stage: StringName) -> void:
 		&"FINAL_BOW":
 			next_state = STATE_STAGE_FINAL_BOW
 			front_facing = true
+		&"EXIT_TURN":
+			next_state = STATE_STAGE_EXIT_TURN
 		_:
 			return
 	_set_front_presentation_geometry(front_facing)
@@ -398,6 +402,7 @@ func _build_animation_system() -> void:
 	_add_animation(library, "stage_bow", _stage_bow_animation())
 	_add_animation(library, "stage_ready", _stage_ready_animation())
 	_add_animation(library, "stage_final_bow", _stage_final_bow_animation())
+	_add_animation(library, "stage_exit_turn", _stage_exit_turn_animation())
 	_add_animation(library, "travel", _travel_animation())
 	_add_animation(library, "jump", _jump_animation())
 	_add_animation(library, "airborne", _airborne_animation())
@@ -567,6 +572,16 @@ func _stage_fourth_wall_turn_pose() -> Dictionary:
 	var pose := _stage_ready_pose()
 	pose["Rig:rotation"] = _ry(FOURTH_WALL_YAW)
 	return pose
+
+
+func _stage_exit_turn_animation() -> Animation:
+	# After the final révérence the dancer returns from audience-facing (+Z) to
+	# the +X wing-exit direction before walking off. The turn is deliberate and
+	# visible; translation resumes only after this turn finishes.
+	return _animation_from_poses(0.38, [0.0, 0.38], [
+		_stage_ready_pose(),
+		_stage_side_ready_pose(),
+	], false)
 
 
 func _stage_final_bow_animation() -> Animation:
