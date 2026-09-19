@@ -244,7 +244,7 @@ class Phase103SingleHumanoidMotionAuthorityTests(unittest.TestCase):
             re.DOTALL,
         )
         infer = re.search(
-            r'func _infer_distal_joint_from_chain\(\).*?(?=\n\nfunc |\Z)',
+            r'func _infer_distal_joint_from_chain\([^)]*\).*?(?=\n\nfunc |\Z)',
             self.controller,
             re.DOTALL,
         )
