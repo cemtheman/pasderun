@@ -49,6 +49,18 @@ class Phase105PoseLabTests(unittest.TestCase):
         self.assertIn("core.setup_leg_controls_and_constraints(", self.script)
         self.assertIn("core.key_leg_controls(", self.script)
 
+    def test_blender_52_reads_written_png_not_render_result_pixels(self) -> None:
+        self.assertIn(
+            'bpy.data.images.load(str(cell_path), check_existing=False)',
+            self.script,
+        )
+        self.assertIn('if not cell_path.exists():', self.script)
+        self.assertIn('bpy.data.images.remove(image)', self.script)
+        self.assertNotIn(
+            'bpy.data.images.get("Render Result")',
+            self.script,
+        )
+
     def test_contact_sheet_is_five_by_three(self) -> None:
         self.assertIn("rows * CELL, cols * CELL", self.script)
         self.assertIn("Expected exactly 15 pose views.", self.wrapper)

@@ -159,14 +159,31 @@ def render_cell(
     view_name: str,
 ) -> np.ndarray:
     filename = f"{row + 1:02d}_{pose_name.lower()}_{view_name.lower()}.png"
-    scene.render.filepath = str(output_dir / filename)
+    cell_path = output_dir / filename
+    scene.render.filepath = str(cell_path)
     bpy.ops.render.render(write_still=True)
 
-    render = bpy.data.images.get("Render Result")
-    if render is None:
-        raise RuntimeError("Render Result missing.")
-    pixels = np.array(render.pixels[:], dtype=np.float32)
-    return pixels.reshape((CELL, CELL, 4))
+    # Blender 5.2 background rendering may leave Render Result.pixels empty
+    # even though write_still produced a valid PNG. Reload the actual file
+    # from disk; the pose-lab contract is based on rendered evidence anyway.
+    if not cell_path.exists():
+        raise RuntimeError(f"Pose-lab render missing: {cell_path}")
+    image = bpy.data.images.load(str(cell_path), check_existing=False)
+    try:
+        width, height = image.size
+        if width != CELL or height != CELL:
+            raise RuntimeError(
+                f"Unexpected pose-lab cell size {width}x{height}: {cell_path}"
+            )
+        pixels = np.array(image.pixels[:], dtype=np.float32)
+        expected = CELL * CELL * 4
+        if pixels.size != expected:
+            raise RuntimeError(
+                f"Expected {expected} pixels, got {pixels.size}: {cell_path}"
+            )
+        return pixels.reshape((CELL, CELL, 4))
+    finally:
+        bpy.data.images.remove(image)
 
 
 def save_contact_sheet(
