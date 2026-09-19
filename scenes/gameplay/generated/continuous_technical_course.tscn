@@ -116,10 +116,10 @@ size = Vector3(9, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_neutral_close"]
 material = ExtResource("1_palace")
-size = Vector3(17, 0.5, 4)
+size = Vector3(22, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_neutral_close"]
-size = Vector3(17, 0.5, 4)
+size = Vector3(22, 0.5, 4)
 
 [sub_resource type="StandardMaterial3D" id="Material_backstage_curtain"]
 albedo_color = Color(0.23, 0.025, 0.055, 1)
@@ -558,14 +558,14 @@ mesh = SubResource("Mesh_22")
 shape = SubResource("Shape_22")
 
 [node name="NeutralClosingRunway" type="StaticBody3D" parent="Level"]
-position = Vector3(553.5, -3.05, 0)
+position = Vector3(556, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralClosingRunway"]
 mesh = SubResource("Mesh_neutral_close")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralClosingRunway"]
 shape = SubResource("Shape_neutral_close")
 
 [node name="BackstageWingCurtain" type="MeshInstance3D" parent="Level"]
-position = Vector3(560.7, 0.45, 0)
+position = Vector3(564.5, 0.45, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_backstage_curtain")
 
