@@ -87,8 +87,8 @@ class Phase7HumanoidDancerTests(unittest.TestCase):
         for contract in (
             'STUMBLE_DURATION := 0.24',
             'RECOVERY_DURATION := 0.62',
-            'STUMBLE_SPEED_MULTIPLIER := 0.45',
-            'RECOVERY_SPEED_MULTIPLIER := 1.21',
+            'STUMBLE_SPEED_MULTIPLIER := 0.58',
+            'RECOVERY_SPEED_MULTIPLIER := 1.08',
             '@export var run_speed: float = 4.0',
         ):
             self.assertIn(contract, self.dancer)
