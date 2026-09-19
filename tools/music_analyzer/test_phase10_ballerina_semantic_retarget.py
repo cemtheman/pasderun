@@ -194,7 +194,9 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             '_play_ballerina_animation(player, &"jump_falling", true, 1.0)',
             self.bootstrap,
         )
-        self.assertIn(
+        self.assertIn("_capture_opposite_run_resume(player)", self.bootstrap)
+        self.assertIn("_resume_run_after_jump(player)", self.bootstrap)
+        self.assertNotIn(
             '_play_ballerina_animation(player, &"jump_end", false, 1.0)',
             self.bootstrap,
         )
@@ -296,6 +298,62 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             self.bootstrap,
         )
 
+    def test_opening_reverence_restores_accepted_phase10_1_upper_body_contract(self) -> None:
+        self.assertIn(
+            'if state == &"STAGE_BOW" or state == &"STAGE_READY":',
+            self.retarget,
+        )
+        self.assertIn(
+            'label == "Pelvis"',
+            self.retarget,
+        )
+        self.assertIn(
+            'label.begins_with("Arm")',
+            self.retarget,
+        )
+        self.assertIn(
+            'var upper_angle := lerpf(1.02, 0.42, open_t)',
+            self.retarget,
+        )
+        self.assertIn(
+            '_apply_accepted_reverence_body("Torso", 0.045 * depth)',
+            self.retarget,
+        )
+        self.assertIn(
+            '_apply_accepted_reverence_body("Head", 0.13 * depth)',
+            self.retarget,
+        )
+
+    def test_jump_landing_resumes_opposite_run_half_cycle_without_jump_end_hop(self) -> None:
+        self.assertIn("func _capture_opposite_run_resume", self.bootstrap)
+        self.assertIn("run_animation.length * 0.5", self.bootstrap)
+        self.assertIn("func _resume_run_after_jump", self.bootstrap)
+        self.assertIn("player.seek(", self.bootstrap)
+        landing_branch = re.search(
+            r'&"LANDING":(.*?)(?=\n\t\t&"|\n\t\t_:)',
+            self.bootstrap,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(landing_branch)
+        self.assertIn("_resume_run_after_jump(player)", landing_branch.group(1))
+        self.assertNotIn("jump_end", landing_branch.group(1))
+
+    def test_stumble_speed_changes_are_continuous_not_state_snaps(self) -> None:
+        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.58", self.dancer)
+        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.08", self.dancer)
+        self.assertIn(
+            "_locomotion_timer / STUMBLE_DURATION",
+            self.dancer,
+        )
+        self.assertIn(
+            "_locomotion_timer / RECOVERY_DURATION",
+            self.dancer,
+        )
+        self.assertIn(
+            "smoothstep(0.0, 0.72, progress)",
+            self.dancer,
+        )
+
     def test_opening_is_walk_then_turn_reverence_then_ready(self) -> None:
         self.assertIn("@export var entrance_walk_distance := 3.0", self.start_gate)
         self.assertIn(
@@ -311,8 +369,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('next_state = STATE_STAGE_BOW', self.visual)
 
     def test_running_stumble_is_forward_catch_step_not_a_stop(self) -> None:
-        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.45", self.dancer)
-        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.21", self.dancer)
+        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.58", self.dancer)
+        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.08", self.dancer)
         self.assertIn('&"STUMBLE": true', self.retarget)
         self.assertIn('&"RECOVERY": true', self.retarget)
         for token in (
@@ -410,16 +468,16 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
             "RECOVERY_DURATION := 0.62",
             "Vector3(0.62, 0.77, -0.10)",
             "Vector3(0.90, -0.28, -0.25)",
-            "Vector3(0.72, -0.62, 0.08)",
+            "Vector3(0.50, -0.84, 0.08)",
             "_right_toe_idx",
         ):
             self.assertIn(token, self.retarget)
         self.assertIn(
-            "-0.14 * impact",
+            "-0.075 * impact",
             self.retarget,
         )
         self.assertIn(
-            "custom_strength := 1.0 - smoothstep(0.58, 1.0, t)",
+            "custom_strength := 0.60 * (1.0 - smoothstep(0.52, 0.92, t))",
             self.retarget,
         )
 
