@@ -453,8 +453,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('dancer.call("set_stage_ending_speed", COMPLETION_WALK_SPEED)', self.recovery_manager)
 
     def test_humanoid_trip_uses_target_axis_independent_chain_directions(self) -> None:
-        self.assertIn('_play_ballerina_animation(player, &"run", true, 0.58)', self.bootstrap)
-        self.assertIn('_play_ballerina_animation(player, &"run", true, 1.12)', self.bootstrap)
+        self.assertIn('_play_ballerina_animation(player, &"run", true, 0.88)', self.bootstrap)
+        self.assertIn('_play_ballerina_animation(player, &"run", true, 1.04)', self.bootstrap)
         self.assertIn('current_world_basis', self.retarget)
         self.assertIn('parent_current.basis.get_rotation_quaternion().slerp', self.retarget)
         for token in (
