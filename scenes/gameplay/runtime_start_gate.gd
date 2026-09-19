@@ -18,6 +18,7 @@ enum PreludeState {
 @export var overlay: CanvasLayer
 
 @export var entrance_target_x := 0.0
+@export var entrance_walk_distance := 3.0
 @export var entrance_speed := 1.55
 @export var bow_duration := 1.35
 
@@ -48,10 +49,15 @@ func _ready() -> void:
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_DISABLED
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_DISABLED
 
-	# The curtain is open for the silent stage entrance. The start prompt appears
-	# only after the dancer has walked in, reverenced, and settled.
+	# The curtain is open for the silent stage entrance. Start offstage-left of
+	# the presentation mark so the dancer visibly WALKS in before turning to the
+	# audience for the révérence. The start prompt appears only after the walk,
+	# turn, curtsy and ready settle are complete.
 	overlay.visible = false
 	dancer.process_mode = Node.PROCESS_MODE_INHERIT
+	var entrance_start := dancer.global_position
+	entrance_start.x = entrance_target_x - maxf(entrance_walk_distance, 0.0)
+	dancer.global_position = entrance_start
 	if dancer.has_method("begin_stage_entrance"):
 		dancer.call("begin_stage_entrance", entrance_speed)
 	else:
