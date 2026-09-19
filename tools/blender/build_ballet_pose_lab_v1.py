@@ -67,10 +67,12 @@ def configure_workbench(scene: bpy.types.Scene) -> str:
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = "PNG"
     scene.render.film_transparent = False
-    scene.display.shading.light = "STUDIO"
-    scene.display.shading.show_shadows = True
-    scene.display.shading.show_cavity = True
-    scene.display.shading.show_outline = True
+    shading = scene.display.shading
+    if hasattr(shading, "light"):
+        shading.light = "STUDIO"
+    for attr in ("show_shadows", "show_cavity", "show_outline"):
+        if hasattr(shading, attr):
+            setattr(shading, attr, True)
     ensure_world(scene)
     return engine
 
