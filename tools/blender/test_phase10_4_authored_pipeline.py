@@ -102,7 +102,7 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertNotIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
 
     def test_preview_is_rendered_automatically(self) -> None:
-        self.assertIn('scene.render.engine = "BLENDER_EEVEE_NEXT"', self.builder)
+        self.assertIn("preview_engine = choose_preview_engine(scene)", self.builder)
         self.assertIn('scene.render.image_settings.file_format = "FFMPEG"', self.builder)
         self.assertIn('scene.render.ffmpeg.codec = "H264"', self.builder)
         self.assertIn('bpy.ops.render.render(animation=True)', self.builder)
