@@ -54,6 +54,8 @@ const STAGE_BOW_DURATION := 1.35
 const STAGE_BOW_TURN_TIME := 0.28
 const STAGE_FINAL_BOW_DURATION := 2.60
 const STAGE_FINAL_TURN_TIME := 0.32
+const STUMBLE_DURATION := 0.24
+const RECOVERY_DURATION := 0.62
 
 @onready var _model_root: Node3D = $low_poly_girl
 @onready var _skeleton: Skeleton3D = $low_poly_girl/Rig/Skeleton3D
@@ -79,6 +81,8 @@ var _tpose_available := false
 
 var _left_hand_idx := -1
 var _right_hand_idx := -1
+var _left_toe_idx := -1
+var _right_toe_idx := -1
 
 
 func _ready() -> void:
@@ -124,6 +128,7 @@ func _process(delta: float) -> void:
 	_apply_idle_baseline()
 	_apply_source_root_transform()
 	_apply_semantic_motion_retarget()
+	_apply_running_trip_calibration(state)
 	_apply_stage_presentation_calibration(state)
 
 
@@ -349,6 +354,8 @@ func _restore_animation_player(
 func _resolve_optional_hands() -> void:
 	_left_hand_idx = _find_bone(["lefthand", "handl"])
 	_right_hand_idx = _find_bone(["righthand", "handr"])
+	_left_toe_idx = _find_bone(["lefttoebase", "lefttoe", "toel", "balll"])
+	_right_toe_idx = _find_bone(["righttoebase", "righttoe", "toer", "ballr"])
 
 
 func _compute_motion_scale() -> float:
@@ -468,6 +475,294 @@ func _apply_semantic_motion_retarget() -> void:
 		)
 
 
+func _apply_running_trip_calibration(state: StringName) -> void:
+	if state == &"STUMBLE":
+		var t := clampf(_state_elapsed / STUMBLE_DURATION, 0.0, 1.0)
+		var impact := smoothstep(0.0, 1.0, t)
+
+		# Forward momentum survives the toe catch. The CharacterBody already
+		# decelerates to 45% run speed; this small counter-offset keeps the
+		# visually trapped foot near the obstacle while the CoM pitches past it.
+		_model_root.position += Vector3(
+			-0.14 * impact,
+			-0.065 * impact,
+			0.0
+		)
+
+		# Trunk: CoM continues +X while the head counter-extends to preserve the
+		# horizon. A small Z component prevents a perfectly planar mannequin fall.
+		_set_chain_world_direction(
+			"Pelvis",
+			"Torso",
+			Vector3(0.62, 0.77, -0.10).lerp(
+				Vector3(0.18, 0.98, 0.0),
+				1.0 - impact
+			).normalized(),
+			1.0
+		)
+		_set_chain_world_direction(
+			"Torso",
+			"Head",
+			Vector3(0.20, 0.98, 0.02).normalized(),
+			1.0
+		)
+
+		# Right/front foot is the tripping foot. It is caught in front of the CoM
+		# while the left/back leg is stranded behind and cannot rescue the first
+		# impact in time.
+		_set_chain_world_direction(
+			"LegFrontHip",
+			"LegFrontKnee",
+			Vector3(0.38, -0.92, -0.02).normalized(),
+			1.0
+		)
+		_set_chain_world_direction(
+			"LegFrontKnee",
+			"FootFront",
+			Vector3(0.08, -0.995, 0.0).normalized(),
+			1.0
+		)
+		_set_chain_world_direction(
+			"LegBackHip",
+			"LegBackKnee",
+			Vector3(-0.38, -0.92, 0.08).normalized(),
+			1.0
+		)
+		_set_chain_world_direction(
+			"LegBackKnee",
+			"FootBack",
+			Vector3(-0.12, -0.99, 0.04).normalized(),
+			1.0
+		)
+
+		# Reflex brace: both arms thrust forward, but asymmetrically. The right
+		# elbow folds more sharply; the left arm opens laterally for counter-torque.
+		_set_chain_world_direction(
+			"ArmFrontShoulder",
+			"ArmFrontElbow",
+			Vector3(0.90, -0.28, -0.25).normalized(),
+			1.0
+		)
+		_set_optional_segment_world_direction(
+			_binding_index("ArmFrontElbow"),
+			_right_hand_idx,
+			Vector3(0.05, -0.96, -0.28).normalized(),
+			1.0
+		)
+		_set_chain_world_direction(
+			"ArmBackShoulder",
+			"ArmBackElbow",
+			Vector3(0.76, -0.38, 0.52).normalized(),
+			1.0
+		)
+		_set_optional_segment_world_direction(
+			_binding_index("ArmBackElbow"),
+			_left_hand_idx,
+			Vector3(0.42, -0.78, 0.46).normalized(),
+			1.0
+		)
+
+		# Dorsiflex the caught forefoot if the imported rig exposes a toe/ball bone.
+		_set_optional_segment_world_direction(
+			_binding_index("FootFront"),
+			_right_toe_idx,
+			Vector3(0.98, 0.18, 0.0).normalized(),
+			1.0
+		)
+		return
+
+	if state != &"RECOVERY":
+		return
+
+	var t := clampf(_state_elapsed / RECOVERY_DURATION, 0.0, 1.0)
+	var release := smoothstep(0.0, 1.0, t)
+	var custom_strength := 1.0 - smoothstep(0.58, 1.0, t)
+
+	# The body is still forward of the original support base at recovery start.
+	# Return the counter-offset gradually while adding a small rebound rather than
+	# teleporting the visual root back onto the gameplay capsule.
+	var rebound := 0.030 * sin(PI * clampf((t - 0.22) / 0.60, 0.0, 1.0))
+	_model_root.position += Vector3(
+		-0.14 * (1.0 - release),
+		-0.065 * (1.0 - release) + rebound,
+		0.0
+	)
+
+	# Emergency step. The caught right foot unhooks and trails; the free left leg
+	# drives high and forward to get a foot back in front of the falling CoM.
+	var torso_dir := Vector3(0.60, 0.79, -0.08).lerp(
+		Vector3(0.10, 0.995, 0.0),
+		release
+	).normalized()
+	var head_dir := Vector3(0.18, 0.98, 0.02).lerp(
+		Vector3(0.02, 1.0, 0.0),
+		release
+	).normalized()
+	_set_chain_world_direction("Pelvis", "Torso", torso_dir, custom_strength)
+	_set_chain_world_direction("Torso", "Head", head_dir, custom_strength)
+
+	var left_thigh := Vector3(0.72, -0.62, 0.08).lerp(
+		Vector3(0.28, -0.96, 0.02),
+		smoothstep(0.28, 0.72, t)
+	).normalized()
+	var left_shin := Vector3(0.46, -0.88, 0.05).lerp(
+		Vector3(0.10, -0.995, 0.0),
+		smoothstep(0.30, 0.76, t)
+	).normalized()
+	_set_chain_world_direction(
+		"LegBackHip",
+		"LegBackKnee",
+		left_thigh,
+		custom_strength
+	)
+	_set_chain_world_direction(
+		"LegBackKnee",
+		"FootBack",
+		left_shin,
+		custom_strength
+	)
+
+	var right_thigh := Vector3(-0.34, -0.94, -0.02).lerp(
+		Vector3(0.18, -0.98, -0.01),
+		smoothstep(0.22, 0.80, t)
+	).normalized()
+	var right_shin := Vector3(-0.14, -0.99, 0.0).lerp(
+		Vector3(0.02, -1.0, 0.0),
+		smoothstep(0.25, 0.82, t)
+	).normalized()
+	_set_chain_world_direction(
+		"LegFrontHip",
+		"LegFrontKnee",
+		right_thigh,
+		custom_strength
+	)
+	_set_chain_world_direction(
+		"LegFrontKnee",
+		"FootFront",
+		right_shin,
+		custom_strength
+	)
+
+	# Asymmetric arm recovery generates counter-torque instead of a mirrored
+	# cartoon flail. The override fades before RECOVERY ends so the accepted
+	# run-cycle brush/contact can reconnect without a visible pop.
+	_set_chain_world_direction(
+		"ArmFrontShoulder",
+		"ArmFrontElbow",
+		Vector3(0.66, -0.66, -0.28).lerp(
+			Vector3(0.32, -0.92, -0.18),
+			release
+		).normalized(),
+		custom_strength
+	)
+	_set_optional_segment_world_direction(
+		_binding_index("ArmFrontElbow"),
+		_right_hand_idx,
+		Vector3(0.25, -0.94, -0.22).normalized(),
+		custom_strength
+	)
+	_set_chain_world_direction(
+		"ArmBackShoulder",
+		"ArmBackElbow",
+		Vector3(-0.24, -0.72, 0.65).lerp(
+			Vector3(0.22, -0.95, 0.20),
+			release
+		).normalized(),
+		custom_strength
+	)
+	_set_optional_segment_world_direction(
+		_binding_index("ArmBackElbow"),
+		_left_hand_idx,
+		Vector3(0.05, -0.90, 0.43).normalized(),
+		custom_strength
+	)
+
+	# Once the trapped foot releases, return from dorsiflexion toward a pointed
+	# travelling foot before handing control fully back to the source recovery.
+	_set_optional_segment_world_direction(
+		_binding_index("FootFront"),
+		_right_toe_idx,
+		Vector3(0.98, -0.18, 0.0).normalized(),
+		custom_strength
+	)
+
+
+func _set_chain_world_direction(
+	parent_label: String,
+	child_label: String,
+	desired_world_direction: Vector3,
+	strength: float
+) -> void:
+	var parent_idx := _binding_index(parent_label)
+	var child_idx := _binding_index(child_label)
+	_set_optional_segment_world_direction(
+		parent_idx,
+		child_idx,
+		desired_world_direction,
+		strength
+	)
+
+
+func _set_optional_segment_world_direction(
+	parent_idx: int,
+	child_idx: int,
+	desired_world_direction: Vector3,
+	strength: float
+) -> void:
+	if parent_idx < 0 or child_idx < 0:
+		return
+	if (
+		not _target_idle_globals.has(parent_idx)
+		or not _target_idle_globals.has(child_idx)
+	):
+		return
+	if desired_world_direction.length_squared() <= 0.000001:
+		return
+
+	var skeleton_world := _skeleton.global_transform.basis.orthonormalized()
+	var skeleton_world_inverse := skeleton_world.inverse()
+	var parent_idle: Transform3D = _target_idle_globals[parent_idx]
+	var child_idle: Transform3D = _target_idle_globals[child_idx]
+	var baseline_direction_world := (
+		skeleton_world
+		* (child_idle.origin - parent_idle.origin).normalized()
+	).normalized()
+	var desired := desired_world_direction.normalized()
+
+	if baseline_direction_world.dot(desired) < -0.9999:
+		# Avoid the ambiguous 180-degree shortest-arc constructor case.
+		desired = (desired + Vector3(0.0, 0.0001, 0.0001)).normalized()
+
+	var align_world := Basis(Quaternion(baseline_direction_world, desired))
+	var baseline_world_basis := (
+		skeleton_world * parent_idle.basis
+	).orthonormalized()
+	var desired_world_basis := (
+		align_world * baseline_world_basis
+	).orthonormalized()
+	var desired_skeleton_basis := (
+		skeleton_world_inverse * desired_world_basis
+	).orthonormalized()
+
+	var current_global := _skeleton.get_bone_global_pose(parent_idx)
+	var weight := clampf(strength, 0.0, 1.0)
+	var blended_quat := current_global.basis.get_rotation_quaternion().slerp(
+		desired_skeleton_basis.get_rotation_quaternion(),
+		weight
+	)
+	_skeleton.set_bone_global_pose(
+		parent_idx,
+		Transform3D(Basis(blended_quat), current_global.origin)
+	)
+
+
+func _binding_index(label: String) -> int:
+	var binding := _binding(label)
+	if binding.is_empty():
+		return -1
+	return int(binding["bone_idx"])
+
+
 func _apply_stage_presentation_calibration(state: StringName) -> void:
 	match state:
 		&"STAGE_BOW":
@@ -481,13 +776,11 @@ func _apply_stage_presentation_calibration(state: StringName) -> void:
 		&"STAGE_READY":
 			_apply_classical_reverence_upper_body(0.0, false)
 		&"STAGE_FINAL_BOW":
-			var final_phase := clampf(
-				(_state_elapsed - STAGE_FINAL_TURN_TIME)
-				/ (STAGE_FINAL_BOW_DURATION - STAGE_FINAL_TURN_TIME),
-				0.0,
-				1.0
-			)
-			_apply_classical_reverence_upper_body(smoothstep(0.0, 1.0, final_phase), true)
+			# Preserve the previously authored LARGE closing révérence in full.
+			# v2 frame conjugation already turns its side-view articulation into
+			# the audience plane correctly; do not flatten its kneel/torso/arms
+			# back into the lighter opening curtsey.
+			pass
 
 
 func _apply_classical_reverence_upper_body(depth: float, final_reverence: bool) -> void:
