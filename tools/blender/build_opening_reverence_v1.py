@@ -762,6 +762,13 @@ def setup_controls_and_constraints(
     controls: dict[str, bpy.types.Object] = {}
     ik_constraints: dict[str, tuple[bpy.types.Constraint, str, str]] = {}
 
+    # Capture clean rest orientations before any constraint can evaluate.
+    foot_world_rotations = {}
+    for suffix in ("L", "R"):
+        foot_pb = armature.pose.bones[f"Foot_{suffix}"]
+        foot_world_matrix = armature.matrix_world @ foot_pb.matrix
+        foot_world_rotations[suffix] = foot_world_matrix.to_quaternion()
+
     for left in (True, False):
         suffix = "L" if left else "R"
 
@@ -779,6 +786,34 @@ def setup_controls_and_constraints(
         )
         controls[f"foot_rotation_{suffix}"] = create_control(
             f"P1043_FootRotation_{suffix}"
+        )
+
+        # Put every control on the current limb before adding IK. Otherwise
+        # Blender evaluates the new constraint against world origin for one
+        # dependency-graph update and can twist the chain before calibration.
+        set_control_location(
+            controls[f"arm_target_{suffix}"],
+            armature,
+            pose_head(armature, f"Hand_{suffix}"),
+        )
+        set_control_location(
+            controls[f"arm_pole_{suffix}"],
+            armature,
+            pose_head(armature, f"Lower_Arm_{suffix}"),
+        )
+        set_control_location(
+            controls[f"leg_target_{suffix}"],
+            armature,
+            pose_head(armature, f"Foot_{suffix}"),
+        )
+        set_control_location(
+            controls[f"leg_pole_{suffix}"],
+            armature,
+            pose_head(armature, f"Lower_Leg_{suffix}"),
+        )
+        set_control_rotation_world(
+            controls[f"foot_rotation_{suffix}"],
+            foot_world_rotations[suffix],
         )
 
         arm_constraint = create_ik_constraint(
@@ -805,17 +840,12 @@ def setup_controls_and_constraints(
             f"Lower_Leg_{suffix}",
         )
 
-        foot_pb = armature.pose.bones[f"Foot_{suffix}"]
-        foot_world_matrix = armature.matrix_world @ foot_pb.matrix
-        set_control_rotation_world(
-            controls[f"foot_rotation_{suffix}"],
-            foot_world_matrix.to_quaternion(),
-        )
         create_world_rotation_constraint(
             armature,
             f"Foot_{suffix}",
             controls[f"foot_rotation_{suffix}"],
         )
+        bpy.context.view_layer.update()
 
     # Calibrate pole angles on meaningful non-straight targets. This is the
     # key difference from guessed Euler/bone-roll authoring.

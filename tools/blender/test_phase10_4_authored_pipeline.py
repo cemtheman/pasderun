@@ -36,6 +36,22 @@ class Phase104NativeIKPipelineTests(unittest.TestCase):
         self.assertNotIn('def solve_two_bone_joint(', self.builder)
         self.assertNotIn('def aim_parent_to_child(', self.builder)
 
+    def test_controls_are_initialized_before_ik_constraints(self) -> None:
+        self.assertIn(
+            "Capture clean rest orientations before any constraint can evaluate.",
+            self.builder,
+        )
+        self.assertIn(
+            "Put every control on the current limb before adding IK.",
+            self.builder,
+        )
+        setup_start = self.builder.index("def setup_controls_and_constraints(")
+        setup_end = self.builder.index("\n\ndef main()", setup_start)
+        setup = self.builder[setup_start:setup_end]
+        first_target = setup.index('set_control_location(\n            controls[f"arm_target_{suffix}"]')
+        first_constraint = setup.index("arm_constraint = create_ik_constraint(")
+        self.assertLess(first_target, first_constraint)
+
     def test_pole_angle_is_calibrated_from_evaluated_rig(self) -> None:
         self.assertIn('def calibrate_pole_angle(', self.builder)
         self.assertIn('pole_alignment_score(', self.builder)
