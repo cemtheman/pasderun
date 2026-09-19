@@ -27,7 +27,7 @@ import build_opening_reverence_v1 as core  # noqa: E402
 
 
 PHASE = "10.5"
-ATTEMPT = "2/2"
+DEFAULT_ATTEMPT = "1/2"
 POSE_NAMES = (
     "BRAS_BAS",
     "EN_AVANT_PASSAGE",
@@ -44,6 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--report", required=True)
+    parser.add_argument("--attempt", default=DEFAULT_ATTEMPT)
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1:])
 
 
@@ -309,7 +310,7 @@ def main() -> None:
 
     report = {
         "phase": PHASE,
-        "attempt": ATTEMPT,
+        "attempt": args.attempt,
         "purpose": "static ballet pose validation before animation",
         "source_glb": str(input_path),
         "contact_sheet": str(output_path),
@@ -327,7 +328,7 @@ def main() -> None:
 
     core.remove_controls(controls)
 
-    print("PHASE10_5_POSE_LAB_ATTEMPT_1=PASS")
+    print(f"PHASE10_5_POSE_LAB_ATTEMPT={args.attempt}")
     print(f"CONTACT={output_path}")
     print(f"REPORT={report_path}")
     print("ROWS=" + " | ".join(POSE_NAMES))

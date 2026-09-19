@@ -16,7 +16,9 @@ class FinalReverenceAttempt2Tests(unittest.TestCase):
         cls.runner = RUNNER.read_text(encoding="utf-8")
 
     def test_this_is_explicitly_final_attempt_two_of_two(self) -> None:
-        self.assertIn('ATTEMPT = "2/2"', self.lab)
+        self.assertIn('DEFAULT_ATTEMPT = "1/2"', self.lab)
+        self.assertIn('parser.add_argument("--attempt", default=DEFAULT_ATTEMPT)', self.lab)
+        self.assertIn('--attempt "2/2"', self.runner)
         self.assertIn("FINAL REVERENCE — ATTEMPT 2/2", self.runner)
 
     def test_pose_lab_disables_imported_action(self) -> None:
@@ -48,10 +50,10 @@ class FinalReverenceAttempt2Tests(unittest.TestCase):
         self.assertIn("final_reverence_attempt2_preview.mp4", self.runner)
         self.assertIn("low_poly_girl_final_reverence_attempt2.glb", self.runner)
 
-    def test_final_phase_contract(self) -> None:
-        self.assertIn('PHASE = "10.5.2"', self.core)
-        self.assertIn("PHASE10_5_2_FINAL_ATTEMPT=PASS", self.core)
-        self.assertIn('$data.phase -ne "10.5.2"', self.runner)
+    def test_shared_core_phase_contract_remains_compatible(self) -> None:
+        self.assertIn('PHASE = "10.4.5"', self.core)
+        self.assertIn("PHASE10_4_5=PASS", self.core)
+        self.assertIn('$data.phase -ne "10.4.5"', self.runner)
 
     def test_no_godot_runtime_scope(self) -> None:
         self.assertNotIn("humanoid_motion_controller.gd", self.runner)

@@ -23,7 +23,7 @@ from mathutils import Matrix, Quaternion, Vector
 
 
 ACTION_NAME = "Opening_Reverence_v1"
-PHASE = "10.5.2"
+PHASE = "10.4.5"
 FPS = 30
 START_FRAME = 0
 END_FRAME = 120
@@ -1267,7 +1267,7 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    print("PHASE10_5_2_FINAL_ATTEMPT=PASS")
+    print("PHASE10_4_5=PASS")
     print(f"ARMATURE={armature.name}")
     print(f"ACTION={ACTION_NAME}")
     print(f"LEG_NATIVE_IK_BAKED={report['leg_native_ik_baked']}")

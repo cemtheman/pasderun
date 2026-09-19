@@ -37,7 +37,7 @@ Write-Host "============================================"
 Write-Host ""
 
 Write-Host "[1/2] Rendering static pose evidence..."
-& $Blender --background --python $labScript -- --input $inputGlb --output $contact --report $labReport
+& $Blender --background --python $labScript -- --input $inputGlb --output $contact --report $labReport --attempt "2/2"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $lab = Get-Content $labReport -Raw | ConvertFrom-Json
@@ -51,7 +51,7 @@ Write-Host "[2/2] Rendering final reverence..."
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $data = Get-Content $report -Raw | ConvertFrom-Json
-if ($data.phase -ne "10.5.2") { throw "Final reverence phase mismatch." }
+if ($data.phase -ne "10.4.5") { throw "Final reverence phase mismatch." }
 if (-not $data.leg_native_ik_baked) { throw "Leg IK bake missing." }
 if (-not $data.arm_roll_stable_frames_baked) { throw "Arm frame bake missing." }
 if ($data.constraints_after_bake -ne 0) { throw "Constraints survived final bake." }

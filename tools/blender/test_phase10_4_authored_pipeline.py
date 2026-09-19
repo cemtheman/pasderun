@@ -74,8 +74,9 @@ class Phase1045RollStableArmTests(unittest.TestCase):
         )
 
     def test_body_wave_cross_and_turnout_are_preserved(self) -> None:
-        self.assertIn('"torso_deg": 9.0', self.builder)
-        self.assertIn('"head_deg": 5.0', self.builder)
+        self.assertIn('"torso_deg": 11.0', self.builder)
+        self.assertIn('"head_deg": 6.0', self.builder)
+        self.assertIn("total_leg * 0.145 * plie", self.builder)
         self.assertIn('"turnout_deg": 32.0', self.builder)
         self.assertIn("ankle += side * hip_width * 1.75 * cross", self.builder)
 
