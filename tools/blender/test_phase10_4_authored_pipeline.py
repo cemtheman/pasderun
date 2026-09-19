@@ -67,12 +67,17 @@ class Phase1044HybridAuthoringTests(unittest.TestCase):
         self.assertIn("finish_target = (", self.builder)
 
     def test_authoring_constraints_are_visually_baked_and_removed(self) -> None:
+        self.assertIn("def bake_authoring_constraints(", self.builder)
         self.assertIn("bpy.ops.nla.bake", self.builder)
         self.assertIn('"visual_keying": True', self.builder)
         self.assertIn('"clear_constraints": True', self.builder)
         self.assertIn("remove_controls(controls)", self.builder)
         self.assertIn('"leg_native_ik_baked": True', self.builder)
         self.assertIn('"arm_landmark_tracks_baked": True', self.builder)
+        self.assertIn(
+            'obj.name.startswith(("P1043_", "P1044_"))',
+            self.builder,
+        )
 
     def test_reverence_phrase_and_body_wave_are_preserved(self) -> None:
         for token in (

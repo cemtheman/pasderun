@@ -653,7 +653,7 @@ def select_armature_bones_for_bake(armature: bpy.types.Object) -> None:
     bpy.ops.pose.select_all(action="SELECT")
 
 
-def bake_native_ik(armature: bpy.types.Object) -> None:
+def bake_authoring_constraints(armature: bpy.types.Object) -> None:
     select_armature_bones_for_bake(armature)
     props = bpy.ops.nla.bake.get_rna_type().properties.keys()
     kwargs = {
@@ -670,7 +670,7 @@ def bake_native_ik(armature: bpy.types.Object) -> None:
     filtered = {key: value for key, value in kwargs.items() if key in props}
     result = bpy.ops.nla.bake(**filtered)
     if "FINISHED" not in result:
-        raise RuntimeError(f"Native IK bake did not finish: {result}")
+        raise RuntimeError(f"Authoring constraint bake did not finish: {result}")
     bpy.ops.object.mode_set(mode="OBJECT")
     bpy.context.view_layer.update()
 
@@ -688,7 +688,7 @@ def constraint_count(armature: bpy.types.Object) -> int:
 def temporary_controls_remaining() -> list[str]:
     return sorted(
         obj.name for obj in bpy.data.objects
-        if obj.name.startswith("P1043_")
+        if obj.name.startswith(("P1043_", "P1044_"))
     )
 
 
@@ -1107,7 +1107,7 @@ def main() -> None:
     # Leg IK and explicit arm landmark tracks evaluate continuously between
     # controls; bake their visual result and remove every authoring constraint.
     scene.frame_set(START_FRAME)
-    bake_native_ik(armature)
+    bake_authoring_constraints(armature)
     remove_controls(controls)
     configure_action_interpolation(action)
     scene.frame_set(START_FRAME)
