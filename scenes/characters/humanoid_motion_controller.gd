@@ -694,7 +694,7 @@ func _apply_stumble_overlay() -> void:
 	# They remain curved balance tools rather than turning into a flailing T-pose.
 	var arm_strength := 0.86 * smoothstep(0.16, 0.78, t)
 	for left in [true, false]:
-		var same_side_as_catch := left == _trip_uses_left_foot
+		var same_side_as_catch: bool = left == _trip_uses_left_foot
 		var side := _travel_pair_side_sign(left)
 		var shoulder := _bone_index("left_upper_arm" if left else "right_upper_arm")
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
@@ -815,7 +815,7 @@ func _apply_recovery_overlay() -> void:
 	# vanishing on the first recovery frame.
 	var arm_recovery_strength := 0.66 * (1.0 - smoothstep(0.42, 0.98, t))
 	for left in [true, false]:
-		var same_side_as_catch := left == _trip_uses_left_foot
+		var same_side_as_catch: bool = left == _trip_uses_left_foot
 		var arm_side := _travel_pair_side_sign(left)
 		_steer_segment_world_direction(
 			_bone_index("left_upper_arm" if left else "right_upper_arm"),
@@ -1033,7 +1033,7 @@ func _apply_reverence_leg_chain(
 	var audience_forward := Vector3(0.0, 0.0, 1.0)
 	for left in [true, false]:
 		var side := left_leg_side if left else right_leg_side
-		var is_working := left != support_left
+		var is_working: bool = left != support_left
 		var hip := _bone_index("left_upper_leg" if left else "right_upper_leg")
 		var knee := _bone_index("left_lower_leg" if left else "right_lower_leg")
 		var foot := left_foot if left else right_foot
@@ -1123,7 +1123,7 @@ func _apply_reverence_port_de_bras(
 		) * 0.5
 
 	for left in [true, false]:
-		var expressive := left == expressive_left
+		var expressive: bool = left == expressive_left
 		var shoulder := left_shoulder if left else right_shoulder
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
 		var hand := _bone_index("left_hand" if left else "right_hand")
