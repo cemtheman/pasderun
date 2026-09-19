@@ -186,12 +186,18 @@ func end_stage_entrance() -> void:
 	velocity = Vector3.ZERO
 
 
-func begin_stage_ending() -> void:
+func begin_stage_ending(speed: float = 0.0) -> void:
 	stage_ending_mode = true
-	stage_entrance_speed = 0.0
+	stage_entrance_speed = maxf(speed, 0.0)
 	velocity = Vector3.ZERO
 	pressing = false
 	hold_triggered = false
+
+
+func set_stage_ending_speed(speed: float) -> void:
+	if not stage_ending_mode:
+		return
+	stage_entrance_speed = maxf(speed, 0.0)
 
 
 func _physics_process_stage_entrance(delta: float) -> void:
