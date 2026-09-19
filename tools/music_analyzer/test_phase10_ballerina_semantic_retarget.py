@@ -460,8 +460,8 @@ class Phase10BallerinaSemanticRetargetTests(unittest.TestCase):
         self.assertIn('next_state = STATE_STAGE_BOW', self.visual)
 
     def test_running_stumble_is_forward_catch_step_not_a_stop(self) -> None:
-        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.58", self.dancer)
-        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.08", self.dancer)
+        self.assertIn("STUMBLE_SPEED_MULTIPLIER := 0.68", self.dancer)
+        self.assertIn("RECOVERY_SPEED_MULTIPLIER := 1.05", self.dancer)
         self.assertIn('&"STUMBLE": true', self.retarget)
         self.assertIn('&"RECOVERY": true', self.retarget)
         for token in (
