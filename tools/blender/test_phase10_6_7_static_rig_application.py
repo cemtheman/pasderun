@@ -101,15 +101,44 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
 
     def test_contact_orientation_does_not_reintroduce_full_bind_swing(self) -> None:
-        self.assertIn(
-            "desired_rig = rig_basis_from_canonical_pose(",
-            self.script,
+        full_foot_start = self.script.index(
+            "def solve_preferred_ankle_flat_contact("
         )
+        full_foot_end = self.script.index(
+            "def realize_full_foot_orientation(",
+            full_foot_start,
+        )
+        full_foot_source = self.script[
+            full_foot_start:full_foot_end
+        ]
         self.assertEqual(
-            self.script.count(
+            full_foot_source.count(
                 "desired_rig = rig_basis_from_canonical_pose("
             ),
             2,
+        )
+        self.assertNotIn(
+            "desired_rig = bind @ desired_canonical",
+            full_foot_source,
+        )
+
+        releve_start = self.script.index(
+            "def apply_releve_plantar_candidate("
+        )
+        releve_end = self.script.index(
+            "def candidate_releve_geometry(",
+            releve_start,
+        )
+        releve_source = self.script[releve_start:releve_end]
+        self.assertEqual(
+            releve_source.count(
+                "desired_rig = rig_basis_from_canonical_pose("
+            ),
+            1,
+        )
+        self.assertNotIn(
+            "desired_rig = bind @ desired_canonical",
+            releve_source,
         )
 
     def test_full_foot_contact_has_orientation_realization_before_root_shift(self) -> None:
