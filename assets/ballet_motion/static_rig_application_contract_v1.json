@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "phase": "10.6.7",
+  "contract_id": "static_rig_application_contact_proof_v1",
+  "policy": {
+    "source_pose_profile": "Phase 10.6.6 calibrated rig orientation retarget",
+    "application_target": "original low_poly_girl armature imported from immutable source GLB",
+    "animation_data_must_be_cleared": true,
+    "apply_via_pose_bone_matrix_basis": true,
+    "euler_application_forbidden": true,
+    "ik_constraints_forbidden": true,
+    "mesh_contact_proof_required_for_lower_body_poses": true,
+    "contact_vertices_source": "Foot/Toes vertex groups on deformed mesh",
+    "visual_render_forbidden": true,
+    "animation_forbidden": true,
+    "glb_export_forbidden": true,
+    "source_glb_mutation_forbidden": true
+  },
+  "contact_sampling": {
+    "minimum_vertex_group_weight": 0.15,
+    "rear_fraction": 0.35,
+    "fore_fraction": 0.35,
+    "low_height_quantile": 0.1
+  },
+  "root_translation_modes": {
+    "bras_bas": "KEEP_REST",
+    "en_avant": "KEEP_REST",
+    "second": "KEEP_REST",
+    "fifth": "SOLVE_FULL_FOOT_CONTACT",
+    "plie": "SOLVE_FULL_FOOT_CONTACT",
+    "releve": "SOLVE_FOREFOOT_CONTACT"
+  },
+  "proof_thresholds": {
+    "local_rotation_matrix_error_max": 0.00001,
+    "absolute_rotation_matrix_error_max": 0.00005,
+    "contact_error_max_foot_length_fraction": 0.06,
+    "fifth_root_shift_max_leg_length_fraction": 0.08,
+    "plie_descent_relative_error_max": 0.4,
+    "plie_descent_absolute_leg_fraction_max": 0.08,
+    "releve_heel_lift_relative_error_max": 0.45,
+    "releve_heel_lift_absolute_foot_fraction_max": 0.2,
+    "releve_heel_must_rise_min_foot_fraction": 0.05
+  }
+}
