@@ -193,9 +193,13 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             "No exact two-bone elbow solution satisfies pose geometry",
             self.solver,
         )
+        normalized_solver = " ".join(
+            line.strip().lstrip("#").strip()
+            for line in self.solver.splitlines()
+        )
         self.assertIn(
             "grammar inequalities decide which geometric solutions are admissible",
-            self.solver,
+            normalized_solver,
         )
 
     def test_foundation_pose_requires_preferred_not_soft_joint_envelope(self) -> None:
