@@ -84,6 +84,68 @@ def _bind_basis(bone: dict) -> list[list[float]]:
     )
 
 
+SEMANTIC_LENGTH_AXIS_JOINT_CLASSES = {
+    "shoulder_ball",
+    "elbow_twist",
+    "wrist_2dof",
+    "hip_ball",
+    "knee_hinge",
+    "ankle_2dof",
+    "mtp_hinge",
+}
+
+
+def _semantic_roll_offset_y(bone: dict) -> float:
+    """Extract only calibrated rest roll around the canonical length axis.
+
+    The full canonical-to-rig bind may contain a rest-pose swing because the
+    imported model's rest limb direction is not the semantic canonical rest
+    direction. Applying that full swing to an already solved absolute pose
+    rotates the requested shoulder->elbow / hip->knee direction a second time.
+    Keep only the axial roll component here.
+    """
+    canonical_rest = _rest_basis(bone)
+    rig_rest = _rig_rest_basis(bone)
+    relative = mat_mul(transpose(canonical_rest), rig_rest)
+    numerator = float(relative[0][2]) - float(relative[2][0])
+    denominator = float(relative[0][0]) + float(relative[2][2])
+    return math.degrees(math.atan2(numerator, denominator))
+
+
+def _rig_target_from_canonical_pose(
+    canonical_pose: list[list[float]],
+    bone: dict,
+    preserve_semantic_length_axis: bool,
+) -> tuple[list[list[float]], str, float]:
+    if (
+        preserve_semantic_length_axis
+        and bone["joint_class"] in SEMANTIC_LENGTH_AXIS_JOINT_CLASSES
+    ):
+        roll_deg = _semantic_roll_offset_y(bone)
+        desired = mat_mul(
+            canonical_pose,
+            axis_rotation("Y", roll_deg),
+        )
+        return desired, "SEMANTIC_LENGTH_AXIS_PRESERVED", roll_deg
+
+    desired = mat_mul(_bind_basis(bone), canonical_pose)
+    return desired, "FULL_REST_BIND", 0.0
+
+
+def _canonical_roundtrip_from_rig_target(
+    rig_target: list[list[float]],
+    bone: dict,
+    retarget_mode: str,
+    semantic_roll_offset_deg: float,
+) -> list[list[float]]:
+    if retarget_mode == "SEMANTIC_LENGTH_AXIS_PRESERVED":
+        return mat_mul(
+            rig_target,
+            axis_rotation("Y", -semantic_roll_offset_deg),
+        )
+    return mat_mul(transpose(_bind_basis(bone)), rig_target)
+
+
 def _topological_order(canonical_profile: dict) -> list[str]:
     bones = canonical_profile["canonical_bones"]
     remaining = set(bones)
@@ -432,6 +494,7 @@ def _rig_pose_from_canonical(
     canonical_pose_bases: dict,
     canonical_profile: dict,
     thresholds: dict,
+    preserve_semantic_length_axis: bool = False,
 ) -> tuple[dict, dict]:
     bones = canonical_profile["canonical_bones"]
     order = _topological_order(canonical_profile)
@@ -441,9 +504,14 @@ def _rig_pose_from_canonical(
     for name in order:
         bone = bones[name]
         canonical_pose = canonical_pose_bases[name]
-        bind = _bind_basis(bone)
         rig_rest = _rig_rest_basis(bone)
-        desired = mat_mul(bind, canonical_pose)
+        desired, retarget_mode, semantic_roll_offset_deg = (
+            _rig_target_from_canonical_pose(
+                canonical_pose,
+                bone,
+                preserve_semantic_length_axis,
+            )
+        )
 
         validate_rotation_matrix(
             desired,
@@ -452,7 +520,12 @@ def _rig_pose_from_canonical(
             thresholds["determinant_max"],
         )
 
-        roundtrip = mat_mul(transpose(bind), desired)
+        roundtrip = _canonical_roundtrip_from_rig_target(
+            desired,
+            bone,
+            retarget_mode,
+            semantic_roll_offset_deg,
+        )
         roundtrip_error = matrix_max_error(roundtrip, canonical_pose)
         if roundtrip_error > float(thresholds["bind_roundtrip_max_error"]):
             raise RigRetargetRejected(
@@ -490,8 +563,23 @@ def _rig_pose_from_canonical(
             thresholds["determinant_max"],
         )
 
+        canonical_y = normalize(
+            [canonical_pose[row][1] for row in range(3)]
+        )
+        desired_y = normalize([desired[row][1] for row in range(3)])
+        semantic_length_alignment = (
+            dot(canonical_y, desired_y)
+            if retarget_mode == "SEMANTIC_LENGTH_AXIS_PRESERVED"
+            else None
+        )
+
         rig_pose[name] = {
             "rig_bone": bone["rig_bone"],
+            "retarget_mode": retarget_mode,
+            "semantic_roll_offset_deg": round(
+                float(semantic_roll_offset_deg),
+                8,
+            ),
             "armature_basis_raw": desired,
             "armature_basis": rounded_matrix(desired),
             "local_pose_delta_matrix": rounded_matrix(local_delta),
@@ -502,6 +590,12 @@ def _rig_pose_from_canonical(
         evidence[name] = {
             "canonical_roundtrip_error": round(roundtrip_error, 10),
             "hierarchy_reconstruction_error": round(hierarchy_error, 10),
+            "retarget_mode": retarget_mode,
+            "semantic_length_axis_alignment_dot": (
+                round(float(semantic_length_alignment), 10)
+                if semantic_length_alignment is not None
+                else None
+            ),
         }
 
     return rig_pose, evidence
@@ -617,7 +711,25 @@ def retarget_pose_solution(
         canonical_bases,
         canonical_profile,
         thresholds,
+        preserve_semantic_length_axis=True,
     )
+    semantic_length_alignment = {
+        name: item["semantic_length_axis_alignment_dot"]
+        for name, item in rig_evidence.items()
+        if item["semantic_length_axis_alignment_dot"] is not None
+    }
+    semantic_minimum = float(
+        thresholds["semantic_limb_length_axis_alignment_min_dot"]
+    )
+    if any(
+        value < semantic_minimum
+        for value in semantic_length_alignment.values()
+    ):
+        raise RigRetargetRejected(
+            "Semantic limb length-axis preservation failed: "
+            f"{semantic_length_alignment}"
+        )
+
     arm_alignment = _arm_alignment_evidence(
         state,
         canonical_bases,
@@ -706,6 +818,10 @@ def retarget_pose_solution(
             "hand_wrist_solution": hand_wrist_evidence,
             "hand_semantic_direction_is_preference": True,
             "hand_wrist_preferred_envelope_pass": True,
+            "semantic_limb_length_axis_alignment_dot": (
+                semantic_length_alignment
+            ),
+            "semantic_limb_length_axis_preservation_pass": True,
             "orientation_retarget_only": True,
             "root_translation_applied": False,
             "contact_translation_applied": False,

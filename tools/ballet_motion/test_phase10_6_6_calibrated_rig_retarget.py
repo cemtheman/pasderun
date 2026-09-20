@@ -521,6 +521,56 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             hand_path,
         )
 
+    def test_semantic_limb_retarget_preserves_solved_length_axis(self) -> None:
+        self.assertTrue(
+            self.contract["policy"][
+                "semantic_limb_length_axis_preservation_required"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "rest_bind_swing_may_not_rotate_solved_limb_length_axis"
+            ]
+        )
+        self.assertEqual(
+            self.contract["thresholds"][
+                "semantic_limb_length_axis_alignment_min_dot"
+            ],
+            0.99999,
+        )
+        self.assertIn(
+            "def _semantic_roll_offset_y(",
+            self.retarget,
+        )
+        self.assertIn(
+            '"SEMANTIC_LENGTH_AXIS_PRESERVED"',
+            self.retarget,
+        )
+        self.assertIn(
+            "semantic_limb_length_axis_preservation_pass",
+            self.retarget,
+        )
+
+    def test_semantic_mapping_uses_only_local_y_roll_not_full_bind_swing(self) -> None:
+        start = self.retarget.index(
+            "def _rig_target_from_canonical_pose("
+        )
+        end = self.retarget.index(
+            "def _canonical_roundtrip_from_rig_target(",
+            start,
+        )
+        source = self.retarget[start:end]
+        self.assertIn(
+            'axis_rotation("Y", roll_deg)',
+            source,
+        )
+        self.assertNotIn(
+            "mat_mul(_bind_basis(bone), canonical_pose)",
+            source.split(
+                'return desired, "SEMANTIC_LENGTH_AXIS_PRESERVED"'
+            )[0],
+        )
+
     def test_retarget_outputs_parent_relative_matrix_and_quaternion(self) -> None:
         self.assertIn('"local_pose_delta_matrix"', self.retarget)
         self.assertIn(
@@ -584,6 +634,14 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         )
         self.assertIn(
             "Hand wrist preferred-envelope gate failed.",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.gate.semantic_limb_length_axis_preservation_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Semantic limb length-axis preservation gate failed.",
             self.wrapper,
         )
 

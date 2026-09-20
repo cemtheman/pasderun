@@ -18,7 +18,10 @@
     "contact_translation_applied": false,
     "blender_application_forbidden": true,
     "render_forbidden": true,
-    "animation_forbidden": true
+    "animation_forbidden": true,
+    "semantic_limb_length_axis_preservation_required": true,
+    "rest_bind_swing_may_not_rotate_solved_limb_length_axis": true,
+    "rest_bind_roll_component_may_be_preserved": true
   },
   "composition": {
     "convention": "POSTMULTIPLY_LOCAL_ROTATIONS_IN_LISTED_ORDER",
@@ -117,7 +120,8 @@
     "bind_roundtrip_max_error": 0.00001,
     "hierarchy_reconstruction_max_error": 0.00001,
     "arm_length_axis_alignment_min_dot": 0.99999,
-    "rest_identity_max_error": 0.00001
+    "rest_identity_max_error": 0.00001,
+    "semantic_limb_length_axis_alignment_min_dot": 0.99999
   },
   "scalar_orientation_routes": {
     "trunk_tilt_deg": {

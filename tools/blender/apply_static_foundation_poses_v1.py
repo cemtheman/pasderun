@@ -19,6 +19,16 @@ from mathutils import Matrix, Vector
 
 PHASE = "10.6.7"
 
+SEMANTIC_LENGTH_AXIS_JOINT_CLASSES = {
+    "shoulder_ball",
+    "elbow_twist",
+    "wrist_2dof",
+    "hip_ball",
+    "knee_hinge",
+    "ankle_2dof",
+    "mtp_hinge",
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -62,6 +72,53 @@ def normalized_basis(matrix: Matrix) -> Matrix:
     if result.determinant() < 0.0:
         raise RuntimeError("Pose basis is not right-handed.")
     return result
+
+
+def rotation_y(angle_deg: float) -> Matrix:
+    angle = math.radians(float(angle_deg))
+    c = math.cos(angle)
+    s = math.sin(angle)
+    return Matrix(
+        (
+            (c, 0.0, s),
+            (0.0, 1.0, 0.0),
+            (-s, 0.0, c),
+        )
+    )
+
+
+def semantic_roll_offset_y(canonical_bone: dict) -> float:
+    canonical_rest = matrix3(
+        canonical_bone["canonical_rest_contract"]["basis_armature_local"]
+    )
+    rig_rest = matrix3(
+        canonical_bone["rig_rest_basis_armature_local"]
+    )
+    relative = canonical_rest.transposed() @ rig_rest
+    numerator = float(relative[0][2]) - float(relative[2][0])
+    denominator = float(relative[0][0]) + float(relative[2][2])
+    return math.degrees(math.atan2(numerator, denominator))
+
+
+def rig_basis_from_canonical_pose(
+    canonical_bone: dict,
+    canonical_basis: Matrix,
+) -> Matrix:
+    if (
+        canonical_bone["joint_class"]
+        in SEMANTIC_LENGTH_AXIS_JOINT_CLASSES
+    ):
+        return (
+            canonical_basis
+            @ rotation_y(semantic_roll_offset_y(canonical_bone))
+        )
+
+    bind = matrix3(
+        canonical_bone["retarget_bind"][
+            "canonical_to_rig_rotation_matrix"
+        ]
+    )
+    return bind @ canonical_basis
 
 
 def quantile(values: list[float], fraction: float) -> float:
@@ -259,12 +316,21 @@ def canonical_basis_from_rig_pose(
     pose_bone: bpy.types.PoseBone,
     canonical_bone: dict,
 ) -> Matrix:
+    rig_basis = normalized_basis(pose_bone.matrix)
+    if (
+        canonical_bone["joint_class"]
+        in SEMANTIC_LENGTH_AXIS_JOINT_CLASSES
+    ):
+        return (
+            rig_basis
+            @ rotation_y(-semantic_roll_offset_y(canonical_bone))
+        )
+
     bind = matrix3(
         canonical_bone["retarget_bind"][
             "canonical_to_rig_rotation_matrix"
         ]
     )
-    rig_basis = normalized_basis(pose_bone.matrix)
     return bind.transposed() @ rig_basis
 
 
@@ -570,12 +636,10 @@ def realize_full_foot_orientation(
         )
         desired_canonical = solution["basis"]
 
-        bind = matrix3(
-            bone["retarget_bind"][
-                "canonical_to_rig_rotation_matrix"
-            ]
+        desired_rig = rig_basis_from_canonical_pose(
+            bone,
+            desired_canonical,
         )
-        desired_rig = bind @ desired_canonical
         apply_absolute_rig_rotation_via_matrix_basis(
             armature,
             rig_name,
@@ -718,12 +782,10 @@ def apply_releve_plantar_candidate(
             inversion,
             side,
         )
-        bind = matrix3(
-            bone["retarget_bind"][
-                "canonical_to_rig_rotation_matrix"
-            ]
+        desired_rig = rig_basis_from_canonical_pose(
+            bone,
+            desired_canonical,
         )
-        desired_rig = bind @ desired_canonical
         apply_absolute_rig_rotation_via_matrix_basis(
             armature,
             bone["rig_bone"],

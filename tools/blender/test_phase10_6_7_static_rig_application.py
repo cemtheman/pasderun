@@ -78,6 +78,40 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn('"rear":', self.script)
         self.assertIn('"fore":', self.script)
 
+    def test_semantic_limb_mapping_preserves_length_axis_in_blender(self) -> None:
+        self.assertIn(
+            "SEMANTIC_LENGTH_AXIS_JOINT_CLASSES",
+            self.script,
+        )
+        self.assertIn(
+            "def semantic_roll_offset_y(",
+            self.script,
+        )
+        self.assertIn(
+            "def rig_basis_from_canonical_pose(",
+            self.script,
+        )
+        self.assertIn(
+            "@ rotation_y(semantic_roll_offset_y(canonical_bone))",
+            self.script,
+        )
+        self.assertIn(
+            "@ rotation_y(-semantic_roll_offset_y(canonical_bone))",
+            self.script,
+        )
+
+    def test_contact_orientation_does_not_reintroduce_full_bind_swing(self) -> None:
+        self.assertIn(
+            "desired_rig = rig_basis_from_canonical_pose(",
+            self.script,
+        )
+        self.assertEqual(
+            self.script.count(
+                "desired_rig = rig_basis_from_canonical_pose("
+            ),
+            2,
+        )
+
     def test_full_foot_contact_has_orientation_realization_before_root_shift(self) -> None:
         self.assertTrue(
             self.contract["policy"][
