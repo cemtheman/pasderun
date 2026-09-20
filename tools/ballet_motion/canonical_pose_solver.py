@@ -411,10 +411,55 @@ def _hand_mesh_spacing_contract(
         "minimum_gap": scale_length * minimum_fraction,
         "maximum_gap": scale_length * maximum_fraction,
         "hand_landmark_clearance_fraction": clearance_fraction,
-        "hand_landmark_minimum_side_offset": (
+        "hand_landmark_target_side_offset": (
             scale_length * clearance_fraction
         ),
     }
+
+
+def _direction_with_exact_hand_side_offset(
+    shoulder: list[float],
+    wrist_distance: float,
+    hand_direction: list[float],
+    hand_length: float,
+    preferred_direction: list[float],
+    side_sign: float,
+    hand_target_side_offset: float,
+) -> list[float]:
+    target_hand_left = side_sign * float(hand_target_side_offset)
+    target_wrist_left = (
+        target_hand_left
+        - float(hand_direction[0]) * float(hand_length)
+    )
+    lateral_component = (
+        target_wrist_left - float(shoulder[0])
+    ) / float(wrist_distance)
+
+    if abs(lateral_component) >= 1.0 - 1e-12:
+        raise PoseSolveRejected(
+            "Exact hand-side target is unreachable at fixed "
+            f"shoulder-wrist distance: lateral={lateral_component}."
+        )
+
+    preferred_up = float(preferred_direction[1])
+    preferred_front = float(preferred_direction[2])
+    projected_length = math.sqrt(
+        preferred_up * preferred_up
+        + preferred_front * preferred_front
+    )
+    if projected_length <= 1e-12:
+        raise PoseSolveRejected(
+            "Preferred wrist direction has degenerate up/front projection."
+        )
+
+    residual = math.sqrt(
+        max(0.0, 1.0 - lateral_component * lateral_component)
+    )
+    return [
+        lateral_component,
+        residual * preferred_up / projected_length,
+        residual * preferred_front / projected_length,
+    ]
 
 
 def _arm_geometry(
@@ -539,7 +584,32 @@ def _arm_geometry(
         wrist = None
         elbow = None
         hand = None
-        for direction in _candidate_unit_directions(preferred_direction):
+
+        if centerline_policy == "HAND_MESH_NEAR_TOUCH_NOT_CROSS":
+            if hand_mesh_contract is None:
+                raise PoseSolveRejected(
+                    f"{pose_name}: hand-mesh spacing contract missing."
+                )
+            exact_direction = _direction_with_exact_hand_side_offset(
+                shoulder,
+                wrist_distance,
+                hand_direction,
+                hand_length,
+                preferred_direction,
+                sign,
+                float(
+                    hand_mesh_contract[
+                        "hand_landmark_target_side_offset"
+                    ]
+                ),
+            )
+            direction_candidates = [exact_direction]
+        else:
+            direction_candidates = _candidate_unit_directions(
+                preferred_direction
+            )
+
+        for direction in direction_candidates:
             candidate_wrist = _add(
                 shoulder,
                 _scale(direction, wrist_distance),
@@ -560,25 +630,26 @@ def _arm_geometry(
             ):
                 if sign * float(candidate_wrist[0]) < -1e-9:
                     continue
-                minimum_hand_side_offset = 0.0
                 if (
                     centerline_policy
                     == "HAND_MESH_NEAR_TOUCH_NOT_CROSS"
                 ):
-                    if hand_mesh_contract is None:
-                        raise PoseSolveRejected(
-                            f"{pose_name}: hand-mesh spacing contract missing."
-                        )
-                    minimum_hand_side_offset = float(
+                    target_hand_side_offset = float(
                         hand_mesh_contract[
-                            "hand_landmark_minimum_side_offset"
+                            "hand_landmark_target_side_offset"
                         ]
                     )
-                if (
-                    sign * float(candidate_hand[0])
-                    < minimum_hand_side_offset - 1e-9
-                ):
-                    continue
+                    realized_hand_side_offset = (
+                        sign * float(candidate_hand[0])
+                    )
+                    if (
+                        abs(
+                            realized_hand_side_offset
+                            - target_hand_side_offset
+                        )
+                        > 1e-8
+                    ):
+                        continue
 
             elbow_constraints = _arm_elbow_constraints(
                 pose_name,

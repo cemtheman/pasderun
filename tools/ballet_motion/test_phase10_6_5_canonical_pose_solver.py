@@ -366,7 +366,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 0.0,
             )
             self.assertEqual(
-                contract["hand_landmark_minimum_side_offset"],
+                contract["hand_landmark_target_side_offset"],
                 0.0,
             )
         self.assertIn(
@@ -375,6 +375,61 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 "hand_mesh_proximal_clearance_strategy"
             ],
         )
+
+    def test_hand_mesh_clearance_uses_continuous_exact_lateral_parameterization(self) -> None:
+        source = (
+            ROOT / "tools" / "ballet_motion" / "canonical_pose_solver.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "def _direction_with_exact_hand_side_offset(",
+            source,
+        )
+        self.assertIn(
+            "direction_candidates = [exact_direction]",
+            source,
+        )
+        self.assertIn(
+            '"hand_landmark_target_side_offset"',
+            source,
+        )
+        self.assertNotIn(
+            '"hand_landmark_minimum_side_offset"',
+            source,
+        )
+
+        for pose in ("bras_bas", "en_avant"):
+            varied = json.loads(json.dumps(self.intents))
+            fraction = 0.35
+            varied["poses"][pose][
+                "hand_landmark_centerline_clearance_chain_fraction"
+            ] = fraction
+            result = solve_pose(
+                pose,
+                varied,
+                self.grammar,
+                self.canonical,
+                self.constraints,
+            )
+            state = result["state"]
+            contract = state["hand_mesh_spacing_contract"]
+            target = contract["scale_length"] * fraction
+            self.assertAlmostEqual(
+                contract["hand_landmark_target_side_offset"],
+                target,
+                places=12,
+            )
+            for side, sign in (("left", 1.0), ("right", -1.0)):
+                realized = (
+                    sign
+                    * float(
+                        state["landmarks"][f"{side}_hand"]["left"]
+                    )
+                )
+                self.assertAlmostEqual(
+                    realized,
+                    target,
+                    places=8,
+                )
 
     def test_plie_travel_is_moderate_not_deep_crossing_setup(self) -> None:
         plie = self.intents["poses"]["plie"]

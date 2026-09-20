@@ -402,6 +402,20 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             "min(left_side_offset,right_side_offset,bilateral_gap-minimum_gap)",
         )
         self.assertEqual(
+            runtime_solver["canonical_parameterization"],
+            "EXACT_HAND_LANDMARK_SIDE_OFFSET_WITH_FIXED_SEMANTIC_UP_FRONT_RATIO",
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_runtime_clearance_parameterization_continuous"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_runtime_clearance_fibonacci_direction_sampling_forbidden"
+            ]
+        )
+        self.assertEqual(
             runtime_solver["upper_constraint"],
             "bilateral_gap<=maximum_gap",
         )

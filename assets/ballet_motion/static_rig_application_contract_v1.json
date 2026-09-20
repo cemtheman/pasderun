@@ -41,7 +41,9 @@
     "hand_mesh_runtime_clearance_not_authored": true,
     "hand_mesh_runtime_solver_reuses_phase_10_6_5_and_10_6_6": true,
     "hand_mesh_secondary_wrist_trim_forbidden": true,
-    "hand_mesh_retarget_wrist_seed_preserved_required": true
+    "hand_mesh_retarget_wrist_seed_preserved_required": true,
+    "hand_mesh_runtime_clearance_parameterization_continuous": true,
+    "hand_mesh_runtime_clearance_fibonacci_direction_sampling_forbidden": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -106,6 +108,7 @@
     "monotonicity_required": true,
     "feasibility_margin_epsilon": 0.000001,
     "constraint_function": "min(left_side_offset,right_side_offset,bilateral_gap-minimum_gap)",
-    "upper_constraint": "bilateral_gap<=maximum_gap"
+    "upper_constraint": "bilateral_gap<=maximum_gap",
+    "canonical_parameterization": "EXACT_HAND_LANDMARK_SIDE_OFFSET_WITH_FIXED_SEMANTIC_UP_FRONT_RATIO"
   }
 }
