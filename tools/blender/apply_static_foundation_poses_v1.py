@@ -1416,7 +1416,10 @@ def main() -> None:
             require(
                 proof["max_abs_error"] <= contact_tolerance,
                 f"{pose_name}: contact error {proof['max_abs_error']} "
-                f"> tolerance {contact_tolerance}.",
+                f"> tolerance {contact_tolerance}; "
+                f"errors={proof['errors']}; "
+                f"root_shift={shift}; "
+                f"full_foot_orientation={contact_orientation}.",
             )
 
         consistency = {}
