@@ -43,7 +43,9 @@
     "hand_mesh_secondary_wrist_trim_forbidden": true,
     "hand_mesh_retarget_wrist_seed_preserved_required": true,
     "hand_mesh_runtime_clearance_parameterization_continuous": true,
-    "hand_mesh_runtime_clearance_fibonacci_direction_sampling_forbidden": true
+    "hand_mesh_runtime_clearance_fibonacci_direction_sampling_forbidden": true,
+    "hand_mesh_runtime_bilateral_side_specific_solution_allowed": true,
+    "hand_mesh_runtime_final_pose_must_pass_bilateral_mirror_grammar": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -100,15 +102,16 @@
     "independent_axial_roll_forbidden": true
   },
   "hand_mesh_runtime_clearance_solver": {
-    "method": "BOUNDED_BISECTION_ON_FEASIBILITY_MARGIN",
+    "method": "SEPARABLE_BILATERAL_BOUNDED_BISECTION",
     "feasibility_iterations": 28,
     "root_iterations": 20,
-    "root_target": "FIRST_FEASIBLE_CLEARANCE_SATISFYING_BILATERAL_GAP_AND_NONCROSSING",
+    "root_target": "PROJECT_DECLARED_GAP_MIDPOINT_INTO_ACHIEVABLE_BILATERAL_SIDE_INTERVALS",
     "physical_upper_bound": "DERIVED_FROM_CANONICAL_SHOULDER_HALF_WIDTH_PLUS_FULL_ARM_AND_HAND_REACH",
     "monotonicity_required": true,
     "feasibility_margin_epsilon": 0.000001,
-    "constraint_function": "min(left_side_offset,right_side_offset,bilateral_gap-minimum_gap)",
-    "upper_constraint": "bilateral_gap<=maximum_gap",
-    "canonical_parameterization": "EXACT_HAND_LANDMARK_SIDE_OFFSET_WITH_FIXED_SEMANTIC_UP_FRONT_RATIO"
+    "constraint_function": "left_side>=0,right_side>=0,minimum_gap<=left_side+right_side<=maximum_gap",
+    "canonical_parameterization": "INDEPENDENT_EXACT_LEFT_RIGHT_HAND_LANDMARK_SIDE_OFFSETS",
+    "side_probe_strategy": "COMMON_CLEARANCE_PROBES_ISOLATE_EACH_ARM_RESPONSE_THEN_FINAL_SIDE_SPECIFIC_POSE_IS_VALIDATED",
+    "wrist_retarget": "PHASE_10_6_6_ANALYTIC_RECTANGULAR_PROJECTION"
   }
 }

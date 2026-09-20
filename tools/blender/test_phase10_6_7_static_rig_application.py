@@ -357,7 +357,7 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         ]
         self.assertEqual(
             runtime_solver["method"],
-            "BOUNDED_BISECTION_ON_FEASIBILITY_MARGIN",
+            "SEPARABLE_BILATERAL_BOUNDED_BISECTION",
         )
         self.assertEqual(runtime_solver["feasibility_iterations"], 28)
         self.assertEqual(runtime_solver["root_iterations"], 20)
@@ -399,11 +399,11 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertEqual(
             runtime_solver["constraint_function"],
-            "min(left_side_offset,right_side_offset,bilateral_gap-minimum_gap)",
+            "left_side>=0,right_side>=0,minimum_gap<=left_side+right_side<=maximum_gap",
         )
         self.assertEqual(
             runtime_solver["canonical_parameterization"],
-            "EXACT_HAND_LANDMARK_SIDE_OFFSET_WITH_FIXED_SEMANTIC_UP_FRONT_RATIO",
+            "INDEPENDENT_EXACT_LEFT_RIGHT_HAND_LANDMARK_SIDE_OFFSETS",
         )
         self.assertTrue(
             self.contract["policy"][
@@ -415,9 +415,31 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
                 "hand_mesh_runtime_clearance_fibonacci_direction_sampling_forbidden"
             ]
         )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_runtime_bilateral_side_specific_solution_allowed"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_runtime_final_pose_must_pass_bilateral_mirror_grammar"
+            ]
+        )
+        self.assertIn(
+            "solved_clearance_fraction_by_side",
+            self.script,
+        )
+        self.assertIn(
+            "target_side_offsets",
+            self.script,
+        )
         self.assertEqual(
-            runtime_solver["upper_constraint"],
-            "bilateral_gap<=maximum_gap",
+            runtime_solver["wrist_retarget"],
+            "PHASE_10_6_6_ANALYTIC_RECTANGULAR_PROJECTION",
+        )
+        self.assertEqual(
+            runtime_solver["side_probe_strategy"],
+            "COMMON_CLEARANCE_PROBES_ISOLATE_EACH_ARM_RESPONSE_THEN_FINAL_SIDE_SPECIFIC_POSE_IS_VALIDATED",
         )
         self.assertTrue(
             self.contract["policy"][
