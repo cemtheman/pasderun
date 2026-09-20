@@ -12,7 +12,7 @@
     "animation_forbidden_in_this_phase": true,
     "arm_centerline_policy": "bras_bas and en_avant keep wrist/hand landmarks on their own side; final near-touch spacing is owned by Phase 10.6.7 deformed hand mesh; Middle_L/Middle_R are diagnostic only",
     "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length",
-    "hand_mesh_proximal_clearance_strategy": "preserve semantic wrist direction and rounded elbow opening; canonical hand landmark keeps a scale-relative medial-mesh clearance corridor; Phase 10.6.7 preferred-only deformed-mesh wrist solve performs final near-touch trim"
+    "hand_mesh_proximal_clearance_strategy": "no authored clearance constant; Phase 10.6.7 derives the minimal feasible canonical hand-landmark clearance by bounded root solving against the deformed hand mesh, then performs preferred-only wrist trim"
   },
   "poses": {
     "bras_bas": {
@@ -52,8 +52,7 @@
       "hand_mesh_gap_chain_fraction": {
         "min": 0.03,
         "max": 0.1
-      },
-      "hand_landmark_centerline_clearance_chain_fraction": 0.3
+      }
     },
     "en_avant": {
       "kind": "symmetric_arm_chain",
@@ -92,8 +91,7 @@
       "hand_mesh_gap_chain_fraction": {
         "min": 0.03,
         "max": 0.1
-      },
-      "hand_landmark_centerline_clearance_chain_fraction": 0.3
+      }
     },
     "second": {
       "kind": "symmetric_arm_chain",

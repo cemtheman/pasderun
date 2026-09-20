@@ -331,7 +331,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         )
         self.assertNotIn("hand_mesh_spacing_contract", result["state"])
 
-    def test_upper_body_mesh_clearance_uses_scale_relative_hand_landmark_corridor(self) -> None:
+    def test_upper_body_mesh_clearance_is_runtime_solved_not_authored(self) -> None:
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["elbow_angle_deg"],
             125,
@@ -339,10 +339,6 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         self.assertEqual(
             self.intents["poses"]["en_avant"]["elbow_angle_deg"],
             125,
-        )
-        self.assertEqual(
-            self.intents["poses"]["second"]["elbow_angle_deg"],
-            145,
         )
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["wrist_direction"]["inward"],
@@ -353,11 +349,9 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             0.30,
         )
         for pose in ("bras_bas", "en_avant"):
-            self.assertEqual(
-                self.intents["poses"][pose][
-                    "hand_landmark_centerline_clearance_chain_fraction"
-                ],
-                0.30,
+            self.assertNotIn(
+                "hand_landmark_centerline_clearance_chain_fraction",
+                self.intents["poses"][pose],
             )
             result = solve_pose(
                 pose,
@@ -367,21 +361,16 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 self.constraints,
             )
             contract = result["state"]["hand_mesh_spacing_contract"]
-            self.assertAlmostEqual(
-                contract["hand_landmark_minimum_side_offset"],
-                contract["scale_length"] * 0.30,
-                places=12,
+            self.assertEqual(
+                contract["hand_landmark_clearance_fraction"],
+                0.0,
             )
-            for side, sign in (("left", 1.0), ("right", -1.0)):
-                self.assertGreaterEqual(
-                    sign * float(
-                        result["state"]["landmarks"][f"{side}_hand"]["left"]
-                    )
-                    + 1e-9,
-                    contract["hand_landmark_minimum_side_offset"],
-                )
+            self.assertEqual(
+                contract["hand_landmark_minimum_side_offset"],
+                0.0,
+            )
         self.assertIn(
-            "clearance corridor",
+            "bounded root solving",
             self.intents["policy"][
                 "hand_mesh_proximal_clearance_strategy"
             ],

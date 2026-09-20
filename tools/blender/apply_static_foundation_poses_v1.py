@@ -7,6 +7,7 @@ actual imported low_poly_girl armature. It does not render or export.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -37,6 +38,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--retarget-profile", required=True)
     parser.add_argument("--constraint-profile", required=True)
     parser.add_argument("--retarget-axis-contract", required=True)
+    parser.add_argument("--grammar-profile", required=True)
+    parser.add_argument("--intent-spec", required=True)
     parser.add_argument("--contract", required=True)
     parser.add_argument("--output", required=True)
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1:])
@@ -1615,23 +1618,6 @@ def solve_hand_mesh_wrist_side(
 
     interval_error = float(best["interval_error"])
     status = "PASS" if interval_error <= epsilon else "FAIL"
-    scale_length = float(spacing["scale_length"])
-    current_clearance_fraction = float(
-        spacing.get("hand_landmark_clearance_fraction", 0.0)
-    )
-    recommended_clearance_fraction = current_clearance_fraction
-    if (
-        status == "FAIL"
-        and float(final_measurement["side_offset"])
-        < minimum_side_offset
-        and scale_length > 1e-12
-    ):
-        shortfall = (
-            minimum_side_offset
-            - float(final_measurement["side_offset"])
-        )
-        recommended_clearance_fraction += shortfall / scale_length
-
     return {
         "required": True,
         "status": status,
@@ -1663,14 +1649,6 @@ def solve_hand_mesh_wrist_side(
         "minimum_side_offset": round(minimum_side_offset, 8),
         "maximum_side_offset": round(maximum_side_offset, 8),
         "interval_error": round(interval_error, 8),
-        "current_hand_landmark_clearance_fraction": round(
-            current_clearance_fraction,
-            8,
-        ),
-        "recommended_hand_landmark_clearance_fraction": round(
-            recommended_clearance_fraction,
-            8,
-        ),
         "preferred_envelope": {
             "flexion_extension": {"min": fmin, "max": fmax},
             "radial_ulnar_deviation": {"min": dmin, "max": dmax},
@@ -1785,6 +1763,279 @@ def realized_hand_mesh_centerline_spacing(
     }
 
 
+def load_ballet_motion_runtime_modules(repo: Path):
+    tools_dir = repo / "tools" / "ballet_motion"
+    if str(tools_dir) not in sys.path:
+        sys.path.insert(0, str(tools_dir))
+
+    import canonical_pose_solver as pose_solver
+    import calibrated_rig_retarget as retarget_solver
+
+    return pose_solver, retarget_solver
+
+
+def runtime_clearance_physical_upper_bound(
+    canonical: dict,
+    pose_solver,
+) -> float:
+    dimensions = pose_solver._canonical_dimensions(canonical)
+    maximum_hand_side_offset = (
+        float(dimensions["shoulder_half_width"])
+        + float(dimensions["upper_arm"])
+        + float(dimensions["forearm"])
+        + float(dimensions["hand"])
+    )
+    scale_length = float(dimensions["hand_middle_chain"])
+    if scale_length <= 1e-12:
+        raise RuntimeError("Degenerate hand-middle scale length.")
+    return maximum_hand_side_offset / scale_length
+
+
+def solve_runtime_hand_mesh_pose(
+    armature: bpy.types.Object,
+    canonical: dict,
+    constraints: dict,
+    retarget_axis_contract: dict,
+    grammar_profile: dict,
+    intent_spec: dict,
+    pose_name: str,
+    hand_samples: dict,
+    inner_edge_quantile: float,
+    wrist_solver_contract: dict,
+    runtime_solver_contract: dict,
+    pose_solver,
+    retarget_solver,
+) -> dict:
+    if pose_name not in ("bras_bas", "en_avant"):
+        raise RuntimeError(
+            f"Runtime hand-mesh solve not defined for {pose_name}."
+        )
+
+    clearance_key = (
+        "hand_landmark_centerline_clearance_chain_fraction"
+    )
+
+    def build_candidate(clearance_fraction: float) -> dict:
+        candidate_intents = copy.deepcopy(intent_spec)
+        candidate_intents["poses"][pose_name][clearance_key] = float(
+            clearance_fraction
+        )
+        solution = pose_solver.solve_pose(
+            pose_name,
+            candidate_intents,
+            grammar_profile,
+            canonical,
+            constraints,
+        )
+        pose_entry = retarget_solver.retarget_pose_solution(
+            solution,
+            canonical,
+            constraints,
+            retarget_axis_contract,
+        )
+        return {
+            "solution": solution,
+            "pose_entry": pose_entry,
+        }
+
+    def try_candidate(clearance_fraction: float):
+        try:
+            return build_candidate(clearance_fraction)
+        except (
+            pose_solver.PoseSolveRejected,
+            retarget_solver.RigRetargetRejected,
+        ):
+            return None
+
+    physical_upper = runtime_clearance_physical_upper_bound(
+        canonical,
+        pose_solver,
+    )
+    feasibility_iterations = int(
+        runtime_solver_contract["feasibility_iterations"]
+    )
+    root_iterations = int(runtime_solver_contract["root_iterations"])
+
+    zero_candidate = try_candidate(0.0)
+    if zero_candidate is None:
+        raise RuntimeError(
+            f"{pose_name}: semantic seed is not feasible."
+        )
+
+    feasible_low = 0.0
+    infeasible_high = physical_upper
+    high_candidate = try_candidate(infeasible_high)
+    if high_candidate is not None:
+        maximum_feasible = physical_upper
+    else:
+        best_feasible = zero_candidate
+        for _ in range(feasibility_iterations):
+            midpoint = (feasible_low + infeasible_high) * 0.5
+            candidate = try_candidate(midpoint)
+            if candidate is None:
+                infeasible_high = midpoint
+            else:
+                feasible_low = midpoint
+                best_feasible = candidate
+        maximum_feasible = feasible_low
+        high_candidate = best_feasible
+
+    def evaluate(clearance_fraction: float) -> dict:
+        candidate = build_candidate(clearance_fraction)
+        pose_entry = candidate["pose_entry"]
+        apply_rotation_deltas(armature, pose_entry)
+        spacing = pose_entry["non_rotational_pose_contract"][
+            "hand_mesh_spacing_contract"
+        ]
+        sides = {
+            side: hand_mesh_inner_edge(
+                armature,
+                canonical,
+                hand_samples[side],
+                side,
+                inner_edge_quantile,
+            )
+            for side in ("left", "right")
+        }
+        minimum_side_offset = min(
+            float(item["side_offset"])
+            for item in sides.values()
+        )
+        return {
+            **candidate,
+            "clearance_fraction": float(clearance_fraction),
+            "sides": sides,
+            "minimum_side_offset": minimum_side_offset,
+            "spacing_contract": spacing,
+        }
+
+    low_eval = evaluate(0.0)
+    spacing = low_eval["spacing_contract"]
+    target_side_offset = (
+        float(spacing["minimum_gap"])
+        + float(spacing["maximum_gap"])
+    ) * 0.25
+    minimum_side_allowed = float(spacing["minimum_gap"]) * 0.5
+    maximum_side_allowed = float(spacing["maximum_gap"]) * 0.5
+
+    if (
+        minimum_side_allowed
+        <= low_eval["minimum_side_offset"]
+        <= maximum_side_allowed
+    ):
+        winning_fraction = 0.0
+        root_steps_used = 0
+    else:
+        high_eval = evaluate(maximum_feasible)
+        if (
+            high_eval["minimum_side_offset"]
+            <= low_eval["minimum_side_offset"] + 1e-9
+        ):
+            raise RuntimeError(
+                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
+                "deformed hand-mesh clearance is not monotonic over the "
+                "validated canonical feasibility interval."
+            )
+        if high_eval["minimum_side_offset"] < target_side_offset:
+            raise RuntimeError(
+                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
+                f"maximum_feasible_clearance_fraction={maximum_feasible}; "
+                f"best_minimum_side_offset="
+                f"{high_eval['minimum_side_offset']}; "
+                f"target_side_offset={target_side_offset}."
+            )
+
+        lower = 0.0
+        upper = maximum_feasible
+        lower_eval = low_eval
+        upper_eval = high_eval
+        root_steps_used = 0
+        for _ in range(root_iterations):
+            root_steps_used += 1
+            midpoint = (lower + upper) * 0.5
+            mid_eval = evaluate(midpoint)
+            mid_value = float(mid_eval["minimum_side_offset"])
+            low_value = float(lower_eval["minimum_side_offset"])
+            high_value = float(upper_eval["minimum_side_offset"])
+            if (
+                mid_value < low_value - 1e-8
+                or mid_value > high_value + 1e-8
+            ):
+                raise RuntimeError(
+                    f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
+                    "deformed hand-mesh clearance violated monotonic "
+                    "bracketing during bounded root solve."
+                )
+            if mid_value < target_side_offset:
+                lower = midpoint
+                lower_eval = mid_eval
+            else:
+                upper = midpoint
+                upper_eval = mid_eval
+        winning_fraction = upper
+
+    winner = evaluate(winning_fraction)
+    pose_entry = winner["pose_entry"]
+    wrist_solution = solve_hand_mesh_wrist_spacing(
+        armature,
+        canonical,
+        constraints,
+        pose_entry,
+        hand_samples,
+        inner_edge_quantile,
+        wrist_solver_contract,
+    )
+    if wrist_solution["status"] != "PASS":
+        raise RuntimeError(
+            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS after bounded "
+            f"canonical clearance solve; clearance_fraction="
+            f"{winning_fraction}; wrist_solution={wrist_solution}."
+        )
+
+    return {
+        "status": "PASS",
+        "pose_entry": pose_entry,
+        "wrist_solution": wrist_solution,
+        "evidence": {
+            "method": runtime_solver_contract["method"],
+            "authored_clearance_constant": False,
+            "physical_upper_bound_fraction": round(
+                physical_upper,
+                10,
+            ),
+            "maximum_feasible_clearance_fraction": round(
+                maximum_feasible,
+                10,
+            ),
+            "solved_clearance_fraction": round(
+                winning_fraction,
+                10,
+            ),
+            "target_side_offset": round(target_side_offset, 10),
+            "minimum_side_allowed": round(
+                minimum_side_allowed,
+                10,
+            ),
+            "maximum_side_allowed": round(
+                maximum_side_allowed,
+                10,
+            ),
+            "semantic_mesh_side_offsets": {
+                side: round(
+                    float(item["side_offset"]),
+                    10,
+                )
+                for side, item in winner["sides"].items()
+            },
+            "feasibility_iterations": feasibility_iterations,
+            "root_iterations_used": root_steps_used,
+            "final_mesh_spacing": wrist_solution[
+                "final_mesh_spacing"
+            ],
+        },
+    }
+
+
 def body_metrics(canonical: dict) -> dict:
     bones = canonical["canonical_bones"]
     foot_length = sum(
@@ -1818,6 +2069,8 @@ def main() -> None:
     retarget_path = Path(args.retarget_profile).resolve()
     constraint_path = Path(args.constraint_profile).resolve()
     axis_contract_path = Path(args.retarget_axis_contract).resolve()
+    grammar_path = Path(args.grammar_profile).resolve()
+    intent_path = Path(args.intent_spec).resolve()
     contract_path = Path(args.contract).resolve()
     output_path = Path(args.output).resolve()
 
@@ -1827,7 +2080,16 @@ def main() -> None:
     retarget_axis_contract = json.loads(
         axis_contract_path.read_text(encoding="utf-8")
     )
+    grammar_profile = json.loads(
+        grammar_path.read_text(encoding="utf-8")
+    )
+    intent_spec = json.loads(
+        intent_path.read_text(encoding="utf-8")
+    )
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    pose_solver, retarget_solver = load_ballet_motion_runtime_modules(
+        repo
+    )
 
     require(canonical["phase"] == "10.6.2", "Requires Phase 10.6.2 canonical profile.")
     require(retarget["phase"] == "10.6.6", "Requires Phase 10.6.6 retarget profile.")
@@ -1941,7 +2203,6 @@ def main() -> None:
     root_name = canonical["canonical_bones"]["pelvis"]["rig_bone"]
 
     pose_reports = {}
-    hand_mesh_calibration_failures = []
     for pose_name in ("bras_bas", "en_avant", "second", "fifth", "plie", "releve"):
         pose_entry = retarget["poses"][pose_name]
         require(
@@ -1967,6 +2228,33 @@ def main() -> None:
             f"{pose_name}: absolute matrix application error "
             f"{rotation_errors['max_absolute_rotation_error']}.",
         )
+
+        hand_mesh_runtime_solution = {}
+        hand_mesh_wrist_solution = {}
+        hand_mesh_spacing = {}
+        if pose_name in ("bras_bas", "en_avant"):
+            hand_mesh_runtime_solution = solve_runtime_hand_mesh_pose(
+                armature,
+                canonical,
+                constraints,
+                retarget_axis_contract,
+                grammar_profile,
+                intent_spec,
+                pose_name,
+                hand_samples,
+                float(hand_sampling["inner_edge_quantile"]),
+                contract["hand_mesh_wrist_solver"],
+                contract["hand_mesh_runtime_clearance_solver"],
+                pose_solver,
+                retarget_solver,
+            )
+            pose_entry = hand_mesh_runtime_solution["pose_entry"]
+            hand_mesh_wrist_solution = hand_mesh_runtime_solution[
+                "wrist_solution"
+            ]
+            hand_mesh_spacing = hand_mesh_wrist_solution[
+                "final_mesh_spacing"
+            ]
 
         mode = contract["root_translation_modes"][pose_name]
         contact_orientation = {}
@@ -2076,31 +2364,7 @@ def main() -> None:
 
         consistency = {}
         fingertip_spacing = {}
-        hand_mesh_spacing = {}
-        hand_mesh_wrist_solution = {}
         if pose_name in ("bras_bas", "en_avant"):
-            hand_mesh_wrist_solution = solve_hand_mesh_wrist_spacing(
-                armature,
-                canonical,
-                constraints,
-                pose_entry,
-                hand_samples,
-                float(hand_sampling["inner_edge_quantile"]),
-                contract["hand_mesh_wrist_solver"],
-            )
-            hand_mesh_spacing = hand_mesh_wrist_solution[
-                "final_mesh_spacing"
-            ]
-            if hand_mesh_wrist_solution["status"] != "PASS":
-                hand_mesh_calibration_failures.append(
-                    {
-                        "pose": pose_name,
-                        "side_solutions": hand_mesh_wrist_solution[
-                            "side_solutions"
-                        ],
-                        "final_mesh_spacing": hand_mesh_spacing,
-                    }
-                )
             fingertip_spacing = realized_middle_fingertip_spacing(
                 armature,
                 canonical,
@@ -2112,6 +2376,9 @@ def main() -> None:
             consistency["hand_mesh_spacing"] = hand_mesh_spacing
             consistency["hand_mesh_wrist_solution"] = (
                 hand_mesh_wrist_solution
+            )
+            consistency["hand_mesh_runtime_clearance"] = (
+                hand_mesh_runtime_solution["evidence"]
             )
 
         if pose_name == "fifth":
@@ -2277,39 +2544,12 @@ def main() -> None:
             "middle_fingertip_diagnostic": fingertip_spacing,
             "hand_mesh_spacing_realization": hand_mesh_spacing,
             "hand_mesh_wrist_solution": hand_mesh_wrist_solution,
+            "hand_mesh_runtime_clearance_solution": (
+                hand_mesh_runtime_solution.get("evidence", {})
+            ),
             "blender_pose_applied": True,
             "rendered": False,
         }
-
-    if hand_mesh_calibration_failures:
-        diagnostic = {
-            "phase": PHASE,
-            "status": "HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED",
-            "hand_mesh_sampling": {
-                "bone_scope": contract["hand_mesh_sampling"]["bone_scope"],
-                "vertex_group_names": {
-                    side: sorted(groups)
-                    for side, groups in hand_groups.items()
-                },
-                "sample_counts": {
-                    side: len(samples)
-                    for side, samples in hand_samples.items()
-                },
-            },
-            "failures": hand_mesh_calibration_failures,
-        }
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(
-            json.dumps(diagnostic, indent=2),
-            encoding="utf-8",
-        )
-        print("HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED")
-        print(json.dumps(diagnostic, indent=2))
-        raise RuntimeError(
-            "Hand mesh clearance calibration required; "
-            "all bras_bas/en_avant side diagnostics were collected "
-            f"in {output_path}."
-        )
 
     output = {
         "phase": PHASE,
@@ -2374,6 +2614,7 @@ def main() -> None:
             "middle_bone_tip_diagnostic_recorded": True,
             "hand_mesh_centerline_spacing_pass": True,
             "hand_mesh_wrist_realization_pass": True,
+            "hand_mesh_runtime_clearance_solver_pass": True,
             "blender_application_performed": True,
             "render_performed": False,
             "animation_performed": False,
@@ -2397,6 +2638,7 @@ def main() -> None:
     print("MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY")
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
     print("HAND_MESH_WRIST_REALIZATION=PASS")
+    print("HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

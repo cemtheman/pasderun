@@ -21,6 +21,7 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_profile_v1.json"
 $retarget = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarget_v1.json"
 $constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
+$grammarProfile = Join-Path $Repo "build\phase10_6\low_poly_girl_ballet_pose_grammar_profile_v1.json"
 $retargetAxisContract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
 $poseProfile = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
 $intents = Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
@@ -86,7 +87,7 @@ if ($retargetNeedsRefresh) {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-foreach ($required in @($canonical, $retarget, $constraints, $retargetAxisContract, $contract)) {
+foreach ($required in @($canonical, $retarget, $constraints, $grammarProfile, $intents, $retargetAxisContract, $contract)) {
     if (-not (Test-Path $required)) {
         throw "Phase 10.6.7 prerequisite missing: $required"
     }
@@ -103,7 +104,7 @@ if (Test-Path $output) {
     Remove-Item -Force $output
 }
 
-& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --retarget-profile $retarget --constraint-profile $constraints --retarget-axis-contract $retargetAxisContract --contract $contract --output $output
+& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --retarget-profile $retarget --constraint-profile $constraints --retarget-axis-contract $retargetAxisContract --grammar-profile $grammarProfile --intent-spec $intents --contract $contract --output $output
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 if (-not (Test-Path $output)) {
@@ -148,6 +149,9 @@ if (-not $data.gate.hand_mesh_centerline_spacing_pass) {
 if (-not $data.gate.hand_mesh_wrist_realization_pass) {
     throw "Hand mesh wrist realization gate failed."
 }
+if (-not $data.gate.hand_mesh_runtime_clearance_solver_pass) {
+    throw "Hand mesh runtime clearance solver gate failed."
+}
 if (-not $data.gate.middle_bone_tip_diagnostic_recorded) {
     throw "Middle-bone tip diagnostic evidence missing."
 }
@@ -176,6 +180,7 @@ Write-Host "Releve plantar+toe: PASS"
 Write-Host "Releve heel lift:  PASS"
 Write-Host "Hand mesh spacing: PASS"
 Write-Host "Hand mesh wrist:   PASS"
+Write-Host "Hand mesh solve:   BOUNDED ROOT SOLVE PASS"
 Write-Host "Middle bone tip:   DIAGNOSTIC ONLY"
 Write-Host "Render/animation/export: NOT PERFORMED"
 Write-Host "Report: $output"

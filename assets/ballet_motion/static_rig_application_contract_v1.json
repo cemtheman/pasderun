@@ -36,7 +36,10 @@
     "hand_mesh_wrist_solver_preferred_only": true,
     "middle_bone_tip_is_diagnostic_after_mesh_realization": true,
     "hand_mesh_vertices_source": "all deformed mesh vertices weighted to Hand_L/Hand_R and every descendant rig bone",
-    "partial_hand_or_single_finger_sampling_forbidden": true
+    "partial_hand_or_single_finger_sampling_forbidden": true,
+    "hand_mesh_runtime_clearance_solver_required": true,
+    "hand_mesh_runtime_clearance_not_authored": true,
+    "hand_mesh_runtime_solver_reuses_phase_10_6_5_and_10_6_6": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -91,5 +94,13 @@
     ],
     "interval_error_epsilon": 0.000001,
     "independent_axial_roll_forbidden": true
+  },
+  "hand_mesh_runtime_clearance_solver": {
+    "method": "BOUNDED_BISECTION_ON_SCALE_RELATIVE_CANONICAL_CLEARANCE",
+    "feasibility_iterations": 28,
+    "root_iterations": 20,
+    "root_target": "MIDPOINT_OF_DECLARED_SIDE_OFFSET_INTERVAL",
+    "physical_upper_bound": "DERIVED_FROM_CANONICAL_SHOULDER_HALF_WIDTH_PLUS_FULL_ARM_AND_HAND_REACH",
+    "monotonicity_required": true
   }
 }

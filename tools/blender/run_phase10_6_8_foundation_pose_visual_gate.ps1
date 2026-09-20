@@ -20,6 +20,7 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 
 $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_profile_v1.json"
 $constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
+$grammarProfile = Join-Path $Repo "build\phase10_6\low_poly_girl_ballet_pose_grammar_profile_v1.json"
 $retarget = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarget_v1.json"
 $retargetAxisContract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
 $poseProfile = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
@@ -91,6 +92,8 @@ foreach ($required in @(
     $canonical,
     $constraints,
     $retarget,
+    $grammarProfile,
+    $intents,
     $retargetAxisContract,
     $staticContract,
     $visualContract
@@ -117,7 +120,7 @@ if (Test-Path $cellDir) {
     Remove-Item -Recurse -Force $cellDir
 }
 
-& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $retargetAxisContract --static-contract $staticContract --visual-contract $visualContract --output $output --report $report
+& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $retargetAxisContract --grammar-profile $grammarProfile --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --output $output --report $report
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 foreach ($path in @($output, $report)) {
@@ -144,6 +147,9 @@ if (-not $data.automated_gate.hand_mesh_centerline_spacing_pass) {
 if (-not $data.automated_gate.hand_mesh_wrist_realization_pass) {
     throw "Hand mesh wrist realization gate failed."
 }
+if (-not $data.automated_gate.hand_mesh_runtime_clearance_solver_pass) {
+    throw "Hand mesh runtime clearance solver gate failed."
+}
 if (-not $data.automated_gate.middle_bone_tip_diagnostic_recorded) {
     throw "Middle-bone tip diagnostic evidence missing."
 }
@@ -166,6 +172,7 @@ Write-Host "Renders:          18/18"
 Write-Host "Hand continuity:  PASS"
 Write-Host "Hand mesh spacing: PASS"
 Write-Host "Hand mesh wrist:   PASS"
+Write-Host "Hand mesh solve:   BOUNDED ROOT SOLVE PASS"
 Write-Host "Middle bone tip:   DIAGNOSTIC ONLY"
 Write-Host "Static contact:   PASS"
 Write-Host "Human review:     PENDING"

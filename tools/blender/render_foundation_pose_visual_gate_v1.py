@@ -33,6 +33,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--constraint-profile", required=True)
     parser.add_argument("--retarget-profile", required=True)
     parser.add_argument("--retarget-axis-contract", required=True)
+    parser.add_argument("--grammar-profile", required=True)
+    parser.add_argument("--intent-spec", required=True)
     parser.add_argument("--static-contract", required=True)
     parser.add_argument("--visual-contract", required=True)
     parser.add_argument("--output", required=True)
@@ -543,6 +545,45 @@ def realize_pose(
         pose_entry,
     )
 
+    hand_mesh_runtime_solution = {}
+    hand_mesh_wrist_solution = {}
+    hand_mesh_spacing = {}
+    if pose_name in ("bras_bas", "en_avant"):
+        hand_mesh_runtime_solution = (
+            static_core.solve_runtime_hand_mesh_pose(
+                armature,
+                canonical,
+                constraints,
+                retarget_axis_contract,
+                runtime["grammar_profile"],
+                runtime["intent_spec"],
+                pose_name,
+                runtime["hand_samples"],
+                float(
+                    runtime["hand_sampling"][
+                        "inner_edge_quantile"
+                    ]
+                ),
+                static_contract["hand_mesh_wrist_solver"],
+                static_contract[
+                    "hand_mesh_runtime_clearance_solver"
+                ],
+                runtime["pose_solver"],
+                runtime["retarget_solver"],
+            )
+        )
+        require(
+            hand_mesh_runtime_solution["status"] == "PASS",
+            f"{pose_name}: deterministic hand-mesh runtime solve failed.",
+        )
+        pose_entry = hand_mesh_runtime_solution["pose_entry"]
+        hand_mesh_wrist_solution = hand_mesh_runtime_solution[
+            "wrist_solution"
+        ]
+        hand_mesh_spacing = hand_mesh_wrist_solution[
+            "final_mesh_spacing"
+        ]
+
     mode = static_contract["root_translation_modes"][pose_name]
     thresholds = static_contract["proof_thresholds"]
     up_axis = runtime["up_axis"]
@@ -660,32 +701,7 @@ def realize_pose(
         )
 
     fingertip_spacing = {}
-    hand_mesh_spacing = {}
-    hand_mesh_wrist_solution = {}
     if pose_name in ("bras_bas", "en_avant"):
-        hand_mesh_wrist_solution = (
-            static_core.solve_hand_mesh_wrist_spacing(
-                armature,
-                canonical,
-                constraints,
-                pose_entry,
-                runtime["hand_samples"],
-                float(
-                    runtime["hand_sampling"][
-                        "inner_edge_quantile"
-                    ]
-                ),
-                static_contract["hand_mesh_wrist_solver"],
-            )
-        )
-        require(
-            hand_mesh_wrist_solution["status"] == "PASS",
-            f"{pose_name}: deformed hand mesh clearance calibration "
-            f"is incomplete: {hand_mesh_wrist_solution}.",
-        )
-        hand_mesh_spacing = hand_mesh_wrist_solution[
-            "final_mesh_spacing"
-        ]
         fingertip_spacing = static_core.realized_middle_fingertip_spacing(
             armature,
             canonical,
@@ -701,6 +717,9 @@ def realize_pose(
         "fingertip_spacing_diagnostic": fingertip_spacing,
         "hand_mesh_spacing": hand_mesh_spacing,
         "hand_mesh_wrist_solution": hand_mesh_wrist_solution,
+        "hand_mesh_runtime_clearance_solution": (
+            hand_mesh_runtime_solution.get("evidence", {})
+        ),
     }
 
 
@@ -726,6 +745,19 @@ def main() -> None:
         Path(args.retarget_axis_contract).read_text(
             encoding="utf-8"
         )
+    )
+    grammar_profile = json.loads(
+        Path(args.grammar_profile).read_text(
+            encoding="utf-8"
+        )
+    )
+    intent_spec = json.loads(
+        Path(args.intent_spec).read_text(
+            encoding="utf-8"
+        )
+    )
+    pose_solver, retarget_solver = (
+        static_core.load_ballet_motion_runtime_modules(repo)
     )
     static_contract = json.loads(
         Path(args.static_contract).read_text(
@@ -793,6 +825,10 @@ def main() -> None:
         canonical,
         static_contract,
     )
+    runtime["grammar_profile"] = grammar_profile
+    runtime["intent_spec"] = intent_spec
+    runtime["pose_solver"] = pose_solver
+    runtime["retarget_solver"] = retarget_solver
 
     scene = bpy.context.scene
     cell_size = int(
@@ -896,6 +932,7 @@ def main() -> None:
             "middle_bone_tip_diagnostic_recorded": True,
             "hand_mesh_centerline_spacing_pass": True,
             "hand_mesh_wrist_realization_pass": True,
+            "hand_mesh_runtime_clearance_solver_pass": True,
             "render_count_pass": True,
             "animation_rendered": False,
             "glb_exported": False,
@@ -923,6 +960,7 @@ def main() -> None:
     print("MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY")
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
     print("HAND_MESH_WRIST_REALIZATION=PASS")
+    print("HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS")
     print("STATIC_CONTACT_REALIZATION=PASS")
     print("ANIMATION=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

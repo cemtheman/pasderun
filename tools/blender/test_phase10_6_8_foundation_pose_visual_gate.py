@@ -222,15 +222,15 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            "static_core.solve_hand_mesh_wrist_spacing(",
+            "static_core.solve_runtime_hand_mesh_pose(",
             self.script,
         )
         self.assertIn(
-            'hand_mesh_wrist_solution["status"] == "PASS"',
+            'hand_mesh_runtime_solution["status"] == "PASS"',
             self.script,
         )
         self.assertIn(
-            "clearance calibration is incomplete",
+            '"hand_mesh_runtime_clearance_solution"',
             self.script,
         )
         self.assertIn(
@@ -239,6 +239,10 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
         )
         self.assertIn(
             '"hand_mesh_wrist_realization_pass": True',
+            self.script,
+        )
+        self.assertIn(
+            '"hand_mesh_runtime_clearance_solver_pass": True',
             self.script,
         )
 
@@ -369,6 +373,18 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
         )
         self.assertIn(
             "$data.automated_gate.hand_mesh_wrist_realization_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.automated_gate.hand_mesh_runtime_clearance_solver_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "--grammar-profile $grammarProfile",
+            self.wrapper,
+        )
+        self.assertIn(
+            "--intent-spec $intents",
             self.wrapper,
         )
         self.assertIn(

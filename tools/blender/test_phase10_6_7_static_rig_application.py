@@ -342,24 +342,59 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             '"authority": "DEFORMED_HAND_MESH"',
             self.script,
         )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_runtime_clearance_solver_required"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_runtime_clearance_not_authored"
+            ]
+        )
+        runtime_solver = self.contract[
+            "hand_mesh_runtime_clearance_solver"
+        ]
+        self.assertEqual(
+            runtime_solver["method"],
+            "BOUNDED_BISECTION_ON_SCALE_RELATIVE_CANONICAL_CLEARANCE",
+        )
+        self.assertEqual(runtime_solver["feasibility_iterations"], 28)
+        self.assertEqual(runtime_solver["root_iterations"], 20)
         self.assertIn(
-            "deformed hand mesh near-touch target is ",
+            "def solve_runtime_hand_mesh_pose(",
             self.script,
         )
         self.assertIn(
+            "def runtime_clearance_physical_upper_bound(",
+            self.script,
+        )
+        self.assertIn(
+            "pose_solver.solve_pose(",
+            self.script,
+        )
+        self.assertIn(
+            "retarget_solver.retarget_pose_solution(",
+            self.script,
+        )
+        self.assertIn(
+            "for _ in range(feasibility_iterations):",
+            self.script,
+        )
+        self.assertIn(
+            "for _ in range(root_iterations):",
+            self.script,
+        )
+        self.assertIn(
+            "INFEASIBLE_WITHIN_CONSTRAINTS",
+            self.script,
+        )
+        self.assertNotIn(
             '"recommended_hand_landmark_clearance_fraction"',
             self.script,
         )
-        self.assertIn(
-            "hand_mesh_calibration_failures = []",
-            self.script,
-        )
-        self.assertIn(
+        self.assertNotIn(
             "HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED",
-            self.script,
-        )
-        self.assertIn(
-            "all bras_bas/en_avant side diagnostics were collected",
             self.script,
         )
         self.assertIn(
@@ -591,6 +626,18 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn("--constraint-profile $constraints", self.wrapper)
         self.assertIn(
             "--retarget-axis-contract $retargetAxisContract",
+            self.wrapper,
+        )
+        self.assertIn(
+            "--grammar-profile $grammarProfile",
+            self.wrapper,
+        )
+        self.assertIn(
+            "--intent-spec $intents",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.gate.hand_mesh_runtime_clearance_solver_pass",
             self.wrapper,
         )
 
