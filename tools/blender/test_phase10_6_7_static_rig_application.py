@@ -216,22 +216,26 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
 
-    def test_full_foot_solver_keeps_anatomical_seed_and_mesh_realization_floor(self) -> None:
+    def test_full_foot_solver_keeps_anatomical_seed_but_mesh_is_final_authority(self) -> None:
         self.assertEqual(
             self.contract["proof_thresholds"][
                 "full_foot_seed_up_alignment_min_dot"
             ],
             0.999999,
         )
-        self.assertEqual(
-            self.contract["proof_thresholds"][
-                "full_foot_up_alignment_min_dot"
-            ],
-            0.98,
+        self.assertTrue(
+            self.contract["policy"][
+                "full_foot_realized_bone_up_alignment_is_not_contact_authority"
+            ]
+        )
+        self.assertNotIn(
+            "full_foot_up_alignment_min_dot",
+            self.contract["proof_thresholds"],
         )
         self.assertIn("minimum_seed_up_alignment_dot", self.script)
-        self.assertIn("minimum_realized_up_alignment_dot", self.script)
+        self.assertNotIn("minimum_realized_up_alignment_dot", self.script)
         self.assertIn("canonical_seed", self.script)
+        self.assertIn("mesh_flatness_error", self.script)
         self.assertNotIn("decompose_ankle_2dof", self.script)
         self.assertNotIn(
             "ankle_dof_decomposition_matrix_error_max",

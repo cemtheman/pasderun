@@ -463,7 +463,6 @@ def solve_preferred_ankle_flat_contact(
     rest_heights: dict,
     low_height_quantile: float,
     minimum_seed_up_alignment_dot: float,
-    minimum_realized_up_alignment_dot: float,
     coarse_step_deg: float,
     refine_steps_deg: list[float],
 ) -> dict:
@@ -604,8 +603,6 @@ def solve_preferred_ankle_flat_contact(
             return
         inversion = float(seed["inversion"])
         metrics = basis_metrics(plantar, inversion)
-        if metrics["up_dot"] < float(minimum_realized_up_alignment_dot):
-            return
 
         desired_rig = rig_basis_from_canonical_pose(
             current_bone,
@@ -664,7 +661,7 @@ def solve_preferred_ankle_flat_contact(
     if best is None:
         raise RuntimeError(
             f"{canonical_name}: no mesh-contact ankle candidate remains "
-            "inside the preferred envelope and realized up-alignment floor."
+            "inside the preferred ankle envelope."
         )
 
     for step in refine_steps_deg:
@@ -715,7 +712,6 @@ def realize_full_foot_orientation(
     rest_heights: dict,
     low_height_quantile: float,
     minimum_seed_up_alignment_dot: float,
-    minimum_realized_up_alignment_dot: float,
     coarse_step_deg: float,
     refine_steps_deg: list[float],
 ) -> dict:
@@ -755,7 +751,6 @@ def realize_full_foot_orientation(
             rest_heights,
             low_height_quantile,
             minimum_seed_up_alignment_dot,
-            minimum_realized_up_alignment_dot,
             coarse_step_deg,
             refine_steps_deg,
         )
@@ -1332,11 +1327,6 @@ def main() -> None:
                 float(
                     thresholds[
                         "full_foot_seed_up_alignment_min_dot"
-                    ]
-                ),
-                float(
-                    thresholds[
-                        "full_foot_up_alignment_min_dot"
                     ]
                 ),
                 float(
