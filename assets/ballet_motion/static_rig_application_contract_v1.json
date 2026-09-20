@@ -14,7 +14,10 @@
     "visual_render_forbidden": true,
     "animation_forbidden": true,
     "glb_export_forbidden": true,
-    "source_glb_mutation_forbidden": true
+    "source_glb_mutation_forbidden": true,
+    "full_foot_orientation_correction_required": true,
+    "full_foot_orientation_source": "canonical foot length axis projected onto floor with canonical foot up aligned to declared BODY_UP",
+    "ankle_contact_correction_must_stay_preferred": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -39,6 +42,7 @@
     "plie_descent_absolute_leg_fraction_max": 0.08,
     "releve_heel_lift_relative_error_max": 0.45,
     "releve_heel_lift_absolute_foot_fraction_max": 0.2,
-    "releve_heel_must_rise_min_foot_fraction": 0.05
+    "releve_heel_must_rise_min_foot_fraction": 0.05,
+    "ankle_dof_decomposition_matrix_error_max": 0.00001
   }
 }

@@ -25,6 +25,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo", required=True)
     parser.add_argument("--canonical-profile", required=True)
     parser.add_argument("--retarget-profile", required=True)
+    parser.add_argument("--constraint-profile", required=True)
+    parser.add_argument("--retarget-axis-contract", required=True)
     parser.add_argument("--contract", required=True)
     parser.add_argument("--output", required=True)
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1:])
@@ -253,6 +255,281 @@ def apply_rotation_deltas(
     bpy.context.view_layer.update()
 
 
+def canonical_basis_from_rig_pose(
+    pose_bone: bpy.types.PoseBone,
+    canonical_bone: dict,
+) -> Matrix:
+    bind = matrix3(
+        canonical_bone["retarget_bind"][
+            "canonical_to_rig_rotation_matrix"
+        ]
+    )
+    rig_basis = normalized_basis(pose_bone.matrix)
+    return bind.transposed() @ rig_basis
+
+
+def basis_from_columns(x_axis: Vector, y_axis: Vector, z_axis: Vector) -> Matrix:
+    return Matrix(
+        (
+            (x_axis.x, y_axis.x, z_axis.x),
+            (x_axis.y, y_axis.y, z_axis.y),
+            (x_axis.z, y_axis.z, z_axis.z),
+        )
+    )
+
+
+def flatten_canonical_foot_basis(
+    current_basis: Matrix,
+    up_axis: Vector,
+) -> Matrix:
+    length_axis = Vector(
+        (
+            current_basis[0][1],
+            current_basis[1][1],
+            current_basis[2][1],
+        )
+    ).normalized()
+    horizontal = length_axis - up_axis * length_axis.dot(up_axis)
+    if horizontal.length <= 1e-8:
+        raise RuntimeError(
+            "Cannot preserve foot yaw while flattening contact frame."
+        )
+    y_axis = horizontal.normalized()
+    z_axis = up_axis.normalized()
+    x_axis = y_axis.cross(z_axis)
+    if x_axis.length <= 1e-8:
+        raise RuntimeError("Degenerate full-foot contact basis.")
+    x_axis.normalize()
+    z_axis = x_axis.cross(y_axis).normalized()
+    result = basis_from_columns(x_axis, y_axis, z_axis)
+    if result.determinant() <= 0.0:
+        raise RuntimeError("Full-foot contact basis is not right-handed.")
+    return result
+
+
+def apply_absolute_rig_rotation_via_matrix_basis(
+    armature: bpy.types.Object,
+    rig_name: str,
+    desired_rig_basis: Matrix,
+) -> None:
+    pose_bone = armature.pose.bones[rig_name]
+    if pose_bone.parent is None:
+        rig_rest = armature.data.bones[rig_name].matrix_local.to_3x3().normalized()
+        local_delta = rig_rest.transposed() @ desired_rig_basis
+    else:
+        parent_name = pose_bone.parent.name
+        parent_pose = normalized_basis(pose_bone.parent.matrix)
+        parent_rest = (
+            armature.data.bones[parent_name].matrix_local.to_3x3().normalized()
+        )
+        rig_rest = (
+            armature.data.bones[rig_name].matrix_local.to_3x3().normalized()
+        )
+        rest_local = parent_rest.transposed() @ rig_rest
+        desired_local = parent_pose.transposed() @ desired_rig_basis
+        local_delta = rest_local.transposed() @ desired_local
+
+    basis = local_delta.to_4x4()
+    basis.translation = pose_bone.matrix_basis.translation.copy()
+    pose_bone.matrix_basis = basis
+    bpy.context.view_layer.update()
+
+
+def decompose_ankle_2dof(
+    local_delta: Matrix,
+    side: str,
+) -> dict:
+    # Contract: Rx(-plantar_dorsiflexion) then
+    # Ry(side_sign * inversion_eversion).
+    sb = max(-1.0, min(1.0, float(local_delta[0][2])))
+    b = math.asin(sb)
+    a = math.atan2(
+        float(local_delta[2][1]),
+        float(local_delta[1][1]),
+    )
+    side_sign = 1.0 if side == "left" else -1.0
+    plantar = -math.degrees(a)
+    inversion = math.degrees(b) / side_sign
+
+    ca = math.cos(a)
+    sa = math.sin(a)
+    cb = math.cos(b)
+    sb = math.sin(b)
+    reconstructed = Matrix(
+        (
+            (cb, 0.0, sb),
+            (sa * sb, ca, -sa * cb),
+            (-ca * sb, sa, ca * cb),
+        )
+    )
+    return {
+        "plantar_dorsiflexion": plantar,
+        "inversion_eversion": inversion,
+        "reconstruction_error": matrix_max_error(
+            reconstructed,
+            local_delta,
+        ),
+    }
+
+
+def canonical_local_delta_for_absolute_target(
+    armature: bpy.types.Object,
+    canonical: dict,
+    canonical_name: str,
+    desired_canonical_basis: Matrix,
+) -> Matrix:
+    bone = canonical["canonical_bones"][canonical_name]
+    parent_name = bone["parent"]
+    canonical_rest = matrix3(
+        bone["canonical_rest_contract"]["basis_armature_local"]
+    )
+    if parent_name is None:
+        return canonical_rest.transposed() @ desired_canonical_basis
+
+    parent_bone = canonical["canonical_bones"][parent_name]
+    parent_rig_name = parent_bone["rig_bone"]
+    parent_pose_bone = armature.pose.bones[parent_rig_name]
+    parent_canonical_pose = canonical_basis_from_rig_pose(
+        parent_pose_bone,
+        parent_bone,
+    )
+    parent_rest = matrix3(
+        parent_bone["canonical_rest_contract"]["basis_armature_local"]
+    )
+    rest_local = parent_rest.transposed() @ canonical_rest
+    desired_local = parent_canonical_pose.transposed() @ desired_canonical_basis
+    return rest_local.transposed() @ desired_local
+
+
+def validate_preferred_ankle_dofs(
+    values: dict,
+    constraints: dict,
+    decomposition_error_max: float,
+) -> None:
+    if values["reconstruction_error"] > float(decomposition_error_max):
+        raise RuntimeError(
+            "Full-foot target is not representable by ankle_2dof: "
+            f"error={values['reconstruction_error']}."
+        )
+
+    dofs = constraints["joint_limits"]["ankle_2dof"]["dofs"]
+    for name in ("plantar_dorsiflexion", "inversion_eversion"):
+        value = float(values[name])
+        preferred = dofs[name]["preferred"]
+        minimum = float(preferred["min"])
+        maximum = float(preferred["max"])
+        if not minimum <= value <= maximum:
+            raise RuntimeError(
+                f"Full-foot contact requires {name}={value:.6f}, "
+                f"outside preferred [{minimum}, {maximum}]."
+            )
+
+
+def realize_full_foot_orientation(
+    armature: bpy.types.Object,
+    canonical: dict,
+    constraints: dict,
+    retarget_axis_contract: dict,
+    up_axis: Vector,
+    decomposition_error_max: float,
+) -> dict:
+    ankle_ops = retarget_axis_contract["lower_body_joint_axes"]["ankle_2dof"]
+    expected = [
+        ("plantar_dorsiflexion", "X", -1.0, False),
+        ("inversion_eversion", "Y", 1.0, True),
+    ]
+    actual = [
+        (
+            item.get("dof"),
+            item["axis"],
+            float(item["scale"]),
+            bool(item["side_sign"]),
+        )
+        for item in ankle_ops
+    ]
+    if actual != expected:
+        raise RuntimeError(
+            f"Unexpected ankle axis contract for contact solve: {actual}."
+        )
+
+    evidence = {}
+    for side in ("left", "right"):
+        canonical_name = f"{side}_foot"
+        bone = canonical["canonical_bones"][canonical_name]
+        rig_name = bone["rig_bone"]
+        pose_bone = armature.pose.bones[rig_name]
+
+        current_canonical = canonical_basis_from_rig_pose(
+            pose_bone,
+            bone,
+        )
+        desired_canonical = flatten_canonical_foot_basis(
+            current_canonical,
+            up_axis,
+        )
+        local_delta = canonical_local_delta_for_absolute_target(
+            armature,
+            canonical,
+            canonical_name,
+            desired_canonical,
+        )
+        ankle_values = decompose_ankle_2dof(local_delta, side)
+        validate_preferred_ankle_dofs(
+            ankle_values,
+            constraints,
+            decomposition_error_max,
+        )
+
+        bind = matrix3(
+            bone["retarget_bind"][
+                "canonical_to_rig_rotation_matrix"
+            ]
+        )
+        desired_rig = bind @ desired_canonical
+        apply_absolute_rig_rotation_via_matrix_basis(
+            armature,
+            rig_name,
+            desired_rig,
+        )
+
+        actual_canonical = canonical_basis_from_rig_pose(
+            armature.pose.bones[rig_name],
+            bone,
+        )
+        alignment_error = matrix_max_error(
+            actual_canonical,
+            desired_canonical,
+        )
+        if alignment_error > 0.00005:
+            raise RuntimeError(
+                f"{canonical_name}: contact-frame application error "
+                f"{alignment_error}."
+            )
+
+        evidence[side] = {
+            "rig_bone": rig_name,
+            "plantar_dorsiflexion_deg": round(
+                float(ankle_values["plantar_dorsiflexion"]),
+                8,
+            ),
+            "inversion_eversion_deg": round(
+                float(ankle_values["inversion_eversion"]),
+                8,
+            ),
+            "ankle_2dof_reconstruction_error": round(
+                float(ankle_values["reconstruction_error"]),
+                10,
+            ),
+            "contact_frame_application_error": round(
+                float(alignment_error),
+                10,
+            ),
+            "preferred_envelope": "PASS",
+        }
+
+    return evidence
+
+
 def set_root_translation_armature_space(
     armature: bpy.types.Object,
     root_name: str,
@@ -385,15 +662,26 @@ def main() -> None:
     repo = Path(args.repo).resolve()
     canonical_path = Path(args.canonical_profile).resolve()
     retarget_path = Path(args.retarget_profile).resolve()
+    constraint_path = Path(args.constraint_profile).resolve()
+    axis_contract_path = Path(args.retarget_axis_contract).resolve()
     contract_path = Path(args.contract).resolve()
     output_path = Path(args.output).resolve()
 
     canonical = json.loads(canonical_path.read_text(encoding="utf-8"))
     retarget = json.loads(retarget_path.read_text(encoding="utf-8"))
+    constraints = json.loads(constraint_path.read_text(encoding="utf-8"))
+    retarget_axis_contract = json.loads(
+        axis_contract_path.read_text(encoding="utf-8")
+    )
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
 
     require(canonical["phase"] == "10.6.2", "Requires Phase 10.6.2 canonical profile.")
     require(retarget["phase"] == "10.6.6", "Requires Phase 10.6.6 retarget profile.")
+    require(constraints["phase"] == "10.6.3", "Requires Phase 10.6.3 constraints.")
+    require(
+        retarget_axis_contract["phase"] == "10.6.6",
+        "Requires Phase 10.6.6 retarget axis contract.",
+    )
     require(contract["phase"] == PHASE, "Static application contract phase mismatch.")
     require(retarget["gate"]["orientation_retarget_pass"], "10.6.6 retarget gate not passed.")
     require(
@@ -503,6 +791,21 @@ def main() -> None:
         )
 
         mode = contract["root_translation_modes"][pose_name]
+        contact_orientation = {}
+        if mode == "SOLVE_FULL_FOOT_CONTACT":
+            contact_orientation = realize_full_foot_orientation(
+                armature,
+                canonical,
+                constraints,
+                retarget_axis_contract,
+                up_axis,
+                float(
+                    thresholds[
+                        "ankle_dof_decomposition_matrix_error_max"
+                    ]
+                ),
+            )
+
         before_heights = contact_heights(
             armature,
             anchors,
@@ -658,6 +961,7 @@ def main() -> None:
             ],
             "root_up_shift": round(float(shift), 8),
             "rotation_application": rotation_errors,
+            "contact_orientation_realization": contact_orientation,
             "contact_proof": proof,
             "contact_consistency": consistency,
             "blender_pose_applied": True,
@@ -700,6 +1004,7 @@ def main() -> None:
             "all_24_bone_rotations_applied": True,
             "local_matrix_application_pass": True,
             "absolute_matrix_application_pass": True,
+            "full_foot_orientation_realization_pass": True,
             "full_foot_contact_pass": True,
             "forefoot_contact_pass": True,
             "plie_root_descent_consistency_pass": True,
@@ -718,6 +1023,7 @@ def main() -> None:
     print(f"REPORT={output_path}")
     print("POSES=6/6")
     print("ROTATION_APPLICATION=PASS")
+    print("FULL_FOOT_ORIENTATION=PASS")
     print("FULL_FOOT_CONTACT=PASS")
     print("FOREFOOT_CONTACT=PASS")
     print("PLIE_ROOT_DESCENT=PASS")

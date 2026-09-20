@@ -20,6 +20,8 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 
 $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_profile_v1.json"
 $retarget = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarget_v1.json"
+$constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
+$retargetAxisContract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
 $contract = Join-Path $Repo "assets\ballet_motion\static_rig_application_contract_v1.json"
 $output = Join-Path $Repo "build\phase10_7\static_rig_application_report_v1.json"
 $script = Join-Path $Repo "tools\blender\apply_static_foundation_poses_v1.py"
@@ -34,7 +36,7 @@ if (-not (Test-Path $retarget)) {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-foreach ($required in @($canonical, $retarget, $contract)) {
+foreach ($required in @($canonical, $retarget, $constraints, $retargetAxisContract, $contract)) {
     if (-not (Test-Path $required)) {
         throw "Phase 10.6.7 prerequisite missing: $required"
     }
@@ -47,7 +49,7 @@ Write-Host "Animation: NO"
 Write-Host "GLB export: NO"
 Write-Host ""
 
-& $Blender --background --python $script -- --repo $Repo --canonical-profile $canonical --retarget-profile $retarget --contract $contract --output $output
+& $Blender --background --python $script -- --repo $Repo --canonical-profile $canonical --retarget-profile $retarget --constraint-profile $constraints --retarget-axis-contract $retargetAxisContract --contract $contract --output $output
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 if (-not (Test-Path $output)) {
@@ -64,6 +66,9 @@ if (-not $data.gate.local_matrix_application_pass) {
 }
 if (-not $data.gate.absolute_matrix_application_pass) {
     throw "Absolute matrix application gate failed."
+}
+if (-not $data.gate.full_foot_orientation_realization_pass) {
+    throw "Full-foot orientation realization gate failed."
 }
 if (-not $data.gate.full_foot_contact_pass) {
     throw "Full-foot contact gate failed."
@@ -93,6 +98,7 @@ Write-Host ""
 Write-Host "PHASE 10.6.7 STATIC RIG APPLICATION PASS"
 Write-Host "Poses:             $poseCount/6"
 Write-Host "Rotation apply:    PASS"
+Write-Host "Full-foot orient.:  PASS"
 Write-Host "Full-foot contact: PASS"
 Write-Host "Forefoot contact:  PASS"
 Write-Host "Plie root descent: PASS"

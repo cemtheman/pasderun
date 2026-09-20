@@ -78,6 +78,45 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn('"rear":', self.script)
         self.assertIn('"fore":', self.script)
 
+    def test_full_foot_contact_has_orientation_realization_before_root_shift(self) -> None:
+        self.assertTrue(
+            self.contract["policy"][
+                "full_foot_orientation_correction_required"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "ankle_contact_correction_must_stay_preferred"
+            ]
+        )
+        self.assertIn("def realize_full_foot_orientation(", self.script)
+        self.assertIn("def flatten_canonical_foot_basis(", self.script)
+        self.assertIn("def decompose_ankle_2dof(", self.script)
+        self.assertIn("validate_preferred_ankle_dofs(", self.script)
+        self.assertIn(
+            'if mode == "SOLVE_FULL_FOOT_CONTACT":',
+            self.script,
+        )
+
+    def test_full_foot_orientation_uses_declared_body_up_not_mesh_guess(self) -> None:
+        self.assertIn(
+            "desired_canonical = flatten_canonical_foot_basis(",
+            self.script,
+        )
+        self.assertIn("up_axis", self.script)
+        self.assertIn(
+            'canonical["body_frame"]["declared_axes_armature_local"]',
+            self.script,
+        )
+
+    def test_contact_fix_does_not_relax_existing_contact_tolerance(self) -> None:
+        self.assertEqual(
+            self.contract["proof_thresholds"][
+                "contact_error_max_foot_length_fraction"
+            ],
+            0.06,
+        )
+
     def test_root_translation_modes_are_explicit(self) -> None:
         modes = self.contract["root_translation_modes"]
         self.assertEqual(modes["bras_bas"], "KEEP_REST")
@@ -138,6 +177,15 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertIn("armature.animation_data_clear()", self.script)
         self.assertIn("obj.animation_data_clear()", self.script)
+
+    def test_wrapper_passes_constraints_and_retarget_axis_contract(self) -> None:
+        self.assertIn("$constraints =", self.wrapper)
+        self.assertIn("$retargetAxisContract =", self.wrapper)
+        self.assertIn("--constraint-profile $constraints", self.wrapper)
+        self.assertIn(
+            "--retarget-axis-contract $retargetAxisContract",
+            self.wrapper,
+        )
 
     def test_wrapper_auto_generates_10_6_6_prerequisite(self) -> None:
         self.assertIn(
