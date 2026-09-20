@@ -56,7 +56,8 @@
     "ballet_hand_shape_finger_bones_only": true,
     "ballet_hand_shape_wrist_mutation_forbidden": true,
     "ballet_hand_shape_arm_chain_mutation_forbidden": true,
-    "ballet_hand_shape_side_assignment_source": "ACTUAL_HAND_BONE_HIERARCHY_NOT_NAME_SUFFIX"
+    "ballet_hand_shape_side_assignment_source": "ACTUAL_HAND_BONE_HIERARCHY_NOT_NAME_SUFFIX",
+    "ballet_hand_shape_segment_order_source": "ACTUAL_HAND_SUBTREE_HIERARCHY_DEPTH; NUMERIC_AND_SIDE_SUFFIXES_ARE_NONAUTHORITATIVE"
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,

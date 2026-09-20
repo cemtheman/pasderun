@@ -1465,22 +1465,20 @@ def _bone_descendants(
     return result
 
 
-def _unique_descendant_matching(
-    root: bpy.types.Bone,
-    predicate,
-    label: str,
-) -> bpy.types.Bone:
-    matches = [
-        bone
-        for bone in _bone_descendants(root)
-        if predicate(bone.name)
-    ]
-    if len(matches) != 1:
+def _hierarchy_distance_from(
+    ancestor: bpy.types.Bone,
+    bone: bpy.types.Bone,
+) -> int:
+    distance = 0
+    current = bone
+    while current is not None and current != ancestor:
+        current = current.parent
+        distance += 1
+    if current != ancestor:
         raise RuntimeError(
-            f"{root.name}: expected one descendant for {label}, "
-            f"got {[bone.name for bone in matches]}."
+            f"{bone.name} is not a descendant of {ancestor.name}."
         )
-    return matches[0]
+    return distance
 
 
 def _finger_chain_from_hand_hierarchy(
@@ -1489,32 +1487,43 @@ def _finger_chain_from_hand_hierarchy(
     digit: str,
 ) -> list[str]:
     hand_bone = armature.data.bones[hand_rig_name]
-    token = digit.capitalize()
+    token = f"{digit.capitalize()}_"
 
-    # Finger roots are not guaranteed to be direct children of Hand_L/R.
-    # The source rig contains intermediate palm/metacarpal nodes, and Ring
-    # also carries swapped _L/_R suffixes. Therefore hierarchy membership,
-    # not suffix or direct-parent assumptions, is authoritative.
-    first = _unique_descendant_matching(
-        hand_bone,
-        lambda name: name.startswith(f"{token}_1_"),
-        f"{digit} segment 1",
+    # The already-reported Hand_L/Hand_R subtree is the authority:
+    # every digit has exactly three bones, but numeric/name suffixes do
+    # NOT encode proximal-to-distal order. Order only by actual rig depth.
+    matches = [
+        bone
+        for bone in _bone_descendants(hand_bone)
+        if bone.name.startswith(token)
+    ]
+    if len(matches) != 3:
+        raise RuntimeError(
+            f"{hand_rig_name}/{digit}: expected exactly 3 hierarchy "
+            f"members, got {[bone.name for bone in matches]}."
+        )
+
+    matches.sort(
+        key=lambda bone: _hierarchy_distance_from(
+            hand_bone,
+            bone,
+        )
     )
-    second = _unique_descendant_matching(
-        first,
-        lambda name: name.startswith(f"{token}_2_"),
-        f"{digit} segment 2",
-    )
-    third = _unique_descendant_matching(
-        second,
-        lambda name: (
-            name.startswith(f"{token}_")
-            and not name.startswith(f"{token}_1_")
-            and not name.startswith(f"{token}_2_")
-        ),
-        f"{digit} terminal segment",
-    )
-    return [first.name, second.name, third.name]
+
+    for parent_like, child_like in zip(matches, matches[1:]):
+        current = child_like.parent
+        while current is not None and current != hand_bone:
+            if current == parent_like:
+                break
+            current = current.parent
+        else:
+            raise RuntimeError(
+                f"{hand_rig_name}/{digit}: three matching bones do not "
+                f"form one proximal-to-distal chain: "
+                f"{[bone.name for bone in matches]}."
+            )
+
+    return [bone.name for bone in matches]
 
 
 def _pose_bone_length_direction(
