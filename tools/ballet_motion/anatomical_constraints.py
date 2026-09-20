@@ -25,6 +25,11 @@ def evaluate_dof(
 ) -> ConstraintResult:
     joint = constraint_spec["joint_limits"][joint_class]
     if joint.get("unbounded"):
+        allowed = set(joint.get("unbounded_dofs", []))
+        if dof not in allowed:
+            raise ValueError(
+                f"Undeclared DOF {joint_class}.{dof}; motion authority denied."
+            )
         return ConstraintResult(
             "PASS",
             joint_class,
@@ -142,7 +147,11 @@ def validate_limit_table(
             continue
 
         declared = set(class_spec["rotational_dofs"])
-        configured = set(limits[class_name].get("dofs", {}))
+        joint_limits = limits[class_name]
+        if joint_limits.get("unbounded"):
+            configured = set(joint_limits.get("unbounded_dofs", []))
+        else:
+            configured = set(joint_limits.get("dofs", {}))
         if declared != configured:
             errors.append(
                 f"dof_mismatch:{class_name}:"
@@ -150,7 +159,7 @@ def validate_limit_table(
                 f"configured={sorted(configured)}"
             )
 
-        for dof_name, dof_limits in limits[class_name].get("dofs", {}).items():
+        for dof_name, dof_limits in joint_limits.get("dofs", {}).items():
             hard = dof_limits["hard"]
             preferred = dof_limits["preferred"]
             if float(hard["min"]) > float(preferred["min"]):

@@ -31,6 +31,30 @@ class Phase1063AnatomicalConstraintTests(unittest.TestCase):
             [],
         )
 
+    def test_root_unbounded_dofs_are_explicit_not_wildcard(self) -> None:
+        root = self.constraints["joint_limits"]["root_6dof"]
+        self.assertTrue(root["unbounded"])
+        self.assertEqual(
+            set(root["unbounded_dofs"]),
+            {"pitch", "yaw", "roll"},
+        )
+        self.assertEqual(
+            evaluate_dof(
+                self.constraints,
+                "root_6dof",
+                "yaw",
+                720.0,
+            ).status,
+            "PASS",
+        )
+        with self.assertRaises(ValueError):
+            evaluate_dof(
+                self.constraints,
+                "root_6dof",
+                "invented_axis",
+                1.0,
+            )
+
     def test_preferred_ranges_are_inside_hard_ranges(self) -> None:
         for joint in self.constraints["joint_limits"].values():
             for limits in joint.get("dofs", {}).values():

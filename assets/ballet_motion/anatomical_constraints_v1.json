@@ -26,6 +26,11 @@
   "joint_limits": {
     "root_6dof": {
       "unbounded": true,
+      "unbounded_dofs": [
+        "pitch",
+        "yaw",
+        "roll"
+      ],
       "dofs": {}
     },
     "axial_ball": {
@@ -370,8 +375,8 @@
     },
     {
       "type": "research",
-      "pmid": "6555111",
-      "use": "elbow normative ROM context"
+      "use": "elbow normative ROM context",
+      "pmcid": "PMC6555111"
     },
     {
       "type": "review",
