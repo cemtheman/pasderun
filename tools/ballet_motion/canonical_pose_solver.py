@@ -636,8 +636,8 @@ def _arm_geometry(
                 ):
                     target_hand_side_offset = float(
                         hand_mesh_contract[
-                            "hand_landmark_target_side_offset"
-                        ]
+                            "hand_landmark_target_side_offset_by_side"
+                        ][side]
                     )
                     realized_hand_side_offset = (
                         sign * float(candidate_hand[0])
