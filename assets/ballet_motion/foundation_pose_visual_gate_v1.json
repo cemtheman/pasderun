@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "phase": "10.6.8",
+  "contract_id": "foundation_pose_visual_gate_v1",
+  "policy": {
+    "source_pose_profile": "Phase 10.6.6 calibrated rig retarget",
+    "static_realization_authority": "Phase 10.6.7 contact/root algorithms",
+    "old_pose_lab_motion_authoring_forbidden": true,
+    "old_reverence_authoring_forbidden": true,
+    "animation_forbidden": true,
+    "glb_export_forbidden": true,
+    "source_glb_mutation_forbidden": true,
+    "geometric_gate_must_pass_before_each_render": true,
+    "hand_axial_continuity_must_pass_before_upper_body_render": true,
+    "human_visual_acceptance_required": true,
+    "automated_ballet_aesthetic_pass_forbidden": true
+  },
+  "poses": [
+    "bras_bas",
+    "en_avant",
+    "second",
+    "fifth",
+    "plie",
+    "releve"
+  ],
+  "views": [
+    "FRONT",
+    "THREE_QUARTER",
+    "SIDE"
+  ],
+  "render": {
+    "engine": "BLENDER_WORKBENCH",
+    "cell_size": 420,
+    "contact_sheet_rows": 6,
+    "contact_sheet_columns": 3,
+    "identical_orthographic_scale": true,
+    "individual_cells_preserved": true
+  },
+  "wrist_continuity": {
+    "local_dof_composition": "Rx(flexion_extension) then Rz(radial_ulnar_deviation)",
+    "independent_axial_y_rotation_forbidden": true,
+    "limit_source": "Phase 10.6.3 wrist_2dof preferred envelope",
+    "reconstruction_matrix_error_max": 0.01
+  },
+  "visual_review_contract": {
+    "upper_body": [
+      "arms remain anterior where grammar requires",
+      "elbow line reads rounded rather than locked",
+      "hand and forearm read continuous without flipped palm/axial break",
+      "shoulders remain down and neck visually free"
+    ],
+    "lower_body": [
+      "fifth reads as crossed/closed rather than parallel stance",
+      "plie reads as coordinated turnout and descent rather than squat/frog",
+      "releve reads on forefoot with both heels lifted and turnout preserved"
+    ],
+    "verdict_values": [
+      "ACCEPT",
+      "REVISE"
+    ],
+    "machine_may_not_choose_verdict": true
+  }
+}
