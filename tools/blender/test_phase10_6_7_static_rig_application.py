@@ -316,7 +316,11 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            "deformed hand mesh centerline spacing failed",
+            "deformed hand mesh centerline spacing ",
+            self.script,
+        )
+        self.assertIn(
+            'f"failed: {hand_mesh_spacing}; "',
             self.script,
         )
         self.assertIn(
