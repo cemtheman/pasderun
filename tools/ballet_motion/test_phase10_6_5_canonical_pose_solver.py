@@ -232,11 +232,11 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
     def test_bras_bas_and_en_avant_touch_not_cross_centerline(self) -> None:
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["centerline_hand_policy"],
-            "TOUCH_NOT_CROSS",
+            "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
         )
         self.assertEqual(
             self.intents["poses"]["en_avant"]["centerline_hand_policy"],
-            "TOUCH_NOT_CROSS",
+            "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
         )
         for pose in ("bras_bas", "en_avant"):
             result = solve_pose(
