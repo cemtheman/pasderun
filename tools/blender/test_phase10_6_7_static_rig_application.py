@@ -287,7 +287,7 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            '"fingertip_centerline_spacing_pass": True',
+            '"middle_bone_tip_diagnostic_recorded": True',
             self.script,
         )
 
@@ -324,8 +324,41 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
+            "def solve_hand_mesh_wrist_spacing(",
+            self.script,
+        )
+        self.assertIn(
+            "def solve_hand_mesh_wrist_side(",
+            self.script,
+        )
+        self.assertIn(
+            'constraints["joint_limits"]["wrist_2dof"]["dofs"]',
+            self.script,
+        )
+        self.assertIn(
             '"hand_mesh_centerline_spacing_pass": True',
             self.script,
+        )
+        self.assertIn(
+            '"hand_mesh_wrist_realization_pass": True',
+            self.script,
+        )
+        self.assertEqual(
+            self.contract["hand_mesh_wrist_solver"][
+                "coarse_step_deg"
+            ],
+            5,
+        )
+        self.assertEqual(
+            self.contract["hand_mesh_wrist_solver"][
+                "refine_steps_deg"
+            ],
+            [1, 0.2, 0.05],
+        )
+        self.assertTrue(
+            self.contract["hand_mesh_wrist_solver"][
+                "independent_axial_roll_forbidden"
+            ]
         )
 
     def test_contact_fix_does_not_relax_existing_contact_tolerance(self) -> None:
@@ -590,13 +623,21 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.wrapper,
         )
 
-    def test_wrapper_requires_fingertip_spacing_gate(self) -> None:
+    def test_wrapper_requires_hand_mesh_spacing_and_wrist_gates(self) -> None:
         self.assertIn(
-            "$data.gate.fingertip_centerline_spacing_pass",
+            "$data.gate.hand_mesh_centerline_spacing_pass",
             self.wrapper,
         )
         self.assertIn(
-            "Fingertip centerline spacing gate failed.",
+            "$data.gate.hand_mesh_wrist_realization_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.gate.middle_bone_tip_diagnostic_recorded",
+            self.wrapper,
+        )
+        self.assertNotIn(
+            "$data.gate.fingertip_centerline_spacing_pass",
             self.wrapper,
         )
 

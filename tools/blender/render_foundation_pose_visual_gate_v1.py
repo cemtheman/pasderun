@@ -667,28 +667,30 @@ def realize_pose(
 
     fingertip_spacing = {}
     hand_mesh_spacing = {}
+    hand_mesh_wrist_solution = {}
     if pose_name in ("bras_bas", "en_avant"):
+        hand_mesh_wrist_solution = (
+            static_core.solve_hand_mesh_wrist_spacing(
+                armature,
+                canonical,
+                constraints,
+                pose_entry,
+                runtime["hand_samples"],
+                float(
+                    runtime["hand_sampling"][
+                        "inner_edge_quantile"
+                    ]
+                ),
+                static_contract["hand_mesh_wrist_solver"],
+            )
+        )
+        hand_mesh_spacing = hand_mesh_wrist_solution[
+            "final_mesh_spacing"
+        ]
         fingertip_spacing = static_core.realized_middle_fingertip_spacing(
             armature,
             canonical,
             pose_entry,
-        )
-        hand_mesh_spacing = static_core.realized_hand_mesh_centerline_spacing(
-            armature,
-            canonical,
-            pose_entry,
-            runtime["hand_samples"],
-            float(
-                runtime["hand_sampling"][
-                    "inner_edge_quantile"
-                ]
-            ),
-        )
-        require(
-            hand_mesh_spacing["status"] == "PASS",
-            f"{pose_name}: deformed hand mesh spacing failed "
-            f"before render: {hand_mesh_spacing}; "
-            f"bone_tip_diagnostic={fingertip_spacing}.",
         )
 
     return {
@@ -697,8 +699,9 @@ def realize_pose(
         "contact": contact,
         "full_foot_orientation": orientation,
         "releve_realization": releve,
-        "fingertip_spacing": fingertip_spacing,
+        "fingertip_spacing_diagnostic": fingertip_spacing,
         "hand_mesh_spacing": hand_mesh_spacing,
+        "hand_mesh_wrist_solution": hand_mesh_wrist_solution,
     }
 
 
@@ -891,8 +894,9 @@ def main() -> None:
             "static_realization_pass": True,
             "mesh_contact_pass": True,
             "upper_body_hand_axial_continuity_pass": True,
-            "fingertip_centerline_spacing_pass": True,
+            "middle_bone_tip_diagnostic_recorded": True,
             "hand_mesh_centerline_spacing_pass": True,
+            "hand_mesh_wrist_realization_pass": True,
             "render_count_pass": True,
             "animation_rendered": False,
             "glb_exported": False,
@@ -917,8 +921,9 @@ def main() -> None:
     print("VIEWS_PER_POSE=3")
     print("RENDERS=18")
     print("HAND_AXIAL_CONTINUITY=PASS")
-    print("FINGERTIP_CENTERLINE_SPACING=PASS")
+    print("MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY")
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
+    print("HAND_MESH_WRIST_REALIZATION=PASS")
     print("STATIC_CONTACT_REALIZATION=PASS")
     print("ANIMATION=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

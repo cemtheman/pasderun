@@ -142,8 +142,14 @@ if (-not $data.gate.releve_plantar_toe_contact_realization_pass) {
 if (-not $data.gate.releve_heel_lift_consistency_pass) {
     throw "Releve heel-lift gate failed."
 }
-if (-not $data.gate.fingertip_centerline_spacing_pass) {
-    throw "Fingertip centerline spacing gate failed."
+if (-not $data.gate.hand_mesh_centerline_spacing_pass) {
+    throw "Hand mesh centerline spacing gate failed."
+}
+if (-not $data.gate.hand_mesh_wrist_realization_pass) {
+    throw "Hand mesh wrist realization gate failed."
+}
+if (-not $data.gate.middle_bone_tip_diagnostic_recorded) {
+    throw "Middle-bone tip diagnostic evidence missing."
 }
 if (-not $data.gate.blender_application_performed) {
     throw "Blender pose application did not occur."
@@ -168,6 +174,8 @@ Write-Host "Plie root descent: PASS"
 Write-Host "Releve plantar:    PASS"
 Write-Host "Releve plantar+toe: PASS"
 Write-Host "Releve heel lift:  PASS"
-Write-Host "Fingertip spacing: PASS"
+Write-Host "Hand mesh spacing: PASS"
+Write-Host "Hand mesh wrist:   PASS"
+Write-Host "Middle bone tip:   DIAGNOSTIC ONLY"
 Write-Host "Render/animation/export: NOT PERFORMED"
 Write-Host "Report: $output"

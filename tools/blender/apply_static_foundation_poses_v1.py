@@ -1348,6 +1348,335 @@ def realized_middle_fingertip_spacing(
     }
 
 
+def rotation_x(angle_deg: float) -> Matrix:
+    angle = math.radians(float(angle_deg))
+    c = math.cos(angle)
+    s = math.sin(angle)
+    return Matrix(
+        (
+            (1.0, 0.0, 0.0),
+            (0.0, c, -s),
+            (0.0, s, c),
+        )
+    )
+
+
+def rotation_z(angle_deg: float) -> Matrix:
+    angle = math.radians(float(angle_deg))
+    c = math.cos(angle)
+    s = math.sin(angle)
+    return Matrix(
+        (
+            (c, -s, 0.0),
+            (s, c, 0.0),
+            (0.0, 0.0, 1.0),
+        )
+    )
+
+
+def wrist_delta_matrix(
+    flexion_extension_deg: float,
+    radial_ulnar_deviation_deg: float,
+) -> Matrix:
+    return (
+        rotation_x(flexion_extension_deg)
+        @ rotation_z(radial_ulnar_deviation_deg)
+    )
+
+
+def apply_hand_wrist_candidate(
+    armature: bpy.types.Object,
+    canonical: dict,
+    side: str,
+    flexion_extension_deg: float,
+    radial_ulnar_deviation_deg: float,
+) -> None:
+    hand_name = f"{side}_hand"
+    hand_bone = canonical["canonical_bones"][hand_name]
+    parent_pose, rest_local = canonical_parent_and_rest_local(
+        armature,
+        canonical,
+        hand_name,
+    )
+    desired_canonical = (
+        parent_pose
+        @ rest_local
+        @ wrist_delta_matrix(
+            flexion_extension_deg,
+            radial_ulnar_deviation_deg,
+        )
+    )
+    desired_rig = rig_basis_from_canonical_pose(
+        hand_bone,
+        desired_canonical,
+    )
+    apply_absolute_rig_rotation_via_matrix_basis(
+        armature,
+        hand_bone["rig_bone"],
+        desired_rig,
+    )
+
+
+def hand_mesh_inner_edge(
+    armature: bpy.types.Object,
+    canonical: dict,
+    samples: list[tuple[str, int]],
+    side: str,
+    inner_edge_quantile: float,
+) -> dict:
+    frame = canonical["body_frame"]["declared_axes_armature_local"]
+    left_axis = Vector(frame["left"]).normalized()
+    coordinates = [
+        float(point.dot(left_axis))
+        for point in evaluated_sample_points(armature, samples)
+    ]
+    q = float(inner_edge_quantile)
+    if side == "left":
+        inner_edge = quantile(coordinates, q)
+        side_offset = inner_edge
+    elif side == "right":
+        inner_edge = quantile(coordinates, 1.0 - q)
+        side_offset = -inner_edge
+    else:
+        raise RuntimeError(f"Unknown hand side: {side}.")
+
+    return {
+        "inner_edge": float(inner_edge),
+        "side_offset": float(side_offset),
+        "sample_count": len(coordinates),
+    }
+
+
+def solve_hand_mesh_wrist_side(
+    armature: bpy.types.Object,
+    canonical: dict,
+    constraints: dict,
+    pose_entry: dict,
+    side: str,
+    samples: list[tuple[str, int]],
+    inner_edge_quantile: float,
+    solver_contract: dict,
+) -> dict:
+    spacing = pose_entry.get(
+        "non_rotational_pose_contract",
+        {},
+    ).get("fingertip_spacing_contract")
+    if spacing is None:
+        return {"required": False, "status": "NOT_REQUIRED"}
+
+    limits = constraints["joint_limits"]["wrist_2dof"]["dofs"]
+    flexion = limits["flexion_extension"]["preferred"]
+    deviation = limits["radial_ulnar_deviation"]["preferred"]
+    fmin = float(flexion["min"])
+    fmax = float(flexion["max"])
+    dmin = float(deviation["min"])
+    dmax = float(deviation["max"])
+
+    hand_name = f"{side}_hand"
+    semantic = pose_entry["evidence"]["hand_wrist_solution"][hand_name]
+    semantic_flexion = float(semantic["flexion_extension_deg"])
+    semantic_deviation_seed = float(
+        semantic["radial_ulnar_deviation_deg"]
+    )
+
+    minimum_side_offset = float(spacing["minimum_gap"]) * 0.5
+    maximum_side_offset = float(spacing["maximum_gap"]) * 0.5
+    epsilon = float(solver_contract["interval_error_epsilon"])
+    best = None
+
+    def evaluate(
+        flexion_extension_deg: float,
+        radial_ulnar_deviation_deg: float,
+    ) -> None:
+        nonlocal best
+        if not fmin <= flexion_extension_deg <= fmax:
+            return
+        if not dmin <= radial_ulnar_deviation_deg <= dmax:
+            return
+
+        apply_hand_wrist_candidate(
+            armature,
+            canonical,
+            side,
+            flexion_extension_deg,
+            radial_ulnar_deviation_deg,
+        )
+        measurement = hand_mesh_inner_edge(
+            armature,
+            canonical,
+            samples,
+            side,
+            inner_edge_quantile,
+        )
+        side_offset = float(measurement["side_offset"])
+        if side_offset < minimum_side_offset:
+            interval_error = minimum_side_offset - side_offset
+        elif side_offset > maximum_side_offset:
+            interval_error = side_offset - maximum_side_offset
+        else:
+            interval_error = 0.0
+
+        semantic_deviation = (
+            abs(flexion_extension_deg - semantic_flexion)
+            + abs(radial_ulnar_deviation_deg - semantic_deviation_target)
+        )
+        key = (
+            interval_error,
+            abs(side_offset - minimum_side_offset),
+            semantic_deviation,
+            abs(flexion_extension_deg),
+            abs(radial_ulnar_deviation_deg),
+        )
+        candidate = {
+            "key": key,
+            "flexion_extension_deg": float(flexion_extension_deg),
+            "radial_ulnar_deviation_deg": float(
+                radial_ulnar_deviation_deg
+            ),
+            "measurement": measurement,
+            "interval_error": float(interval_error),
+            "semantic_deviation_deg": float(semantic_deviation),
+        }
+        if best is None or key < best["key"]:
+            best = candidate
+
+    coarse = float(solver_contract["coarse_step_deg"])
+    f = fmin
+    while f <= fmax + 1e-9:
+        d = dmin
+        while d <= dmax + 1e-9:
+            evaluate(f, d)
+            d += coarse
+        f += coarse
+
+    if best is None:
+        raise RuntimeError(
+            f"{side}: no preferred wrist candidate exists for hand mesh."
+        )
+
+    for step_value in solver_contract["refine_steps_deg"]:
+        step = float(step_value)
+        center_f = float(best["flexion_extension_deg"])
+        center_d = float(best["radial_ulnar_deviation_deg"])
+        for f_offset in range(-5, 6):
+            for d_offset in range(-5, 6):
+                evaluate(
+                    center_f + f_offset * step,
+                    center_d + d_offset * step,
+                )
+
+    apply_hand_wrist_candidate(
+        armature,
+        canonical,
+        side,
+        float(best["flexion_extension_deg"]),
+        float(best["radial_ulnar_deviation_deg"]),
+    )
+    final_measurement = hand_mesh_inner_edge(
+        armature,
+        canonical,
+        samples,
+        side,
+        inner_edge_quantile,
+    )
+
+    if float(best["interval_error"]) > epsilon:
+        raise RuntimeError(
+            f"{side}: deformed hand mesh near-touch target is "
+            "unreachable inside wrist preferred envelope; "
+            f"closest_side_offset={final_measurement['side_offset']}; "
+            f"required=[{minimum_side_offset}, "
+            f"{maximum_side_offset}]; "
+            f"solved_flexion={best['flexion_extension_deg']}; "
+            f"solved_deviation={best['radial_ulnar_deviation_deg']}; "
+            f"preferred_flexion=[{fmin}, {fmax}]; "
+            f"preferred_deviation=[{dmin}, {dmax}]."
+        )
+
+    return {
+        "required": True,
+        "status": "PASS",
+        "side": side,
+        "solved_flexion_extension_deg": round(
+            float(best["flexion_extension_deg"]),
+            8,
+        ),
+        "solved_radial_ulnar_deviation_deg": round(
+            float(best["radial_ulnar_deviation_deg"]),
+            8,
+        ),
+        "semantic_seed_flexion_extension_deg": round(
+            semantic_flexion,
+            8,
+        ),
+        "semantic_seed_radial_ulnar_deviation_deg": round(
+            semantic_deviation_seed,
+            8,
+        ),
+        "inner_edge": round(
+            float(final_measurement["inner_edge"]),
+            8,
+        ),
+        "side_offset": round(
+            float(final_measurement["side_offset"]),
+            8,
+        ),
+        "minimum_side_offset": round(minimum_side_offset, 8),
+        "maximum_side_offset": round(maximum_side_offset, 8),
+        "preferred_envelope": {
+            "flexion_extension": {"min": fmin, "max": fmax},
+            "radial_ulnar_deviation": {"min": dmin, "max": dmax},
+        },
+        "independent_axial_roll": "BLOCKED",
+        "authority": "DEFORMED_HAND_MESH",
+    }
+
+
+def solve_hand_mesh_wrist_spacing(
+    armature: bpy.types.Object,
+    canonical: dict,
+    constraints: dict,
+    pose_entry: dict,
+    hand_samples: dict,
+    inner_edge_quantile: float,
+    solver_contract: dict,
+) -> dict:
+    side_solutions = {}
+    for side in ("left", "right"):
+        side_solutions[side] = solve_hand_mesh_wrist_side(
+            armature,
+            canonical,
+            constraints,
+            pose_entry,
+            side,
+            hand_samples[side],
+            inner_edge_quantile,
+            solver_contract,
+        )
+
+    final_spacing = realized_hand_mesh_centerline_spacing(
+        armature,
+        canonical,
+        pose_entry,
+        hand_samples,
+        inner_edge_quantile,
+    )
+    if final_spacing["status"] != "PASS":
+        raise RuntimeError(
+            "Deformed hand mesh wrist solve did not realize bilateral "
+            f"spacing contract: {final_spacing}; "
+            f"side_solutions={side_solutions}."
+        )
+
+    return {
+        "status": "PASS",
+        "side_solutions": side_solutions,
+        "final_mesh_spacing": final_spacing,
+        "preferred_only": True,
+        "independent_axial_roll": "BLOCKED",
+    }
+
+
 def realized_hand_mesh_centerline_spacing(
     armature: bpy.types.Object,
     canonical: dict,
@@ -1700,27 +2029,32 @@ def main() -> None:
         consistency = {}
         fingertip_spacing = {}
         hand_mesh_spacing = {}
+        hand_mesh_wrist_solution = {}
         if pose_name in ("bras_bas", "en_avant"):
+            hand_mesh_wrist_solution = solve_hand_mesh_wrist_spacing(
+                armature,
+                canonical,
+                constraints,
+                pose_entry,
+                hand_samples,
+                float(hand_sampling["inner_edge_quantile"]),
+                contract["hand_mesh_wrist_solver"],
+            )
+            hand_mesh_spacing = hand_mesh_wrist_solution[
+                "final_mesh_spacing"
+            ]
             fingertip_spacing = realized_middle_fingertip_spacing(
                 armature,
                 canonical,
                 pose_entry,
             )
-            hand_mesh_spacing = realized_hand_mesh_centerline_spacing(
-                armature,
-                canonical,
-                pose_entry,
-                hand_samples,
-                float(hand_sampling["inner_edge_quantile"]),
+            consistency["fingertip_spacing_diagnostic"] = (
+                fingertip_spacing
             )
-            require(
-                hand_mesh_spacing["status"] == "PASS",
-                f"{pose_name}: deformed hand mesh centerline spacing "
-                f"failed: {hand_mesh_spacing}; "
-                f"bone_tip_diagnostic={fingertip_spacing}.",
-            )
-            consistency["fingertip_spacing"] = fingertip_spacing
             consistency["hand_mesh_spacing"] = hand_mesh_spacing
+            consistency["hand_mesh_wrist_solution"] = (
+                hand_mesh_wrist_solution
+            )
 
         if pose_name == "fifth":
             max_shift = (
@@ -1884,6 +2218,7 @@ def main() -> None:
             "contact_consistency": consistency,
             "fingertip_spacing_realization": fingertip_spacing,
             "hand_mesh_spacing_realization": hand_mesh_spacing,
+            "hand_mesh_wrist_solution": hand_mesh_wrist_solution,
             "blender_pose_applied": True,
             "rendered": False,
         }
@@ -1931,8 +2266,9 @@ def main() -> None:
             "releve_plantar_contact_realization_pass": True,
             "releve_plantar_toe_contact_realization_pass": True,
             "releve_heel_lift_consistency_pass": True,
-            "fingertip_centerline_spacing_pass": True,
+            "middle_bone_tip_diagnostic_recorded": True,
             "hand_mesh_centerline_spacing_pass": True,
+            "hand_mesh_wrist_realization_pass": True,
             "blender_application_performed": True,
             "render_performed": False,
             "animation_performed": False,
@@ -1953,8 +2289,9 @@ def main() -> None:
     print("PLIE_ROOT_DESCENT=PASS")
     print("RELEVE_PLANTAR_CONTACT_REALIZATION=PASS")
     print("RELEVE_HEEL_LIFT=PASS")
-    print("FINGERTIP_CENTERLINE_SPACING=PASS")
+    print("MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY")
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
+    print("HAND_MESH_WRIST_REALIZATION=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

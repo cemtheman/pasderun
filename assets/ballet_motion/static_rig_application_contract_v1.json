@@ -31,7 +31,10 @@
     "plie_full_foot_contact_is_final_root_translation_authority": true,
     "hand_mesh_centerline_spacing_required_for_bras_bas_and_en_avant": true,
     "hand_mesh_is_final_visual_centerline_authority": true,
-    "middle_bone_tail_is_diagnostic_not_visual_authority": true
+    "middle_bone_tail_is_diagnostic_not_visual_authority": true,
+    "hand_mesh_wrist_realization_required": true,
+    "hand_mesh_wrist_solver_preferred_only": true,
+    "middle_bone_tip_is_diagnostic_after_mesh_realization": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -75,5 +78,15 @@
   "hand_mesh_sampling": {
     "minimum_vertex_group_weight": 0.15,
     "inner_edge_quantile": 0.02
+  },
+  "hand_mesh_wrist_solver": {
+    "coarse_step_deg": 5,
+    "refine_steps_deg": [
+      1,
+      0.2,
+      0.05
+    ],
+    "interval_error_epsilon": 0.000001,
+    "independent_axial_roll_forbidden": true
   }
 }
