@@ -46,6 +46,9 @@ def main() -> None:
     grammar_path = Path(args.grammar_profile).resolve()
     intents_path = Path(args.intents).resolve()
     output_path = Path(args.output).resolve()
+    solver_source_path = Path(__file__).with_name(
+        "canonical_pose_solver.py"
+    ).resolve()
 
     canonical = json.loads(canonical_path.read_text(encoding="utf-8"))
     constraints = json.loads(constraint_path.read_text(encoding="utf-8"))
@@ -117,6 +120,7 @@ def main() -> None:
             "constraint_profile_sha256": sha256_file(constraint_path),
             "grammar_profile_sha256": sha256_file(grammar_path),
             "intent_spec_sha256": sha256_file(intents_path),
+            "solver_source_sha256": sha256_file(solver_source_path),
             "source_glb_sha256": canonical["source"]["sha256"],
         },
         "policy": intents["policy"],

@@ -483,7 +483,15 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.wrapper,
         )
         self.assertIn(
+            "existingPose.inputs.solver_source_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
             "existingRetarget.inputs.pose_profile_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "existingRetarget.inputs.retarget_source_sha256",
             self.wrapper,
         )
         self.assertIn(
@@ -495,7 +503,15 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.wrapper,
         )
         self.assertIn(
+            "pose profile is stale; solver source changed",
+            self.wrapper,
+        )
+        self.assertIn(
             "retarget profile is stale; pose profile changed",
+            self.wrapper,
+        )
+        self.assertIn(
+            "retarget profile is stale; retarget source changed",
             self.wrapper,
         )
         self.assertIn(

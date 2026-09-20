@@ -646,6 +646,34 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             self.wrapper,
         )
 
+    def test_builder_and_wrapper_require_calibrated_middle_fingertip_gate(self) -> None:
+        self.assertIn(
+            "calibrated_middle_fingertip_spacing_pass",
+            self.builder,
+        )
+        self.assertIn(
+            "$data.gate.calibrated_middle_fingertip_spacing_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Calibrated middle-fingertip spacing gate failed.",
+            self.wrapper,
+        )
+        self.assertIn(
+            "CALIBRATED_MIDDLE_FINGERTIP_SPACING=PASS",
+            self.builder,
+        )
+
+    def test_output_tracks_retarget_source_sha(self) -> None:
+        self.assertIn(
+            '"retarget_source_sha256"',
+            self.builder,
+        )
+        self.assertIn(
+            'with_name("calibrated_rig_retarget.py")',
+            self.builder,
+        )
+
     def test_wrapper_refreshes_10_6_5_when_intent_spec_changes(self) -> None:
         self.assertIn(
             "run_phase10_6_5_canonical_pose_solver.ps1",
@@ -656,7 +684,15 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             self.wrapper,
         )
         self.assertIn(
+            "existingPose.inputs.solver_source_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
             "Phase 10.6.5 pose profile is stale; intent spec changed.",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Phase 10.6.5 pose profile is stale; solver source changed.",
             self.wrapper,
         )
         self.assertIn(

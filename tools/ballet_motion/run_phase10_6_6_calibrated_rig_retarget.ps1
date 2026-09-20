@@ -12,6 +12,7 @@ $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_pro
 $constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
 $poses = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
 $intents = Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
+$poseSolverSource = Join-Path $Repo "tools\ballet_motion\canonical_pose_solver.py"
 $contract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
 $output = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarget_v1.json"
 $script = Join-Path $Repo "tools\ballet_motion\build_calibrated_rig_retarget_v1.py"
@@ -26,8 +27,16 @@ if (-not $poseNeedsRefresh) {
     $existingPose = Get-Content $poses -Raw | ConvertFrom-Json
     $currentIntentSha = (Get-FileHash -Algorithm SHA256 $intents).Hash.ToLowerInvariant()
     $profileIntentSha = [string]$existingPose.inputs.intent_spec_sha256
+    $currentSolverSha = (Get-FileHash -Algorithm SHA256 $poseSolverSource).Hash.ToLowerInvariant()
+    $profileSolverSha = [string]$existingPose.inputs.solver_source_sha256
     if ($profileIntentSha.ToLowerInvariant() -ne $currentIntentSha) {
         Write-Host "Phase 10.6.5 pose profile is stale; intent spec changed."
+        $poseNeedsRefresh = $true
+    } elseif (
+        [string]::IsNullOrWhiteSpace($profileSolverSha) -or
+        $profileSolverSha.ToLowerInvariant() -ne $currentSolverSha
+    ) {
+        Write-Host "Phase 10.6.5 pose profile is stale; solver source changed."
         $poseNeedsRefresh = $true
     }
 }
@@ -67,6 +76,7 @@ if (-not $data.gate.canonical_roundtrip_pass) { throw "Canonical roundtrip gate 
 if (-not $data.gate.hierarchy_reconstruction_pass) { throw "Hierarchy reconstruction gate failed." }
 if (-not $data.gate.arm_length_axis_alignment_pass) { throw "Arm length-axis gate failed." }
 if (-not $data.gate.hand_wrist_preferred_envelope_pass) { throw "Hand wrist preferred-envelope gate failed." }
+if (-not $data.gate.calibrated_middle_fingertip_spacing_pass) { throw "Calibrated middle-fingertip spacing gate failed." }
 if (-not $data.gate.semantic_limb_length_axis_preservation_pass) { throw "Semantic limb length-axis preservation gate failed." }
 if (-not $data.gate.orientation_retarget_pass) { throw "Orientation retarget gate failed." }
 if ($data.gate.root_translation_applied) { throw "Root translation is out of scope." }
@@ -92,6 +102,7 @@ Write-Host "Canonical roundtrip:    PASS"
 Write-Host "Hierarchy reconstruction: PASS"
 Write-Host "Arm length-axis:        PASS"
 Write-Host "Hand wrist envelope:    PASS"
+Write-Host "Middle fingertip gap:   PASS"
 Write-Host "Semantic limb axis:     PASS"
 Write-Host "Root/contact translation: NOT APPLIED"
 Write-Host "Blender/render:         NOT PERFORMED"

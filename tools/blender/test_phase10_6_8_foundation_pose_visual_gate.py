@@ -302,7 +302,15 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.wrapper,
         )
         self.assertIn(
+            "existingPose.inputs.solver_source_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
             "existingRetarget.inputs.pose_profile_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "existingRetarget.inputs.retarget_source_sha256",
             self.wrapper,
         )
         self.assertIn(

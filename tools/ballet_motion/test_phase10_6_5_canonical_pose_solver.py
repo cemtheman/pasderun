@@ -505,6 +505,16 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             self.wrapper,
         )
 
+    def test_output_tracks_canonical_solver_source_sha(self) -> None:
+        self.assertIn(
+            '"solver_source_sha256"',
+            self.builder,
+        )
+        self.assertIn(
+            'with_name("canonical_pose_solver.py")',
+            self.builder,
+        )
+
     def test_output_contract_is_phase_10_6_5(self) -> None:
         self.assertIn('PHASE = "10.6.5"', self.builder)
         self.assertIn(

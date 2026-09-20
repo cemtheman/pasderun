@@ -24,6 +24,8 @@ $retarget = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarg
 $retargetAxisContract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
 $poseProfile = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
 $intents = Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
+$poseSolverSource = Join-Path $Repo "tools\ballet_motion\canonical_pose_solver.py"
+$retargetSource = Join-Path $Repo "tools\ballet_motion\calibrated_rig_retarget.py"
 $staticContract = Join-Path $Repo "assets\ballet_motion\static_rig_application_contract_v1.json"
 $visualContract = Join-Path $Repo "assets\ballet_motion\foundation_pose_visual_gate_v1.json"
 $output = Join-Path $Repo "build\phase10_8\foundation_pose_visual_gate_v1_contact.png"
@@ -43,8 +45,16 @@ if (-not (Test-Path $poseProfile)) {
     $existingPose = Get-Content $poseProfile -Raw | ConvertFrom-Json
     $currentIntentSha = (Get-FileHash -Algorithm SHA256 $intents).Hash.ToLowerInvariant()
     $profileIntentSha = [string]$existingPose.inputs.intent_spec_sha256
+    $currentSolverSha = (Get-FileHash -Algorithm SHA256 $poseSolverSource).Hash.ToLowerInvariant()
+    $profileSolverSha = [string]$existingPose.inputs.solver_source_sha256
     if ($profileIntentSha.ToLowerInvariant() -ne $currentIntentSha) {
         Write-Host "Phase 10.6.5 pose profile is stale; intent spec changed."
+        $retargetNeedsRefresh = $true
+    } elseif (
+        [string]::IsNullOrWhiteSpace($profileSolverSha) -or
+        $profileSolverSha.ToLowerInvariant() -ne $currentSolverSha
+    ) {
+        Write-Host "Phase 10.6.5 pose profile is stale; solver source changed."
         $retargetNeedsRefresh = $true
     }
 }
@@ -55,8 +65,16 @@ if (-not $retargetNeedsRefresh) {
     $profileAxisSha = [string]$existingRetarget.inputs.axis_contract_sha256
     $currentPoseSha = (Get-FileHash -Algorithm SHA256 $poseProfile).Hash.ToLowerInvariant()
     $profilePoseSha = [string]$existingRetarget.inputs.pose_profile_sha256
+    $currentRetargetSourceSha = (Get-FileHash -Algorithm SHA256 $retargetSource).Hash.ToLowerInvariant()
+    $profileRetargetSourceSha = [string]$existingRetarget.inputs.retarget_source_sha256
     if ($profilePoseSha.ToLowerInvariant() -ne $currentPoseSha) {
         Write-Host "Phase 10.6.6 retarget profile is stale; pose profile changed."
+        $retargetNeedsRefresh = $true
+    } elseif (
+        [string]::IsNullOrWhiteSpace($profileRetargetSourceSha) -or
+        $profileRetargetSourceSha.ToLowerInvariant() -ne $currentRetargetSourceSha
+    ) {
+        Write-Host "Phase 10.6.6 retarget profile is stale; retarget source changed."
         $retargetNeedsRefresh = $true
     } elseif ($profileAxisSha.ToLowerInvariant() -ne $currentAxisSha) {
         $retargetNeedsRefresh = $true

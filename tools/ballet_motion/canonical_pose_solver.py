@@ -402,7 +402,6 @@ def _arm_geometry(
     upper_arm = dimensions["upper_arm"]
     forearm = dimensions["forearm"]
     hand_length = dimensions["hand"]
-    middle_length = dimensions["middle"]
     fingertip_contract = _fingertip_spacing_contract(
         intent,
         dimensions,
@@ -452,7 +451,6 @@ def _arm_geometry(
                 "elbow",
                 "wrist",
                 "hand",
-                "middle_tip",
             ):
                 source = landmarks[f"left_{joint}"]
                 landmarks[f"right_{joint}"] = _body_point(
@@ -514,10 +512,10 @@ def _arm_geometry(
         if wrist_constraints["minimum_front"] is None:
             wrist_constraints["minimum_front"] = wrist_front_min
 
-        ranked_candidates = []
-        for order_index, direction in enumerate(
-            _candidate_unit_directions(preferred_direction)
-        ):
+        wrist = None
+        elbow = None
+        hand = None
+        for direction in _candidate_unit_directions(preferred_direction):
             candidate_wrist = _add(
                 shoulder,
                 _scale(direction, wrist_distance),
@@ -532,11 +530,6 @@ def _arm_geometry(
                 candidate_wrist,
                 _scale(hand_direction, hand_length),
             )
-            candidate_middle_tip = _add(
-                candidate_hand,
-                _scale(hand_direction, middle_length),
-            )
-
             if centerline_policy in (
                 "TOUCH_NOT_CROSS",
                 "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
@@ -546,52 +539,6 @@ def _arm_geometry(
                 if sign * float(candidate_hand[0]) < -1e-9:
                     continue
 
-            fingertip_gap = None
-            if centerline_policy == "FINGERTIP_NEAR_TOUCH_NOT_CROSS":
-                if fingertip_contract is None:
-                    raise PoseSolveRejected(
-                        f"{pose_name}: fingertip gap contract missing."
-                    )
-                side_tip_offset = sign * float(candidate_middle_tip[0])
-                if side_tip_offset < 0.0:
-                    continue
-                fingertip_gap = 2.0 * side_tip_offset
-                if (
-                    fingertip_gap
-                    < float(fingertip_contract["minimum_gap"]) - 1e-9
-                    or fingertip_gap
-                    > float(fingertip_contract["maximum_gap"]) + 1e-9
-                ):
-                    continue
-                rank_key = (
-                    fingertip_gap,
-                    -_dot(direction, preferred_direction),
-                    order_index,
-                )
-            else:
-                rank_key = (float(order_index),)
-
-            ranked_candidates.append(
-                (
-                    rank_key,
-                    candidate_wrist,
-                    candidate_hand,
-                    candidate_middle_tip,
-                )
-            )
-
-        ranked_candidates.sort(key=lambda item: item[0])
-
-        wrist = None
-        elbow = None
-        hand = None
-        middle_tip = None
-        for (
-            _rank_key,
-            candidate_wrist,
-            candidate_hand,
-            candidate_middle_tip,
-        ) in ranked_candidates:
             elbow_constraints = _arm_elbow_constraints(
                 pose_name,
                 side,
@@ -617,25 +564,18 @@ def _arm_geometry(
             wrist = candidate_wrist
             elbow = candidate_elbow
             hand = candidate_hand
-            middle_tip = candidate_middle_tip
             break
 
-        if (
-            wrist is None
-            or elbow is None
-            or hand is None
-            or middle_tip is None
-        ):
+        if wrist is None or elbow is None or hand is None:
             raise PoseSolveRejected(
-                f"{pose_name}/{side}: no wrist/elbow/hand/fingertip "
-                "solution satisfies grammar and centerline policy."
+                f"{pose_name}/{side}: no wrist/elbow/hand solution "
+                "satisfies grammar and centerline policy."
             )
 
         landmarks[f"{side}_shoulder"] = _body_point(*shoulder)
         landmarks[f"{side}_elbow"] = _body_point(*elbow)
         landmarks[f"{side}_wrist"] = _body_point(*wrist)
         landmarks[f"{side}_hand"] = _body_point(*hand)
-        landmarks[f"{side}_middle_tip"] = _body_point(*middle_tip)
 
     return landmarks
 
@@ -906,22 +846,9 @@ def solve_pose(
             )
         evidence["arm_segment_lengths"] = arm_lengths
         if "fingertip_spacing_contract" in state:
-            left_tip = state["landmarks"]["left_middle_tip"]
-            right_tip = state["landmarks"]["right_middle_tip"]
-            gap = float(left_tip["left"]) - float(right_tip["left"])
-            contract = state["fingertip_spacing_contract"]
-            if not (
-                float(contract["minimum_gap"]) - 1e-9
-                <= gap
-                <= float(contract["maximum_gap"]) + 1e-9
-            ):
-                raise PoseSolveRejected(
-                    f"{pose_name}: solved fingertip gap {gap} outside "
-                    f"[{contract['minimum_gap']}, {contract['maximum_gap']}]."
-                )
             evidence["fingertip_spacing"] = {
-                "gap": gap,
-                "status": "PASS",
+                "status": "DEFERRED_TO_CALIBRATED_RETARGET",
+                "authority": "Phase 10.6.6 calibrated Hand->Middle rest/bind geometry",
             }
 
     return {
