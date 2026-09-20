@@ -139,7 +139,11 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
     def test_full_foot_solver_aligns_foot_up_not_arbitrary_full_matrix(self) -> None:
         self.assertIn("up_alignment_dot", self.script)
         self.assertIn(
-            'thresholds["full_foot_up_alignment_min_dot"]',
+            '"full_foot_up_alignment_min_dot"',
+            self.script,
+        )
+        self.assertIn(
+            "minimum_up_alignment_dot",
             self.script,
         )
         self.assertNotIn("decompose_ankle_2dof", self.script)
