@@ -38,6 +38,14 @@ def _dot(a, b):
     return sum(a[i] * b[i] for i in range(3))
 
 
+def _cross(a, b):
+    return [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    ]
+
+
 def _length(a):
     return math.sqrt(_dot(a, a))
 
@@ -130,12 +138,97 @@ def _desired_wrist_distance(
     )
 
 
+def _arm_elbow_constraints(
+    pose_name: str,
+    side: str,
+    shoulder: list[float],
+    wrist: list[float],
+    grammar: dict,
+) -> dict:
+    sign = 1.0 if side == "left" else -1.0
+    constraints = {
+        "side_sign": sign,
+        "minimum_front": None,
+        "minimum_abs_left": None,
+        "maximum_abs_left": None,
+        "maximum_up": None,
+        "minimum_up": None,
+    }
+
+    for check in grammar["poses"][pose_name]["checks"]:
+        kind = check["type"]
+        elbow_name = f"{side}_elbow"
+
+        if kind == "anterior_halfspace" and elbow_name in check["landmarks"]:
+            minimum = float(check["min_front"])
+            current = constraints["minimum_front"]
+            constraints["minimum_front"] = (
+                minimum if current is None else max(current, minimum)
+            )
+
+        if kind == "axis_order" and check.get("axis") == "abs_left":
+            margin = float(check["margin"])
+            relation = check["relation"]
+            wrist_abs = abs(float(wrist[0]))
+            if relation == "elbow_gt_wrist":
+                constraints["minimum_abs_left"] = wrist_abs + margin
+            elif relation == "wrist_gt_elbow":
+                constraints["maximum_abs_left"] = max(0.0, wrist_abs - margin)
+
+        if (
+            kind == "axis_order"
+            and check.get("axis") == "up"
+            and check.get("relation") == "shoulder_gt_elbow_gt_wrist"
+        ):
+            margin = float(check["margin"])
+            constraints["maximum_up"] = float(shoulder[1]) - margin
+            constraints["minimum_up"] = float(wrist[1]) + margin
+
+    return constraints
+
+
+def _elbow_satisfies_constraints(
+    elbow: list[float],
+    constraints: dict,
+) -> bool:
+    abs_left = abs(float(elbow[0]))
+    front = float(elbow[2])
+    up = float(elbow[1])
+
+    minimum_front = constraints["minimum_front"]
+    if minimum_front is not None and front < minimum_front - 1e-9:
+        return False
+
+    minimum_abs_left = constraints["minimum_abs_left"]
+    if minimum_abs_left is not None and abs_left < minimum_abs_left - 1e-9:
+        return False
+
+    maximum_abs_left = constraints["maximum_abs_left"]
+    if maximum_abs_left is not None and abs_left > maximum_abs_left + 1e-9:
+        return False
+
+    maximum_up = constraints["maximum_up"]
+    if maximum_up is not None and up > maximum_up + 1e-9:
+        return False
+
+    minimum_up = constraints["minimum_up"]
+    if minimum_up is not None and up < minimum_up - 1e-9:
+        return False
+
+    sign = float(constraints["side_sign"])
+    if sign * float(elbow[0]) < -1e-9:
+        return False
+
+    return True
+
+
 def _two_bone_elbow(
     shoulder: list[float],
     wrist: list[float],
     upper_arm: float,
     forearm: float,
     pole: list[float],
+    constraints: dict,
 ) -> list[float]:
     delta = _sub(wrist, shoulder)
     distance = _length(delta)
@@ -154,13 +247,32 @@ def _two_bone_elbow(
     ) / (2.0 * distance)
     height_sq = max(0.0, upper_arm * upper_arm - x * x)
     height = math.sqrt(height_sq)
+    center = _add(shoulder, _scale(along, x))
 
-    perpendicular = _project_orthogonal(pole, along)
-    perpendicular = _normalize(perpendicular)
+    preferred = _normalize(_project_orthogonal(pole, along))
+    tangent = _normalize(_cross(along, preferred))
 
-    return _add(
-        _add(shoulder, _scale(along, x)),
-        _scale(perpendicular, height),
+    # Deterministic feasibility search around the exact two-bone elbow circle.
+    # This is not coefficient tuning: segment lengths stay exact and grammar
+    # inequalities decide which geometric solutions are admissible.
+    angles_deg = [0.0]
+    for step in range(1, 721):
+        angle = step * 0.25
+        angles_deg.extend((angle, -angle))
+
+    for angle_deg in angles_deg:
+        angle = math.radians(angle_deg)
+        direction = _add(
+            _scale(preferred, math.cos(angle)),
+            _scale(tangent, math.sin(angle)),
+        )
+        elbow = _add(center, _scale(direction, height))
+        if _elbow_satisfies_constraints(elbow, constraints):
+            return elbow
+
+    raise PoseSolveRejected(
+        "No exact two-bone elbow solution satisfies pose geometry: "
+        f"{constraints}"
     )
 
 
@@ -248,22 +360,31 @@ def _arm_geometry(
             -float(pole_spec["down"]),
             float(pole_spec["front"]),
         ]
+        elbow_constraints = _arm_elbow_constraints(
+            pose_name,
+            side,
+            shoulder,
+            wrist,
+            grammar,
+        )
+        required_elbow_front = (
+            elbow_front_min
+            + float(intent.get("minimum_elbow_front_margin", 0.0))
+        )
+        current_front = elbow_constraints["minimum_front"]
+        elbow_constraints["minimum_front"] = (
+            required_elbow_front
+            if current_front is None
+            else max(current_front, required_elbow_front)
+        )
         elbow = _two_bone_elbow(
             shoulder,
             wrist,
             upper_arm,
             forearm,
             pole,
+            elbow_constraints,
         )
-
-        required_elbow_front = (
-            elbow_front_min
-            + float(intent.get("minimum_elbow_front_margin", 0.0))
-        )
-        if elbow[2] < required_elbow_front:
-            raise PoseSolveRejected(
-                f"{pose_name}: elbow fell behind anterior contract."
-            )
 
         hand_spec = intent["hand_direction"]
         hand_lateral_key = (

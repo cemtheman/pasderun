@@ -130,6 +130,37 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 "PASS",
             )
 
+    def test_arm_solver_enforces_grammar_lateral_order_across_ratios(self) -> None:
+        variants = (
+            (0.24, 0.30),
+            (0.30, 0.28),
+            (0.36, 0.24),
+            (0.22, 0.34),
+        )
+        for upper_arm, forearm in variants:
+            canonical = json.loads(json.dumps(self.canonical))
+            for side in ("left", "right"):
+                canonical["canonical_bones"][f"{side}_upper_arm"][
+                    "length"
+                ] = upper_arm
+                canonical["canonical_bones"][f"{side}_forearm"][
+                    "length"
+                ] = forearm
+
+            for pose in ("bras_bas", "en_avant", "second"):
+                result = solve_pose(
+                    pose,
+                    self.intents,
+                    self.grammar,
+                    canonical,
+                    self.constraints,
+                )
+                self.assertEqual(
+                    result["validation"]["status"],
+                    "PASS",
+                    f"{pose} failed for arm ratio {upper_arm}/{forearm}",
+                )
+
     def test_arm_solver_preserves_segment_lengths(self) -> None:
         for pose in ("bras_bas", "en_avant", "second"):
             result = solve_pose(
@@ -154,6 +185,18 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 self.constraints,
             )
             self.assertEqual(result["validation"]["status"], "PASS")
+
+    def test_solver_uses_grammar_constraints_not_only_preferred_pole(self) -> None:
+        self.assertIn("def _arm_elbow_constraints(", self.solver)
+        self.assertIn("def _elbow_satisfies_constraints(", self.solver)
+        self.assertIn(
+            "No exact two-bone elbow solution satisfies pose geometry",
+            self.solver,
+        )
+        self.assertIn(
+            "grammar inequalities decide which geometric solutions are admissible",
+            self.solver,
+        )
 
     def test_foundation_pose_requires_preferred_not_soft_joint_envelope(self) -> None:
         self.assertTrue(
