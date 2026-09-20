@@ -670,7 +670,11 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             self.builder,
         )
         self.assertIn(
-            'with_name("calibrated_rig_retarget.py")',
+            "retarget_source_path = Path(__file__).with_name(",
+            self.builder,
+        )
+        self.assertIn(
+            '"calibrated_rig_retarget.py"',
             self.builder,
         )
 

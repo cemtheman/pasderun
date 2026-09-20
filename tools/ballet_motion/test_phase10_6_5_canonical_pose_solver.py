@@ -277,7 +277,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                     -1e-9,
                 )
 
-    def test_bras_bas_and_en_avant_use_scale_relative_middle_fingertip_gap(self) -> None:
+    def test_bras_bas_and_en_avant_declare_scale_relative_middle_fingertip_gap(self) -> None:
         for pose in ("bras_bas", "en_avant"):
             result = solve_pose(
                 pose,
@@ -292,16 +292,17 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 contract["scale_basis"],
                 "average_hand_plus_middle_chain_length",
             )
-            left_tip = state["landmarks"]["left_middle_tip"]
-            right_tip = state["landmarks"]["right_middle_tip"]
-            gap = float(left_tip["left"]) - float(right_tip["left"])
-            self.assertGreater(gap, 0.0)
-            self.assertGreaterEqual(gap + 1e-9, contract["minimum_gap"])
-            self.assertLessEqual(gap, contract["maximum_gap"] + 1e-9)
+            self.assertGreater(contract["minimum_gap"], 0.0)
+            self.assertGreater(
+                contract["maximum_gap"],
+                contract["minimum_gap"],
+            )
             self.assertEqual(
                 result["evidence"]["fingertip_spacing"]["status"],
-                "PASS",
+                "DEFERRED_TO_CALIBRATED_RETARGET",
             )
+            self.assertNotIn("left_middle_tip", state["landmarks"])
+            self.assertNotIn("right_middle_tip", state["landmarks"])
 
     def test_middle_reference_is_not_an_articulated_finger_dof(self) -> None:
         result = solve_pose(
@@ -313,8 +314,12 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         )
         self.assertNotIn("left_middle", result["state"]["joint_dofs"])
         self.assertNotIn("right_middle", result["state"]["joint_dofs"])
-        self.assertIn("left_middle_tip", result["state"]["landmarks"])
-        self.assertIn("right_middle_tip", result["state"]["landmarks"])
+        self.assertNotIn("left_middle_tip", result["state"]["landmarks"])
+        self.assertNotIn("right_middle_tip", result["state"]["landmarks"])
+        self.assertEqual(
+            result["evidence"]["fingertip_spacing"]["status"],
+            "DEFERRED_TO_CALIBRATED_RETARGET",
+        )
 
     def test_second_has_no_fingertip_near_touch_contract(self) -> None:
         result = solve_pose(
@@ -511,7 +516,11 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             self.builder,
         )
         self.assertIn(
-            'with_name("canonical_pose_solver.py")',
+            "solver_source_path = Path(__file__).with_name(",
+            self.builder,
+        )
+        self.assertIn(
+            '"canonical_pose_solver.py"',
             self.builder,
         )
 
