@@ -1,2 +1,10 @@
 .godot/
 *.tmp
+
+# Phase 10 Blender / animation working outputs
+build/phase10_4/*
+build/phase10_5/*
+
+# Python generated cache
+tools/blender/__pycache__/
+*.pyc
