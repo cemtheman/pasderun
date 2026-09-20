@@ -123,7 +123,7 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
 
         releve_start = self.script.index(
-            "def apply_releve_plantar_candidate("
+            "def apply_releve_plantar_toe_candidate("
         )
         releve_end = self.script.index(
             "def candidate_releve_geometry(",
@@ -131,13 +131,19 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         releve_source = self.script[releve_start:releve_end]
         self.assertEqual(
-            releve_source.count(
-                "desired_rig = rig_basis_from_canonical_pose("
-            ),
-            1,
+            releve_source.count("rig_basis_from_canonical_pose("),
+            2,
+        )
+        self.assertIn(
+            "desired_foot_rig = rig_basis_from_canonical_pose(",
+            releve_source,
+        )
+        self.assertIn(
+            "desired_toe_rig = rig_basis_from_canonical_pose(",
+            releve_source,
         )
         self.assertNotIn(
-            "desired_rig = bind @ desired_canonical",
+            "bind @ desired",
             releve_source,
         )
 
@@ -331,7 +337,15 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            '["toe_flexion_extension"]["preferred"]',
+            'constraints["joint_limits"]["mtp_hinge"]["dofs"]',
+            self.script,
+        )
+        self.assertIn(
+            '"toe_flexion_extension"',
+            self.script,
+        )
+        self.assertIn(
+            'toe_preferred',
             self.script,
         )
         self.assertIn(
@@ -436,13 +450,21 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertIn("retarget prerequisite", self.wrapper)
 
-    def test_wrapper_requires_releve_plantar_realization_gate(self) -> None:
+    def test_wrapper_requires_releve_joint_realization_gates(self) -> None:
         self.assertIn(
             "$data.gate.releve_plantar_contact_realization_pass",
             self.wrapper,
         )
         self.assertIn(
             "Releve plantar/contact realization gate failed.",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.gate.releve_plantar_toe_contact_realization_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Releve plantar+toe/contact realization gate failed.",
             self.wrapper,
         )
 

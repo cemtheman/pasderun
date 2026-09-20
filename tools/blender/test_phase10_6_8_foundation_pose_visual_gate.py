@@ -192,7 +192,15 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
 
     def test_releve_realization_reuses_10_6_7_authority(self) -> None:
         self.assertIn(
-            "static_core.solve_releve_plantar_for_mesh_heel_height(",
+            "static_core.solve_releve_plantar_toe_for_mesh_heel_height(",
+            self.script,
+        )
+        self.assertIn(
+            "releve_toe_search_coarse_step_deg",
+            self.script,
+        )
+        self.assertIn(
+            "releve_joint_search_refine_steps_deg",
             self.script,
         )
         self.assertIn(
