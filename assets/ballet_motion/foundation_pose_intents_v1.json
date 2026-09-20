@@ -14,7 +14,8 @@
     "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length",
     "hand_mesh_proximal_clearance_strategy": "no authored clearance constant; Phase 10.6.7 derives the minimal feasible canonical hand-landmark clearance by bounded root solving against the deformed hand mesh, then performs preferred-only wrist trim",
     "elbow_bend_plane_visual_correction": "bras_bas and second preserve elbow-angle magnitude and outward/down rounding; only elbow_pole FRONT component is mirrored to correct the visually reversed side-view bend plane",
-    "second_elbow_bend_plane": "SECOND: pole is predominantly OUTWARD, with equal small DOWN and BACK bias; preserves 145-degree elbow opening while avoiding both reversed side-view bend and front-view gull-wing shape"
+    "second_elbow_bend_plane": "SECOND: pole is predominantly OUTWARD, with equal small DOWN and BACK bias; preserves 145-degree elbow opening while avoiding both reversed side-view bend and front-view gull-wing shape",
+    "second_arm_carriage": "SECOND: lower the whole shoulder-to-wrist carriage slightly by increasing the downward wrist-direction component; preserve 145-degree elbow opening and the settled outward-dominant elbow pole"
   },
   "poses": {
     "bras_bas": {
@@ -100,7 +101,7 @@
       "elbow_angle_deg": 145,
       "wrist_direction": {
         "outward": 0.98,
-        "down": 0.14,
+        "down": 0.22,
         "front": 0.08
       },
       "elbow_pole": {
