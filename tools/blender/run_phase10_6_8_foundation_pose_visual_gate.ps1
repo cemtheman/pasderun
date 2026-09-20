@@ -22,6 +22,8 @@ $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_pro
 $constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
 $retarget = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarget_v1.json"
 $retargetAxisContract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
+$poseProfile = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
+$intents = Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
 $staticContract = Join-Path $Repo "assets\ballet_motion\static_rig_application_contract_v1.json"
 $visualContract = Join-Path $Repo "assets\ballet_motion\foundation_pose_visual_gate_v1.json"
 $output = Join-Path $Repo "build\phase10_8\foundation_pose_visual_gate_v1_contact.png"
@@ -34,11 +36,29 @@ if (-not (Test-Path $retargetRunner)) {
 }
 
 $retargetNeedsRefresh = -not (Test-Path $retarget)
+
+if (-not (Test-Path $poseProfile)) {
+    $retargetNeedsRefresh = $true
+} else {
+    $existingPose = Get-Content $poseProfile -Raw | ConvertFrom-Json
+    $currentIntentSha = (Get-FileHash -Algorithm SHA256 $intents).Hash.ToLowerInvariant()
+    $profileIntentSha = [string]$existingPose.inputs.intent_spec_sha256
+    if ($profileIntentSha.ToLowerInvariant() -ne $currentIntentSha) {
+        Write-Host "Phase 10.6.5 pose profile is stale; intent spec changed."
+        $retargetNeedsRefresh = $true
+    }
+}
+
 if (-not $retargetNeedsRefresh) {
     $existingRetarget = Get-Content $retarget -Raw | ConvertFrom-Json
     $currentAxisSha = (Get-FileHash -Algorithm SHA256 $retargetAxisContract).Hash.ToLowerInvariant()
     $profileAxisSha = [string]$existingRetarget.inputs.axis_contract_sha256
-    if ($profileAxisSha.ToLowerInvariant() -ne $currentAxisSha) {
+    $currentPoseSha = (Get-FileHash -Algorithm SHA256 $poseProfile).Hash.ToLowerInvariant()
+    $profilePoseSha = [string]$existingRetarget.inputs.pose_profile_sha256
+    if ($profilePoseSha.ToLowerInvariant() -ne $currentPoseSha) {
+        Write-Host "Phase 10.6.6 retarget profile is stale; pose profile changed."
+        $retargetNeedsRefresh = $true
+    } elseif ($profileAxisSha.ToLowerInvariant() -ne $currentAxisSha) {
         $retargetNeedsRefresh = $true
     }
 }

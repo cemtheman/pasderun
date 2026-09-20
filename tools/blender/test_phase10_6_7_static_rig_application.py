@@ -446,10 +446,26 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.wrapper,
         )
 
-    def test_wrapper_refreshes_stale_10_6_6_axis_contract_profile(self) -> None:
+    def test_wrapper_refreshes_stale_pose_or_10_6_6_profile(self) -> None:
         self.assertIn("Get-FileHash -Algorithm SHA256", self.wrapper)
         self.assertIn(
+            "existingPose.inputs.intent_spec_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "existingRetarget.inputs.pose_profile_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
             "existingRetarget.inputs.axis_contract_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "pose profile is stale; intent spec changed",
+            self.wrapper,
+        )
+        self.assertIn(
+            "retarget profile is stale; pose profile changed",
             self.wrapper,
         )
         self.assertIn(

@@ -645,12 +645,23 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             self.wrapper,
         )
 
-    def test_wrapper_auto_generates_10_6_5_prerequisite(self) -> None:
+    def test_wrapper_refreshes_10_6_5_when_intent_spec_changes(self) -> None:
         self.assertIn(
             "run_phase10_6_5_canonical_pose_solver.ps1",
             self.wrapper,
         )
-        self.assertIn("generating prerequisite", self.wrapper)
+        self.assertIn(
+            "existingPose.inputs.intent_spec_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Phase 10.6.5 pose profile is stale; intent spec changed.",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Refreshing Phase 10.6.5 pose prerequisite",
+            self.wrapper,
+        )
 
     def test_wrapper_is_ascii_safe_for_windows_powershell(self) -> None:
         self.assertTrue(all(ord(char) < 128 for char in self.wrapper))

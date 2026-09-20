@@ -11,17 +11,29 @@ if (-not $Repo) {
 $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_profile_v1.json"
 $constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
 $poses = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
+$intents = Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
 $contract = Join-Path $Repo "assets\ballet_motion\retarget_axis_contract_v1.json"
 $output = Join-Path $Repo "build\phase10_6\low_poly_girl_calibrated_rig_retarget_v1.json"
 $script = Join-Path $Repo "tools\ballet_motion\build_calibrated_rig_retarget_v1.py"
 
-if (-not (Test-Path $poses)) {
-    $runner = Join-Path $Repo "tools\ballet_motion\run_phase10_6_5_canonical_pose_solver.ps1"
-    if (-not (Test-Path $runner)) {
-        throw "Phase 10.6.5 runner missing: $runner"
-    }
+$runner = Join-Path $Repo "tools\ballet_motion\run_phase10_6_5_canonical_pose_solver.ps1"
+if (-not (Test-Path $runner)) {
+    throw "Phase 10.6.5 runner missing: $runner"
+}
 
-    Write-Host "Phase 10.6.5 pose profile missing; generating prerequisite..."
+$poseNeedsRefresh = -not (Test-Path $poses)
+if (-not $poseNeedsRefresh) {
+    $existingPose = Get-Content $poses -Raw | ConvertFrom-Json
+    $currentIntentSha = (Get-FileHash -Algorithm SHA256 $intents).Hash.ToLowerInvariant()
+    $profileIntentSha = [string]$existingPose.inputs.intent_spec_sha256
+    if ($profileIntentSha.ToLowerInvariant() -ne $currentIntentSha) {
+        Write-Host "Phase 10.6.5 pose profile is stale; intent spec changed."
+        $poseNeedsRefresh = $true
+    }
+}
+
+if ($poseNeedsRefresh) {
+    Write-Host "Refreshing Phase 10.6.5 pose prerequisite..."
     & powershell -ExecutionPolicy Bypass -File $runner -Repo $Repo
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

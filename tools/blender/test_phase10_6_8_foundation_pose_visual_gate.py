@@ -270,9 +270,17 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
 
-    def test_wrapper_refreshes_stale_retarget_profile(self) -> None:
+    def test_wrapper_refreshes_stale_pose_and_retarget_profile(self) -> None:
         self.assertIn(
             "Get-FileHash -Algorithm SHA256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "existingPose.inputs.intent_spec_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "existingRetarget.inputs.pose_profile_sha256",
             self.wrapper,
         )
         self.assertIn(
