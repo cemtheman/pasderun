@@ -138,9 +138,26 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
 
-    def test_full_foot_orientation_uses_declared_body_up_not_mesh_guess(self) -> None:
+    def test_full_foot_orientation_uses_mesh_contact_with_declared_up(self) -> None:
+        self.assertTrue(
+            self.contract["policy"][
+                "full_foot_mesh_contact_plane_is_final_authority"
+            ]
+        )
         self.assertIn(
             "solution = solve_preferred_ankle_flat_contact(",
+            self.script,
+        )
+        self.assertIn(
+            "mesh_flatness_error",
+            self.script,
+        )
+        self.assertIn(
+            "required_shifts",
+            self.script,
+        )
+        self.assertIn(
+            "anchor_height(",
             self.script,
         )
         self.assertIn("up_axis", self.script)
@@ -170,21 +187,40 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
 
-    def test_full_foot_solver_aligns_foot_up_not_arbitrary_full_matrix(self) -> None:
-        self.assertIn("up_alignment_dot", self.script)
-        self.assertIn(
-            '"full_foot_up_alignment_min_dot"',
-            self.script,
+    def test_full_foot_solver_keeps_anatomical_seed_and_mesh_realization_floor(self) -> None:
+        self.assertEqual(
+            self.contract["proof_thresholds"][
+                "full_foot_seed_up_alignment_min_dot"
+            ],
+            0.999999,
         )
-        self.assertIn(
-            "minimum_up_alignment_dot",
-            self.script,
+        self.assertEqual(
+            self.contract["proof_thresholds"][
+                "full_foot_up_alignment_min_dot"
+            ],
+            0.98,
         )
+        self.assertIn("minimum_seed_up_alignment_dot", self.script)
+        self.assertIn("minimum_realized_up_alignment_dot", self.script)
+        self.assertIn("canonical_seed", self.script)
         self.assertNotIn("decompose_ankle_2dof", self.script)
         self.assertNotIn(
             "ankle_dof_decomposition_matrix_error_max",
             self.script,
         )
+
+    def test_full_foot_mesh_search_is_preferred_only_and_refined(self) -> None:
+        thresholds = self.contract["proof_thresholds"]
+        self.assertEqual(
+            thresholds["full_foot_mesh_search_coarse_step_deg"],
+            1,
+        )
+        self.assertEqual(
+            thresholds["full_foot_mesh_search_refine_steps_deg"],
+            [0.1, 0.01, 0.001],
+        )
+        self.assertIn("coarse_step_deg", self.script)
+        self.assertIn("refine_steps_deg", self.script)
 
     def test_contact_fix_does_not_relax_existing_contact_tolerance(self) -> None:
         self.assertEqual(
@@ -352,6 +388,16 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertIn(
             "Releve plantar/contact realization gate failed.",
+            self.wrapper,
+        )
+
+    def test_wrapper_is_fail_closed_against_stale_report(self) -> None:
+        self.assertIn(
+            "Remove-Item -Force $output",
+            self.wrapper,
+        )
+        self.assertIn(
+            "--python-exit-code 1",
             self.wrapper,
         )
 

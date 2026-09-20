@@ -276,6 +276,20 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.wrapper,
         )
 
+    def test_wrapper_is_fail_closed_against_stale_visual_artifacts(self) -> None:
+        self.assertIn(
+            "Remove-Item -Force $stale",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Remove-Item -Recurse -Force $cellDir",
+            self.wrapper,
+        )
+        self.assertIn(
+            "--python-exit-code 1",
+            self.wrapper,
+        )
+
     def test_wrapper_requires_pending_human_review(self) -> None:
         self.assertIn(
             '$data.human_visual_gate.status -ne "PENDING_REVIEW"',

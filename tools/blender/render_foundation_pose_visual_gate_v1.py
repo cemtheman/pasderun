@@ -535,11 +535,30 @@ def realize_pose(
             constraints,
             retarget_axis_contract,
             up_axis,
+            anchors,
+            rest_heights,
+            float(sampling["low_height_quantile"]),
+            float(
+                thresholds[
+                    "full_foot_seed_up_alignment_min_dot"
+                ]
+            ),
             float(
                 thresholds[
                     "full_foot_up_alignment_min_dot"
                 ]
             ),
+            float(
+                thresholds[
+                    "full_foot_mesh_search_coarse_step_deg"
+                ]
+            ),
+            [
+                float(value)
+                for value in thresholds[
+                    "full_foot_mesh_search_refine_steps_deg"
+                ]
+            ],
         )
 
     non_rot = pose_entry.get(

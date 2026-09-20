@@ -69,7 +69,17 @@ Write-Host "GLB export: NO"
 Write-Host "Automated aesthetic verdict: NO"
 Write-Host ""
 
-& $Blender --background --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $retargetAxisContract --static-contract $staticContract --visual-contract $visualContract --output $output --report $report
+$cellDir = Join-Path (Split-Path $output -Parent) "foundation_pose_cells"
+foreach ($stale in @($output, $report)) {
+    if (Test-Path $stale) {
+        Remove-Item -Force $stale
+    }
+}
+if (Test-Path $cellDir) {
+    Remove-Item -Recurse -Force $cellDir
+}
+
+& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $retargetAxisContract --static-contract $staticContract --visual-contract $visualContract --output $output --report $report
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 foreach ($path in @($output, $report)) {

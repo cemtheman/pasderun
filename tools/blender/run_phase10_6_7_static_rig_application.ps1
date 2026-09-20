@@ -61,7 +61,11 @@ Write-Host "Animation: NO"
 Write-Host "GLB export: NO"
 Write-Host ""
 
-& $Blender --background --python $script -- --repo $Repo --canonical-profile $canonical --retarget-profile $retarget --constraint-profile $constraints --retarget-axis-contract $retargetAxisContract --contract $contract --output $output
+if (Test-Path $output) {
+    Remove-Item -Force $output
+}
+
+& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --retarget-profile $retarget --constraint-profile $constraints --retarget-axis-contract $retargetAxisContract --contract $contract --output $output
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 if (-not (Test-Path $output)) {

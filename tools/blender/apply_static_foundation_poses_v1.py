@@ -459,7 +459,13 @@ def solve_preferred_ankle_flat_contact(
     canonical_name: str,
     side: str,
     up_axis: Vector,
-    minimum_up_alignment_dot: float,
+    anchors: dict,
+    rest_heights: dict,
+    low_height_quantile: float,
+    minimum_seed_up_alignment_dot: float,
+    minimum_realized_up_alignment_dot: float,
+    coarse_step_deg: float,
+    refine_steps_deg: list[float],
 ) -> dict:
     parent_pose, rest_local = canonical_parent_and_rest_local(
         armature,
@@ -490,7 +496,7 @@ def solve_preferred_ankle_flat_contact(
     else:
         current_heading = None
 
-    def evaluate(plantar: float, inversion: float) -> tuple:
+    def basis_metrics(plantar: float, inversion: float) -> dict:
         basis = canonical_foot_basis_from_ankle_dofs(
             parent_pose,
             rest_local,
@@ -502,7 +508,6 @@ def solve_preferred_ankle_flat_contact(
             (basis[0][2], basis[1][2], basis[2][2])
         ).normalized()
         up_dot = max(-1.0, min(1.0, z_axis.dot(up_axis)))
-        tilt_error = 1.0 - up_dot
 
         heading_error = 0.0
         if current_heading is not None:
@@ -519,75 +524,184 @@ def solve_preferred_ankle_flat_contact(
             else:
                 heading_error = 2.0
 
-        magnitude = abs(plantar) + abs(inversion)
-        return (
-            tilt_error,
-            heading_error,
-            magnitude,
-            plantar,
-            inversion,
-            basis,
-            up_dot,
-        )
+        return {
+            "basis": basis,
+            "up_dot": float(up_dot),
+            "tilt_error": float(1.0 - up_dot),
+            "heading_error": float(heading_error),
+        }
 
     pmin = float(plantar_pref["min"])
     pmax = float(plantar_pref["max"])
     imin = float(inversion_pref["min"])
     imax = float(inversion_pref["max"])
 
-    best = None
+    # Stage 1: find the canonical preferred-envelope seed. This preserves the
+    # old anatomical rule that a valid foot-up solution must exist before any
+    # mesh-specific correction is allowed.
+    seed = None
 
-    def consider(plantar: float, inversion: float) -> None:
-        nonlocal best
+    def consider_seed(plantar: float, inversion: float) -> None:
+        nonlocal seed
         if not pmin <= plantar <= pmax:
             return
         if not imin <= inversion <= imax:
             return
-        candidate = evaluate(plantar, inversion)
-        key = candidate[:5]
-        if best is None or key < best[:5]:
-            best = candidate
+        metrics = basis_metrics(plantar, inversion)
+        key = (
+            metrics["tilt_error"],
+            metrics["heading_error"],
+            abs(plantar) + abs(inversion),
+            plantar,
+            inversion,
+        )
+        candidate = {
+            "key": key,
+            "plantar": float(plantar),
+            "inversion": float(inversion),
+            **metrics,
+        }
+        if seed is None or key < seed["key"]:
+            seed = candidate
 
-    # Coarse preferred-envelope search.
     plantar = pmin
     while plantar <= pmax + 1e-9:
         inversion = imin
         while inversion <= imax + 1e-9:
-            consider(plantar, inversion)
+            consider_seed(plantar, inversion)
             inversion += 1.0
         plantar += 1.0
 
-    if best is None:
-        raise RuntimeError("No preferred ankle candidate exists.")
+    if seed is None:
+        raise RuntimeError("No preferred ankle seed exists.")
 
-    # Deterministic local refinement around the best candidate.
     for step in (0.1, 0.01, 0.001):
-        center_p = float(best[3])
-        center_i = float(best[4])
+        center_p = float(seed["plantar"])
+        center_i = float(seed["inversion"])
         for p_offset in range(-10, 11):
             for i_offset in range(-10, 11):
-                consider(
+                consider_seed(
                     center_p + p_offset * step,
                     center_i + i_offset * step,
                 )
 
-    tilt_error, heading_error, _magnitude, plantar, inversion, basis, up_dot = best
-
-    if up_dot < float(minimum_up_alignment_dot):
+    if seed["up_dot"] < float(minimum_seed_up_alignment_dot):
         raise RuntimeError(
-            f"{canonical_name}: preferred ankle envelope cannot flatten "
-            f"foot. up_dot={up_dot:.10f} < "
-            f"{float(minimum_up_alignment_dot):.10f}; "
-            f"best plantar={plantar:.6f}, inversion={inversion:.6f}."
+            f"{canonical_name}: preferred ankle seed cannot align foot-up. "
+            f"up_dot={seed['up_dot']:.10f} < "
+            f"{float(minimum_seed_up_alignment_dot):.10f}."
         )
 
+    # Stage 2: keep the seed inversion and solve plantar against the actual
+    # deformed rear/fore mesh contact plane. A single root translation can
+    # only satisfy full-foot contact when rear and fore require the same
+    # vertical shift, so minimize that shift mismatch directly.
+    best = None
+
+    def consider_mesh(plantar: float) -> None:
+        nonlocal best
+        if not pmin <= plantar <= pmax:
+            return
+        inversion = float(seed["inversion"])
+        metrics = basis_metrics(plantar, inversion)
+        if metrics["up_dot"] < float(minimum_realized_up_alignment_dot):
+            return
+
+        desired_rig = rig_basis_from_canonical_pose(
+            current_bone,
+            metrics["basis"],
+        )
+        apply_absolute_rig_rotation_via_matrix_basis(
+            armature,
+            current_bone["rig_bone"],
+            desired_rig,
+        )
+
+        posed = {
+            region: anchor_height(
+                armature,
+                anchors[side][region],
+                up_axis,
+                low_height_quantile,
+            )
+            for region in ("rear", "fore")
+        }
+        required_shifts = {
+            region: (
+                float(rest_heights[side][region])
+                - float(posed[region])
+            )
+            for region in ("rear", "fore")
+        }
+        mesh_flatness_error = abs(
+            required_shifts["rear"] - required_shifts["fore"]
+        )
+        key = (
+            mesh_flatness_error,
+            metrics["tilt_error"],
+            metrics["heading_error"],
+            abs(float(plantar) - float(seed["plantar"])),
+            abs(float(plantar)),
+        )
+        candidate = {
+            "key": key,
+            "plantar": float(plantar),
+            "inversion": inversion,
+            "posed_heights": posed,
+            "required_shifts": required_shifts,
+            "mesh_flatness_error": float(mesh_flatness_error),
+            **metrics,
+        }
+        if best is None or key < best["key"]:
+            best = candidate
+
+    step = float(coarse_step_deg)
+    plantar = pmin
+    while plantar <= pmax + 1e-9:
+        consider_mesh(plantar)
+        plantar += step
+
+    if best is None:
+        raise RuntimeError(
+            f"{canonical_name}: no mesh-contact ankle candidate remains "
+            "inside the preferred envelope and realized up-alignment floor."
+        )
+
+    for step in refine_steps_deg:
+        center = float(best["plantar"])
+        for offset in range(-10, 11):
+            consider_mesh(center + offset * float(step))
+
+    # Leave Blender in the winning mesh-contact state.
+    desired_rig = rig_basis_from_canonical_pose(
+        current_bone,
+        best["basis"],
+    )
+    apply_absolute_rig_rotation_via_matrix_basis(
+        armature,
+        current_bone["rig_bone"],
+        desired_rig,
+    )
+
     return {
-        "basis": basis,
-        "plantar_dorsiflexion": float(plantar),
-        "inversion_eversion": float(inversion),
-        "up_alignment_dot": float(up_dot),
-        "tilt_error": float(tilt_error),
-        "heading_error": float(heading_error),
+        "basis": best["basis"],
+        "plantar_dorsiflexion": float(best["plantar"]),
+        "inversion_eversion": float(best["inversion"]),
+        "up_alignment_dot": float(best["up_dot"]),
+        "tilt_error": float(best["tilt_error"]),
+        "heading_error": float(best["heading_error"]),
+        "mesh_flatness_error": float(best["mesh_flatness_error"]),
+        "rear_required_shift": float(
+            best["required_shifts"]["rear"]
+        ),
+        "fore_required_shift": float(
+            best["required_shifts"]["fore"]
+        ),
+        "canonical_seed": {
+            "plantar_dorsiflexion": float(seed["plantar"]),
+            "inversion_eversion": float(seed["inversion"]),
+            "up_alignment_dot": float(seed["up_dot"]),
+        },
     }
 
 
@@ -597,7 +711,13 @@ def realize_full_foot_orientation(
     constraints: dict,
     retarget_axis_contract: dict,
     up_axis: Vector,
-    minimum_up_alignment_dot: float,
+    anchors: dict,
+    rest_heights: dict,
+    low_height_quantile: float,
+    minimum_seed_up_alignment_dot: float,
+    minimum_realized_up_alignment_dot: float,
+    coarse_step_deg: float,
+    refine_steps_deg: list[float],
 ) -> dict:
     ankle_ops = retarget_axis_contract["lower_body_joint_axes"]["ankle_2dof"]
     expected = [
@@ -623,7 +743,6 @@ def realize_full_foot_orientation(
         canonical_name = f"{side}_foot"
         bone = canonical["canonical_bones"][canonical_name]
         rig_name = bone["rig_bone"]
-        pose_bone = armature.pose.bones[rig_name]
 
         solution = solve_preferred_ankle_flat_contact(
             armature,
@@ -632,19 +751,15 @@ def realize_full_foot_orientation(
             canonical_name,
             side,
             up_axis,
-            minimum_up_alignment_dot,
+            anchors,
+            rest_heights,
+            low_height_quantile,
+            minimum_seed_up_alignment_dot,
+            minimum_realized_up_alignment_dot,
+            coarse_step_deg,
+            refine_steps_deg,
         )
         desired_canonical = solution["basis"]
-
-        desired_rig = rig_basis_from_canonical_pose(
-            bone,
-            desired_canonical,
-        )
-        apply_absolute_rig_rotation_via_matrix_basis(
-            armature,
-            rig_name,
-            desired_rig,
-        )
 
         actual_canonical = canonical_basis_from_rig_pose(
             armature.pose.bones[rig_name],
@@ -682,6 +797,22 @@ def realize_full_foot_orientation(
                 float(solution["heading_error"]),
                 10,
             ),
+            "mesh_flatness_error": round(
+                float(solution["mesh_flatness_error"]),
+                10,
+            ),
+            "rear_required_shift": round(
+                float(solution["rear_required_shift"]),
+                10,
+            ),
+            "fore_required_shift": round(
+                float(solution["fore_required_shift"]),
+                10,
+            ),
+            "canonical_seed": {
+                key: round(float(value), 10)
+                for key, value in solution["canonical_seed"].items()
+            },
             "contact_frame_application_error": round(
                 float(alignment_error),
                 10,
@@ -1195,11 +1326,30 @@ def main() -> None:
                 constraints,
                 retarget_axis_contract,
                 up_axis,
+                anchors,
+                rest_heights,
+                float(sampling["low_height_quantile"]),
+                float(
+                    thresholds[
+                        "full_foot_seed_up_alignment_min_dot"
+                    ]
+                ),
                 float(
                     thresholds[
                         "full_foot_up_alignment_min_dot"
                     ]
                 ),
+                float(
+                    thresholds[
+                        "full_foot_mesh_search_coarse_step_deg"
+                    ]
+                ),
+                [
+                    float(value)
+                    for value in thresholds[
+                        "full_foot_mesh_search_refine_steps_deg"
+                    ]
+                ],
             )
 
         non_rot = pose_entry.get("non_rotational_pose_contract", {})
