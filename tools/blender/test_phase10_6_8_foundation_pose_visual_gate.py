@@ -212,6 +212,20 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
 
+    def test_deformed_hand_mesh_spacing_is_final_authority_before_render(self) -> None:
+        self.assertIn(
+            "static_core.realized_hand_mesh_centerline_spacing(",
+            self.script,
+        )
+        self.assertIn(
+            "deformed hand mesh spacing failed",
+            self.script,
+        )
+        self.assertIn(
+            '"hand_mesh_centerline_spacing_pass": True',
+            self.script,
+        )
+
     def test_middle_fingertip_spacing_is_realized_before_render(self) -> None:
         self.assertIn(
             "static_core.realized_middle_fingertip_spacing(",

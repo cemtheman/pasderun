@@ -479,6 +479,34 @@ def prepare_contact_runtime(
         up_axis,
         float(sampling["low_height_quantile"]),
     )
+    hand_groups = {
+        "left": {
+            canonical["canonical_bones"]["left_hand"]["rig_bone"],
+            canonical["canonical_bones"]["left_middle"]["rig_bone"],
+        },
+        "right": {
+            canonical["canonical_bones"]["right_hand"]["rig_bone"],
+            canonical["canonical_bones"]["right_middle"]["rig_bone"],
+        },
+    }
+    hand_meshes = static_core.relevant_mesh_objects(
+        armature,
+        set().union(*hand_groups.values()),
+    )
+    hand_sampling = static_contract["hand_mesh_sampling"]
+    hand_samples = {
+        side: static_core.collect_weighted_samples(
+            hand_meshes,
+            hand_groups[side],
+            float(
+                hand_sampling[
+                    "minimum_vertex_group_weight"
+                ]
+            ),
+        )
+        for side in ("left", "right")
+    }
+
     metrics = static_core.body_metrics(canonical)
     thresholds = static_contract["proof_thresholds"]
     contact_tolerance = (
@@ -496,6 +524,8 @@ def prepare_contact_runtime(
         "metrics": metrics,
         "contact_tolerance": contact_tolerance,
         "sampling": sampling,
+        "hand_samples": hand_samples,
+        "hand_sampling": hand_sampling,
     }
 
 
@@ -636,16 +666,29 @@ def realize_pose(
         )
 
     fingertip_spacing = {}
+    hand_mesh_spacing = {}
     if pose_name in ("bras_bas", "en_avant"):
         fingertip_spacing = static_core.realized_middle_fingertip_spacing(
             armature,
             canonical,
             pose_entry,
         )
+        hand_mesh_spacing = static_core.realized_hand_mesh_centerline_spacing(
+            armature,
+            canonical,
+            pose_entry,
+            runtime["hand_samples"],
+            float(
+                runtime["hand_sampling"][
+                    "inner_edge_quantile"
+                ]
+            ),
+        )
         require(
-            fingertip_spacing["status"] == "PASS",
-            f"{pose_name}: realized middle-fingertip spacing failed "
-            f"before render: {fingertip_spacing}.",
+            hand_mesh_spacing["status"] == "PASS",
+            f"{pose_name}: deformed hand mesh spacing failed "
+            f"before render: {hand_mesh_spacing}; "
+            f"bone_tip_diagnostic={fingertip_spacing}.",
         )
 
     return {
@@ -655,6 +698,7 @@ def realize_pose(
         "full_foot_orientation": orientation,
         "releve_realization": releve,
         "fingertip_spacing": fingertip_spacing,
+        "hand_mesh_spacing": hand_mesh_spacing,
     }
 
 
@@ -848,6 +892,7 @@ def main() -> None:
             "mesh_contact_pass": True,
             "upper_body_hand_axial_continuity_pass": True,
             "fingertip_centerline_spacing_pass": True,
+            "hand_mesh_centerline_spacing_pass": True,
             "render_count_pass": True,
             "animation_rendered": False,
             "glb_exported": False,
@@ -873,6 +918,7 @@ def main() -> None:
     print("RENDERS=18")
     print("HAND_AXIAL_CONTINUITY=PASS")
     print("FINGERTIP_CENTERLINE_SPACING=PASS")
+    print("HAND_MESH_CENTERLINE_SPACING=PASS")
     print("STATIC_CONTACT_REALIZATION=PASS")
     print("ANIMATION=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

@@ -291,6 +291,39 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
 
+    def test_hand_mesh_is_final_centerline_authority(self) -> None:
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_centerline_spacing_required_for_bras_bas_and_en_avant"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_is_final_visual_centerline_authority"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "middle_bone_tail_is_diagnostic_not_visual_authority"
+            ]
+        )
+        self.assertIn(
+            "def realized_hand_mesh_centerline_spacing(",
+            self.script,
+        )
+        self.assertIn(
+            '"authority": "DEFORMED_HAND_MESH"',
+            self.script,
+        )
+        self.assertIn(
+            "deformed hand mesh centerline spacing failed",
+            self.script,
+        )
+        self.assertIn(
+            '"hand_mesh_centerline_spacing_pass": True',
+            self.script,
+        )
+
     def test_contact_fix_does_not_relax_existing_contact_tolerance(self) -> None:
         self.assertEqual(
             self.contract["proof_thresholds"][

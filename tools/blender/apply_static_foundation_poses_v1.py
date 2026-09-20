@@ -1348,6 +1348,61 @@ def realized_middle_fingertip_spacing(
     }
 
 
+def realized_hand_mesh_centerline_spacing(
+    armature: bpy.types.Object,
+    canonical: dict,
+    pose_entry: dict,
+    hand_samples: dict,
+    inner_edge_quantile: float,
+) -> dict:
+    non_rot = pose_entry.get("non_rotational_pose_contract", {})
+    contract = non_rot.get("fingertip_spacing_contract")
+    if contract is None:
+        return {"required": False, "status": "NOT_REQUIRED"}
+
+    frame = canonical["body_frame"]["declared_axes_armature_local"]
+    left_axis = Vector(frame["left"]).normalized()
+    left_points = evaluated_sample_points(
+        armature,
+        hand_samples["left"],
+    )
+    right_points = evaluated_sample_points(
+        armature,
+        hand_samples["right"],
+    )
+    left_coordinates = [
+        float(point.dot(left_axis))
+        for point in left_points
+    ]
+    right_coordinates = [
+        float(point.dot(left_axis))
+        for point in right_points
+    ]
+
+    q = float(inner_edge_quantile)
+    left_inner = quantile(left_coordinates, q)
+    right_inner = quantile(right_coordinates, 1.0 - q)
+    gap = left_inner - right_inner
+    minimum = float(contract["minimum_gap"])
+    maximum = float(contract["maximum_gap"])
+    passed = minimum - 1e-9 <= gap <= maximum + 1e-9
+
+    return {
+        "required": True,
+        "status": "PASS" if passed else "FAIL",
+        "left_inner_edge": round(left_inner, 8),
+        "right_inner_edge": round(right_inner, 8),
+        "mesh_centerline_gap": round(gap, 8),
+        "mesh_centerline_overlap": round(max(0.0, -gap), 8),
+        "minimum_allowed_gap": round(minimum, 8),
+        "maximum_allowed_gap": round(maximum, 8),
+        "inner_edge_quantile": q,
+        "left_sample_count": len(left_points),
+        "right_sample_count": len(right_points),
+        "authority": "DEFORMED_HAND_MESH",
+    }
+
+
 def body_metrics(canonical: dict) -> dict:
     bones = canonical["canonical_bones"]
     foot_length = sum(
@@ -1447,6 +1502,35 @@ def main() -> None:
     }
     required_groups = set().union(*foot_groups.values())
     meshes = relevant_mesh_objects(armature, required_groups)
+
+    hand_groups = {
+        "left": {
+            canonical["canonical_bones"]["left_hand"]["rig_bone"],
+            canonical["canonical_bones"]["left_middle"]["rig_bone"],
+        },
+        "right": {
+            canonical["canonical_bones"]["right_hand"]["rig_bone"],
+            canonical["canonical_bones"]["right_middle"]["rig_bone"],
+        },
+    }
+    hand_required_groups = set().union(*hand_groups.values())
+    hand_meshes = relevant_mesh_objects(
+        armature,
+        hand_required_groups,
+    )
+    hand_sampling = contract["hand_mesh_sampling"]
+    hand_samples = {
+        side: collect_weighted_samples(
+            hand_meshes,
+            hand_groups[side],
+            float(
+                hand_sampling[
+                    "minimum_vertex_group_weight"
+                ]
+            ),
+        )
+        for side in ("left", "right")
+    }
 
     sampling = contract["contact_sampling"]
     anchors = {}
@@ -1615,18 +1699,28 @@ def main() -> None:
 
         consistency = {}
         fingertip_spacing = {}
+        hand_mesh_spacing = {}
         if pose_name in ("bras_bas", "en_avant"):
             fingertip_spacing = realized_middle_fingertip_spacing(
                 armature,
                 canonical,
                 pose_entry,
             )
+            hand_mesh_spacing = realized_hand_mesh_centerline_spacing(
+                armature,
+                canonical,
+                pose_entry,
+                hand_samples,
+                float(hand_sampling["inner_edge_quantile"]),
+            )
             require(
-                fingertip_spacing["status"] == "PASS",
-                f"{pose_name}: realized Middle_L/Middle_R fingertip "
-                f"spacing failed: {fingertip_spacing}.",
+                hand_mesh_spacing["status"] == "PASS",
+                f"{pose_name}: deformed hand mesh centerline spacing "
+                f"failed: {hand_mesh_spacing}; "
+                f"bone_tip_diagnostic={fingertip_spacing}.",
             )
             consistency["fingertip_spacing"] = fingertip_spacing
+            consistency["hand_mesh_spacing"] = hand_mesh_spacing
 
         if pose_name == "fifth":
             max_shift = (
@@ -1789,6 +1883,7 @@ def main() -> None:
             "contact_proof": proof,
             "contact_consistency": consistency,
             "fingertip_spacing_realization": fingertip_spacing,
+            "hand_mesh_spacing_realization": hand_mesh_spacing,
             "blender_pose_applied": True,
             "rendered": False,
         }
@@ -1837,6 +1932,7 @@ def main() -> None:
             "releve_plantar_toe_contact_realization_pass": True,
             "releve_heel_lift_consistency_pass": True,
             "fingertip_centerline_spacing_pass": True,
+            "hand_mesh_centerline_spacing_pass": True,
             "blender_application_performed": True,
             "render_performed": False,
             "animation_performed": False,
@@ -1858,6 +1954,7 @@ def main() -> None:
     print("RELEVE_PLANTAR_CONTACT_REALIZATION=PASS")
     print("RELEVE_HEEL_LIFT=PASS")
     print("FINGERTIP_CENTERLINE_SPACING=PASS")
+    print("HAND_MESH_CENTERLINE_SPACING=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")
