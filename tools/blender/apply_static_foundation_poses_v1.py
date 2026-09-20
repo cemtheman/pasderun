@@ -335,94 +335,223 @@ def apply_absolute_rig_rotation_via_matrix_basis(
     bpy.context.view_layer.update()
 
 
-def decompose_ankle_2dof(
-    local_delta: Matrix,
-    side: str,
-) -> dict:
-    # Contract: Rx(-plantar_dorsiflexion) then
-    # Ry(side_sign * inversion_eversion).
-    sb = max(-1.0, min(1.0, float(local_delta[0][2])))
-    b = math.asin(sb)
-    a = math.atan2(
-        float(local_delta[2][1]),
-        float(local_delta[1][1]),
-    )
-    side_sign = 1.0 if side == "left" else -1.0
-    plantar = -math.degrees(a)
-    inversion = math.degrees(b) / side_sign
-
-    ca = math.cos(a)
-    sa = math.sin(a)
-    cb = math.cos(b)
-    sb = math.sin(b)
-    reconstructed = Matrix(
-        (
-            (cb, 0.0, sb),
-            (sa * sb, ca, -sa * cb),
-            (-ca * sb, sa, ca * cb),
-        )
-    )
-    return {
-        "plantar_dorsiflexion": plantar,
-        "inversion_eversion": inversion,
-        "reconstruction_error": matrix_max_error(
-            reconstructed,
-            local_delta,
-        ),
-    }
-
-
-def canonical_local_delta_for_absolute_target(
+def canonical_parent_and_rest_local(
     armature: bpy.types.Object,
     canonical: dict,
     canonical_name: str,
-    desired_canonical_basis: Matrix,
-) -> Matrix:
+) -> tuple[Matrix, Matrix]:
     bone = canonical["canonical_bones"][canonical_name]
     parent_name = bone["parent"]
-    canonical_rest = matrix3(
-        bone["canonical_rest_contract"]["basis_armature_local"]
-    )
     if parent_name is None:
-        return canonical_rest.transposed() @ desired_canonical_basis
+        raise RuntimeError(
+            f"{canonical_name}: ankle solve requires a parent bone."
+        )
 
     parent_bone = canonical["canonical_bones"][parent_name]
-    parent_rig_name = parent_bone["rig_bone"]
-    parent_pose_bone = armature.pose.bones[parent_rig_name]
+    parent_pose_bone = armature.pose.bones[parent_bone["rig_bone"]]
     parent_canonical_pose = canonical_basis_from_rig_pose(
         parent_pose_bone,
         parent_bone,
     )
+
     parent_rest = matrix3(
         parent_bone["canonical_rest_contract"]["basis_armature_local"]
     )
+    canonical_rest = matrix3(
+        bone["canonical_rest_contract"]["basis_armature_local"]
+    )
     rest_local = parent_rest.transposed() @ canonical_rest
-    desired_local = parent_canonical_pose.transposed() @ desired_canonical_basis
-    return rest_local.transposed() @ desired_local
+    return parent_canonical_pose, rest_local
 
 
-def validate_preferred_ankle_dofs(
-    values: dict,
+def ankle_delta_matrix(
+    plantar_dorsiflexion: float,
+    inversion_eversion: float,
+    side: str,
+) -> Matrix:
+    side_sign = 1.0 if side == "left" else -1.0
+    plantar_angle = math.radians(-float(plantar_dorsiflexion))
+    inversion_angle = math.radians(
+        side_sign * float(inversion_eversion)
+    )
+
+    cx = math.cos(plantar_angle)
+    sx = math.sin(plantar_angle)
+    cy = math.cos(inversion_angle)
+    sy = math.sin(inversion_angle)
+
+    rx = Matrix(
+        (
+            (1.0, 0.0, 0.0),
+            (0.0, cx, -sx),
+            (0.0, sx, cx),
+        )
+    )
+    ry = Matrix(
+        (
+            (cy, 0.0, sy),
+            (0.0, 1.0, 0.0),
+            (-sy, 0.0, cy),
+        )
+    )
+    return rx @ ry
+
+
+def canonical_foot_basis_from_ankle_dofs(
+    parent_canonical_pose: Matrix,
+    rest_local: Matrix,
+    plantar_dorsiflexion: float,
+    inversion_eversion: float,
+    side: str,
+) -> Matrix:
+    return (
+        parent_canonical_pose
+        @ rest_local
+        @ ankle_delta_matrix(
+            plantar_dorsiflexion,
+            inversion_eversion,
+            side,
+        )
+    )
+
+
+def solve_preferred_ankle_flat_contact(
+    armature: bpy.types.Object,
+    canonical: dict,
     constraints: dict,
-    decomposition_error_max: float,
-) -> None:
-    if values["reconstruction_error"] > float(decomposition_error_max):
-        raise RuntimeError(
-            "Full-foot target is not representable by ankle_2dof: "
-            f"error={values['reconstruction_error']}."
+    canonical_name: str,
+    side: str,
+    up_axis: Vector,
+    minimum_up_alignment_dot: float,
+) -> dict:
+    parent_pose, rest_local = canonical_parent_and_rest_local(
+        armature,
+        canonical,
+        canonical_name,
+    )
+
+    limits = constraints["joint_limits"]["ankle_2dof"]["dofs"]
+    plantar_pref = limits["plantar_dorsiflexion"]["preferred"]
+    inversion_pref = limits["inversion_eversion"]["preferred"]
+
+    current_bone = canonical["canonical_bones"][canonical_name]
+    current_pose_bone = armature.pose.bones[current_bone["rig_bone"]]
+    current_canonical = canonical_basis_from_rig_pose(
+        current_pose_bone,
+        current_bone,
+    )
+    current_y = Vector(
+        (
+            current_canonical[0][1],
+            current_canonical[1][1],
+            current_canonical[2][1],
+        )
+    )
+    current_heading = current_y - up_axis * current_y.dot(up_axis)
+    if current_heading.length > 1e-8:
+        current_heading.normalize()
+    else:
+        current_heading = None
+
+    def evaluate(plantar: float, inversion: float) -> tuple:
+        basis = canonical_foot_basis_from_ankle_dofs(
+            parent_pose,
+            rest_local,
+            plantar,
+            inversion,
+            side,
+        )
+        z_axis = Vector(
+            (basis[0][2], basis[1][2], basis[2][2])
+        ).normalized()
+        up_dot = max(-1.0, min(1.0, z_axis.dot(up_axis)))
+        tilt_error = 1.0 - up_dot
+
+        heading_error = 0.0
+        if current_heading is not None:
+            y_axis = Vector(
+                (basis[0][1], basis[1][1], basis[2][1])
+            )
+            projected = y_axis - up_axis * y_axis.dot(up_axis)
+            if projected.length > 1e-8:
+                projected.normalize()
+                heading_error = 1.0 - max(
+                    -1.0,
+                    min(1.0, projected.dot(current_heading)),
+                )
+            else:
+                heading_error = 2.0
+
+        magnitude = abs(plantar) + abs(inversion)
+        return (
+            tilt_error,
+            heading_error,
+            magnitude,
+            plantar,
+            inversion,
+            basis,
+            up_dot,
         )
 
-    dofs = constraints["joint_limits"]["ankle_2dof"]["dofs"]
-    for name in ("plantar_dorsiflexion", "inversion_eversion"):
-        value = float(values[name])
-        preferred = dofs[name]["preferred"]
-        minimum = float(preferred["min"])
-        maximum = float(preferred["max"])
-        if not minimum <= value <= maximum:
-            raise RuntimeError(
-                f"Full-foot contact requires {name}={value:.6f}, "
-                f"outside preferred [{minimum}, {maximum}]."
-            )
+    pmin = float(plantar_pref["min"])
+    pmax = float(plantar_pref["max"])
+    imin = float(inversion_pref["min"])
+    imax = float(inversion_pref["max"])
+
+    best = None
+
+    def consider(plantar: float, inversion: float) -> None:
+        nonlocal best
+        if not pmin <= plantar <= pmax:
+            return
+        if not imin <= inversion <= imax:
+            return
+        candidate = evaluate(plantar, inversion)
+        key = candidate[:5]
+        if best is None or key < best[:5]:
+            best = candidate
+
+    # Coarse preferred-envelope search.
+    plantar = pmin
+    while plantar <= pmax + 1e-9:
+        inversion = imin
+        while inversion <= imax + 1e-9:
+            consider(plantar, inversion)
+            inversion += 1.0
+        plantar += 1.0
+
+    if best is None:
+        raise RuntimeError("No preferred ankle candidate exists.")
+
+    # Deterministic local refinement around the best candidate.
+    for step in (0.1, 0.01, 0.001):
+        center_p = float(best[3])
+        center_i = float(best[4])
+        for p_offset in range(-10, 11):
+            for i_offset in range(-10, 11):
+                consider(
+                    center_p + p_offset * step,
+                    center_i + i_offset * step,
+                )
+
+    tilt_error, heading_error, _magnitude, plantar, inversion, basis, up_dot = best
+
+    if up_dot < float(minimum_up_alignment_dot):
+        raise RuntimeError(
+            f"{canonical_name}: preferred ankle envelope cannot flatten "
+            f"foot. up_dot={up_dot:.10f} < "
+            f"{float(minimum_up_alignment_dot):.10f}; "
+            f"best plantar={plantar:.6f}, inversion={inversion:.6f}."
+        )
+
+    return {
+        "basis": basis,
+        "plantar_dorsiflexion": float(plantar),
+        "inversion_eversion": float(inversion),
+        "up_alignment_dot": float(up_dot),
+        "tilt_error": float(tilt_error),
+        "heading_error": float(heading_error),
+    }
 
 
 def realize_full_foot_orientation(
@@ -431,7 +560,7 @@ def realize_full_foot_orientation(
     constraints: dict,
     retarget_axis_contract: dict,
     up_axis: Vector,
-    decomposition_error_max: float,
+    minimum_up_alignment_dot: float,
 ) -> dict:
     ankle_ops = retarget_axis_contract["lower_body_joint_axes"]["ankle_2dof"]
     expected = [
@@ -459,26 +588,16 @@ def realize_full_foot_orientation(
         rig_name = bone["rig_bone"]
         pose_bone = armature.pose.bones[rig_name]
 
-        current_canonical = canonical_basis_from_rig_pose(
-            pose_bone,
-            bone,
-        )
-        desired_canonical = flatten_canonical_foot_basis(
-            current_canonical,
-            up_axis,
-        )
-        local_delta = canonical_local_delta_for_absolute_target(
+        solution = solve_preferred_ankle_flat_contact(
             armature,
             canonical,
-            canonical_name,
-            desired_canonical,
-        )
-        ankle_values = decompose_ankle_2dof(local_delta, side)
-        validate_preferred_ankle_dofs(
-            ankle_values,
             constraints,
-            decomposition_error_max,
+            canonical_name,
+            side,
+            up_axis,
+            minimum_up_alignment_dot,
         )
+        desired_canonical = solution["basis"]
 
         bind = matrix3(
             bone["retarget_bind"][
@@ -509,15 +628,23 @@ def realize_full_foot_orientation(
         evidence[side] = {
             "rig_bone": rig_name,
             "plantar_dorsiflexion_deg": round(
-                float(ankle_values["plantar_dorsiflexion"]),
+                float(solution["plantar_dorsiflexion"]),
                 8,
             ),
             "inversion_eversion_deg": round(
-                float(ankle_values["inversion_eversion"]),
+                float(solution["inversion_eversion"]),
                 8,
             ),
-            "ankle_2dof_reconstruction_error": round(
-                float(ankle_values["reconstruction_error"]),
+            "up_alignment_dot": round(
+                float(solution["up_alignment_dot"]),
+                10,
+            ),
+            "tilt_error": round(
+                float(solution["tilt_error"]),
+                10,
+            ),
+            "heading_error": round(
+                float(solution["heading_error"]),
                 10,
             ),
             "contact_frame_application_error": round(
@@ -801,7 +928,7 @@ def main() -> None:
                 up_axis,
                 float(
                     thresholds[
-                        "ankle_dof_decomposition_matrix_error_max"
+                        "full_foot_up_alignment_min_dot"
                     ]
                 ),
             )

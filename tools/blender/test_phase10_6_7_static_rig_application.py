@@ -90,9 +90,15 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             ]
         )
         self.assertIn("def realize_full_foot_orientation(", self.script)
-        self.assertIn("def flatten_canonical_foot_basis(", self.script)
-        self.assertIn("def decompose_ankle_2dof(", self.script)
-        self.assertIn("validate_preferred_ankle_dofs(", self.script)
+        self.assertIn(
+            "def solve_preferred_ankle_flat_contact(",
+            self.script,
+        )
+        self.assertIn("def ankle_delta_matrix(", self.script)
+        self.assertIn(
+            "def canonical_foot_basis_from_ankle_dofs(",
+            self.script,
+        )
         self.assertIn(
             'if mode == "SOLVE_FULL_FOOT_CONTACT":',
             self.script,
@@ -100,12 +106,39 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
 
     def test_full_foot_orientation_uses_declared_body_up_not_mesh_guess(self) -> None:
         self.assertIn(
-            "desired_canonical = flatten_canonical_foot_basis(",
+            "solution = solve_preferred_ankle_flat_contact(",
             self.script,
         )
         self.assertIn("up_axis", self.script)
         self.assertIn(
             'canonical["body_frame"]["declared_axes_armature_local"]',
+            self.script,
+        )
+
+    def test_full_foot_solver_searches_only_preferred_ankle_envelope(self) -> None:
+        self.assertIn(
+            'limits = constraints["joint_limits"]["ankle_2dof"]["dofs"]',
+            self.script,
+        )
+        self.assertIn(
+            'plantar_pref = limits["plantar_dorsiflexion"]["preferred"]',
+            self.script,
+        )
+        self.assertIn(
+            'inversion_pref = limits["inversion_eversion"]["preferred"]',
+            self.script,
+        )
+        self.assertIn("for step in (0.1, 0.01, 0.001):", self.script)
+
+    def test_full_foot_solver_aligns_foot_up_not_arbitrary_full_matrix(self) -> None:
+        self.assertIn("up_alignment_dot", self.script)
+        self.assertIn(
+            'thresholds["full_foot_up_alignment_min_dot"]',
+            self.script,
+        )
+        self.assertNotIn("decompose_ankle_2dof", self.script)
+        self.assertNotIn(
+            "ankle_dof_decomposition_matrix_error_max",
             self.script,
         )
 
