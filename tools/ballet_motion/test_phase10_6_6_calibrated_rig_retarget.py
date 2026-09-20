@@ -427,7 +427,7 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
     def test_hand_basis_is_not_reseeded_from_body_front(self) -> None:
         start = self.retarget.index('if role == "hand":')
         end = self.retarget.index(
-            "targets[bone_name] = basis",
+            "\n            else:",
             start,
         )
         hand_path = self.retarget[start:end]
