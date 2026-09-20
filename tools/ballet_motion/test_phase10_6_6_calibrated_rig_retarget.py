@@ -28,6 +28,7 @@ from rig_retarget_math import (
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CONTRACT = ROOT / "assets" / "ballet_motion" / "retarget_axis_contract_v1.json"
+CONSTRAINTS = ROOT / "assets" / "ballet_motion" / "anatomical_constraints_v1.json"
 RETARGET = ROOT / "tools" / "ballet_motion" / "calibrated_rig_retarget.py"
 BUILDER = ROOT / "tools" / "ballet_motion" / "build_calibrated_rig_retarget_v1.py"
 WRAPPER = ROOT / "tools" / "ballet_motion" / "run_phase10_6_6_calibrated_rig_retarget.ps1"
@@ -37,6 +38,9 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.constraints = json.loads(
+            CONSTRAINTS.read_text(encoding="utf-8")
+        )
         cls.retarget = RETARGET.read_text(encoding="utf-8")
         cls.builder = BUILDER.read_text(encoding="utf-8")
         cls.wrapper = WRAPPER.read_text(encoding="utf-8")
@@ -371,6 +375,14 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             upper["hand"]["axial_roll_policy"],
             "NO_INDEPENDENT_HAND_AXIAL_ROLL",
         )
+        self.assertEqual(
+            upper["hand"]["semantic_direction_policy"],
+            "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE",
+        )
+        self.assertEqual(
+            upper["hand"]["limit_source"],
+            "PHASE_10_6_3_WRIST_2DOF_PREFERRED",
+        )
         self.assertIn("basis_from_length_and_front(", self.retarget)
         self.assertIn("local_twist_y(", self.retarget)
         self.assertIn("_wrist_2dof_target_basis(", self.retarget)
@@ -398,6 +410,8 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             parent_pose,
             parent_rest,
             hand_rest,
+            self.constraints,
+            self.contract,
         )
         recovered_local = mat_mul(
             transpose(parent_pose),
@@ -420,8 +434,71 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             places=8,
         )
         self.assertGreater(
-            evidence["length_axis_alignment_dot"],
+            evidence["semantic_alignment_dot"],
             0.999999999,
+        )
+
+    def test_wrist_solver_clamps_semantic_direction_to_preferred_envelope(self) -> None:
+        parent_pose = identity3()
+        parent_rest = identity3()
+        hand_rest = identity3()
+
+        impossible_preferred = mat_mul(
+            axis_rotation("X", 5.0),
+            axis_rotation("Z", 29.0),
+        )
+        direction = [
+            impossible_preferred[row][1]
+            for row in range(3)
+        ]
+
+        target, evidence = _wrist_2dof_target_basis(
+            direction,
+            parent_pose,
+            parent_rest,
+            hand_rest,
+            self.constraints,
+            self.contract,
+        )
+        self.assertEqual(
+            evidence["preferred_envelope_status"],
+            "PASS",
+        )
+        self.assertLessEqual(
+            evidence["radial_ulnar_deviation_deg"],
+            20.0,
+        )
+        self.assertGreaterEqual(
+            evidence["radial_ulnar_deviation_deg"],
+            -25.0,
+        )
+        self.assertGreater(
+            evidence["semantic_alignment_dot"],
+            0.98,
+        )
+        recovered_y = normalize(
+            [target[row][1] for row in range(3)]
+        )
+        self.assertGreater(
+            sum(
+                recovered_y[index] * direction[index]
+                for index in range(3)
+            ),
+            0.98,
+        )
+
+    def test_hand_semantic_alignment_is_not_part_of_exact_arm_gate(self) -> None:
+        self.assertIn(
+            'if not name.endswith("_hand")',
+            self.retarget,
+        )
+        self.assertIn(
+            '"hand_semantic_direction_is_preference": True',
+            self.retarget,
+        )
+        self.assertIn(
+            '"hand_wrist_preferred_envelope_pass": True',
+            self.retarget,
         )
 
     def test_hand_basis_is_not_reseeded_from_body_front(self) -> None:
@@ -489,6 +566,26 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         )
         self.assertIn("POSES=6/6", self.builder)
         self.assertIn("BONES_PER_POSE=24", self.builder)
+
+    def test_builder_passes_constraint_profile_into_retarget(self) -> None:
+        self.assertIn(
+            "canonical,\n            constraints,\n            contract,",
+            self.builder,
+        )
+        self.assertIn(
+            '"hand_wrist_preferred_envelope_pass": True',
+            self.builder,
+        )
+
+    def test_wrapper_requires_hand_wrist_preferred_envelope_gate(self) -> None:
+        self.assertIn(
+            "$data.gate.hand_wrist_preferred_envelope_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Hand wrist preferred-envelope gate failed.",
+            self.wrapper,
+        )
 
     def test_wrapper_auto_generates_10_6_5_prerequisite(self) -> None:
         self.assertIn(

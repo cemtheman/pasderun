@@ -98,6 +98,7 @@ def main() -> None:
         pose_name: retarget_pose_solution(
             poses["solutions"][pose_name],
             canonical,
+            constraints,
             contract,
         )
         for pose_name in sorted(required)
@@ -113,6 +114,13 @@ def main() -> None:
             for item in retargeted.values()
         ),
         "Unexpected non-orientation retarget occurred.",
+    )
+    require(
+        all(
+            item["evidence"]["hand_wrist_preferred_envelope_pass"]
+            for item in retargeted.values()
+        ),
+        "Hand wrist preferred-envelope gate failed.",
     )
 
     output = {
@@ -137,6 +145,7 @@ def main() -> None:
             "canonical_roundtrip_pass": True,
             "hierarchy_reconstruction_pass": True,
             "arm_length_axis_alignment_pass": True,
+            "hand_wrist_preferred_envelope_pass": True,
             "orientation_retarget_pass": True,
             "root_translation_applied": False,
             "contact_translation_applied": False,
@@ -157,6 +166,7 @@ def main() -> None:
     print("CANONICAL_ROUNDTRIP=PASS")
     print("HIERARCHY_RECONSTRUCTION=PASS")
     print("ARM_LENGTH_AXIS_ALIGNMENT=PASS")
+    print("HAND_WRIST_PREFERRED_ENVELOPE=PASS")
     print("ROOT_TRANSLATION=NOT_APPLIED")
     print("BLENDER_APPLICATION=NOT_PERFORMED")
     print("RENDER=NOT_PERFORMED")

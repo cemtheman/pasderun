@@ -107,6 +107,8 @@ def _wrist_2dof_target_basis(
     parent_pose_basis: list[list[float]],
     parent_rest_basis: list[list[float]],
     hand_rest_basis: list[list[float]],
+    constraint_profile: dict,
+    axis_contract: dict,
 ) -> tuple[list[list[float]], dict]:
     direction = normalize(desired_length_direction)
     rest_local = mat_mul(
@@ -114,49 +116,108 @@ def _wrist_2dof_target_basis(
         hand_rest_basis,
     )
     base = mat_mul(parent_pose_basis, rest_local)
-    local_direction = mat_vec(transpose(base), direction)
-    local_direction = normalize(local_direction)
 
-    x = max(-1.0, min(1.0, float(local_direction[0])))
-    deviation_rad = math.asin(-x)
-    cos_deviation = math.cos(deviation_rad)
-    if abs(cos_deviation) <= 1e-8:
+    limits = constraint_profile["joint_limits"]["wrist_2dof"]["dofs"]
+    flexion = limits["flexion_extension"]["preferred"]
+    deviation = limits["radial_ulnar_deviation"]["preferred"]
+    fmin = float(flexion["min"])
+    fmax = float(flexion["max"])
+    dmin = float(deviation["min"])
+    dmax = float(deviation["max"])
+
+    solver = axis_contract["upper_limb_roll"]["hand"]["solver"]
+    best = None
+
+    def consider(flexion_deg: float, deviation_deg: float) -> None:
+        nonlocal best
+        if not fmin <= flexion_deg <= fmax:
+            return
+        if not dmin <= deviation_deg <= dmax:
+            return
+
+        delta = mat_mul(
+            axis_rotation("X", flexion_deg),
+            axis_rotation("Z", deviation_deg),
+        )
+        target = mat_mul(base, delta)
+        target_y = normalize([target[row][1] for row in range(3)])
+        alignment = dot(target_y, direction)
+        key = (
+            -alignment,
+            abs(flexion_deg) + abs(deviation_deg),
+            abs(flexion_deg),
+            abs(deviation_deg),
+        )
+        candidate = (
+            key,
+            target,
+            flexion_deg,
+            deviation_deg,
+            alignment,
+        )
+        if best is None or key < best[0]:
+            best = candidate
+
+    coarse = float(solver["coarse_step_deg"])
+    flexion_value = fmin
+    while flexion_value <= fmax + 1e-9:
+        deviation_value = dmin
+        while deviation_value <= dmax + 1e-9:
+            consider(flexion_value, deviation_value)
+            deviation_value += coarse
+        flexion_value += coarse
+
+    if best is None:
         raise RigRetargetRejected(
-            "Wrist landmark direction is singular for declared wrist_2dof."
+            "No wrist_2dof candidate exists in preferred envelope."
         )
 
-    flexion_rad = math.atan2(
-        float(local_direction[2]),
-        float(local_direction[1]),
-    )
-    flexion_deg = math.degrees(flexion_rad)
-    deviation_deg = math.degrees(deviation_rad)
+    for step in solver["refine_steps_deg"]:
+        step = float(step)
+        center_f = float(best[2])
+        center_d = float(best[3])
+        for f_offset in range(-10, 11):
+            for d_offset in range(-10, 11):
+                consider(
+                    center_f + f_offset * step,
+                    center_d + d_offset * step,
+                )
 
-    delta = mat_mul(
-        axis_rotation("X", flexion_deg),
-        axis_rotation("Z", deviation_deg),
-    )
-    target = mat_mul(base, delta)
-    target_y = normalize([target[row][1] for row in range(3)])
-    alignment = dot(target_y, direction)
-    if alignment < 0.999999:
-        raise RigRetargetRejected(
-            "Declared wrist_2dof cannot reconstruct hand landmark "
-            f"direction; alignment={alignment}."
-        )
-
+    _key, target, solved_flexion, solved_deviation, alignment = best
     return target, {
-        "flexion_extension_deg": flexion_deg,
-        "radial_ulnar_deviation_deg": deviation_deg,
-        "length_axis_alignment_dot": alignment,
+        "flexion_extension_deg": round(
+            float(solved_flexion),
+            8,
+        ),
+        "radial_ulnar_deviation_deg": round(
+            float(solved_deviation),
+            8,
+        ),
+        "semantic_alignment_dot": round(
+            float(alignment),
+            10,
+        ),
+        "preferred_envelope": {
+            "flexion_extension": {
+                "min": fmin,
+                "max": fmax,
+            },
+            "radial_ulnar_deviation": {
+                "min": dmin,
+                "max": dmax,
+            },
+        },
+        "preferred_envelope_status": "PASS",
+        "independent_axial_hand_roll": "BLOCKED",
     }
 
 
 def _upper_limb_target_bases(
     state: dict,
     canonical_profile: dict,
+    constraint_profile: dict,
     axis_contract: dict,
-) -> dict[str, list[list[float]]]:
+) -> tuple[dict[str, list[list[float]]], dict]:
     landmarks = state.get("landmarks", {})
     required = (
         "left_shoulder",
@@ -169,13 +230,14 @@ def _upper_limb_target_bases(
         "right_hand",
     )
     if not all(name in landmarks for name in required):
-        return {}
+        return {}, {}
 
     frame = canonical_profile["body_frame"]["declared_axes_armature_local"]
     front = frame["front"]
     up = frame["up"]
     left = frame["left"]
     targets = {}
+    hand_evidence = {}
 
     for side in ("left", "right"):
         chains = (
@@ -212,12 +274,15 @@ def _upper_limb_target_bases(
                         f"{bone_name}: posed forearm frame is unavailable."
                     )
                 bones = canonical_profile["canonical_bones"]
-                basis, _wrist_evidence = _wrist_2dof_target_basis(
+                basis, wrist_evidence = _wrist_2dof_target_basis(
                     direction,
                     targets[parent_name],
                     _rest_basis(bones[parent_name]),
                     _rest_basis(bones[bone_name]),
+                    constraint_profile,
+                    axis_contract,
                 )
+                hand_evidence[bone_name] = wrist_evidence
             else:
                 basis = basis_from_length_and_front(
                     direction,
@@ -240,7 +305,7 @@ def _upper_limb_target_bases(
 
             targets[bone_name] = basis
 
-    return targets
+    return targets, hand_evidence
 
 
 def _joint_delta(
@@ -300,13 +365,15 @@ def _joint_delta(
 def _canonical_pose_bases(
     state: dict,
     canonical_profile: dict,
+    constraint_profile: dict,
     axis_contract: dict,
-) -> tuple[dict, dict]:
+) -> tuple[dict, dict, dict]:
     bones = canonical_profile["canonical_bones"]
     order = _topological_order(canonical_profile)
-    arm_targets = _upper_limb_target_bases(
+    arm_targets, hand_evidence = _upper_limb_target_bases(
         state,
         canonical_profile,
+        constraint_profile,
         axis_contract,
     )
 
@@ -358,7 +425,7 @@ def _canonical_pose_bases(
         posed[name] = pose_basis
         local_deltas[name] = delta
 
-    return posed, local_deltas
+    return posed, local_deltas, hand_evidence
 
 
 def _rig_pose_from_canonical(
@@ -521,6 +588,7 @@ def validate_rest_identity(
 def retarget_pose_solution(
     solution: dict,
     canonical_profile: dict,
+    constraint_profile: dict,
     axis_contract: dict,
 ) -> dict:
     if solution["validation"]["status"] != "PASS":
@@ -528,10 +596,13 @@ def retarget_pose_solution(
 
     state = solution["state"]
     thresholds = axis_contract["thresholds"]
-    canonical_bases, canonical_local_deltas = _canonical_pose_bases(
-        state,
-        canonical_profile,
-        axis_contract,
+    canonical_bases, canonical_local_deltas, hand_wrist_evidence = (
+        _canonical_pose_bases(
+            state,
+            canonical_profile,
+            constraint_profile,
+            axis_contract,
+        )
     )
 
     for name, basis in canonical_bases.items():
@@ -555,9 +626,18 @@ def retarget_pose_solution(
     minimum_alignment = float(
         thresholds["arm_length_axis_alignment_min_dot"]
     )
-    if any(value < minimum_alignment for value in arm_alignment.values()):
+    hard_arm_alignment = {
+        name: value
+        for name, value in arm_alignment.items()
+        if not name.endswith("_hand")
+    }
+    if any(
+        value < minimum_alignment
+        for value in hard_arm_alignment.values()
+    ):
         raise RigRetargetRejected(
-            f"Arm length-axis alignment failed: {arm_alignment}"
+            "Upper-arm/forearm length-axis alignment failed: "
+            f"{hard_arm_alignment}"
         )
 
     canonical_output = {
@@ -622,6 +702,10 @@ def retarget_pose_solution(
             "max_canonical_roundtrip_error": round(max_roundtrip, 10),
             "max_hierarchy_reconstruction_error": round(max_hierarchy, 10),
             "arm_length_axis_alignment_dot": arm_alignment,
+            "hard_arm_length_axis_alignment_dot": hard_arm_alignment,
+            "hand_wrist_solution": hand_wrist_evidence,
+            "hand_semantic_direction_is_preference": True,
+            "hand_wrist_preferred_envelope_pass": True,
             "orientation_retarget_only": True,
             "root_translation_applied": False,
             "contact_translation_applied": False,

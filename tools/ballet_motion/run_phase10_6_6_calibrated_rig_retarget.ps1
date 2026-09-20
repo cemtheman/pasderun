@@ -54,6 +54,7 @@ if (-not $data.gate.rest_identity_pass) { throw "Rest identity gate failed." }
 if (-not $data.gate.canonical_roundtrip_pass) { throw "Canonical roundtrip gate failed." }
 if (-not $data.gate.hierarchy_reconstruction_pass) { throw "Hierarchy reconstruction gate failed." }
 if (-not $data.gate.arm_length_axis_alignment_pass) { throw "Arm length-axis gate failed." }
+if (-not $data.gate.hand_wrist_preferred_envelope_pass) { throw "Hand wrist preferred-envelope gate failed." }
 if (-not $data.gate.orientation_retarget_pass) { throw "Orientation retarget gate failed." }
 if ($data.gate.root_translation_applied) { throw "Root translation is out of scope." }
 if ($data.gate.contact_translation_applied) { throw "Contact translation is out of scope." }
@@ -77,5 +78,6 @@ Write-Host "Rest identity:          PASS"
 Write-Host "Canonical roundtrip:    PASS"
 Write-Host "Hierarchy reconstruction: PASS"
 Write-Host "Arm length-axis:        PASS"
+Write-Host "Hand wrist envelope:    PASS"
 Write-Host "Root/contact translation: NOT APPLIED"
 Write-Host "Blender/render:         NOT PERFORMED"
