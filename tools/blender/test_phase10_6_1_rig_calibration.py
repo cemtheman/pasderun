@@ -97,6 +97,12 @@ class Phase1061RigCalibrationTests(unittest.TestCase):
         self.assertNotIn("AnimationTree", self.script)
         self.assertIn("No render. No animation. No GLB export.", self.wrapper)
 
+    def test_windows_powershell_wrapper_is_ascii_only(self) -> None:
+        self.assertTrue(
+            all(ord(char) < 128 for char in self.wrapper),
+            "Windows PowerShell 5.1 wrapper must remain ASCII-only.",
+        )
+
     def test_output_contract_is_phase_10_6_1(self) -> None:
         self.assertIn('PHASE = "10.6.1"', self.script)
         self.assertIn("PHASE10_6_1_RIG_CALIBRATION=PASS", self.script)

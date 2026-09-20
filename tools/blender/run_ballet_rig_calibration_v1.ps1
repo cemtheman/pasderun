@@ -22,7 +22,7 @@ $seed = Join-Path $Repo "assets\characters\low_poly_girl\ballet_rig_calibration_
 $output = Join-Path $Repo "build\phase10_6\low_poly_girl_ballet_rig_profile_v1.json"
 $script = Join-Path $Repo "tools\blender\build_ballet_rig_calibration_v1.py"
 
-Write-Host "PHASE 10.6.1 — RIG CALIBRATION PROFILE"
+Write-Host "PHASE 10.6.1 - RIG CALIBRATION PROFILE"
 Write-Host "No render. No animation. No GLB export."
 Write-Host "Seed:    $seed"
 Write-Host "Profile: $output"
