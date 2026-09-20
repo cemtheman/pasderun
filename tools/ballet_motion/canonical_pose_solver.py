@@ -138,6 +138,90 @@ def _desired_wrist_distance(
     )
 
 
+def _wrist_constraints(
+    pose_name: str,
+    side: str,
+    shoulder: list[float],
+    grammar: dict,
+) -> dict:
+    constraints = {
+        "minimum_front": None,
+        "maximum_up": None,
+        "minimum_up": None,
+    }
+    wrist_name = f"{side}_wrist"
+
+    for check in grammar["poses"][pose_name]["checks"]:
+        kind = check["type"]
+
+        if kind == "anterior_halfspace" and wrist_name in check["landmarks"]:
+            minimum = float(check["min_front"])
+            current = constraints["minimum_front"]
+            constraints["minimum_front"] = (
+                minimum if current is None else max(current, minimum)
+            )
+
+        if kind == "wrist_below_shoulder":
+            shoulder_name = check[f"{side}_shoulder"]
+            if shoulder_name == f"{side}_shoulder":
+                minimum_drop = float(check["min_drop"])
+                maximum_drop = float(check["max_drop"])
+                constraints["maximum_up"] = (
+                    float(shoulder[1]) - minimum_drop
+                )
+                constraints["minimum_up"] = (
+                    float(shoulder[1]) - maximum_drop
+                )
+
+    return constraints
+
+
+def _wrist_satisfies_constraints(
+    wrist: list[float],
+    constraints: dict,
+) -> bool:
+    minimum_front = constraints["minimum_front"]
+    if minimum_front is not None and float(wrist[2]) < minimum_front - 1e-9:
+        return False
+
+    maximum_up = constraints["maximum_up"]
+    if maximum_up is not None and float(wrist[1]) > maximum_up + 1e-9:
+        return False
+
+    minimum_up = constraints["minimum_up"]
+    if minimum_up is not None and float(wrist[1]) < minimum_up - 1e-9:
+        return False
+
+    return True
+
+
+def _candidate_unit_directions(
+    preferred: list[float],
+    sample_count: int = 2048,
+) -> list[list[float]]:
+    preferred = _normalize(preferred)
+    candidates = [preferred]
+
+    # Deterministic Fibonacci sphere. Sort by angular similarity so semantic
+    # intent remains the preference while grammar decides feasibility.
+    golden_angle = math.pi * (3.0 - math.sqrt(5.0))
+    sampled = []
+    for index in range(sample_count):
+        z = 1.0 - 2.0 * ((index + 0.5) / sample_count)
+        radius = math.sqrt(max(0.0, 1.0 - z * z))
+        phi = index * golden_angle
+        direction = [
+            radius * math.cos(phi),
+            z,
+            radius * math.sin(phi),
+        ]
+        sampled.append((_dot(direction, preferred), direction))
+
+    sampled.sort(key=lambda item: item[0], reverse=True)
+    candidates.extend(direction for _, direction in sampled)
+    return candidates
+
+
 def _arm_elbow_constraints(
     pose_name: str,
     side: str,
@@ -327,29 +411,13 @@ def _arm_geometry(
         raw_direction = intent["wrist_direction"]
         lateral_key = "inward" if "inward" in raw_direction else "outward"
         lateral_sign = -sign if lateral_key == "inward" else sign
-        direction = _normalize(
+        preferred_direction = _normalize(
             [
                 lateral_sign * float(raw_direction[lateral_key]),
                 -float(raw_direction["down"]),
                 float(raw_direction["front"]),
             ]
         )
-        wrist = _add(shoulder, _scale(direction, wrist_distance))
-
-        required_wrist_front = wrist_front_min
-        if wrist[2] < required_wrist_front:
-            delta_front = required_wrist_front - wrist[2]
-            candidate = [wrist[0], wrist[1], wrist[2] + delta_front]
-            candidate_delta = _sub(candidate, shoulder)
-            if _length(candidate_delta) >= upper_arm + forearm:
-                raise PoseSolveRejected(
-                    f"{pose_name}: required anterior wrist target is unreachable."
-                )
-            candidate_delta = _scale(
-                _normalize(candidate_delta),
-                wrist_distance,
-            )
-            wrist = _add(shoulder, candidate_delta)
 
         pole_spec = intent["elbow_pole"]
         pole = [
@@ -357,25 +425,61 @@ def _arm_geometry(
             -float(pole_spec["down"]),
             float(pole_spec["front"]),
         ]
-        elbow_constraints = _arm_elbow_constraints(
+
+        wrist_constraints = _wrist_constraints(
             pose_name,
             side,
             shoulder,
-            wrist,
             grammar,
         )
-        # Grammar owns the hard anterior boundary. Semantic intent already
-        # influences the preferred pole; it must not silently tighten grammar.
-        if elbow_constraints["minimum_front"] is None:
-            elbow_constraints["minimum_front"] = elbow_front_min
-        elbow = _two_bone_elbow(
-            shoulder,
-            wrist,
-            upper_arm,
-            forearm,
-            pole,
-            elbow_constraints,
-        )
+        if wrist_constraints["minimum_front"] is None:
+            wrist_constraints["minimum_front"] = wrist_front_min
+
+        wrist = None
+        elbow = None
+        for direction in _candidate_unit_directions(preferred_direction):
+            candidate_wrist = _add(
+                shoulder,
+                _scale(direction, wrist_distance),
+            )
+            if not _wrist_satisfies_constraints(
+                candidate_wrist,
+                wrist_constraints,
+            ):
+                continue
+
+            elbow_constraints = _arm_elbow_constraints(
+                pose_name,
+                side,
+                shoulder,
+                candidate_wrist,
+                grammar,
+            )
+            # Grammar owns the hard anterior boundary. Semantic intent only
+            # ranks candidate directions and must not tighten grammar.
+            if elbow_constraints["minimum_front"] is None:
+                elbow_constraints["minimum_front"] = elbow_front_min
+
+            try:
+                candidate_elbow = _two_bone_elbow(
+                    shoulder,
+                    candidate_wrist,
+                    upper_arm,
+                    forearm,
+                    pole,
+                    elbow_constraints,
+                )
+            except PoseSolveRejected:
+                continue
+
+            wrist = candidate_wrist
+            elbow = candidate_elbow
+            break
+
+        if wrist is None or elbow is None:
+            raise PoseSolveRejected(
+                f"{pose_name}/{side}: no wrist/elbow solution satisfies grammar."
+            )
 
         hand_spec = intent["hand_direction"]
         hand_lateral_key = (

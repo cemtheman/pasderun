@@ -142,6 +142,35 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             self.solver,
         )
 
+    def test_wrist_target_is_preference_not_single_hard_ray(self) -> None:
+        self.assertIn("def _wrist_constraints(", self.solver)
+        self.assertIn("def _wrist_satisfies_constraints(", self.solver)
+        self.assertIn("def _candidate_unit_directions(", self.solver)
+        self.assertIn("Deterministic Fibonacci sphere", self.solver)
+        self.assertIn(
+            "semantic intent remains the preference while grammar decides feasibility",
+            " ".join(
+                line.strip().lstrip("#").strip()
+                for line in self.solver.splitlines()
+            ),
+        )
+
+    def test_solver_can_escape_infeasible_preferred_wrist_ray(self) -> None:
+        altered = json.loads(json.dumps(self.intents))
+        altered["poses"]["bras_bas"]["wrist_direction"] = {
+            "inward": 0.98,
+            "down": 0.05,
+            "front": 0.05,
+        }
+        result = solve_pose(
+            "bras_bas",
+            altered,
+            self.grammar,
+            self.canonical,
+            self.constraints,
+        )
+        self.assertEqual(result["validation"]["status"], "PASS")
+
     def test_arm_solver_enforces_grammar_lateral_order_across_ratios(self) -> None:
         variants = (
             (0.24, 0.30),
