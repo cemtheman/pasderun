@@ -56,12 +56,13 @@ if (-not $data.validator_foundation.canonical_graph_valid) {
 if (-not $data.validator_foundation.all_bind_rotations_right_handed) {
     throw "Bind rotation handedness validation failed."
 }
-if ($data.canonical_bones.PSObject.Properties.Count -ne 24) {
-    throw "Expected exactly 24 canonical bones."
+$canonicalBoneCount = @($data.canonical_bones.PSObject.Properties).Count
+if ($canonicalBoneCount -ne 24) {
+    throw "Expected exactly 24 canonical bones, got $canonicalBoneCount."
 }
 
 Write-Host ""
 Write-Host "PHASE 10.6.2 CANONICAL BALLET SKELETON PASS"
 Write-Host "Profile: $output"
-Write-Host "Bones:   $($data.canonical_bones.PSObject.Properties.Count)"
+Write-Host "Bones:   $canonicalBoneCount"
 Write-Host "Front:   DECLARED_BY_RIG_CALIBRATION_ONLY"

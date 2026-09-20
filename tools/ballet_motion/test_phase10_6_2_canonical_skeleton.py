@@ -170,6 +170,17 @@ class Phase1062CanonicalSkeletonTests(unittest.TestCase):
             "Windows PowerShell 5.1 wrapper must remain ASCII-only.",
         )
 
+    def test_windows_powershell_counts_json_properties_via_array(self) -> None:
+        self.assertIn(
+            "$canonicalBoneCount = @($data.canonical_bones.PSObject.Properties).Count",
+            self.wrapper,
+        )
+        self.assertNotIn(
+            "$data.canonical_bones.PSObject.Properties.Count -ne 24",
+            self.wrapper,
+        )
+        self.assertIn('Write-Host "Bones:   $canonicalBoneCount"', self.wrapper)
+
     def test_output_contract_is_phase_10_6_2(self) -> None:
         self.assertIn('PHASE = "10.6.2"', self.builder)
         self.assertIn("PHASE10_6_2_CANONICAL_SKELETON=PASS", self.builder)

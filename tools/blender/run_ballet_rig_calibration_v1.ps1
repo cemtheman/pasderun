@@ -49,8 +49,9 @@ if ($data.frame_policy.pose_dependent_frame_allowed) {
 if (-not $data.validation.passed) {
     throw "Declared anatomical frame validation failed."
 }
-if ($data.canonical_bones.PSObject.Properties.Count -lt 24) {
-    throw "Canonical rig profile is incomplete."
+$canonicalBoneCount = @($data.canonical_bones.PSObject.Properties).Count
+if ($canonicalBoneCount -lt 24) {
+    throw "Canonical rig profile is incomplete. Expected at least 24 bones, got $canonicalBoneCount."
 }
 
 Write-Host ""

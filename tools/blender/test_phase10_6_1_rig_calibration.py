@@ -103,6 +103,16 @@ class Phase1061RigCalibrationTests(unittest.TestCase):
             "Windows PowerShell 5.1 wrapper must remain ASCII-only.",
         )
 
+    def test_windows_powershell_counts_json_properties_via_array(self) -> None:
+        self.assertIn(
+            "$canonicalBoneCount = @($data.canonical_bones.PSObject.Properties).Count",
+            self.wrapper,
+        )
+        self.assertNotIn(
+            "$data.canonical_bones.PSObject.Properties.Count -lt 24",
+            self.wrapper,
+        )
+
     def test_output_contract_is_phase_10_6_1(self) -> None:
         self.assertIn('PHASE = "10.6.1"', self.script)
         self.assertIn("PHASE10_6_1_RIG_CALIBRATION=PASS", self.script)
