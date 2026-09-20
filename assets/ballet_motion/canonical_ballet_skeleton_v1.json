@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "spec_id": "canonical_ballet_humanoid_v1",
+  "phase": "10.6.2",
+  "coordinate_convention": {
+    "body_components": [
+      "LEFT",
+      "UP",
+      "FRONT"
+    ],
+    "body_front_policy": "DECLARED_BY_RIG_CALIBRATION_ONLY",
+    "bone_length_axis": "LOCAL_Y",
+    "canonical_basis_rule": "Y=length_axis; Z=secondary_axis projected orthogonal to Y; X=Y cross Z",
+    "handedness": "RIGHT_HANDED"
+  },
+  "solver_policy": {
+    "numeric_joint_limits_stage": "10.6.3",
+    "pose_grammar_stage": "10.6.4",
+    "motion_phrase_stage": "10.6.5+",
+    "imported_rig_axes_may_not_define_ballet_intent": true,
+    "canonical_pose_must_precede_retarget": true
+  },
+  "joint_classes": {
+    "root_6dof": {
+      "rotational_dofs": [
+        "pitch",
+        "yaw",
+        "roll"
+      ],
+      "translational_dofs": [
+        "left_right",
+        "up_down",
+        "front_back"
+      ],
+      "anatomical_role": "whole-body root / pelvis authority"
+    },
+    "axial_ball": {
+      "rotational_dofs": [
+        "flexion_extension",
+        "lateral_flexion",
+        "axial_rotation"
+      ],
+      "anatomical_role": "spinal segment"
+    },
+    "head_ball": {
+      "rotational_dofs": [
+        "flexion_extension",
+        "lateral_flexion",
+        "axial_rotation"
+      ],
+      "anatomical_role": "head-neck expression"
+    },
+    "scapular_3dof": {
+      "rotational_dofs": [
+        "elevation_depression",
+        "protraction_retraction",
+        "upward_downward_rotation"
+      ],
+      "anatomical_role": "clavicle/scapular carriage"
+    },
+    "shoulder_ball": {
+      "rotational_dofs": [
+        "flexion_extension",
+        "abduction_adduction",
+        "internal_external_rotation"
+      ],
+      "anatomical_role": "glenohumeral shoulder"
+    },
+    "elbow_twist": {
+      "rotational_dofs": [
+        "flexion_extension",
+        "pronation_supination"
+      ],
+      "anatomical_role": "elbow hinge plus forearm axial orientation"
+    },
+    "wrist_2dof": {
+      "rotational_dofs": [
+        "flexion_extension",
+        "radial_ulnar_deviation"
+      ],
+      "anatomical_role": "wrist carriage; axial hand roll inherited from forearm calibration"
+    },
+    "hip_ball": {
+      "rotational_dofs": [
+        "flexion_extension",
+        "abduction_adduction",
+        "internal_external_rotation"
+      ],
+      "anatomical_role": "hip including turnout authority"
+    },
+    "knee_hinge": {
+      "rotational_dofs": [
+        "flexion_extension"
+      ],
+      "anatomical_role": "primary knee hinge; no independent turnout authority"
+    },
+    "ankle_2dof": {
+      "rotational_dofs": [
+        "plantar_dorsiflexion",
+        "inversion_eversion"
+      ],
+      "anatomical_role": "ankle/foot articulation"
+    },
+    "mtp_hinge": {
+      "rotational_dofs": [
+        "toe_flexion_extension"
+      ],
+      "anatomical_role": "metatarsophalangeal / demi-pointe articulation"
+    },
+    "reference": {
+      "rotational_dofs": [],
+      "anatomical_role": "semantic endpoint/reference; not a primary solver joint"
+    }
+  },
+  "bones": {
+    "pelvis": {
+      "parent": null,
+      "side": "CENTER",
+      "length_axis": "BODY_UP",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "root_6dof"
+    },
+    "spine_lower": {
+      "parent": "pelvis",
+      "side": "CENTER",
+      "length_axis": "BODY_UP",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "axial_ball"
+    },
+    "spine_mid": {
+      "parent": "spine_lower",
+      "side": "CENTER",
+      "length_axis": "BODY_UP",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "axial_ball"
+    },
+    "chest": {
+      "parent": "spine_mid",
+      "side": "CENTER",
+      "length_axis": "BODY_UP",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "axial_ball"
+    },
+    "neck": {
+      "parent": "chest",
+      "side": "CENTER",
+      "length_axis": "BODY_UP",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "axial_ball"
+    },
+    "head": {
+      "parent": "neck",
+      "side": "CENTER",
+      "length_axis": "BODY_UP",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "head_ball"
+    },
+    "left_clavicle": {
+      "parent": "chest",
+      "side": "LEFT",
+      "length_axis": "BODY_LEFT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "scapular_3dof"
+    },
+    "right_clavicle": {
+      "parent": "chest",
+      "side": "RIGHT",
+      "length_axis": "BODY_RIGHT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "scapular_3dof"
+    },
+    "left_upper_arm": {
+      "parent": "left_clavicle",
+      "side": "LEFT",
+      "length_axis": "BODY_LEFT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "shoulder_ball"
+    },
+    "right_upper_arm": {
+      "parent": "right_clavicle",
+      "side": "RIGHT",
+      "length_axis": "BODY_RIGHT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "shoulder_ball"
+    },
+    "left_forearm": {
+      "parent": "left_upper_arm",
+      "side": "LEFT",
+      "length_axis": "BODY_LEFT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "elbow_twist"
+    },
+    "right_forearm": {
+      "parent": "right_upper_arm",
+      "side": "RIGHT",
+      "length_axis": "BODY_RIGHT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "elbow_twist"
+    },
+    "left_hand": {
+      "parent": "left_forearm",
+      "side": "LEFT",
+      "length_axis": "BODY_LEFT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "wrist_2dof"
+    },
+    "right_hand": {
+      "parent": "right_forearm",
+      "side": "RIGHT",
+      "length_axis": "BODY_RIGHT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "wrist_2dof"
+    },
+    "left_middle": {
+      "parent": "left_hand",
+      "side": "LEFT",
+      "length_axis": "BODY_LEFT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "reference"
+    },
+    "right_middle": {
+      "parent": "right_hand",
+      "side": "RIGHT",
+      "length_axis": "BODY_RIGHT",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "reference"
+    },
+    "left_thigh": {
+      "parent": "pelvis",
+      "side": "LEFT",
+      "length_axis": "BODY_DOWN",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "hip_ball"
+    },
+    "right_thigh": {
+      "parent": "pelvis",
+      "side": "RIGHT",
+      "length_axis": "BODY_DOWN",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "hip_ball"
+    },
+    "left_shin": {
+      "parent": "left_thigh",
+      "side": "LEFT",
+      "length_axis": "BODY_DOWN",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "knee_hinge"
+    },
+    "right_shin": {
+      "parent": "right_thigh",
+      "side": "RIGHT",
+      "length_axis": "BODY_DOWN",
+      "secondary_axis": "BODY_FRONT",
+      "joint_class": "knee_hinge"
+    },
+    "left_foot": {
+      "parent": "left_shin",
+      "side": "LEFT",
+      "length_axis": "BODY_FRONT",
+      "secondary_axis": "BODY_UP",
+      "joint_class": "ankle_2dof"
+    },
+    "right_foot": {
+      "parent": "right_shin",
+      "side": "RIGHT",
+      "length_axis": "BODY_FRONT",
+      "secondary_axis": "BODY_UP",
+      "joint_class": "ankle_2dof"
+    },
+    "left_toes": {
+      "parent": "left_foot",
+      "side": "LEFT",
+      "length_axis": "BODY_FRONT",
+      "secondary_axis": "BODY_UP",
+      "joint_class": "mtp_hinge"
+    },
+    "right_toes": {
+      "parent": "right_foot",
+      "side": "RIGHT",
+      "length_axis": "BODY_FRONT",
+      "secondary_axis": "BODY_UP",
+      "joint_class": "mtp_hinge"
+    }
+  },
+  "bilateral_pairs": [
+    [
+      "left_clavicle",
+      "right_clavicle"
+    ],
+    [
+      "left_upper_arm",
+      "right_upper_arm"
+    ],
+    [
+      "left_forearm",
+      "right_forearm"
+    ],
+    [
+      "left_hand",
+      "right_hand"
+    ],
+    [
+      "left_middle",
+      "right_middle"
+    ],
+    [
+      "left_thigh",
+      "right_thigh"
+    ],
+    [
+      "left_shin",
+      "right_shin"
+    ],
+    [
+      "left_foot",
+      "right_foot"
+    ],
+    [
+      "left_toes",
+      "right_toes"
+    ]
+  ],
+  "validator_foundation": {
+    "canonical_basis_orthogonality_max_error": 0.000001,
+    "bind_rotation_orthogonality_max_error": 0.00001,
+    "bind_rotation_determinant_min": 0.9999,
+    "bind_rotation_determinant_max": 1.0001,
+    "source_sha_must_match": true,
+    "calibration_must_have_declared_front": true,
+    "pose_validators_reserved": [
+      "anterior_halfspace",
+      "bilateral_mirror",
+      "joint_limit",
+      "knee_second_toe_tracking",
+      "support_polygon_com",
+      "contact",
+      "palm_orientation_continuity"
+    ]
+  }
+}
