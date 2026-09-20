@@ -140,7 +140,27 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         self.assertNotIn("minimum_wrist_front_margin", self.solver)
         self.assertNotIn("minimum_elbow_front_margin", self.solver)
         self.assertIn(
-            "Grammar owns the hard anterior boundary",
+            "wrist_constraints = _wrist_constraints(",
+            self.solver,
+        )
+        self.assertIn(
+            'if wrist_constraints["minimum_front"] is None:',
+            self.solver,
+        )
+        self.assertIn(
+            'wrist_constraints["minimum_front"] = wrist_front_min',
+            self.solver,
+        )
+        self.assertIn(
+            "elbow_constraints = _arm_elbow_constraints(",
+            self.solver,
+        )
+        self.assertIn(
+            'if elbow_constraints["minimum_front"] is None:',
+            self.solver,
+        )
+        self.assertIn(
+            'elbow_constraints["minimum_front"] = elbow_front_min',
             self.solver,
         )
 
