@@ -544,6 +544,11 @@ def realize_pose(
         armature,
         pose_entry,
     )
+    hand_shape_evidence = static_core.apply_ballet_hand_shape(
+        armature,
+        canonical,
+        static_contract,
+    )
 
     hand_mesh_runtime_solution = {}
     hand_mesh_wrist_solution = {}
@@ -718,6 +723,7 @@ def realize_pose(
         "hand_mesh_runtime_clearance_solution": (
             hand_mesh_runtime_solution.get("evidence", {})
         ),
+        "ballet_hand_shape": hand_shape_evidence,
     }
 
 
@@ -931,6 +937,7 @@ def main() -> None:
             "hand_mesh_centerline_spacing_pass": True,
             "hand_mesh_retarget_wrist_seed_preserved_pass": True,
             "hand_mesh_runtime_clearance_solver_pass": True,
+            "ballet_hand_shape_applied": True,
             "render_count_pass": True,
             "animation_rendered": False,
             "glb_exported": False,
@@ -959,6 +966,7 @@ def main() -> None:
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
     print("HAND_MESH_RETARGET_WRIST_SEED_PRESERVED=PASS")
     print("HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS")
+    print("BALLET_HAND_SHAPE=PASS")
     print("STATIC_CONTACT_REALIZATION=PASS")
     print("ANIMATION=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

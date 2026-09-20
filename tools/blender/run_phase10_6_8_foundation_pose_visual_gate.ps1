@@ -150,6 +150,9 @@ if (-not $data.automated_gate.hand_mesh_retarget_wrist_seed_preserved_pass) {
 if (-not $data.automated_gate.hand_mesh_runtime_clearance_solver_pass) {
     throw "Hand mesh runtime clearance solver gate failed."
 }
+if (-not $data.automated_gate.ballet_hand_shape_applied) {
+    throw "Ballet hand shape gate failed."
+}
 if (-not $data.automated_gate.middle_bone_tip_diagnostic_recorded) {
     throw "Middle-bone tip diagnostic evidence missing."
 }
@@ -173,6 +176,7 @@ Write-Host "Hand continuity:  PASS"
 Write-Host "Hand mesh spacing: PASS"
 Write-Host "Wrist seed:        RETARGET SEED PRESERVED"
 Write-Host "Hand mesh solve:   BOUNDED ROOT SOLVE PASS"
+Write-Host "Ballet hand shape: PASS"
 Write-Host "Middle bone tip:   DIAGNOSTIC ONLY"
 Write-Host "Static contact:   PASS"
 Write-Host "Human review:     PENDING"

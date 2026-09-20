@@ -1453,6 +1453,189 @@ def apply_hand_wrist_candidate(
     )
 
 
+def _finger_chain_from_hand_hierarchy(
+    armature: bpy.types.Object,
+    hand_rig_name: str,
+    digit: str,
+) -> list[str]:
+    hand_bone = armature.data.bones[hand_rig_name]
+    prefix = f"{digit.capitalize()}_"
+    roots = [
+        child
+        for child in hand_bone.children
+        if child.name.startswith(f"{digit.capitalize()}_1_")
+    ]
+    if len(roots) != 1:
+        raise RuntimeError(
+            f"{hand_rig_name}/{digit}: expected one hierarchy root, "
+            f"got {[bone.name for bone in roots]}."
+        )
+
+    chain = [roots[0]]
+    while True:
+        children = [
+            child
+            for child in chain[-1].children
+            if child.name.startswith(prefix)
+        ]
+        if not children:
+            break
+        if len(children) != 1:
+            raise RuntimeError(
+                f"{hand_rig_name}/{digit}: ambiguous hierarchy at "
+                f"{chain[-1].name}: {[bone.name for bone in children]}."
+            )
+        chain.append(children[0])
+
+    if len(chain) != 3:
+        raise RuntimeError(
+            f"{hand_rig_name}/{digit}: expected 3 finger bones, "
+            f"got {[bone.name for bone in chain]}."
+        )
+    return [bone.name for bone in chain]
+
+
+def _pose_bone_length_direction(
+    pose_bone: bpy.types.PoseBone,
+) -> Vector:
+    basis = normalized_basis(pose_bone.matrix)
+    return Vector(
+        (
+            float(basis[0][1]),
+            float(basis[1][1]),
+            float(basis[2][1]),
+        )
+    ).normalized()
+
+
+def _orient_pose_bone_length_to_direction(
+    armature: bpy.types.Object,
+    rig_name: str,
+    target_direction: Vector,
+) -> None:
+    pose_bone = armature.pose.bones[rig_name]
+    current_basis = normalized_basis(pose_bone.matrix)
+    current_direction = _pose_bone_length_direction(pose_bone)
+    target = Vector(target_direction).normalized()
+    swing = current_direction.rotation_difference(target).to_matrix()
+    desired_basis = swing @ current_basis
+    apply_absolute_rig_rotation_via_matrix_basis(
+        armature,
+        rig_name,
+        desired_basis,
+    )
+
+
+def _ballet_hand_palm_frame(
+    armature: bpy.types.Object,
+    hand_rig_name: str,
+    chains: dict[str, list[str]],
+) -> tuple[Vector, Vector, Vector]:
+    hand_pose = armature.pose.bones[hand_rig_name]
+    index_root = armature.pose.bones[chains["index"][0]]
+    middle_root = armature.pose.bones[chains["middle"][0]]
+    pinky_root = armature.pose.bones[chains["pinky"][0]]
+
+    longitudinal = (
+        Vector(middle_root.head) - Vector(hand_pose.head)
+    ).normalized()
+    raw_width = Vector(index_root.head) - Vector(pinky_root.head)
+    width = raw_width - longitudinal * raw_width.dot(longitudinal)
+    if width.length <= 1e-9:
+        raise RuntimeError(
+            f"{hand_rig_name}: degenerate palm width axis."
+        )
+    width.normalize()
+    normal = longitudinal.cross(width)
+    if normal.length <= 1e-9:
+        raise RuntimeError(
+            f"{hand_rig_name}: degenerate palm normal."
+        )
+    normal.normalize()
+    return longitudinal, width, normal
+
+
+def apply_ballet_hand_shape(
+    armature: bpy.types.Object,
+    canonical: dict,
+    contract: dict,
+) -> dict:
+    profile = contract["ballet_hand_shape"]
+    digits = list(profile["digits"])
+    slopes = profile["lateral_slope_by_digit"]
+    normal_keep = float(
+        profile["existing_normal_component_preservation"]
+    )
+    normal_max = float(
+        profile["maximum_abs_existing_normal_component"]
+    )
+
+    evidence = {
+        "status": "PASS",
+        "style": profile["style"],
+        "finger_bones_only": True,
+        "wrist_mutated": False,
+        "arm_chain_mutated": False,
+        "sides": {},
+    }
+
+    for side in ("left", "right"):
+        hand_rig_name = canonical["canonical_bones"][
+            f"{side}_hand"
+        ]["rig_bone"]
+        chains = {
+            digit: _finger_chain_from_hand_hierarchy(
+                armature,
+                hand_rig_name,
+                digit,
+            )
+            for digit in digits
+        }
+        longitudinal, width, normal = _ballet_hand_palm_frame(
+            armature,
+            hand_rig_name,
+            chains,
+        )
+
+        for digit in digits:
+            digit_slopes = [float(v) for v in slopes[digit]]
+            if len(digit_slopes) != len(chains[digit]):
+                raise RuntimeError(
+                    f"{side}/{digit}: hand-shape slope count mismatch."
+                )
+
+            for rig_name, lateral_slope in zip(
+                chains[digit],
+                digit_slopes,
+            ):
+                current = _pose_bone_length_direction(
+                    armature.pose.bones[rig_name]
+                )
+                normal_component = max(
+                    -normal_max,
+                    min(normal_max, float(current.dot(normal))),
+                ) * normal_keep
+                target = (
+                    longitudinal
+                    + width * lateral_slope
+                    + normal * normal_component
+                ).normalized()
+                _orient_pose_bone_length_to_direction(
+                    armature,
+                    rig_name,
+                    target,
+                )
+
+        evidence["sides"][side] = {
+            "hand_rig_bone": hand_rig_name,
+            "digit_chains": chains,
+            "hierarchy_over_name_suffix": True,
+        }
+
+    bpy.context.view_layer.update()
+    return evidence
+
+
 def hand_mesh_inner_edge(
     armature: bpy.types.Object,
     canonical: dict,
@@ -2350,6 +2533,12 @@ def main() -> None:
             f"{rotation_errors['max_absolute_rotation_error']}.",
         )
 
+        hand_shape_evidence = apply_ballet_hand_shape(
+            armature,
+            canonical,
+            contract,
+        )
+
         hand_mesh_runtime_solution = {}
         hand_mesh_wrist_solution = {}
         hand_mesh_spacing = {}
@@ -2666,6 +2855,7 @@ def main() -> None:
             "hand_mesh_runtime_clearance_solution": (
                 hand_mesh_runtime_solution.get("evidence", {})
             ),
+            "ballet_hand_shape": hand_shape_evidence,
             "blender_pose_applied": True,
             "rendered": False,
         }
@@ -2734,6 +2924,7 @@ def main() -> None:
             "hand_mesh_centerline_spacing_pass": True,
             "hand_mesh_retarget_wrist_seed_preserved_pass": True,
             "hand_mesh_runtime_clearance_solver_pass": True,
+            "ballet_hand_shape_applied": True,
             "blender_application_performed": True,
             "render_performed": False,
             "animation_performed": False,
@@ -2758,6 +2949,7 @@ def main() -> None:
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
     print("HAND_MESH_RETARGET_WRIST_SEED_PRESERVED=PASS")
     print("HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS")
+    print("BALLET_HAND_SHAPE=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

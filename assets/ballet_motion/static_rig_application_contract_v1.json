@@ -51,7 +51,12 @@
     "hand_mesh_wrist_local_bend_preserved": true,
     "hand_mesh_mesh_driven_elbow_or_wrist_correction_forbidden": true,
     "hand_mesh_centerline_strict_no_cross_required": true,
-    "hand_mesh_centerline_outlier_tolerance_forbidden": true
+    "hand_mesh_centerline_outlier_tolerance_forbidden": true,
+    "ballet_hand_shape_required": true,
+    "ballet_hand_shape_finger_bones_only": true,
+    "ballet_hand_shape_wrist_mutation_forbidden": true,
+    "ballet_hand_shape_arm_chain_mutation_forbidden": true,
+    "ballet_hand_shape_side_assignment_source": "ACTUAL_HAND_BONE_HIERARCHY_NOT_NAME_SUFFIX"
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -122,5 +127,48 @@
       "hand"
     ],
     "independent_axial_roll_forbidden": true
+  },
+  "ballet_hand_shape": {
+    "style": "RELAXED_CLASSICAL_BALLET_HAND",
+    "goal": "elongated grouped fingers with soft natural separation; thumb quiet and gathered toward index side",
+    "palm_frame": "WRIST_TO_MIDDLE_ROOT_LONGITUDINAL_AND_PINKY_TO_INDEX_WIDTH",
+    "segment_direction_model": "PALM_LONG_PLUS_SEMANTIC_LATERAL_SLOPE_PLUS_REDUCED_EXISTING_NORMAL_COMPONENT",
+    "existing_normal_component_preservation": 0.35,
+    "maximum_abs_existing_normal_component": 0.12,
+    "lateral_slope_by_digit": {
+      "index": [
+        0.12,
+        0.07,
+        0.035
+      ],
+      "middle": [
+        0.025,
+        0.01,
+        0
+      ],
+      "ring": [
+        -0.025,
+        -0.01,
+        0
+      ],
+      "pinky": [
+        -0.12,
+        -0.075,
+        -0.04
+      ],
+      "thumb": [
+        0.45,
+        0.28,
+        0.14
+      ]
+    },
+    "segment_count_per_digit": 3,
+    "digits": [
+      "index",
+      "middle",
+      "ring",
+      "pinky",
+      "thumb"
+    ]
   }
 }
