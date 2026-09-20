@@ -588,7 +588,7 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             "scalars",
             "com",
             "support_polygon",
-            "fingertip_spacing_contract",
+            "hand_mesh_spacing_contract",
         ):
             self.assertIn(f'"{key}"', self.retarget)
         self.assertIn('"root_translation_applied": False', self.retarget)

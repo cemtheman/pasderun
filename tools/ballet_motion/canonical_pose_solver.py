@@ -388,7 +388,7 @@ def _hand_mesh_spacing_contract(
     maximum_fraction = float(spec["max"])
     if not 0.0 < minimum_fraction < maximum_fraction:
         raise PoseSolveRejected(
-            "Fingertip gap fractions must satisfy 0 < min < max."
+            "Hand-mesh gap fractions must satisfy 0 < min < max."
         )
 
     scale_length = float(dimensions["hand_middle_chain"])
