@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "phase": "10.6.5",
+  "solver_id": "canonical_foundation_pose_solver_v1",
+  "policy": {
+    "source_of_pose_intent": "semantic_parameters_not_reference_fixture_coordinates",
+    "bilateral_pose_lengths": "average_left_right_canonical_segment_lengths",
+    "foundation_gate_requires_preferred_joint_envelope": true,
+    "pose_validation_source": "Phase 10.6.4 grammar",
+    "rig_retarget_forbidden_in_this_phase": true,
+    "render_forbidden_in_this_phase": true,
+    "animation_forbidden_in_this_phase": true
+  },
+  "poses": {
+    "bras_bas": {
+      "kind": "symmetric_arm_chain",
+      "elbow_angle_deg": 125,
+      "wrist_direction": {
+        "inward": 0.62,
+        "down": 0.78,
+        "front": 0.22
+      },
+      "elbow_pole": {
+        "outward": 0.82,
+        "down": 0.18,
+        "front": 0.54
+      },
+      "minimum_wrist_front_margin": 0.05,
+      "minimum_elbow_front_margin": 0.04,
+      "hand_direction": {
+        "inward": 0.55,
+        "down": 0.35,
+        "front": 0.35
+      },
+      "joint_dofs": {
+        "upper_arm": {
+          "flexion_extension": 20,
+          "abduction_adduction": 30,
+          "internal_external_rotation": 10
+        },
+        "forearm": {
+          "flexion_extension": 55,
+          "pronation_supination": 15
+        },
+        "hand": {
+          "flexion_extension": 0,
+          "radial_ulnar_deviation": 0
+        }
+      }
+    },
+    "en_avant": {
+      "kind": "symmetric_arm_chain",
+      "elbow_angle_deg": 125,
+      "wrist_direction": {
+        "inward": 0.3,
+        "down": 0.18,
+        "front": 0.94
+      },
+      "elbow_pole": {
+        "outward": 0.82,
+        "down": 0,
+        "front": 0.57
+      },
+      "minimum_wrist_front_margin": 0.05,
+      "minimum_elbow_front_margin": 0.04,
+      "hand_direction": {
+        "inward": 0.28,
+        "down": 0.1,
+        "front": 0.95
+      },
+      "joint_dofs": {
+        "upper_arm": {
+          "flexion_extension": 70,
+          "abduction_adduction": 25,
+          "internal_external_rotation": 10
+        },
+        "forearm": {
+          "flexion_extension": 55,
+          "pronation_supination": 15
+        },
+        "hand": {
+          "flexion_extension": 0,
+          "radial_ulnar_deviation": 0
+        }
+      }
+    },
+    "second": {
+      "kind": "symmetric_arm_chain",
+      "elbow_angle_deg": 145,
+      "wrist_direction": {
+        "outward": 0.98,
+        "down": 0.14,
+        "front": 0.08
+      },
+      "elbow_pole": {
+        "outward": 0.72,
+        "down": 0.08,
+        "front": 0.69
+      },
+      "wrist_drop_target": 0.1,
+      "minimum_wrist_front_margin": 0.02,
+      "minimum_elbow_front_margin": 0.02,
+      "hand_direction": {
+        "outward": 0.92,
+        "down": 0.28,
+        "front": 0.28
+      },
+      "joint_dofs": {
+        "upper_arm": {
+          "flexion_extension": 10,
+          "abduction_adduction": 90,
+          "internal_external_rotation": 20
+        },
+        "forearm": {
+          "flexion_extension": 35,
+          "pronation_supination": 10
+        },
+        "hand": {
+          "flexion_extension": 0,
+          "radial_ulnar_deviation": 0
+        }
+      }
+    },
+    "fifth": {
+      "kind": "stance",
+      "hip_external_rotation_deg": 45,
+      "knee_external_rotation_deg": 4,
+      "knee_flexion_deg": 5,
+      "foot_cross_fraction": 0.42,
+      "support_half_width_fraction": 0.42,
+      "support_half_depth_fraction": 0.34,
+      "joint_dofs": {
+        "thigh": {
+          "flexion_extension": 0,
+          "abduction_adduction": 0,
+          "internal_external_rotation": 45
+        },
+        "shin": {
+          "flexion_extension": 5
+        },
+        "foot": {
+          "plantar_dorsiflexion": 0,
+          "inversion_eversion": 0
+        },
+        "toes": {
+          "toe_flexion_extension": 0
+        }
+      }
+    },
+    "plie": {
+      "kind": "lower_body",
+      "hip_external_rotation_deg": 45,
+      "knee_external_rotation_deg": 8,
+      "knee_flexion_deg": 45,
+      "pelvis_descent_body_fraction": 0.09,
+      "trunk_tilt_deg": 3,
+      "knee_second_toe_error_deg": 3,
+      "support_half_width_fraction": 0.48,
+      "support_half_depth_fraction": 0.34,
+      "joint_dofs": {
+        "thigh": {
+          "flexion_extension": 30,
+          "abduction_adduction": 8,
+          "internal_external_rotation": 45
+        },
+        "shin": {
+          "flexion_extension": 45
+        },
+        "foot": {
+          "plantar_dorsiflexion": 0,
+          "inversion_eversion": 0
+        },
+        "toes": {
+          "toe_flexion_extension": 0
+        }
+      }
+    },
+    "releve": {
+      "kind": "lower_body",
+      "hip_external_rotation_deg": 40,
+      "knee_external_rotation_deg": 4,
+      "knee_flexion_deg": 3,
+      "heel_height_foot_fraction": 0.55,
+      "support_half_width_fraction": 0.3,
+      "support_half_depth_fraction": 0.22,
+      "com_front_fraction": 0.06,
+      "joint_dofs": {
+        "thigh": {
+          "flexion_extension": 0,
+          "abduction_adduction": 0,
+          "internal_external_rotation": 40
+        },
+        "shin": {
+          "flexion_extension": 3
+        },
+        "foot": {
+          "plantar_dorsiflexion": 35,
+          "inversion_eversion": 0
+        },
+        "toes": {
+          "toe_flexion_extension": 50
+        }
+      }
+    }
+  },
+  "rejection_probes": {
+    "arms_behind_torso": {
+      "base_pose": "bras_bas",
+      "mutation": "mirror_arm_front_to_posterior",
+      "must_fail_validator": "anterior_halfspace"
+    },
+    "locked_t_pose": {
+      "base_pose": "second",
+      "mutation": "lock_arms_to_shoulder_height",
+      "must_fail_validator": "wrist_below_shoulder"
+    },
+    "independent_foot_yaw": {
+      "base_pose": "plie",
+      "mutation": "inject_left_foot_yaw",
+      "value": 8,
+      "must_fail_validator": "turnout_chain"
+    },
+    "com_outside_support": {
+      "base_pose": "releve",
+      "mutation": "move_com_outside_support",
+      "must_fail_validator": "support_polygon_com"
+    }
+  }
+}
