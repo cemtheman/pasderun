@@ -877,54 +877,126 @@ def extract_exact_ankle_inversion(
     return math.degrees(math.asin(value)) / side_sign
 
 
-def apply_releve_plantar_candidate(
+def extract_exact_ankle_plantar(
+    canonical_local_delta: Matrix,
+) -> float:
+    value = max(
+        -1.0,
+        min(1.0, float(canonical_local_delta[2][1])),
+    )
+    return -math.degrees(math.asin(value))
+
+
+def extract_exact_toe_flexion(
+    canonical_local_delta: Matrix,
+) -> float:
+    value = max(
+        -1.0,
+        min(1.0, float(canonical_local_delta[2][1])),
+    )
+    return math.degrees(math.asin(value))
+
+
+def toe_delta_matrix(toe_flexion: float) -> Matrix:
+    angle = math.radians(float(toe_flexion))
+    c = math.cos(angle)
+    s = math.sin(angle)
+    return Matrix(
+        (
+            (1.0, 0.0, 0.0),
+            (0.0, c, -s),
+            (0.0, s, c),
+        )
+    )
+
+
+def apply_releve_plantar_toe_candidate(
     armature: bpy.types.Object,
     canonical: dict,
     pose_entry: dict,
     plantar_dorsiflexion: float,
+    toe_flexion_extension: float,
 ) -> dict:
     evidence = {}
     for side in ("left", "right"):
-        canonical_name = f"{side}_foot"
-        bone = canonical["canonical_bones"][canonical_name]
-        local_delta = matrix3(
-            pose_entry["canonical_pose"][canonical_name][
+        foot_name = f"{side}_foot"
+        foot_bone = canonical["canonical_bones"][foot_name]
+        foot_local_delta = matrix3(
+            pose_entry["canonical_pose"][foot_name][
                 "local_pose_delta_matrix"
             ]
         )
         inversion = extract_exact_ankle_inversion(
-            local_delta,
+            foot_local_delta,
             side,
         )
         parent_pose, rest_local = canonical_parent_and_rest_local(
             armature,
             canonical,
-            canonical_name,
+            foot_name,
         )
-        desired_canonical = canonical_foot_basis_from_ankle_dofs(
+        desired_foot_canonical = canonical_foot_basis_from_ankle_dofs(
             parent_pose,
             rest_local,
             plantar_dorsiflexion,
             inversion,
             side,
         )
-        desired_rig = rig_basis_from_canonical_pose(
-            bone,
-            desired_canonical,
+        desired_foot_rig = rig_basis_from_canonical_pose(
+            foot_bone,
+            desired_foot_canonical,
         )
         apply_absolute_rig_rotation_via_matrix_basis(
             armature,
-            bone["rig_bone"],
-            desired_rig,
+            foot_bone["rig_bone"],
+            desired_foot_rig,
         )
+
+        toe_name = f"{side}_toes"
+        toe_bone = canonical["canonical_bones"][toe_name]
+        foot_pose = canonical_basis_from_rig_pose(
+            armature.pose.bones[foot_bone["rig_bone"]],
+            foot_bone,
+        )
+        foot_rest = matrix3(
+            foot_bone["canonical_rest_contract"][
+                "basis_armature_local"
+            ]
+        )
+        toe_rest = matrix3(
+            toe_bone["canonical_rest_contract"][
+                "basis_armature_local"
+            ]
+        )
+        toe_rest_local = foot_rest.transposed() @ toe_rest
+        desired_toe_canonical = (
+            foot_pose
+            @ toe_rest_local
+            @ toe_delta_matrix(toe_flexion_extension)
+        )
+        desired_toe_rig = rig_basis_from_canonical_pose(
+            toe_bone,
+            desired_toe_canonical,
+        )
+        apply_absolute_rig_rotation_via_matrix_basis(
+            armature,
+            toe_bone["rig_bone"],
+            desired_toe_rig,
+        )
+
         evidence[side] = {
-            "rig_bone": bone["rig_bone"],
+            "foot_rig_bone": foot_bone["rig_bone"],
+            "toe_rig_bone": toe_bone["rig_bone"],
             "plantar_dorsiflexion_deg": round(
                 float(plantar_dorsiflexion),
                 8,
             ),
             "inversion_eversion_deg": round(
                 float(inversion),
+                8,
+            ),
+            "toe_flexion_extension_deg": round(
+                float(toe_flexion_extension),
                 8,
             ),
         }
@@ -977,7 +1049,7 @@ def candidate_releve_geometry(
     }
 
 
-def solve_releve_plantar_for_mesh_heel_height(
+def solve_releve_plantar_toe_for_mesh_heel_height(
     armature: bpy.types.Object,
     canonical: dict,
     pose_entry: dict,
@@ -987,27 +1059,59 @@ def solve_releve_plantar_for_mesh_heel_height(
     up_axis: Vector,
     low_height_quantile: float,
     target_heights: dict,
-    coarse_step_deg: float,
+    plantar_coarse_step_deg: float,
+    toe_coarse_step_deg: float,
     refine_steps_deg: list[float],
 ) -> dict:
-    preferred = constraints["joint_limits"]["ankle_2dof"]["dofs"][
+    ankle_preferred = constraints["joint_limits"]["ankle_2dof"]["dofs"][
         "plantar_dorsiflexion"
     ]["preferred"]
-    minimum = float(preferred["min"])
-    maximum = float(preferred["max"])
+    toe_preferred = constraints["joint_limits"]["mtp_hinge"]["dofs"][
+        "toe_flexion_extension"
+    ]["preferred"]
+    plantar_min = float(ankle_preferred["min"])
+    plantar_max = float(ankle_preferred["max"])
+    toe_min = float(toe_preferred["min"])
+    toe_max = float(toe_preferred["max"])
+
+    semantic_plantar = []
+    semantic_toe = []
+    for side in ("left", "right"):
+        foot_delta = matrix3(
+            pose_entry["canonical_pose"][f"{side}_foot"][
+                "local_pose_delta_matrix"
+            ]
+        )
+        toe_delta = matrix3(
+            pose_entry["canonical_pose"][f"{side}_toes"][
+                "local_pose_delta_matrix"
+            ]
+        )
+        semantic_plantar.append(
+            extract_exact_ankle_plantar(foot_delta)
+        )
+        semantic_toe.append(
+            extract_exact_toe_flexion(toe_delta)
+        )
+    semantic_plantar_target = sum(semantic_plantar) / 2.0
+    semantic_toe_target = sum(semantic_toe) / 2.0
 
     best = None
 
-    def evaluate(plantar: float) -> None:
+    def evaluate(plantar: float, toe_flexion: float) -> None:
         nonlocal best
-        if not minimum <= plantar <= maximum:
+        if not plantar_min <= plantar <= plantar_max:
             return
+        if not toe_min <= toe_flexion <= toe_max:
+            return
+
         apply_rotation_deltas(armature, pose_entry)
-        application = apply_releve_plantar_candidate(
+        application = apply_releve_plantar_toe_candidate(
             armature,
             canonical,
             pose_entry,
             plantar,
+            toe_flexion,
         )
         geometry = candidate_releve_geometry(
             armature,
@@ -1028,15 +1132,22 @@ def solve_releve_plantar_for_mesh_heel_height(
             float(geometry["heel_lifts"]["left"])
             - float(geometry["heel_lifts"]["right"])
         )
+        semantic_deviation = (
+            abs(float(plantar) - semantic_plantar_target)
+            + abs(float(toe_flexion) - semantic_toe_target)
+        )
         key = (
             maximum_heel_error,
             float(geometry["max_fore_error"]),
             bilateral_error,
+            semantic_deviation,
             abs(float(plantar)),
+            abs(float(toe_flexion)),
         )
         candidate = {
             "key": key,
             "plantar_dorsiflexion_deg": float(plantar),
+            "toe_flexion_extension_deg": float(toe_flexion),
             "application": application,
             "geometry": geometry,
             "heel_errors": heel_errors,
@@ -1044,31 +1155,37 @@ def solve_releve_plantar_for_mesh_heel_height(
         if best is None or key < best["key"]:
             best = candidate
 
-    step = float(coarse_step_deg)
-    plantar = minimum
-    while plantar <= maximum + 1e-9:
-        evaluate(plantar)
-        plantar += step
+    plantar = plantar_min
+    while plantar <= plantar_max + 1e-9:
+        toe_flexion = toe_min
+        while toe_flexion <= toe_max + 1e-9:
+            evaluate(plantar, toe_flexion)
+            toe_flexion += float(toe_coarse_step_deg)
+        plantar += float(plantar_coarse_step_deg)
 
     if best is None:
         raise RuntimeError(
-            "Releve plantar solver found no preferred candidate."
+            "Releve plantar+toe solver found no preferred candidate."
         )
 
     for refine_step in refine_steps_deg:
-        center = float(best["plantar_dorsiflexion_deg"])
-        for offset in range(-10, 11):
-            evaluate(
-                center + offset * float(refine_step)
-            )
+        center_p = float(best["plantar_dorsiflexion_deg"])
+        center_t = float(best["toe_flexion_extension_deg"])
+        for p_offset in range(-5, 6):
+            for t_offset in range(-5, 6):
+                evaluate(
+                    center_p + p_offset * float(refine_step),
+                    center_t + t_offset * float(refine_step),
+                )
 
     # Re-apply the winning candidate so Blender is left in solved state.
     apply_rotation_deltas(armature, pose_entry)
-    application = apply_releve_plantar_candidate(
+    application = apply_releve_plantar_toe_candidate(
         armature,
         canonical,
         pose_entry,
         float(best["plantar_dorsiflexion_deg"]),
+        float(best["toe_flexion_extension_deg"]),
     )
     geometry = candidate_releve_geometry(
         armature,
@@ -1082,6 +1199,9 @@ def solve_releve_plantar_for_mesh_heel_height(
         "plantar_dorsiflexion_deg": float(
             best["plantar_dorsiflexion_deg"]
         ),
+        "toe_flexion_extension_deg": float(
+            best["toe_flexion_extension_deg"]
+        ),
         "application": application,
         "geometry": geometry,
         "heel_errors": {
@@ -1092,8 +1212,22 @@ def solve_releve_plantar_for_mesh_heel_height(
             for side in ("left", "right")
         },
         "preferred_envelope": {
-            "min": minimum,
-            "max": maximum,
+            "plantar_dorsiflexion": {
+                "min": plantar_min,
+                "max": plantar_max,
+            },
+            "toe_flexion_extension": {
+                "min": toe_min,
+                "max": toe_max,
+            },
+        },
+        "semantic_targets": {
+            "plantar_dorsiflexion_deg": float(
+                semantic_plantar_target
+            ),
+            "toe_flexion_extension_deg": float(
+                semantic_toe_target
+            ),
         },
     }
 
@@ -1350,7 +1484,7 @@ def main() -> None:
                 "left": float(scalars["left_heel_height"]),
                 "right": float(scalars["right_heel_height"]),
             }
-            releve_realization = solve_releve_plantar_for_mesh_heel_height(
+            releve_realization = solve_releve_plantar_toe_for_mesh_heel_height(
                 armature,
                 canonical,
                 pose_entry,
@@ -1365,10 +1499,15 @@ def main() -> None:
                         "releve_plantar_search_coarse_step_deg"
                     ]
                 ),
+                float(
+                    thresholds[
+                        "releve_toe_search_coarse_step_deg"
+                    ]
+                ),
                 [
                     float(value)
                     for value in thresholds[
-                        "releve_plantar_search_refine_steps_deg"
+                        "releve_joint_search_refine_steps_deg"
                     ]
                 ],
             )
@@ -1479,11 +1618,22 @@ def main() -> None:
             selected_plantar = float(
                 releve_realization["plantar_dorsiflexion_deg"]
             )
+            selected_toe = float(
+                releve_realization["toe_flexion_extension_deg"]
+            )
+            plantar_preferred = preferred["plantar_dorsiflexion"]
+            toe_preferred = preferred["toe_flexion_extension"]
             require(
-                float(preferred["min"])
+                float(plantar_preferred["min"])
                 <= selected_plantar
-                <= float(preferred["max"]),
+                <= float(plantar_preferred["max"]),
                 "releve: plantar solver left preferred envelope.",
+            )
+            require(
+                float(toe_preferred["min"])
+                <= selected_toe
+                <= float(toe_preferred["max"]),
+                "releve: toe solver left preferred envelope.",
             )
             minimum_lift = (
                 metrics["foot_chain_length"]
@@ -1523,6 +1673,7 @@ def main() -> None:
                     f"{abs(actual - target)} > {allowed}; "
                     f"target={target}; actual={actual}; "
                     f"selected_plantar={selected_plantar}; "
+                    f"selected_toe={selected_toe}; "
                     f"preferred={preferred}; "
                     f"solver_geometry={releve_realization['geometry']}; "
                     f"solver_heel_errors={releve_realization['heel_errors']}.",
@@ -1539,7 +1690,14 @@ def main() -> None:
                 selected_plantar,
                 8,
             )
-            consistency["plantar_preferred_envelope"] = preferred
+            consistency["solved_toe_flexion_extension_deg"] = round(
+                selected_toe,
+                8,
+            )
+            consistency["releve_joint_preferred_envelope"] = preferred
+            consistency["releve_semantic_joint_targets"] = (
+                releve_realization["semantic_targets"]
+            )
 
         pose_reports[pose_name] = {
             "root_translation_mode": mode,
@@ -1598,6 +1756,7 @@ def main() -> None:
             "forefoot_contact_pass": True,
             "plie_root_descent_consistency_pass": True,
             "releve_plantar_contact_realization_pass": True,
+            "releve_plantar_toe_contact_realization_pass": True,
             "releve_heel_lift_consistency_pass": True,
             "blender_application_performed": True,
             "render_performed": False,

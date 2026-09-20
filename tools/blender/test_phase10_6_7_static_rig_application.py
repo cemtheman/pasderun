@@ -301,7 +301,7 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn("target_pelvis_descent", self.script)
         self.assertIn("actual_contact_solved_descent", self.script)
 
-    def test_releve_realizes_semantic_heel_height_by_solving_plantar(self) -> None:
+    def test_releve_realizes_semantic_heel_height_by_solving_plantar_and_toe(self) -> None:
         self.assertTrue(
             self.contract["policy"][
                 "releve_contact_realization_required"
@@ -314,11 +314,16 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertTrue(
             self.contract["policy"][
+                "releve_toe_solver_preferred_only"
+            ]
+        )
+        self.assertFalse(
+            self.contract["policy"][
                 "releve_toe_flexion_preserved_from_retarget"
             ]
         )
         self.assertIn(
-            "def solve_releve_plantar_for_mesh_heel_height(",
+            "def solve_releve_plantar_toe_for_mesh_heel_height(",
             self.script,
         )
         self.assertIn(
@@ -326,7 +331,11 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            "apply_releve_plantar_candidate(",
+            '["toe_flexion_extension"]["preferred"]',
+            self.script,
+        )
+        self.assertIn(
+            "apply_releve_plantar_toe_candidate(",
             self.script,
         )
         self.assertIn(
@@ -334,21 +343,34 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            "releve_plantar_contact_realization_pass",
+            "releve_plantar_toe_contact_realization_pass",
             self.script,
         )
 
-    def test_releve_solver_does_not_modify_toe_flexion(self) -> None:
-        solver_start = self.script.index(
-            "def solve_releve_plantar_for_mesh_heel_height("
+    def test_releve_joint_search_stays_inside_preferred_envelopes(self) -> None:
+        self.assertIn("plantar_min <= plantar <= plantar_max", self.script)
+        self.assertIn("toe_min <= toe_flexion <= toe_max", self.script)
+        self.assertIn("semantic_deviation", self.script)
+        self.assertTrue(
+            self.contract["policy"][
+                "releve_semantic_joint_targets_are_preferences_after_contact"
+            ]
         )
-        solver_end = self.script.index(
-            "def root_shift_for_contact(",
-            solver_start,
+
+    def test_releve_joint_search_is_bounded_and_refined(self) -> None:
+        thresholds = self.contract["proof_thresholds"]
+        self.assertEqual(
+            thresholds["releve_plantar_search_coarse_step_deg"],
+            2,
         )
-        solver_source = self.script[solver_start:solver_end]
-        self.assertNotIn("toes", solver_source)
-        self.assertNotIn("toe_flexion", solver_source)
+        self.assertEqual(
+            thresholds["releve_toe_search_coarse_step_deg"],
+            5,
+        )
+        self.assertEqual(
+            thresholds["releve_joint_search_refine_steps_deg"],
+            [1, 0.2, 0.05],
+        )
 
     def test_releve_target_tolerance_is_not_relaxed(self) -> None:
         self.assertEqual(

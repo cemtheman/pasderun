@@ -570,7 +570,7 @@ def realize_pose(
             "left": float(scalars["left_heel_height"]),
             "right": float(scalars["right_heel_height"]),
         }
-        releve = static_core.solve_releve_plantar_for_mesh_heel_height(
+        releve = static_core.solve_releve_plantar_toe_for_mesh_heel_height(
             armature,
             canonical,
             pose_entry,
@@ -585,10 +585,15 @@ def realize_pose(
                     "releve_plantar_search_coarse_step_deg"
                 ]
             ),
+            float(
+                thresholds[
+                    "releve_toe_search_coarse_step_deg"
+                ]
+            ),
             [
                 float(value)
                 for value in thresholds[
-                    "releve_plantar_search_refine_steps_deg"
+                    "releve_joint_search_refine_steps_deg"
                 ]
             ],
         )
