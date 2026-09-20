@@ -13,7 +13,8 @@
     "arm_centerline_policy": "bras_bas and en_avant keep wrist/hand landmarks on their own side; final near-touch spacing is owned by Phase 10.6.7 deformed hand mesh; Middle_L/Middle_R are diagnostic only",
     "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length",
     "hand_mesh_proximal_clearance_strategy": "no authored clearance constant; Phase 10.6.7 derives the minimal feasible canonical hand-landmark clearance by bounded root solving against the deformed hand mesh, then performs preferred-only wrist trim",
-    "elbow_bend_plane_visual_correction": "bras_bas and second preserve elbow-angle magnitude and outward/down rounding; only elbow_pole FRONT component is mirrored to correct the visually reversed side-view bend plane"
+    "elbow_bend_plane_visual_correction": "bras_bas and second preserve elbow-angle magnitude and outward/down rounding; only elbow_pole FRONT component is mirrored to correct the visually reversed side-view bend plane",
+    "second_elbow_bend_plane": "SECOND: pole is predominantly OUTWARD, with equal small DOWN and BACK bias; preserves 145-degree elbow opening while avoiding both reversed side-view bend and front-view gull-wing shape"
   },
   "poses": {
     "bras_bas": {
@@ -105,7 +106,7 @@
       "elbow_pole": {
         "outward": 0.72,
         "down": 0.08,
-        "front": -0.69
+        "front": -0.08
       },
       "wrist_drop_target": 0.1,
       "hand_direction": {
