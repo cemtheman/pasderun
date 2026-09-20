@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "profile_id": "low_poly_girl_ballet_v1",
+  "source_glb": "assets/characters/low_poly_girl/low_poly_girl .glb",
+  "expected_armature_name": "Rig",
+  "coordinate_space": "BLENDER_ARMATURE_LOCAL",
+  "declared_anatomical_frame": {
+    "up": [
+      0,
+      0,
+      1
+    ],
+    "left": [
+      1,
+      0,
+      0
+    ],
+    "front": [
+      0,
+      -1,
+      0
+    ]
+  },
+  "canonical_bones": {
+    "pelvis": "Hips",
+    "spine_lower": "Spine",
+    "spine_mid": "Spine 1",
+    "chest": "Chest",
+    "neck": "Neck",
+    "head": "Head",
+    "left_clavicle": "Clavicle_L",
+    "right_clavicle": "Clavicle_R",
+    "left_upper_arm": "Upper_Arm_L",
+    "right_upper_arm": "Upper_Arm_R",
+    "left_forearm": "Lower_Arm_L",
+    "right_forearm": "Lower_Arm_R",
+    "left_hand": "Hand_L",
+    "right_hand": "Hand_R",
+    "left_middle": "Middle_L",
+    "right_middle": "Middle_R",
+    "left_thigh": "Upper_Leg_L",
+    "right_thigh": "Upper_Leg_R",
+    "left_shin": "Lower_Leg_L",
+    "right_shin": "Lower_Leg_R",
+    "left_foot": "Foot_L",
+    "right_foot": "Foot_R",
+    "left_toes": "Toes_L",
+    "right_toes": "Toes_R"
+  },
+  "semantic_segments": {
+    "left_hand_tangent": [
+      "Hand_L",
+      "Middle_L"
+    ],
+    "right_hand_tangent": [
+      "Hand_R",
+      "Middle_R"
+    ],
+    "left_foot_forward": [
+      "Foot_L",
+      "Toes_L"
+    ],
+    "right_foot_forward": [
+      "Foot_R",
+      "Toes_R"
+    ]
+  },
+  "validation_thresholds": {
+    "orthogonality_abs_dot_max": 0.0001,
+    "axis_length_error_max": 0.0001,
+    "shoulder_side_alignment_min": 0.8,
+    "hip_side_alignment_min": 0.6,
+    "torso_up_alignment_min": 0.9,
+    "average_toe_front_alignment_min": 0.35
+  },
+  "notes": [
+    "The anatomical frame is declared once for this source rig; it is not inferred from the current pose.",
+    "Toe and shoulder geometry are validation evidence only and must never redefine BODY_FRONT.",
+    "Generated profiles are tied to the exact source GLB SHA-256."
+  ]
+}
