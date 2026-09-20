@@ -53,18 +53,12 @@ foreach ($required in @(
 Write-Host "PHASE 10.7.1 - BRAS BAS -> EN AVANT FOUNDATION MOTION"
 Write-Host "Endpoint authority: accepted Phase 10.6 realized poses"
 Write-Host "Interpolation: local quaternion shortest-arc + minimum jerk"
+Write-Host "Generated build directories are preserved."
 Write-Host "GLB export: NO"
 Write-Host ""
 
 & python $test
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-if (Test-Path $report) {
-    Remove-Item -Force $report
-}
-if (Test-Path $previewDir) {
-    Remove-Item -Recurse -Force $previewDir
-}
 
 & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --motion-contract $motionContract --report $report --preview-dir $previewDir
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
