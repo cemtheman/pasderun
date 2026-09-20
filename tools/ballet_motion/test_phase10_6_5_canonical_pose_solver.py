@@ -130,6 +130,18 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 "PASS",
             )
 
+    def test_semantic_intent_does_not_tighten_hard_front_grammar(self) -> None:
+        for pose in ("bras_bas", "en_avant", "second"):
+            intent = self.intents["poses"][pose]
+            self.assertNotIn("minimum_wrist_front_margin", intent)
+            self.assertNotIn("minimum_elbow_front_margin", intent)
+        self.assertNotIn("minimum_wrist_front_margin", self.solver)
+        self.assertNotIn("minimum_elbow_front_margin", self.solver)
+        self.assertIn(
+            "Grammar owns the hard anterior boundary",
+            self.solver,
+        )
+
     def test_arm_solver_enforces_grammar_lateral_order_across_ratios(self) -> None:
         variants = (
             (0.24, 0.30),

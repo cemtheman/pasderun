@@ -25,8 +25,6 @@
         "down": 0.18,
         "front": 0.54
       },
-      "minimum_wrist_front_margin": 0.05,
-      "minimum_elbow_front_margin": 0.04,
       "hand_direction": {
         "inward": 0.55,
         "down": 0.35,
@@ -61,8 +59,6 @@
         "down": 0,
         "front": 0.57
       },
-      "minimum_wrist_front_margin": 0.05,
-      "minimum_elbow_front_margin": 0.04,
       "hand_direction": {
         "inward": 0.28,
         "down": 0.1,
@@ -98,8 +94,6 @@
         "front": 0.69
       },
       "wrist_drop_target": 0.1,
-      "minimum_wrist_front_margin": 0.02,
-      "minimum_elbow_front_margin": 0.02,
       "hand_direction": {
         "outward": 0.92,
         "down": 0.28,

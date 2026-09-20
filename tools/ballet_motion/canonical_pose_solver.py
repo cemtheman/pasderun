@@ -336,10 +336,7 @@ def _arm_geometry(
         )
         wrist = _add(shoulder, _scale(direction, wrist_distance))
 
-        required_wrist_front = (
-            wrist_front_min
-            + float(intent.get("minimum_wrist_front_margin", 0.0))
-        )
+        required_wrist_front = wrist_front_min
         if wrist[2] < required_wrist_front:
             delta_front = required_wrist_front - wrist[2]
             candidate = [wrist[0], wrist[1], wrist[2] + delta_front]
@@ -367,16 +364,10 @@ def _arm_geometry(
             wrist,
             grammar,
         )
-        required_elbow_front = (
-            elbow_front_min
-            + float(intent.get("minimum_elbow_front_margin", 0.0))
-        )
-        current_front = elbow_constraints["minimum_front"]
-        elbow_constraints["minimum_front"] = (
-            required_elbow_front
-            if current_front is None
-            else max(current_front, required_elbow_front)
-        )
+        # Grammar owns the hard anterior boundary. Semantic intent already
+        # influences the preferred pole; it must not silently tighten grammar.
+        if elbow_constraints["minimum_front"] is None:
+            elbow_constraints["minimum_front"] = elbow_front_min
         elbow = _two_bone_elbow(
             shoulder,
             wrist,
