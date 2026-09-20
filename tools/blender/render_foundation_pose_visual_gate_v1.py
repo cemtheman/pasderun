@@ -545,11 +545,6 @@ def realize_pose(
             ),
             float(
                 thresholds[
-                    "full_foot_up_alignment_min_dot"
-                ]
-            ),
-            float(
-                thresholds[
                     "full_foot_mesh_search_coarse_step_deg"
                 ]
             ),
