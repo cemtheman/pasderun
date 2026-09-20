@@ -575,7 +575,6 @@ def realize_pose(
             hand_mesh_runtime_solution["status"] == "PASS",
             f"{pose_name}: deterministic hand-mesh runtime solve failed.",
         )
-        pose_entry = hand_mesh_runtime_solution["pose_entry"]
         hand_mesh_wrist_solution = hand_mesh_runtime_solution[
             "wrist_seed_evidence"
         ]

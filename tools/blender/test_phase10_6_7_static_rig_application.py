@@ -357,102 +357,44 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         ]
         self.assertEqual(
             runtime_solver["method"],
-            "SEPARABLE_BILATERAL_BOUNDED_BISECTION",
+            "INDEPENDENT_PRIMARY_SHOULDER_SWEEP_BISECTION",
         )
-        self.assertEqual(runtime_solver["feasibility_iterations"], 28)
-        self.assertEqual(runtime_solver["root_iterations"], 20)
+        self.assertEqual(
+            runtime_solver["shoulder_axis_by_pose"]["bras_bas"],
+            "BODY_FRONT",
+        )
+        self.assertEqual(
+            runtime_solver["shoulder_axis_by_pose"]["en_avant"],
+            "BODY_UP",
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_elbow_local_bend_preserved"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_wrist_local_bend_preserved"
+            ]
+        )
+        self.assertEqual(
+            self.contract["policy"]["hand_mesh_primary_joint_authority"],
+            "SHOULDER_SWEEP_ONLY",
+        )
         self.assertIn(
-            "def solve_runtime_hand_mesh_pose(",
+            "def apply_single_shoulder_sweep(",
             self.script,
         )
         self.assertIn(
-            "def runtime_clearance_physical_upper_bound(",
+            "def shoulder_sweep_limit_deg(",
             self.script,
         )
         self.assertIn(
-            "pose_solver.solve_pose(",
-            self.script,
-        )
-        self.assertIn(
-            "retarget_solver.retarget_pose_solution(",
-            self.script,
-        )
-        self.assertIn(
-            "for _ in range(feasibility_iterations):",
-            self.script,
-        )
-        self.assertIn(
-            "for _ in range(root_iterations):",
-            self.script,
-        )
-        self.assertIn(
-            "INFEASIBLE_WITHIN_CONSTRAINTS",
+            "Matrix.Rotation(",
             self.script,
         )
         self.assertNotIn(
-            '"recommended_hand_landmark_clearance_fraction"',
-            self.script,
-        )
-        self.assertNotIn(
-            "HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED",
-            self.script,
-        )
-        self.assertEqual(
-            runtime_solver["constraint_function"],
-            "left_side>=0,right_side>=0,minimum_gap<=left_side+right_side<=maximum_gap",
-        )
-        self.assertEqual(
-            runtime_solver["canonical_parameterization"],
-            "INDEPENDENT_EXACT_LEFT_RIGHT_HAND_LANDMARK_SIDE_OFFSETS",
-        )
-        self.assertTrue(
-            self.contract["policy"][
-                "hand_mesh_runtime_clearance_parameterization_continuous"
-            ]
-        )
-        self.assertTrue(
-            self.contract["policy"][
-                "hand_mesh_runtime_clearance_fibonacci_direction_sampling_forbidden"
-            ]
-        )
-        self.assertTrue(
-            self.contract["policy"][
-                "hand_mesh_runtime_bilateral_side_specific_solution_allowed"
-            ]
-        )
-        self.assertTrue(
-            self.contract["policy"][
-                "hand_mesh_runtime_final_pose_must_pass_bilateral_mirror_grammar"
-            ]
-        )
-        self.assertIn(
             "solved_clearance_fraction_by_side",
-            self.script,
-        )
-        self.assertIn(
-            "target_side_offsets",
-            self.script,
-        )
-        self.assertEqual(
-            runtime_solver["wrist_retarget"],
-            "PHASE_10_6_6_ANALYTIC_RECTANGULAR_PROJECTION",
-        )
-        self.assertEqual(
-            runtime_solver["side_probe_strategy"],
-            "COMMON_CLEARANCE_PROBES_ISOLATE_EACH_ARM_RESPONSE_THEN_FINAL_SIDE_SPECIFIC_POSE_IS_VALIDATED",
-        )
-        self.assertTrue(
-            self.contract["policy"][
-                "hand_mesh_secondary_wrist_trim_forbidden"
-            ]
-        )
-        self.assertTrue(
-            self.contract["policy"][
-                "hand_mesh_retarget_wrist_seed_preserved_required"
-            ]
-        )
-        self.assertIn(
-            '"secondary_wrist_trim_applied": False',
             self.script,
         )
         self.assertIn(

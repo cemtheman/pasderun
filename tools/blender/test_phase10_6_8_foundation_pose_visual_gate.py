@@ -225,6 +225,10 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             "static_core.solve_runtime_hand_mesh_pose(",
             self.script,
         )
+        self.assertNotIn(
+            "static_core.solve_hand_mesh_wrist_spacing(",
+            self.script,
+        )
         self.assertIn(
             'hand_mesh_runtime_solution["status"] == "PASS"',
             self.script,

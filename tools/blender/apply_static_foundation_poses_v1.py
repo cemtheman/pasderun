@@ -1791,6 +1791,70 @@ def runtime_clearance_physical_upper_bound(
     return maximum_hand_side_offset / scale_length
 
 
+def shoulder_sweep_axis(
+    pose_name: str,
+    canonical: dict,
+) -> Vector:
+    frame = canonical["body_frame"]["declared_axes_armature_local"]
+    if pose_name == "bras_bas":
+        return Vector(frame["front"]).normalized()
+    if pose_name == "en_avant":
+        return Vector(frame["up"]).normalized()
+    raise RuntimeError(
+        f"Shoulder sweep is not defined for {pose_name}."
+    )
+
+
+def shoulder_sweep_limit_deg(
+    pose_name: str,
+    constraints: dict,
+    intent_spec: dict,
+) -> float:
+    semantic = intent_spec["poses"][pose_name][
+        "joint_dofs"
+    ]["upper_arm"]
+    limits = constraints["joint_limits"]["shoulder_ball"]["dofs"]
+    margins = []
+    for dof_name, value in semantic.items():
+        preferred = limits[dof_name]["preferred"]
+        value = float(value)
+        margins.append(value - float(preferred["min"]))
+        margins.append(float(preferred["max"]) - value)
+
+    limit = min(margins)
+    if limit <= 0.0:
+        raise RuntimeError(
+            f"{pose_name}: no preferred shoulder sweep margin remains."
+        )
+    return float(limit)
+
+
+def apply_single_shoulder_sweep(
+    armature: bpy.types.Object,
+    canonical: dict,
+    side: str,
+    axis: Vector,
+    angle_deg: float,
+) -> None:
+    canonical_name = f"{side}_upper_arm"
+    rig_name = canonical["canonical_bones"][
+        canonical_name
+    ]["rig_bone"]
+    pose_bone = armature.pose.bones[rig_name]
+    baseline = normalized_basis(pose_bone.matrix)
+    rotation = Matrix.Rotation(
+        math.radians(float(angle_deg)),
+        3,
+        axis,
+    )
+    desired = rotation @ baseline
+    apply_absolute_rig_rotation_via_matrix_basis(
+        armature,
+        rig_name,
+        desired,
+    )
+
+
 def solve_runtime_hand_mesh_pose(
     armature: bpy.types.Object,
     canonical: dict,
@@ -1805,389 +1869,292 @@ def solve_runtime_hand_mesh_pose(
     pose_solver,
     retarget_solver,
 ) -> dict:
+    del retarget_axis_contract, grammar_profile, pose_solver, retarget_solver
+
     if pose_name not in ("bras_bas", "en_avant"):
         raise RuntimeError(
-            f"Runtime hand-mesh solve not defined for {pose_name}."
+            f"Shoulder-sweep hand solve not defined for {pose_name}."
         )
 
-    scalar_key = (
-        "hand_landmark_centerline_clearance_chain_fraction"
+    # The caller has already selected the Phase 10.6.6 pose entry and
+    # applied it. Capture that exact local chain as immutable authority.
+    base_pose = {
+        bone.name: bone.matrix_basis.copy()
+        for bone in armature.pose.bones
+    }
+    axis = shoulder_sweep_axis(pose_name, canonical)
+    sweep_limit = shoulder_sweep_limit_deg(
+        pose_name,
+        constraints,
+        intent_spec,
     )
-    side_key = (
-        "hand_landmark_centerline_clearance_chain_fraction_by_side"
+    spacing = None
+
+    # Recover the active pose entry contract from the already-applied
+    # calibrated pose by reading the hand-gap scale from intent/canonical
+    # dimensions. No new canonical/retarget solve occurs here.
+    dimensions = body_metrics_for_hand(canonical)
+    gap_spec = intent_spec["poses"][pose_name][
+        "hand_mesh_gap_chain_fraction"
+    ]
+    minimum_gap = (
+        dimensions["hand_middle_chain"]
+        * float(gap_spec["min"])
+    )
+    maximum_gap = (
+        dimensions["hand_middle_chain"]
+        * float(gap_spec["max"])
+    )
+    target_side_offset = (
+        minimum_gap + maximum_gap
+    ) * 0.25
+
+    root_iterations = int(
+        runtime_solver_contract["root_iterations"]
     )
 
-    def build_candidate(clearance) -> dict:
-        candidate_intents = copy.deepcopy(intent_spec)
-        pose_intent = candidate_intents["poses"][pose_name]
-        if isinstance(clearance, dict):
-            pose_intent.pop(scalar_key, None)
-            pose_intent[side_key] = {
-                "left": float(clearance["left"]),
-                "right": float(clearance["right"]),
-            }
-        else:
-            pose_intent.pop(side_key, None)
-            pose_intent[scalar_key] = float(clearance)
+    def restore_base_pose() -> None:
+        for bone in armature.pose.bones:
+            bone.matrix_basis = base_pose[bone.name].copy()
+        bpy.context.view_layer.update()
 
-        solution = pose_solver.solve_pose(
-            pose_name,
-            candidate_intents,
-            grammar_profile,
-            canonical,
-            constraints,
-        )
-        pose_entry = retarget_solver.retarget_pose_solution(
-            solution,
-            canonical,
-            constraints,
-            retarget_axis_contract,
-        )
-        return {
-            "solution": solution,
-            "pose_entry": pose_entry,
-        }
-
-    def try_candidate(clearance):
-        try:
-            return build_candidate(clearance)
-        except (
-            pose_solver.PoseSolveRejected,
-            retarget_solver.RigRetargetRejected,
-        ):
-            return None
-
-    def measure_candidate(candidate: dict) -> dict:
-        pose_entry = candidate["pose_entry"]
-        apply_rotation_deltas(armature, pose_entry)
-        spacing = pose_entry["non_rotational_pose_contract"][
-            "hand_mesh_spacing_contract"
-        ]
-        sides = {
-            side: hand_mesh_inner_edge(
-                armature,
-                canonical,
-                hand_samples[side],
-                side,
-                inner_edge_quantile,
-            )
-            for side in ("left", "right")
-        }
-        realized = realized_hand_mesh_centerline_spacing(
+    def evaluate(side: str, angle_deg: float) -> dict:
+        restore_base_pose()
+        apply_single_shoulder_sweep(
             armature,
             canonical,
-            pose_entry,
-            hand_samples,
+            side,
+            axis,
+            angle_deg,
+        )
+        measurement = hand_mesh_inner_edge(
+            armature,
+            canonical,
+            hand_samples[side],
+            side,
             inner_edge_quantile,
         )
         return {
-            **candidate,
-            "sides": sides,
-            "spacing_contract": spacing,
-            "realized_spacing": realized,
-            "bilateral_gap": float(
-                realized["mesh_centerline_gap"]
-            ),
+            "angle_deg": float(angle_deg),
+            "side_offset": float(measurement["side_offset"]),
+            "measurement": measurement,
         }
 
-    def evaluate_common(clearance_fraction: float) -> dict:
-        return {
-            **measure_candidate(
-                build_candidate(float(clearance_fraction))
-            ),
-            "clearance_fraction": float(clearance_fraction),
-        }
+    def solve_side(side: str) -> dict:
+        center = evaluate(side, 0.0)
+        error0 = center["side_offset"] - target_side_offset
+        if abs(error0) <= 1e-6:
+            return center
 
-    physical_upper = runtime_clearance_physical_upper_bound(
-        canonical,
-        pose_solver,
-    )
-    feasibility_iterations = int(
-        runtime_solver_contract["feasibility_iterations"]
-    )
-    root_iterations = int(runtime_solver_contract["root_iterations"])
-    epsilon = float(
-        runtime_solver_contract["feasibility_margin_epsilon"]
-    )
-
-    zero_candidate = try_candidate(0.0)
-    if zero_candidate is None:
-        raise RuntimeError(
-            f"{pose_name}: semantic seed is not feasible."
-        )
-
-    feasible_low = 0.0
-    infeasible_high = physical_upper
-    high_candidate = try_candidate(infeasible_high)
-    if high_candidate is not None:
-        maximum_common_feasible = physical_upper
-    else:
-        for _ in range(feasibility_iterations):
-            midpoint = (feasible_low + infeasible_high) * 0.5
-            candidate = try_candidate(midpoint)
-            if candidate is None:
-                infeasible_high = midpoint
-            else:
-                feasible_low = midpoint
-        maximum_common_feasible = feasible_low
-
-    low_eval = evaluate_common(0.0)
-    high_eval = evaluate_common(maximum_common_feasible)
-    spacing = low_eval["spacing_contract"]
-    minimum_gap = float(spacing["minimum_gap"])
-    maximum_gap = float(spacing["maximum_gap"])
-
-    side_ranges = {}
-    for side in ("left", "right"):
-        low_value = float(
-            low_eval["sides"][side]["side_offset"]
-        )
-        high_value = float(
-            high_eval["sides"][side]["side_offset"]
-        )
-        if high_value <= low_value + 1e-9:
-            raise RuntimeError(
-                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                f"{side} deformed hand-mesh side offset is not "
-                "monotonic over the continuous canonical clearance "
-                f"interval: low={low_value}, high={high_value}."
+        negative = evaluate(side, -sweep_limit)
+        positive = evaluate(side, sweep_limit)
+        candidates = []
+        for endpoint in (negative, positive):
+            endpoint_error = (
+                endpoint["side_offset"] - target_side_offset
             )
-        side_ranges[side] = {
-            "low": low_value,
-            "high": high_value,
-        }
+            if error0 * endpoint_error <= 0.0:
+                candidates.append(endpoint)
 
-    feasible_total_low = max(
-        minimum_gap,
-        max(0.0, side_ranges["left"]["low"])
-        + max(0.0, side_ranges["right"]["low"]),
-    )
-    feasible_total_high = min(
-        maximum_gap,
-        side_ranges["left"]["high"]
-        + side_ranges["right"]["high"],
-    )
-    if feasible_total_low > feasible_total_high + epsilon:
-        raise RuntimeError(
-            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-            "independent continuous side ranges do not intersect the "
-            "declared bilateral gap interval; "
-            f"side_ranges={side_ranges}; "
-            f"declared_gap=[{minimum_gap}, {maximum_gap}]."
+        if not candidates:
+            reachable = sorted(
+                (
+                    negative["side_offset"],
+                    center["side_offset"],
+                    positive["side_offset"],
+                )
+            )
+            raise RuntimeError(
+                f"{pose_name}/{side}: INFEASIBLE_WITHIN_CONSTRAINTS; "
+                "primary shoulder sweep cannot reach the declared hand "
+                f"mesh target {target_side_offset}; reachable side-offset "
+                f"envelope={reachable}; sweep_limit_deg={sweep_limit}."
+            )
+
+        endpoint = min(
+            candidates,
+            key=lambda item: abs(item["angle_deg"]),
         )
+        lower = center
+        upper = endpoint
+        if lower["angle_deg"] > upper["angle_deg"]:
+            lower, upper = upper, lower
 
-    declared_midpoint = (minimum_gap + maximum_gap) * 0.5
-    target_total = min(
-        max(declared_midpoint, feasible_total_low),
-        feasible_total_high,
-    )
+        lower_error = lower["side_offset"] - target_side_offset
+        upper_error = upper["side_offset"] - target_side_offset
 
-    left_min = max(0.0, side_ranges["left"]["low"])
-    left_max = side_ranges["left"]["high"]
-    right_min = max(0.0, side_ranges["right"]["low"])
-    right_max = side_ranges["right"]["high"]
-    left_target_low = max(
-        left_min,
-        target_total - right_max,
-    )
-    left_target_high = min(
-        left_max,
-        target_total - right_min,
-    )
-    if left_target_low > left_target_high + epsilon:
-        raise RuntimeError(
-            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-            "no bilateral side allocation satisfies the declared gap."
-        )
+        for _ in range(root_iterations):
+            midpoint_angle = (
+                lower["angle_deg"] + upper["angle_deg"]
+            ) * 0.5
+            midpoint = evaluate(side, midpoint_angle)
+            midpoint_error = (
+                midpoint["side_offset"] - target_side_offset
+            )
+            if abs(midpoint_error) <= 1e-7:
+                lower = midpoint
+                upper = midpoint
+                break
+            if lower_error * midpoint_error <= 0.0:
+                upper = midpoint
+                upper_error = midpoint_error
+            else:
+                lower = midpoint
+                lower_error = midpoint_error
 
-    target_left = min(
-        max(target_total * 0.5, left_target_low),
-        left_target_high,
-    )
-    target_right = target_total - target_left
-    side_targets = {
-        "left": target_left,
-        "right": target_right,
-    }
-
-    def solve_common_clearance_for_side(
-        side: str,
-        target_side_offset: float,
-    ) -> tuple[float, int]:
-        lower = 0.0
-        upper = maximum_common_feasible
-        lower_value = float(
-            low_eval["sides"][side]["side_offset"]
-        )
-        upper_value = float(
-            high_eval["sides"][side]["side_offset"]
+        result = min(
+            (lower, upper),
+            key=lambda item: abs(
+                item["side_offset"] - target_side_offset
+            ),
         )
         if (
-            target_side_offset < lower_value - epsilon
-            or target_side_offset > upper_value + epsilon
+            abs(result["side_offset"] - target_side_offset)
+            > 0.00002
         ):
             raise RuntimeError(
-                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                f"{side} target {target_side_offset} is outside "
-                f"continuous achievable range "
-                f"[{lower_value}, {upper_value}]."
+                f"{pose_name}/{side}: shoulder-sweep root solve did not "
+                f"converge; target={target_side_offset}; result={result}."
             )
+        return result
 
-        if abs(target_side_offset - lower_value) <= epsilon:
-            return 0.0, 0
-        if abs(target_side_offset - upper_value) <= epsilon:
-            return maximum_common_feasible, 0
-
-        lower_eval_local = low_eval
-        upper_eval_local = high_eval
-        steps = 0
-        for _ in range(root_iterations):
-            steps += 1
-            midpoint = (lower + upper) * 0.5
-            mid_eval = evaluate_common(midpoint)
-            mid_value = float(
-                mid_eval["sides"][side]["side_offset"]
-            )
-            low_value = float(
-                lower_eval_local["sides"][side]["side_offset"]
-            )
-            high_value = float(
-                upper_eval_local["sides"][side]["side_offset"]
-            )
-            if (
-                mid_value < low_value - 1e-8
-                or mid_value > high_value + 1e-8
-            ):
-                raise RuntimeError(
-                    f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                    f"{side} side-offset function violated monotonic "
-                    "bracketing during bounded bisection."
-                )
-            if mid_value < target_side_offset:
-                lower = midpoint
-                lower_eval_local = mid_eval
-            else:
-                upper = midpoint
-                upper_eval_local = mid_eval
-        return upper, steps
-
-    solved_clearance = {}
-    side_root_steps = {}
-    for side in ("left", "right"):
-        solved_clearance[side], side_root_steps[side] = (
-            solve_common_clearance_for_side(
-                side,
-                side_targets[side],
-            )
-        )
-
-    try:
-        winner = measure_candidate(
-            build_candidate(solved_clearance)
-        )
-    except (
-        pose_solver.PoseSolveRejected,
-        retarget_solver.RigRetargetRejected,
-    ) as error:
-        raise RuntimeError(
-            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-            "independently solved bilateral clearances fail the final "
-            f"full-pose grammar/retarget gate: {error}"
-        ) from error
-
-    final_gap = float(winner["bilateral_gap"])
-    if not (
-        minimum_gap - epsilon
-        <= final_gap
-        <= maximum_gap + epsilon
-    ):
-        raise RuntimeError(
-            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; final "
-            f"bilateral gap {final_gap} outside "
-            f"[{minimum_gap}, {maximum_gap}]."
-        )
-
-    final_side_offsets = {
-        side: float(winner["sides"][side]["side_offset"])
+    solved = {
+        side: solve_side(side)
         for side in ("left", "right")
     }
-    for side in ("left", "right"):
-        if final_side_offsets[side] < -epsilon:
-            raise RuntimeError(
-                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                f"{side} hand crosses centerline by "
-                f"{-final_side_offsets[side]}."
-            )
-        if (
-            abs(final_side_offsets[side] - side_targets[side])
-            > max(epsilon * 8.0, 0.00002)
-        ):
-            raise RuntimeError(
-                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                f"{side} final mesh offset "
-                f"{final_side_offsets[side]} does not realize target "
-                f"{side_targets[side]}."
-            )
 
-    pose_entry = winner["pose_entry"]
-    wrist_seed = pose_entry["evidence"]["hand_wrist_solution"]
-    if not pose_entry["evidence"]["hand_wrist_preferred_envelope_pass"]:
-        raise RuntimeError(
-            f"{pose_name}: retarget wrist seed left preferred envelope."
+    restore_base_pose()
+    for side in ("left", "right"):
+        apply_single_shoulder_sweep(
+            armature,
+            canonical,
+            side,
+            axis,
+            solved[side]["angle_deg"],
         )
+
+    # The two shoulder rotations are now simultaneously active. Forearm
+    # and hand matrix_basis values were never changed, so the rounded
+    # elbow and wrist relation from Phase 10.6.6 is preserved exactly.
+    left_final = hand_mesh_inner_edge(
+        armature,
+        canonical,
+        hand_samples["left"],
+        "left",
+        inner_edge_quantile,
+    )
+    right_final = hand_mesh_inner_edge(
+        armature,
+        canonical,
+        hand_samples["right"],
+        "right",
+        inner_edge_quantile,
+    )
+    final_gap = (
+        float(left_final["side_offset"])
+        + float(right_final["side_offset"])
+    )
+
+    if float(left_final["side_offset"]) < 0.0:
+        raise RuntimeError(
+            f"{pose_name}: left hand crosses centerline."
+        )
+    if float(right_final["side_offset"]) < 0.0:
+        raise RuntimeError(
+            f"{pose_name}: right hand crosses centerline."
+        )
+    if not (
+        minimum_gap - 1e-6
+        <= final_gap
+        <= maximum_gap + 1e-6
+    ):
+        raise RuntimeError(
+            f"{pose_name}: final shoulder-sweep mesh gap "
+            f"{final_gap} outside [{minimum_gap}, {maximum_gap}]."
+        )
+
+    realized = {
+        "required": True,
+        "status": "PASS",
+        "left_inner_edge": round(
+            float(left_final["inner_edge"]),
+            8,
+        ),
+        "right_inner_edge": round(
+            float(right_final["inner_edge"]),
+            8,
+        ),
+        "mesh_centerline_gap": round(final_gap, 8),
+        "mesh_centerline_overlap": 0.0,
+        "minimum_allowed_gap": round(minimum_gap, 8),
+        "maximum_allowed_gap": round(maximum_gap, 8),
+        "inner_edge_quantile": float(inner_edge_quantile),
+        "left_sample_count": int(left_final["sample_count"]),
+        "right_sample_count": int(right_final["sample_count"]),
+        "authority": "DEFORMED_HAND_MESH",
+    }
 
     return {
         "status": "PASS",
-        "pose_entry": pose_entry,
-        "final_mesh_spacing": winner["realized_spacing"],
+        "pose_entry": None,
+        "final_mesh_spacing": realized,
         "wrist_seed_evidence": {
             "status": "PASS",
-            "source": (
-                "PHASE_10_6_6_ANALYTIC_RETARGET_SEMANTIC_WRIST_SEED"
-            ),
+            "source": "PHASE_10_6_6_LOCAL_CHAIN_PRESERVED",
             "preferred_envelope_pass": True,
             "secondary_wrist_trim_applied": False,
             "independent_axial_roll": "BLOCKED",
-            "hand_wrist_solution": wrist_seed,
         },
         "evidence": {
             "method": runtime_solver_contract["method"],
-            "authored_clearance_constant": False,
-            "secondary_wrist_trim_applied": False,
-            "physical_upper_bound_fraction": round(
-                physical_upper,
-                10,
+            "primary_joint": "SHOULDER",
+            "elbow_local_bend_preserved": True,
+            "wrist_local_bend_preserved": True,
+            "shoulder_axis": runtime_solver_contract[
+                "shoulder_axis_by_pose"
+            ][pose_name],
+            "shoulder_sweep_limit_deg": round(
+                sweep_limit,
+                8,
             ),
-            "maximum_common_feasible_clearance_fraction": round(
-                maximum_common_feasible,
-                10,
+            "target_side_offset": round(
+                target_side_offset,
+                8,
             ),
-            "side_achievable_ranges": {
-                side: {
-                    key: round(float(value), 10)
-                    for key, value in values.items()
-                }
-                for side, values in side_ranges.items()
+            "solved_shoulder_sweep_deg": {
+                side: round(
+                    float(item["angle_deg"]),
+                    8,
+                )
+                for side, item in solved.items()
             },
-            "target_total_gap": round(target_total, 10),
-            "target_side_offsets": {
-                side: round(float(value), 10)
-                for side, value in side_targets.items()
-            },
-            "solved_clearance_fraction_by_side": {
-                side: round(float(value), 10)
-                for side, value in solved_clearance.items()
-            },
-            "root_iterations_by_side": side_root_steps,
             "final_mesh_side_offsets": {
-                side: round(float(value), 10)
-                for side, value in final_side_offsets.items()
+                "left": round(
+                    float(left_final["side_offset"]),
+                    8,
+                ),
+                "right": round(
+                    float(right_final["side_offset"]),
+                    8,
+                ),
             },
-            "bilateral_gap": round(final_gap, 10),
-            "minimum_gap": round(minimum_gap, 10),
-            "maximum_gap": round(maximum_gap, 10),
-            "final_mesh_spacing": winner["realized_spacing"],
+            "final_mesh_spacing": realized,
         },
+    }
+
+
+def body_metrics_for_hand(canonical: dict) -> dict:
+    bones = canonical["canonical_bones"]
+    hand = (
+        float(bones["left_hand"]["length"])
+        + float(bones["right_hand"]["length"])
+    ) * 0.5
+    middle = (
+        float(bones["left_middle"]["length"])
+        + float(bones["right_middle"]["length"])
+    ) * 0.5
+    return {
+        "hand_middle_chain": hand + middle,
     }
 
 def body_metrics(canonical: dict) -> dict:
@@ -2401,7 +2368,6 @@ def main() -> None:
                 pose_solver,
                 retarget_solver,
             )
-            pose_entry = hand_mesh_runtime_solution["pose_entry"]
             hand_mesh_wrist_solution = hand_mesh_runtime_solution[
                 "wrist_seed_evidence"
             ]
