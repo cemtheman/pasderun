@@ -392,6 +392,17 @@ def _hand_mesh_spacing_contract(
         )
 
     scale_length = float(dimensions["hand_middle_chain"])
+    clearance_fraction = float(
+        intent.get(
+            "hand_landmark_centerline_clearance_chain_fraction",
+            0.0,
+        )
+    )
+    if clearance_fraction < 0.0:
+        raise PoseSolveRejected(
+            "Hand-landmark centerline clearance fraction must be non-negative."
+        )
+
     return {
         "scale_basis": "average_hand_plus_middle_chain_length",
         "scale_length": scale_length,
@@ -399,6 +410,10 @@ def _hand_mesh_spacing_contract(
         "maximum_fraction": maximum_fraction,
         "minimum_gap": scale_length * minimum_fraction,
         "maximum_gap": scale_length * maximum_fraction,
+        "hand_landmark_clearance_fraction": clearance_fraction,
+        "hand_landmark_minimum_side_offset": (
+            scale_length * clearance_fraction
+        ),
     }
 
 
@@ -545,7 +560,24 @@ def _arm_geometry(
             ):
                 if sign * float(candidate_wrist[0]) < -1e-9:
                     continue
-                if sign * float(candidate_hand[0]) < -1e-9:
+                minimum_hand_side_offset = 0.0
+                if (
+                    centerline_policy
+                    == "HAND_MESH_NEAR_TOUCH_NOT_CROSS"
+                ):
+                    if hand_mesh_contract is None:
+                        raise PoseSolveRejected(
+                            f"{pose_name}: hand-mesh spacing contract missing."
+                        )
+                    minimum_hand_side_offset = float(
+                        hand_mesh_contract[
+                            "hand_landmark_minimum_side_offset"
+                        ]
+                    )
+                if (
+                    sign * float(candidate_hand[0])
+                    < minimum_hand_side_offset - 1e-9
+                ):
                     continue
 
             elbow_constraints = _arm_elbow_constraints(

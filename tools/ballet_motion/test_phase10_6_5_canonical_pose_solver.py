@@ -331,7 +331,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         )
         self.assertNotIn("hand_mesh_spacing_contract", result["state"])
 
-    def test_upper_body_mesh_clearance_retreats_wrist_without_overbending_elbow(self) -> None:
+    def test_upper_body_mesh_clearance_uses_scale_relative_hand_landmark_corridor(self) -> None:
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["elbow_angle_deg"],
             125,
@@ -346,23 +346,42 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         )
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["wrist_direction"]["inward"],
-            0.58,
+            0.62,
         )
         self.assertEqual(
             self.intents["poses"]["en_avant"]["wrist_direction"]["inward"],
-            0.27,
+            0.30,
         )
         for pose in ("bras_bas", "en_avant"):
-            self.assertIn(
-                "hand_mesh_gap_chain_fraction",
-                self.intents["poses"][pose],
+            self.assertEqual(
+                self.intents["poses"][pose][
+                    "hand_landmark_centerline_clearance_chain_fraction"
+                ],
+                0.30,
             )
-            self.assertNotIn(
-                "fingertip_gap_chain_fraction",
-                self.intents["poses"][pose],
+            result = solve_pose(
+                pose,
+                self.intents,
+                self.grammar,
+                self.canonical,
+                self.constraints,
             )
+            contract = result["state"]["hand_mesh_spacing_contract"]
+            self.assertAlmostEqual(
+                contract["hand_landmark_minimum_side_offset"],
+                contract["scale_length"] * 0.30,
+                places=12,
+            )
+            for side, sign in (("left", 1.0), ("right", -1.0)):
+                self.assertGreaterEqual(
+                    sign * float(
+                        result["state"]["landmarks"][f"{side}_hand"]["left"]
+                    )
+                    + 1e-9,
+                    contract["hand_landmark_minimum_side_offset"],
+                )
         self.assertIn(
-            "deformed-mesh wrist solve",
+            "clearance corridor",
             self.intents["policy"][
                 "hand_mesh_proximal_clearance_strategy"
             ],
