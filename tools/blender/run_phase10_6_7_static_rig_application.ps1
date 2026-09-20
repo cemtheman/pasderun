@@ -26,12 +26,24 @@ $contract = Join-Path $Repo "assets\ballet_motion\static_rig_application_contrac
 $output = Join-Path $Repo "build\phase10_7\static_rig_application_report_v1.json"
 $script = Join-Path $Repo "tools\blender\apply_static_foundation_poses_v1.py"
 
-if (-not (Test-Path $retarget)) {
-    $runner = Join-Path $Repo "tools\ballet_motion\run_phase10_6_6_calibrated_rig_retarget.ps1"
-    if (-not (Test-Path $runner)) {
-        throw "Phase 10.6.6 runner missing: $runner"
+$runner = Join-Path $Repo "tools\ballet_motion\run_phase10_6_6_calibrated_rig_retarget.ps1"
+if (-not (Test-Path $runner)) {
+    throw "Phase 10.6.6 runner missing: $runner"
+}
+
+$retargetNeedsRefresh = -not (Test-Path $retarget)
+if (-not $retargetNeedsRefresh) {
+    $existingRetarget = Get-Content $retarget -Raw | ConvertFrom-Json
+    $currentAxisSha = (Get-FileHash -Algorithm SHA256 $retargetAxisContract).Hash.ToLowerInvariant()
+    $profileAxisSha = [string]$existingRetarget.inputs.axis_contract_sha256
+    if ($profileAxisSha.ToLowerInvariant() -ne $currentAxisSha) {
+        Write-Host "Phase 10.6.6 retarget profile is stale; axis contract changed."
+        $retargetNeedsRefresh = $true
     }
-    Write-Host "Phase 10.6.6 retarget profile missing; generating prerequisite..."
+}
+
+if ($retargetNeedsRefresh) {
+    Write-Host "Generating Phase 10.6.6 retarget prerequisite..."
     & powershell -ExecutionPolicy Bypass -File $runner -Repo $Repo
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }

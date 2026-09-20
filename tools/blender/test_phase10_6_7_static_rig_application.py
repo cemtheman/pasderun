@@ -230,12 +230,23 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.wrapper,
         )
 
+    def test_wrapper_refreshes_stale_10_6_6_axis_contract_profile(self) -> None:
+        self.assertIn("Get-FileHash -Algorithm SHA256", self.wrapper)
+        self.assertIn(
+            "existingRetarget.inputs.axis_contract_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "retarget profile is stale; axis contract changed",
+            self.wrapper,
+        )
+
     def test_wrapper_auto_generates_10_6_6_prerequisite(self) -> None:
         self.assertIn(
             "run_phase10_6_6_calibrated_rig_retarget.ps1",
             self.wrapper,
         )
-        self.assertIn("generating prerequisite", self.wrapper)
+        self.assertIn("retarget prerequisite", self.wrapper)
 
     def test_windows_powershell_wrapper_is_ascii_only(self) -> None:
         self.assertTrue(

@@ -23,7 +23,8 @@
   "composition": {
     "convention": "POSTMULTIPLY_LOCAL_ROTATIONS_IN_LISTED_ORDER",
     "local_axes": "X_Y_Z_OF_CANONICAL_BONE_REST_FRAME",
-    "angle_units": "degrees"
+    "angle_units": "degrees",
+    "external_rotation_mapping_note": "Positive semantic external rotation maps to negative canonical local-Y rotation on LEFT and positive on RIGHT because the leg rest Y axis points BODY_DOWN."
   },
   "lower_body_joint_axes": {
     "hip_ball": [
@@ -42,7 +43,7 @@
       {
         "dof": "internal_external_rotation",
         "axis": "Y",
-        "scale": 1,
+        "scale": -1,
         "side_sign": true
       }
     ],
@@ -56,7 +57,7 @@
       {
         "derived": "knee_external_rotation_deg",
         "axis": "Y",
-        "scale": 1,
+        "scale": -1,
         "side_sign": true
       }
     ],

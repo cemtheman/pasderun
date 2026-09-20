@@ -71,6 +71,10 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             hip["internal_external_rotation"]["axis"],
             "Y",
         )
+        self.assertEqual(
+            hip["internal_external_rotation"]["scale"],
+            -1,
+        )
         self.assertTrue(
             hip["internal_external_rotation"]["side_sign"]
         )
@@ -83,6 +87,7 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             derived[0]["derived"],
             "knee_external_rotation_deg",
         )
+        self.assertEqual(derived[0]["scale"], -1)
         self.assertTrue(derived[0]["side_sign"])
 
     def test_trunk_tilt_is_orientation_not_translation_passthrough(self) -> None:
@@ -112,6 +117,83 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         self.assertGreater(matrix_max_error(delta, identity3()), 1e-6)
         self.assertLess(orthogonality_error(delta), 1e-12)
         self.assertAlmostEqual(determinant(delta), 1.0, places=12)
+
+    def test_positive_turnout_rotates_both_feet_outward(self) -> None:
+        axes = self.contract["lower_body_joint_axes"]
+        hip_er = next(
+            item
+            for item in axes["hip_ball"]
+            if item.get("dof") == "internal_external_rotation"
+        )
+        knee_er = next(
+            item
+            for item in axes["knee_hinge"]
+            if item.get("derived") == "knee_external_rotation_deg"
+        )
+
+        # Canonical body coordinates are LEFT, UP, FRONT.
+        pelvis = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+        thigh_rest = [
+            [-1.0, 0.0, 0.0],
+            [0.0, -1.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+        shin_rest = thigh_rest
+        foot_rest = [
+            [-1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 1.0, 0.0],
+        ]
+
+        thigh_local_rest = mat_mul(transpose(pelvis), thigh_rest)
+        shin_local_rest = mat_mul(
+            transpose(thigh_rest),
+            shin_rest,
+        )
+        foot_local_rest = mat_mul(
+            transpose(shin_rest),
+            foot_rest,
+        )
+
+        foot_left_components = None
+        foot_right_components = None
+        for side, side_factor in (("left", 1.0), ("right", -1.0)):
+            hip_angle = (
+                45.0
+                * float(hip_er["scale"])
+                * side_factor
+            )
+            knee_angle = (
+                4.0
+                * float(knee_er["scale"])
+                * side_factor
+            )
+            thigh_pose = mat_mul(
+                thigh_local_rest,
+                axis_rotation("Y", hip_angle),
+            )
+            shin_pose = mat_mul(
+                mat_mul(thigh_pose, shin_local_rest),
+                axis_rotation("Y", knee_angle),
+            )
+            foot_pose = mat_mul(shin_pose, foot_local_rest)
+            foot_forward = [
+                foot_pose[row][1]
+                for row in range(3)
+            ]
+            if side == "left":
+                foot_left_components = foot_forward
+            else:
+                foot_right_components = foot_forward
+
+        self.assertGreater(foot_left_components[0], 0.0)
+        self.assertLess(foot_right_components[0], 0.0)
+        self.assertGreater(foot_left_components[2], 0.0)
+        self.assertGreater(foot_right_components[2], 0.0)
 
     def test_axis_rotation_is_proper_rotation(self) -> None:
         for axis in ("X", "Y", "Z"):
