@@ -49,7 +49,9 @@
     "hand_mesh_primary_joint_authority": "SHOULDER_SWEEP_ONLY",
     "hand_mesh_elbow_local_bend_preserved": true,
     "hand_mesh_wrist_local_bend_preserved": true,
-    "hand_mesh_mesh_driven_elbow_or_wrist_correction_forbidden": true
+    "hand_mesh_mesh_driven_elbow_or_wrist_correction_forbidden": true,
+    "hand_mesh_centerline_strict_no_cross_required": true,
+    "hand_mesh_centerline_outlier_tolerance_forbidden": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -92,8 +94,9 @@
   },
   "hand_mesh_sampling": {
     "minimum_vertex_group_weight": 0.15,
-    "inner_edge_quantile": 0.02,
-    "bone_scope": "HAND_ROOT_PLUS_ALL_DESCENDANTS"
+    "inner_edge_quantile": 0,
+    "bone_scope": "HAND_ROOT_PLUS_ALL_DESCENDANTS",
+    "inner_edge_measurement": "STRICT_EXTREME_VERTEX"
   },
   "hand_mesh_wrist_solver": {
     "coarse_step_deg": 5,
