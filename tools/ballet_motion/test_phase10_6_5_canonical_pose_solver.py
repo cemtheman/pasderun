@@ -362,12 +362,12 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             )
             contract = result["state"]["hand_mesh_spacing_contract"]
             self.assertEqual(
-                contract["hand_landmark_clearance_fraction"],
-                0.0,
+                contract["hand_landmark_clearance_fraction_by_side"],
+                {"left": 0.0, "right": 0.0},
             )
             self.assertEqual(
-                contract["hand_landmark_target_side_offset"],
-                0.0,
+                contract["hand_landmark_target_side_offset_by_side"],
+                {"left": 0.0, "right": 0.0},
             )
         self.assertIn(
             "bounded root solving",
@@ -389,20 +389,16 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             source,
         )
         self.assertIn(
-            '"hand_landmark_target_side_offset"',
-            source,
-        )
-        self.assertNotIn(
-            '"hand_landmark_minimum_side_offset"',
+            '"hand_landmark_target_side_offset_by_side"',
             source,
         )
 
         for pose in ("bras_bas", "en_avant"):
             varied = json.loads(json.dumps(self.intents))
-            fraction = 0.35
+            by_side = {"left": 0.31, "right": 0.37}
             varied["poses"][pose][
-                "hand_landmark_centerline_clearance_chain_fraction"
-            ] = fraction
+                "hand_landmark_centerline_clearance_chain_fraction_by_side"
+            ] = by_side
             result = solve_pose(
                 pose,
                 varied,
@@ -412,13 +408,16 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             )
             state = result["state"]
             contract = state["hand_mesh_spacing_contract"]
-            target = contract["scale_length"] * fraction
-            self.assertAlmostEqual(
-                contract["hand_landmark_target_side_offset"],
-                target,
-                places=12,
-            )
+            scale = contract["scale_length"]
             for side, sign in (("left", 1.0), ("right", -1.0)):
+                target = scale * by_side[side]
+                self.assertAlmostEqual(
+                    contract[
+                        "hand_landmark_target_side_offset_by_side"
+                    ][side],
+                    target,
+                    places=12,
+                )
                 realized = (
                     sign
                     * float(
@@ -430,6 +429,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                     target,
                     places=8,
                 )
+
 
     def test_plie_travel_is_moderate_not_deep_crossing_setup(self) -> None:
         plie = self.intents["poses"]["plie"]

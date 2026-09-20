@@ -186,84 +186,80 @@ def _wrist_2dof_target_basis(
     dmin = float(deviation["min"])
     dmax = float(deviation["max"])
 
-    solver = axis_contract["upper_limb_roll"]["hand"]["solver"]
-    best = None
-
-    def consider(flexion_deg: float, deviation_deg: float) -> None:
-        nonlocal best
-        if not fmin <= flexion_deg <= fmax:
-            return
-        if not dmin <= deviation_deg <= dmax:
-            return
-
-        delta = mat_mul(
-            axis_rotation("X", flexion_deg),
-            axis_rotation("Z", deviation_deg),
+    local_direction = [
+        dot(
+            [base[row][column] for row in range(3)],
+            direction,
         )
-        target = mat_mul(base, delta)
-        target_y = normalize([target[row][1] for row in range(3)])
-        alignment = dot(target_y, direction)
-        key = (
-            -alignment,
-            abs(flexion_deg) + abs(deviation_deg),
-            abs(flexion_deg),
-            abs(deviation_deg),
-        )
-        candidate = (
-            key,
-            target,
-            flexion_deg,
-            deviation_deg,
-            alignment,
-        )
-        if best is None or key < best[0]:
-            best = candidate
+        for column in range(3)
+    ]
+    ux, uy, uz = [float(value) for value in local_direction]
 
-    coarse = float(solver["coarse_step_deg"])
-    flexion_value = fmin
-    while flexion_value <= fmax + 1e-9:
-        deviation_value = dmin
-        while deviation_value <= dmax + 1e-9:
-            consider(flexion_value, deviation_value)
-            deviation_value += coarse
-        flexion_value += coarse
+    ideal_flexion = math.degrees(math.atan2(uz, uy))
+    flexion_candidates = [fmin, fmax]
+    if fmin <= ideal_flexion <= fmax:
+        flexion_candidates.append(ideal_flexion)
 
-    if best is None:
-        raise RigRetargetRejected(
-            "No wrist_2dof candidate exists in preferred envelope."
+    def flexion_score(value: float) -> float:
+        angle = math.radians(value)
+        return uy * math.cos(angle) + uz * math.sin(angle)
+
+    solved_flexion = max(
+        flexion_candidates,
+        key=lambda value: (
+            flexion_score(value),
+            -abs(value),
+        ),
+    )
+    flexion_angle = math.radians(solved_flexion)
+    projected_yz = (
+        uy * math.cos(flexion_angle)
+        + uz * math.sin(flexion_angle)
+    )
+
+    ideal_deviation = math.degrees(
+        math.atan2(-ux, projected_yz)
+    )
+    deviation_candidates = [dmin, dmax]
+    if dmin <= ideal_deviation <= dmax:
+        deviation_candidates.append(ideal_deviation)
+
+    def deviation_score(value: float) -> float:
+        angle = math.radians(value)
+        return (
+            -ux * math.sin(angle)
+            + projected_yz * math.cos(angle)
         )
 
-    for step in solver["refine_steps_deg"]:
-        step = float(step)
-        center_f = float(best[2])
-        center_d = float(best[3])
-        for f_offset in range(-10, 11):
-            for d_offset in range(-10, 11):
-                consider(
-                    center_f + f_offset * step,
-                    center_d + d_offset * step,
-                )
+    solved_deviation = max(
+        deviation_candidates,
+        key=lambda value: (
+            deviation_score(value),
+            -abs(value),
+        ),
+    )
 
-    (
-        _key,
-        target,
-        solved_flexion,
-        solved_deviation,
-        alignment,
-    ) = best
+    delta = mat_mul(
+        axis_rotation("X", solved_flexion),
+        axis_rotation("Z", solved_deviation),
+    )
+    target = mat_mul(base, delta)
+    target_y = normalize([target[row][1] for row in range(3)])
+    alignment = dot(target_y, direction)
 
     evidence = {
+        "solver_method": "ANALYTIC_RECTANGULAR_PROJECTION",
         "flexion_extension_deg": round(
             float(solved_flexion),
-            8,
+            10,
         ),
         "radial_ulnar_deviation_deg": round(
             float(solved_deviation),
-            8,
+            10,
         ),
         "semantic_alignment_dot": round(
             float(alignment),
-            10,
+            12,
         ),
         "preferred_envelope": {
             "flexion_extension": {
@@ -279,7 +275,6 @@ def _wrist_2dof_target_basis(
         "independent_axial_hand_roll": "BLOCKED",
     }
     return target, evidence
-
 
 def _upper_limb_target_bases(
     state: dict,

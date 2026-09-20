@@ -378,7 +378,7 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         semantic_policy = upper["hand"]["semantic_direction_policy"]
         self.assertTrue(
             semantic_policy.startswith(
-                "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE"
+                "SEMANTIC_PREFERENCE_ANALYTICALLY_PROJECTED_TO_WRIST_2DOF_PREFERRED_ENVELOPE"
             )
         )
         self.assertIn(
@@ -403,6 +403,21 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         self.assertIn("basis_from_length_and_front(", self.retarget)
         self.assertIn("local_twist_y(", self.retarget)
         self.assertIn("_wrist_2dof_target_basis(", self.retarget)
+        self.assertEqual(
+            upper["hand"]["solver"]["method"],
+            "ANALYTIC_RECTANGULAR_PROJECTION",
+        )
+        self.assertTrue(upper["hand"]["solver"]["continuous"])
+        wrist_start = self.retarget.index(
+            "def _wrist_2dof_target_basis("
+        )
+        wrist_end = self.retarget.index(
+            "def _upper_limb_target_bases(",
+            wrist_start,
+        )
+        wrist_source = self.retarget[wrist_start:wrist_end]
+        self.assertNotIn("while flexion_value", wrist_source)
+        self.assertNotIn("refine_steps_deg", wrist_source)
 
     def test_wrist_2dof_target_matches_landmark_without_axial_roll(self) -> None:
         parent_pose = mat_mul(

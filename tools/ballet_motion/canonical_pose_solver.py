@@ -392,15 +392,29 @@ def _hand_mesh_spacing_contract(
         )
 
     scale_length = float(dimensions["hand_middle_chain"])
-    clearance_fraction = float(
+    scalar_clearance = float(
         intent.get(
             "hand_landmark_centerline_clearance_chain_fraction",
             0.0,
         )
     )
-    if clearance_fraction < 0.0:
+    by_side = intent.get(
+        "hand_landmark_centerline_clearance_chain_fraction_by_side"
+    )
+    if by_side is None:
+        clearance_by_side = {
+            "left": scalar_clearance,
+            "right": scalar_clearance,
+        }
+    else:
+        clearance_by_side = {
+            "left": float(by_side["left"]),
+            "right": float(by_side["right"]),
+        }
+
+    if any(value < 0.0 for value in clearance_by_side.values()):
         raise PoseSolveRejected(
-            "Hand-landmark centerline clearance fraction must be non-negative."
+            "Hand-landmark centerline clearance fractions must be non-negative."
         )
 
     return {
@@ -410,10 +424,11 @@ def _hand_mesh_spacing_contract(
         "maximum_fraction": maximum_fraction,
         "minimum_gap": scale_length * minimum_fraction,
         "maximum_gap": scale_length * maximum_fraction,
-        "hand_landmark_clearance_fraction": clearance_fraction,
-        "hand_landmark_target_side_offset": (
-            scale_length * clearance_fraction
-        ),
+        "hand_landmark_clearance_fraction_by_side": clearance_by_side,
+        "hand_landmark_target_side_offset_by_side": {
+            side: scale_length * value
+            for side, value in clearance_by_side.items()
+        },
     }
 
 
@@ -514,21 +529,6 @@ def _arm_geometry(
             shoulder_front,
         ]
 
-        if side == "right":
-            for joint in (
-                "shoulder",
-                "elbow",
-                "wrist",
-                "hand",
-            ):
-                source = landmarks[f"left_{joint}"]
-                landmarks[f"right_{joint}"] = _body_point(
-                    -float(source["left"]),
-                    float(source["up"]),
-                    float(source["front"]),
-                )
-            continue
-
         raw_direction = intent["wrist_direction"]
         lateral_key = "inward" if "inward" in raw_direction else "outward"
         lateral_sign = -sign if lateral_key == "inward" else sign
@@ -599,8 +599,8 @@ def _arm_geometry(
                 sign,
                 float(
                     hand_mesh_contract[
-                        "hand_landmark_target_side_offset"
-                    ]
+                        "hand_landmark_target_side_offset_by_side"
+                    ][side]
                 ),
             )
             direction_candidates = [exact_direction]

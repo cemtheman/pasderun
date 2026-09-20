@@ -104,14 +104,13 @@
       "orientation_source": "WRIST_LANDMARK_DIRECTION_SOLVED_IN_DECLARED_2DOF",
       "axial_roll_policy": "NO_INDEPENDENT_HAND_AXIAL_ROLL",
       "parent_orientation_source": "POSED_FOREARM_FRAME_PLUS_CANONICAL_HAND_REST_RELATION",
-      "semantic_direction_policy": "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE; FINAL_CENTERLINE_SPACING_DEFERRED_TO_PHASE_10_6_7_DEFORMED_MESH",
+      "semantic_direction_policy": "SEMANTIC_PREFERENCE_ANALYTICALLY_PROJECTED_TO_WRIST_2DOF_PREFERRED_ENVELOPE; FINAL_CENTERLINE_SPACING_DEFERRED_TO_PHASE_10_6_7_DEFORMED_MESH",
       "limit_source": "PHASE_10_6_3_WRIST_2DOF_PREFERRED",
       "solver": {
-        "coarse_step_deg": 1,
-        "refine_steps_deg": [
-          0.1,
-          0.01
-        ]
+        "method": "ANALYTIC_RECTANGULAR_PROJECTION",
+        "local_dof_composition": "Rx(flexion_extension) then Rz(radial_ulnar_deviation)",
+        "preferred_envelope_projection": true,
+        "continuous": true
       }
     }
   },
