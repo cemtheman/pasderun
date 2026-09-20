@@ -11,17 +11,39 @@ if (-not $Repo) {
 $canonical = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_profile_v1.json"
 $constraints = Join-Path $Repo "build\phase10_6\low_poly_girl_anatomical_constraint_profile_v1.json"
 $grammar = Join-Path $Repo "build\phase10_6\low_poly_girl_ballet_pose_grammar_profile_v1.json"
+$grammarSource = Join-Path $Repo "assets\ballet_motion\ballet_pose_grammar_v1.json"
+$grammarValidatorSource = Join-Path $Repo "tools\ballet_motion\ballet_pose_validators.py"
 $intents = Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
 $output = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json"
 $script = Join-Path $Repo "tools\ballet_motion\build_canonical_pose_solver_v1.py"
 
-if (-not (Test-Path $grammar)) {
-    $runner = Join-Path $Repo "tools\ballet_motion\run_phase10_6_4_ballet_pose_grammar.ps1"
-    if (-not (Test-Path $runner)) {
-        throw "Phase 10.6.4 runner missing: $runner"
-    }
+$runner = Join-Path $Repo "tools\ballet_motion\run_phase10_6_4_ballet_pose_grammar.ps1"
+if (-not (Test-Path $runner)) {
+    throw "Phase 10.6.4 runner missing: $runner"
+}
 
-    Write-Host "Phase 10.6.4 grammar profile missing; generating prerequisite..."
+$grammarNeedsRefresh = -not (Test-Path $grammar)
+if (-not $grammarNeedsRefresh) {
+    $existingGrammar = Get-Content $grammar -Raw | ConvertFrom-Json
+    $currentGrammarSha = (Get-FileHash -Algorithm SHA256 $grammarSource).Hash.ToLowerInvariant()
+    $profileGrammarSha = [string]$existingGrammar.inputs.grammar_sha256
+    $currentValidatorSha = (Get-FileHash -Algorithm SHA256 $grammarValidatorSource).Hash.ToLowerInvariant()
+    $profileValidatorSha = [string]$existingGrammar.inputs.validator_source_sha256
+
+    if ($profileGrammarSha.ToLowerInvariant() -ne $currentGrammarSha) {
+        Write-Host "Phase 10.6.4 grammar profile is stale; grammar source changed."
+        $grammarNeedsRefresh = $true
+    } elseif (
+        [string]::IsNullOrWhiteSpace($profileValidatorSha) -or
+        $profileValidatorSha.ToLowerInvariant() -ne $currentValidatorSha
+    ) {
+        Write-Host "Phase 10.6.4 grammar profile is stale; validator source changed."
+        $grammarNeedsRefresh = $true
+    }
+}
+
+if ($grammarNeedsRefresh) {
+    Write-Host "Refreshing Phase 10.6.4 grammar prerequisite..."
     & powershell -ExecutionPolicy Bypass -File $runner -Repo $Repo
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

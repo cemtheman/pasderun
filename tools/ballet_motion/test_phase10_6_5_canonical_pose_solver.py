@@ -517,12 +517,31 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         self.assertIn("all_invalid_probes_rejected", self.builder)
         self.assertIn("INVALID_PROBES=4/4_REJECTED", self.builder)
 
-    def test_wrapper_auto_generates_10_6_4_prerequisite(self) -> None:
+    def test_wrapper_refreshes_10_6_4_prerequisite_when_stale(self) -> None:
         self.assertIn(
             "run_phase10_6_4_ballet_pose_grammar.ps1",
             self.wrapper,
         )
-        self.assertIn("generating prerequisite", self.wrapper)
+        self.assertIn(
+            "existingGrammar.inputs.grammar_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "existingGrammar.inputs.validator_source_sha256",
+            self.wrapper,
+        )
+        self.assertIn(
+            "grammar profile is stale; grammar source changed",
+            self.wrapper,
+        )
+        self.assertIn(
+            "grammar profile is stale; validator source changed",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Refreshing Phase 10.6.4 grammar prerequisite",
+            self.wrapper,
+        )
 
     def test_wrapper_is_ascii_safe_for_windows_powershell(self) -> None:
         self.assertTrue(all(ord(char) < 128 for char in self.wrapper))

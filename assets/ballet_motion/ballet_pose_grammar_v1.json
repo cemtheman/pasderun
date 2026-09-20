@@ -14,7 +14,8 @@
     "anatomical_joint_limits_always_apply": true,
     "contact_and_balance_rules_are_first_class": true,
     "failed_geometric_validator_blocks_render": true,
-    "failed_geometric_validator_blocks_animation": true
+    "failed_geometric_validator_blocks_animation": true,
+    "plie_pelvis_descent_validator_basis": "average_leg_chain_length"
   },
   "poses": {
     "bras_bas": {
@@ -296,10 +297,11 @@
           "hard_error_deg": 12
         },
         {
-          "type": "scalar_range",
+          "type": "scaled_scalar_range",
           "name": "pelvis_descent",
-          "min": 0.05,
-          "max": 0.4
+          "scale_basis": "average_leg_chain_length",
+          "min_fraction": 0.04,
+          "max_fraction": 0.3
         },
         {
           "type": "scalar_range",

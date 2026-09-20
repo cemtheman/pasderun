@@ -60,6 +60,23 @@ def _pass(kind: str) -> dict:
     return {"passed": True, "validator": kind}
 
 
+def _canonical_scale(
+    canonical_profile: dict,
+    scale_basis: str,
+) -> float:
+    bones = canonical_profile["canonical_bones"]
+    if scale_basis == "average_leg_chain_length":
+        return (
+            float(bones["left_thigh"]["length"])
+            + float(bones["left_shin"]["length"])
+            + float(bones["left_foot"]["length"])
+            + float(bones["right_thigh"]["length"])
+            + float(bones["right_shin"]["length"])
+            + float(bones["right_foot"]["length"])
+        ) / 2.0
+    raise ValueError(f"Unknown canonical scale basis: {scale_basis}")
+
+
 def validate_check(
     state: dict,
     check: dict,
@@ -198,6 +215,31 @@ def validate_check(
         maximum = float(check["max"])
         if value < minimum or value > maximum:
             return _fail(kind, f"{name}={value:.6f}")
+        return _pass(kind)
+
+    if kind == "scaled_scalar_range":
+        scalars = state.get("scalars", {})
+        name = check["name"]
+        if name not in scalars:
+            return _fail(kind, f"missing:{name}")
+        scale = _canonical_scale(
+            canonical_profile,
+            check["scale_basis"],
+        )
+        if scale <= 1e-12:
+            raise ValueError(
+                f"Degenerate canonical scale {check['scale_basis']}={scale}."
+            )
+        value = float(scalars[name])
+        fraction = value / scale
+        minimum = float(check["min_fraction"])
+        maximum = float(check["max_fraction"])
+        if fraction < minimum or fraction > maximum:
+            return _fail(
+                kind,
+                f"{name}_fraction={fraction:.6f}; "
+                f"value={value:.6f}; scale={scale:.6f}",
+            )
         return _pass(kind)
 
     if kind == "support_polygon_com":

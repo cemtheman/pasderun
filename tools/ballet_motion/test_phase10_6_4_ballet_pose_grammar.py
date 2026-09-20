@@ -102,6 +102,23 @@ class Phase1064BalletPoseGrammarTests(unittest.TestCase):
         self.assertEqual(contact["left"], "FULL_FOOT")
         self.assertEqual(contact["right"], "FULL_FOOT")
 
+    def test_plie_descent_range_is_leg_chain_relative(self) -> None:
+        checks = self.grammar["poses"]["plie"]["checks"]
+        descent = next(
+            item
+            for item in checks
+            if item.get("name") == "pelvis_descent"
+        )
+        self.assertEqual(descent["type"], "scaled_scalar_range")
+        self.assertEqual(
+            descent["scale_basis"],
+            "average_leg_chain_length",
+        )
+        self.assertEqual(descent["min_fraction"], 0.04)
+        self.assertEqual(descent["max_fraction"], 0.30)
+        self.assertNotIn("min", descent)
+        self.assertNotIn("max", descent)
+
     def test_releve_requires_forefoot_contact_and_heel_height(self) -> None:
         checks = self.grammar["poses"]["releve"]["checks"]
         contact = next(item for item in checks if item["type"] == "contact_mode")
@@ -110,6 +127,19 @@ class Phase1064BalletPoseGrammarTests(unittest.TestCase):
         scalars = [item["name"] for item in checks if item["type"] == "scalar_range"]
         self.assertIn("left_heel_height", scalars)
         self.assertIn("right_heel_height", scalars)
+
+    def test_scaled_scalar_validator_is_available(self) -> None:
+        validator_source = (
+            ROOT / "tools" / "ballet_motion" / "ballet_pose_validators.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            'if scale_basis == "average_leg_chain_length":',
+            validator_source,
+        )
+        self.assertIn(
+            'if kind == "scaled_scalar_range":',
+            validator_source,
+        )
 
     def test_invalid_geometry_blocks_render_and_animation(self) -> None:
         policy = self.grammar["policy"]

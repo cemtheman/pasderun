@@ -43,6 +43,9 @@ def main() -> None:
     grammar_path = Path(args.grammar).resolve()
     fixtures_path = Path(args.fixtures).resolve()
     output_path = Path(args.output).resolve()
+    validator_source_path = Path(__file__).with_name(
+        "ballet_pose_validators.py"
+    ).resolve()
 
     canonical = json.loads(canonical_path.read_text(encoding="utf-8"))
     constraints = json.loads(constraint_path.read_text(encoding="utf-8"))
@@ -145,6 +148,9 @@ def main() -> None:
             "canonical_profile_sha256": sha256_file(canonical_path),
             "constraint_profile_sha256": sha256_file(constraint_path),
             "grammar_sha256": sha256_file(grammar_path),
+            "validator_source_sha256": sha256_file(
+                validator_source_path
+            ),
             "fixtures_sha256": sha256_file(fixtures_path),
             "source_glb_sha256": canonical["source"]["sha256"],
         },
