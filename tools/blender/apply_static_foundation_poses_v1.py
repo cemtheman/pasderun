@@ -278,35 +278,6 @@ def basis_from_columns(x_axis: Vector, y_axis: Vector, z_axis: Vector) -> Matrix
     )
 
 
-def flatten_canonical_foot_basis(
-    current_basis: Matrix,
-    up_axis: Vector,
-) -> Matrix:
-    length_axis = Vector(
-        (
-            current_basis[0][1],
-            current_basis[1][1],
-            current_basis[2][1],
-        )
-    ).normalized()
-    horizontal = length_axis - up_axis * length_axis.dot(up_axis)
-    if horizontal.length <= 1e-8:
-        raise RuntimeError(
-            "Cannot preserve foot yaw while flattening contact frame."
-        )
-    y_axis = horizontal.normalized()
-    z_axis = up_axis.normalized()
-    x_axis = y_axis.cross(z_axis)
-    if x_axis.length <= 1e-8:
-        raise RuntimeError("Degenerate full-foot contact basis.")
-    x_axis.normalize()
-    z_axis = x_axis.cross(y_axis).normalized()
-    result = basis_from_columns(x_axis, y_axis, z_axis)
-    if result.determinant() <= 0.0:
-        raise RuntimeError("Full-foot contact basis is not right-handed.")
-    return result
-
-
 def apply_absolute_rig_rotation_via_matrix_basis(
     armature: bpy.types.Object,
     rig_name: str,

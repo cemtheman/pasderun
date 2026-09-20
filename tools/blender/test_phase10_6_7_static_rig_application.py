@@ -130,6 +130,12 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertIn("for step in (0.1, 0.01, 0.001):", self.script)
 
+    def test_old_ideal_basis_flatten_helper_is_removed(self) -> None:
+        self.assertNotIn(
+            "def flatten_canonical_foot_basis(",
+            self.script,
+        )
+
     def test_full_foot_solver_aligns_foot_up_not_arbitrary_full_matrix(self) -> None:
         self.assertIn("up_alignment_dot", self.script)
         self.assertIn(
