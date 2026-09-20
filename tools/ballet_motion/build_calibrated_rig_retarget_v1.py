@@ -82,7 +82,7 @@ def main() -> None:
         "Root translation is forbidden in Phase 10.6.6.",
     )
     require(
-        not contract["policy"]["blender_application_forbidden"] is False,
+        contract["policy"]["blender_application_forbidden"],
         "Blender application policy weakened.",
     )
 

@@ -13,6 +13,7 @@ from canonical_math import (
 from calibrated_rig_retarget import (
     _rig_pose_from_canonical,
     _upper_limb_target_bases,
+    validate_rest_identity,
 )
 from rig_retarget_math import (
     axis_rotation,
@@ -83,6 +84,21 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         )
         self.assertTrue(derived[0]["side_sign"])
 
+    def test_trunk_tilt_is_orientation_not_translation_passthrough(self) -> None:
+        route = self.contract["scalar_orientation_routes"]["trunk_tilt_deg"]
+        self.assertEqual(route["axis"], "X")
+        self.assertAlmostEqual(
+            sum(item["weight"] for item in route["routes"]),
+            1.0,
+            places=12,
+        )
+        self.assertEqual(
+            {item["bone"] for item in route["routes"]},
+            {"spine_lower", "spine_mid", "chest"},
+        )
+        self.assertIn('"scalar_orientation_routes"', self.retarget)
+        self.assertIn('if key != "trunk_tilt_deg"', self.retarget)
+
     def test_axis_rotation_is_proper_rotation(self) -> None:
         for axis in ("X", "Y", "Z"):
             matrix = axis_rotation(axis, 37.0)
@@ -121,6 +137,105 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         rig_pose = mat_mul(bind, canonical_pose)
         roundtrip = mat_mul(transpose(bind), rig_pose)
         self.assertLess(matrix_max_error(roundtrip, canonical_pose), 1e-12)
+
+    def test_rest_identity_function_executes_on_synthetic_hierarchy(self) -> None:
+        rest_root = identity3()
+        rest_child = axis_rotation("Z", 20.0)
+        rig_root = axis_rotation("X", 10.0)
+        rig_child = mat_mul(rig_root, axis_rotation("Z", 20.0))
+
+        def bone(parent, canonical_rest, rig_rest, name):
+            bind = mat_mul(rig_rest, transpose(canonical_rest))
+            return {
+                "parent": parent,
+                "rig_bone": name,
+                "canonical_rest_contract": {
+                    "basis_armature_local": canonical_rest,
+                },
+                "rig_rest_basis_armature_local": rig_rest,
+                "retarget_bind": {
+                    "canonical_to_rig_rotation_matrix": bind,
+                },
+            }
+
+        profile = {
+            "canonical_bones": {
+                "pelvis": bone(
+                    None,
+                    rest_root,
+                    rig_root,
+                    "Pelvis",
+                ),
+                "child": bone(
+                    "pelvis",
+                    rest_child,
+                    rig_child,
+                    "Child",
+                ),
+            }
+        }
+        result = validate_rest_identity(profile, self.contract)
+        self.assertLess(result["max_rig_rest_basis_error"], 1e-9)
+        self.assertLess(
+            result["max_local_delta_identity_error"],
+            1e-9,
+        )
+
+    def test_rig_pose_function_executes_roundtrip_on_synthetic_hierarchy(self) -> None:
+        rest_root = identity3()
+        rest_child = axis_rotation("Z", 20.0)
+        rig_root = axis_rotation("X", 10.0)
+        rig_child = mat_mul(rig_root, axis_rotation("Z", 20.0))
+
+        def bone(parent, canonical_rest, rig_rest, name):
+            return {
+                "parent": parent,
+                "rig_bone": name,
+                "canonical_rest_contract": {
+                    "basis_armature_local": canonical_rest,
+                },
+                "rig_rest_basis_armature_local": rig_rest,
+                "retarget_bind": {
+                    "canonical_to_rig_rotation_matrix": mat_mul(
+                        rig_rest,
+                        transpose(canonical_rest),
+                    ),
+                },
+            }
+
+        profile = {
+            "canonical_bones": {
+                "pelvis": bone(None, rest_root, rig_root, "Pelvis"),
+                "child": bone(
+                    "pelvis",
+                    rest_child,
+                    rig_child,
+                    "Child",
+                ),
+            }
+        }
+        canonical_pose = {
+            "pelvis": axis_rotation("Y", 12.0),
+            "child": mat_mul(
+                axis_rotation("Y", 12.0),
+                mat_mul(
+                    axis_rotation("Z", 20.0),
+                    axis_rotation("X", -8.0),
+                ),
+            ),
+        }
+        rig_pose, evidence = _rig_pose_from_canonical(
+            canonical_pose,
+            profile,
+            self.contract["thresholds"],
+        )
+        self.assertEqual(set(rig_pose), {"pelvis", "child"})
+        for item in evidence.values():
+            self.assertLess(item["canonical_roundtrip_error"], 1e-9)
+            self.assertLess(
+                item["hierarchy_reconstruction_error"],
+                1e-9,
+            )
 
     def test_parent_relative_rig_delta_reconstructs_absolute_basis(self) -> None:
         parent_rest = axis_rotation("Z", 10.0)

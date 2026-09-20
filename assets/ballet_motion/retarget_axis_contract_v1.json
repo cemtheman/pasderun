@@ -105,5 +105,25 @@
     "hierarchy_reconstruction_max_error": 0.00001,
     "arm_length_axis_alignment_min_dot": 0.99999,
     "rest_identity_max_error": 0.00001
+  },
+  "scalar_orientation_routes": {
+    "trunk_tilt_deg": {
+      "axis": "X",
+      "routes": [
+        {
+          "bone": "spine_lower",
+          "weight": 0.34
+        },
+        {
+          "bone": "spine_mid",
+          "weight": 0.33
+        },
+        {
+          "bone": "chest",
+          "weight": 0.33
+        }
+      ],
+      "semantics": "positive canonical trunk flexion distributed across axial chain"
+    }
   }
 }

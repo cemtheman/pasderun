@@ -206,6 +206,22 @@ def _joint_delta(
             angle *= side_factor
         result = mat_mul(result, axis_rotation(operation["axis"], angle))
 
+    for scalar_name, route in axis_contract.get(
+        "scalar_orientation_routes",
+        {},
+    ).items():
+        scalar_value = state.get("scalars", {}).get(scalar_name)
+        if scalar_value is None:
+            continue
+        for target in route["routes"]:
+            if target["bone"] != bone_name:
+                continue
+            angle = float(scalar_value) * float(target["weight"])
+            result = mat_mul(
+                result,
+                axis_rotation(route["axis"], angle),
+            )
+
     return result
 
 
@@ -493,12 +509,18 @@ def retarget_pose_solution(
             "contacts",
             "turnout",
             "knee_second_toe_error_deg",
-            "scalars",
             "com",
             "support_polygon",
         )
         if key in state
     }
+    translation_scalars = {
+        key: value
+        for key, value in state.get("scalars", {}).items()
+        if key != "trunk_tilt_deg"
+    }
+    if translation_scalars:
+        non_rotational["translation_contact_scalars"] = translation_scalars
 
     max_roundtrip = max(
         item["canonical_roundtrip_error"]
