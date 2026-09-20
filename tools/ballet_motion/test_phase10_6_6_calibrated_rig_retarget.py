@@ -11,6 +11,7 @@ from canonical_math import (
     transpose,
 )
 from calibrated_rig_retarget import (
+    _joint_delta,
     _rig_pose_from_canonical,
     _upper_limb_target_bases,
     validate_rest_identity,
@@ -98,6 +99,19 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         )
         self.assertIn('"scalar_orientation_routes"', self.retarget)
         self.assertIn('if key != "trunk_tilt_deg"', self.retarget)
+
+    def test_trunk_tilt_route_executes_for_axial_ball(self) -> None:
+        state = {"scalars": {"trunk_tilt_deg": 9.0}}
+        bone = {"joint_class": "axial_ball"}
+        delta = _joint_delta(
+            "spine_lower",
+            bone,
+            state,
+            self.contract,
+        )
+        self.assertGreater(matrix_max_error(delta, identity3()), 1e-6)
+        self.assertLess(orthogonality_error(delta), 1e-12)
+        self.assertAlmostEqual(determinant(delta), 1.0, places=12)
 
     def test_axis_rotation_is_proper_rotation(self) -> None:
         for axis in ("X", "Y", "Z"):

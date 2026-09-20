@@ -179,9 +179,10 @@ def _joint_delta(
     axis_contract: dict,
 ) -> list[list[float]]:
     joint_class = bone["joint_class"]
-    operations = axis_contract["lower_body_joint_axes"].get(joint_class)
-    if operations is None:
-        return identity3()
+    operations = axis_contract["lower_body_joint_axes"].get(
+        joint_class,
+        [],
+    )
 
     authored = state.get("joint_dofs", {}).get(bone_name, {})
     result = identity3()
