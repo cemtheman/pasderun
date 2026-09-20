@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "phase": "10.6.3",
+  "profile_id": "canonical_ballet_anatomical_constraints_v1",
+  "units": {
+    "angles": "degrees"
+  },
+  "conventions": {
+    "flexion_positive": true,
+    "extension_negative": true,
+    "abduction_positive": true,
+    "adduction_negative": true,
+    "external_rotation_positive": true,
+    "internal_rotation_negative": true,
+    "plantarflexion_positive": true,
+    "dorsiflexion_negative": true,
+    "inversion_positive": true,
+    "eversion_negative": true
+  },
+  "policy": {
+    "hard_limit_semantics": "mechanical solver envelope; requests outside are rejected",
+    "preferred_limit_semantics": "ballet working envelope; solver may enter hard-only zone only with explicit high-priority need",
+    "limits_are_population_model_not_personal_medical_measurement": true,
+    "no_joint_may_create_motion_on_an_undeclared_dof": true
+  },
+  "joint_limits": {
+    "root_6dof": {
+      "unbounded": true,
+      "dofs": {}
+    },
+    "axial_ball": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -25,
+            "max": 35
+          },
+          "preferred": {
+            "min": -15,
+            "max": 25
+          }
+        },
+        "lateral_flexion": {
+          "hard": {
+            "min": -30,
+            "max": 30
+          },
+          "preferred": {
+            "min": -18,
+            "max": 18
+          }
+        },
+        "axial_rotation": {
+          "hard": {
+            "min": -35,
+            "max": 35
+          },
+          "preferred": {
+            "min": -22,
+            "max": 22
+          }
+        }
+      }
+    },
+    "head_ball": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -50,
+            "max": 55
+          },
+          "preferred": {
+            "min": -30,
+            "max": 35
+          }
+        },
+        "lateral_flexion": {
+          "hard": {
+            "min": -45,
+            "max": 45
+          },
+          "preferred": {
+            "min": -25,
+            "max": 25
+          }
+        },
+        "axial_rotation": {
+          "hard": {
+            "min": -80,
+            "max": 80
+          },
+          "preferred": {
+            "min": -55,
+            "max": 55
+          }
+        }
+      }
+    },
+    "scapular_3dof": {
+      "dofs": {
+        "elevation_depression": {
+          "hard": {
+            "min": -25,
+            "max": 35
+          },
+          "preferred": {
+            "min": -18,
+            "max": 20
+          }
+        },
+        "protraction_retraction": {
+          "hard": {
+            "min": -30,
+            "max": 30
+          },
+          "preferred": {
+            "min": -20,
+            "max": 20
+          }
+        },
+        "upward_downward_rotation": {
+          "hard": {
+            "min": -35,
+            "max": 60
+          },
+          "preferred": {
+            "min": -20,
+            "max": 45
+          }
+        }
+      }
+    },
+    "shoulder_ball": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -50,
+            "max": 180
+          },
+          "preferred": {
+            "min": -30,
+            "max": 170
+          }
+        },
+        "abduction_adduction": {
+          "hard": {
+            "min": -50,
+            "max": 180
+          },
+          "preferred": {
+            "min": -30,
+            "max": 165
+          }
+        },
+        "internal_external_rotation": {
+          "hard": {
+            "min": -90,
+            "max": 100
+          },
+          "preferred": {
+            "min": -70,
+            "max": 85
+          }
+        }
+      }
+    },
+    "elbow_twist": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -5,
+            "max": 150
+          },
+          "preferred": {
+            "min": 0,
+            "max": 145
+          }
+        },
+        "pronation_supination": {
+          "hard": {
+            "min": -90,
+            "max": 95
+          },
+          "preferred": {
+            "min": -80,
+            "max": 85
+          }
+        }
+      }
+    },
+    "wrist_2dof": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -75,
+            "max": 75
+          },
+          "preferred": {
+            "min": -55,
+            "max": 55
+          }
+        },
+        "radial_ulnar_deviation": {
+          "hard": {
+            "min": -35,
+            "max": 30
+          },
+          "preferred": {
+            "min": -25,
+            "max": 20
+          }
+        }
+      }
+    },
+    "hip_ball": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -45,
+            "max": 140
+          },
+          "preferred": {
+            "min": -30,
+            "max": 125
+          }
+        },
+        "abduction_adduction": {
+          "hard": {
+            "min": -45,
+            "max": 50
+          },
+          "preferred": {
+            "min": -35,
+            "max": 40
+          }
+        },
+        "internal_external_rotation": {
+          "hard": {
+            "min": -45,
+            "max": 80
+          },
+          "preferred": {
+            "min": -30,
+            "max": 60
+          }
+        }
+      }
+    },
+    "knee_hinge": {
+      "dofs": {
+        "flexion_extension": {
+          "hard": {
+            "min": -5,
+            "max": 150
+          },
+          "preferred": {
+            "min": 0,
+            "max": 140
+          }
+        }
+      }
+    },
+    "ankle_2dof": {
+      "dofs": {
+        "plantar_dorsiflexion": {
+          "hard": {
+            "min": -25,
+            "max": 60
+          },
+          "preferred": {
+            "min": -20,
+            "max": 50
+          }
+        },
+        "inversion_eversion": {
+          "hard": {
+            "min": -25,
+            "max": 35
+          },
+          "preferred": {
+            "min": -15,
+            "max": 25
+          }
+        }
+      }
+    },
+    "mtp_hinge": {
+      "dofs": {
+        "toe_flexion_extension": {
+          "hard": {
+            "min": -30,
+            "max": 100
+          },
+          "preferred": {
+            "min": -15,
+            "max": 90
+          }
+        }
+      }
+    },
+    "reference": {
+      "unbounded": false,
+      "dofs": {}
+    }
+  },
+  "turnout_model": {
+    "external_rotation_sign": "positive",
+    "primary_authority": "hip_ball.internal_external_rotation",
+    "hip_external_rotation": {
+      "preferred_max_per_leg_deg": 60,
+      "hard_max_per_leg_deg": 80
+    },
+    "knee_axial_coupling": {
+      "solver_authority": "derived_only",
+      "independent_solver_dof": false,
+      "max_external_rotation_at_extension_deg": 5,
+      "max_external_rotation_at_90_flexion_deg": 18,
+      "interpolation": "linear_clamped_0_to_90_flexion",
+      "reason": "tibiofemoral axial contribution is flexion-dependent and must not become free turnout authority"
+    },
+    "ankle_foot": {
+      "independent_yaw_dof": false,
+      "turnout_generation_by_foot_yaw_forbidden": true,
+      "foot_contact_must_follow_upstream_chain": true,
+      "pronation_is_not_turnout_authority": true
+    },
+    "solver_priority": [
+      "preserve_contact_and_knee_alignment",
+      "use_hip_external_rotation",
+      "allow_limited_flexion_dependent_knee_coupling",
+      "preserve_ankle_foot_alignment"
+    ]
+  },
+  "coupling_constraints": {
+    "knee_second_toe_tracking": {
+      "enabled": true,
+      "reference": "knee center projected toward second-toe ray",
+      "preferred_angular_error_deg": 6,
+      "hard_angular_error_deg": 12
+    },
+    "shoulder_clavicle_coordination": {
+      "enabled": true,
+      "humeral_elevation_requires_clavicle_participation_above_deg": 70,
+      "clavicle_share_is_solver_coupled_not_fixed_ratio": true
+    },
+    "wrist_forearm_continuity": {
+      "enabled": true,
+      "hand_axial_roll_source": "forearm_pronation_supination_plus_retarget_bind",
+      "independent_hand_axial_roll_forbidden": true
+    }
+  },
+  "sources": [
+    {
+      "type": "research",
+      "pmid": "27015006",
+      "doi": "10.1080/02640414.2016.1164335",
+      "use": "multi-joint ballet turnout contribution model"
+    },
+    {
+      "type": "research",
+      "pmid": "28880595",
+      "doi": "10.7547/15-142",
+      "use": "lower-leg and foot contributions to turnout"
+    },
+    {
+      "type": "research",
+      "pmid": "9262883",
+      "doi": "10.1097/00042752-199707000-00004",
+      "use": "ballet hip and ankle ROM context"
+    },
+    {
+      "type": "research",
+      "pmid": "6555111",
+      "use": "elbow normative ROM context"
+    },
+    {
+      "type": "review",
+      "pmcid": "PMC6603670",
+      "use": "general adult joint ROM context"
+    }
+  ],
+  "notes": [
+    "These are conservative engine envelopes, not diagnostic or individualized medical limits.",
+    "Preferred ranges are intentionally narrower than hard limits.",
+    "Ballet turnout is solved as a coordinated chain, never as independent foot yaw."
+  ]
+}
