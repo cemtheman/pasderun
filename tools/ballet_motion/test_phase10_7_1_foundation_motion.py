@@ -1,0 +1,90 @@
+from __future__ import annotations
+
+import json
+import sys
+import unittest
+from pathlib import Path
+
+
+REPO = Path(__file__).resolve().parents[2]
+TOOLS = REPO / "tools" / "ballet_motion"
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
+import foundation_motion as motion  # noqa: E402
+
+
+class Phase1071FoundationMotionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.contract = json.loads(
+            (REPO / "assets" / "ballet_motion" / "foundation_motion_contract_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        cls.intents = json.loads(
+            (REPO / "assets" / "ballet_motion" / "foundation_pose_intents_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        cls.constraints = json.loads(
+            (REPO / "assets" / "ballet_motion" / "anatomical_constraints_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+    def test_contract_and_frame_range(self) -> None:
+        motion.validate_contract(self.contract)
+        self.assertEqual(motion.frame_end(self.contract), 61)
+        self.assertEqual(motion.normalized_time(1, self.contract), 0.0)
+        self.assertEqual(motion.normalized_time(61, self.contract), 1.0)
+
+    def test_role_progress_is_bounded_monotone_and_exact_at_endpoints(self) -> None:
+        previous = {role: 0.0 for role in motion.ROLE_ORDER}
+        for index in range(1001):
+            t = index / 1000.0
+            for role in motion.ROLE_ORDER:
+                value = motion.windowed_progress(
+                    t, self.contract["joint_windows"][role]
+                )
+                self.assertGreaterEqual(value, 0.0)
+                self.assertLessEqual(value, 1.0)
+                self.assertGreaterEqual(value + 1e-12, previous[role])
+                previous[role] = value
+
+        for role in motion.ROLE_ORDER:
+            self.assertEqual(
+                motion.windowed_progress(0.0, self.contract["joint_windows"][role]),
+                0.0,
+            )
+            self.assertEqual(
+                motion.windowed_progress(1.0, self.contract["joint_windows"][role]),
+                1.0,
+            )
+
+    def test_proximal_to_distal_window_order(self) -> None:
+        windows = self.contract["joint_windows"]
+        starts = [windows[role]["start"] for role in motion.ROLE_ORDER]
+        ends = [windows[role]["end"] for role in motion.ROLE_ORDER]
+        widths = [
+            windows[role]["end"] - windows[role]["start"]
+            for role in motion.ROLE_ORDER
+        ]
+        self.assertEqual(starts, sorted(starts))
+        self.assertEqual(ends, sorted(ends))
+        for proximal, distal in zip(widths, widths[1:]):
+            self.assertGreaterEqual(proximal, distal)
+
+    def test_semantic_proxy_never_leaves_preferred_envelope(self) -> None:
+        for index in range(101):
+            evidence = motion.semantic_dof_proxy(
+                index / 100.0,
+                self.contract,
+                self.intents,
+                self.constraints,
+            )
+            self.assertEqual(evidence["status"], "PASS")
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "phase": "10.7.1",
+  "contract_id": "foundation_motion_bras_bas_to_en_avant_v1",
+  "transition": {
+    "start_pose": "bras_bas",
+    "end_pose": "en_avant",
+    "duration_seconds": 2.0,
+    "fps": 30,
+    "frame_start": 1
+  },
+  "curve": {
+    "type": "MINIMUM_JERK",
+    "formula": "10t^3-15t^4+6t^5",
+    "overshoot_forbidden": true
+  },
+  "joint_windows": {
+    "shoulder": {"start": 0.0, "end": 0.90},
+    "elbow": {"start": 0.08, "end": 0.94},
+    "wrist": {"start": 0.18, "end": 0.98},
+    "fingers": {"start": 0.30, "end": 1.0}
+  },
+  "interpolation": {
+    "space": "LOCAL_MATRIX_BASIS",
+    "rotation": "QUATERNION_SHORTEST_ARC_SLERP",
+    "start_endpoint": "EXACT_PHASE_10_6_REALIZED_BRAS_BAS",
+    "end_endpoint": "EXACT_PHASE_10_6_REALIZED_EN_AVANT",
+    "moving_bone_translation": "LOCK_TO_START",
+    "moving_bone_scale": "LOCK_TO_START",
+    "locked_bones": "EXACT_START_MATRIX_BASIS"
+  },
+  "authority": {
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "endpoint_pose_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "actual_rig_hierarchy_authority": true,
+    "mannequin_motion_forbidden": true,
+    "parallel_motion_authority_forbidden": true,
+    "lower_body_contact_redesign_forbidden": true,
+    "hand_system_redesign_forbidden": true
+  },
+  "validation": {
+    "endpoint_local_matrix_error_max": 0.000001,
+    "locked_local_matrix_error_max": 0.0000001,
+    "locked_world_matrix_error_max": 0.000001,
+    "moving_translation_error_max": 0.0000001,
+    "moving_scale_error_max": 0.0000001,
+    "minimum_hand_mesh_side_offset": 0.0,
+    "minimum_elbow_opening_deg": 5.0,
+    "maximum_elbow_opening_deg": 179.0,
+    "minimum_consecutive_quaternion_dot": 0.0,
+    "sample_every_frame": true,
+    "wrist_axial_roll_gate": "PHASE_10_6_8_CANONICAL_WRIST_2DOF_RECONSTRUCTION",
+    "preferred_envelope_diagnostic": "ACCEPTED_ENDPOINTS_PLUS_MONOTONE_SEMANTIC_DOF_PROXY"
+  },
+  "preview": {
+    "views": ["FRONT", "THREE_QUARTER", "SIDE"],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_transition_only": true,
+    "glb_export_forbidden": true,
+    "opening_reverence_forbidden": true,
+    "final_reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_reaction_changes_forbidden": true,
+    "signature_move_forbidden": true,
+    "scoring_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
