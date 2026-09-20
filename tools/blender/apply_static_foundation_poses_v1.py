@@ -1304,7 +1304,7 @@ def realized_middle_fingertip_spacing(
     pose_entry: dict,
 ) -> dict:
     non_rot = pose_entry.get("non_rotational_pose_contract", {})
-    contract = non_rot.get("fingertip_spacing_contract")
+    contract = non_rot.get("hand_mesh_spacing_contract")
     if contract is None:
         return {"required": False, "status": "NOT_REQUIRED"}
 
@@ -1323,13 +1323,9 @@ def realized_middle_fingertip_spacing(
     minimum = float(contract["minimum_gap"])
     maximum = float(contract["maximum_gap"])
     crossed = gap < 0.0
-    passed = (
-        not crossed
-        and minimum - 1e-9 <= gap <= maximum + 1e-9
-    )
     return {
         "required": True,
-        "status": "PASS" if passed else "FAIL",
+        "status": "DIAGNOSTIC_ONLY",
         "left_middle_rig_bone": left_name,
         "right_middle_rig_bone": right_name,
         "left_middle_tip_body": {
@@ -1460,7 +1456,7 @@ def solve_hand_mesh_wrist_side(
     spacing = pose_entry.get(
         "non_rotational_pose_contract",
         {},
-    ).get("fingertip_spacing_contract")
+    ).get("hand_mesh_spacing_contract")
     if spacing is None:
         return {"required": False, "status": "NOT_REQUIRED"}
 
@@ -1685,7 +1681,7 @@ def realized_hand_mesh_centerline_spacing(
     inner_edge_quantile: float,
 ) -> dict:
     non_rot = pose_entry.get("non_rotational_pose_contract", {})
-    contract = non_rot.get("fingertip_spacing_contract")
+    contract = non_rot.get("hand_mesh_spacing_contract")
     if contract is None:
         return {"required": False, "status": "NOT_REQUIRED"}
 
@@ -2216,7 +2212,7 @@ def main() -> None:
             "releve_contact_realization": releve_realization,
             "contact_proof": proof,
             "contact_consistency": consistency,
-            "fingertip_spacing_realization": fingertip_spacing,
+            "middle_fingertip_diagnostic": fingertip_spacing,
             "hand_mesh_spacing_realization": hand_mesh_spacing,
             "hand_mesh_wrist_solution": hand_mesh_wrist_solution,
             "blender_pose_applied": True,
