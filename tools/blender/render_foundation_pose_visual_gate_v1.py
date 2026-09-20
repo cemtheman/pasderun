@@ -155,6 +155,15 @@ def validate_hand_axial_continuity(
             "reconstruction_matrix_error_max"
         ]
     )
+    comparison_tolerance_deg = float(
+        visual_contract["wrist_continuity"][
+            "limit_comparison_tolerance_deg"
+        ]
+    )
+    require(
+        0.0 <= comparison_tolerance_deg <= 0.001,
+        "Wrist limit comparison tolerance must remain <= 0.001 degree.",
+    )
     limits = constraints["joint_limits"]["wrist_2dof"]["dofs"]
     evidence = {}
 
@@ -182,9 +191,12 @@ def validate_hand_axial_continuity(
             minimum = float(preferred["min"])
             maximum = float(preferred["max"])
             require(
-                minimum <= value <= maximum,
+                minimum - comparison_tolerance_deg
+                <= value
+                <= maximum + comparison_tolerance_deg,
                 f"{hand_name}: {dof_name}={value:.6f} outside "
-                f"preferred [{minimum}, {maximum}].",
+                f"preferred [{minimum}, {maximum}] beyond "
+                f"numeric tolerance {comparison_tolerance_deg} deg.",
             )
 
         evidence[side] = {
@@ -201,6 +213,9 @@ def validate_hand_axial_continuity(
                 10,
             ),
             "preferred_envelope": "PASS",
+            "preferred_envelope_numeric_tolerance_deg": (
+                comparison_tolerance_deg
+            ),
             "independent_axial_wrist_rotation": "BLOCKED",
         }
 

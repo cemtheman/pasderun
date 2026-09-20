@@ -135,6 +135,28 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
 
+    def test_wrist_limit_comparison_tolerance_is_tight_and_explicit(self) -> None:
+        tolerance = self.contract["wrist_continuity"][
+            "limit_comparison_tolerance_deg"
+        ]
+        self.assertEqual(tolerance, 0.001)
+        self.assertIn(
+            '"limit_comparison_tolerance_deg"',
+            self.script,
+        )
+        self.assertIn(
+            "minimum - comparison_tolerance_deg",
+            self.script,
+        )
+        self.assertIn(
+            "maximum + comparison_tolerance_deg",
+            self.script,
+        )
+        self.assertIn(
+            "Wrist limit comparison tolerance must remain <= 0.001 degree.",
+            self.script,
+        )
+
     def test_hand_gate_runs_only_on_upper_body_foundation_poses(self) -> None:
         self.assertIn(
             'if pose_name in ("bras_bas", "en_avant", "second"):',

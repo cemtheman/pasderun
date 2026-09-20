@@ -40,6 +40,7 @@
     "local_dof_composition": "Rx(flexion_extension) then Rz(radial_ulnar_deviation)",
     "independent_axial_y_rotation_forbidden": true,
     "limit_source": "Phase 10.6.3 wrist_2dof preferred envelope",
+    "limit_comparison_tolerance_deg": 0.001,
     "reconstruction_matrix_error_max": 0.01
   },
   "visual_review_contract": {
