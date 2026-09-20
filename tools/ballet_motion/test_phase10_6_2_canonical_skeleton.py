@@ -146,6 +146,24 @@ class Phase1062CanonicalSkeletonTests(unittest.TestCase):
             self.wrapper,
         )
 
+    def test_missing_calibration_is_generated_automatically(self) -> None:
+        self.assertIn(
+            "run_ballet_rig_calibration_v1.ps1",
+            self.wrapper,
+        )
+        self.assertIn(
+            "generating prerequisite",
+            self.wrapper,
+        )
+        self.assertIn(
+            "& powershell -ExecutionPolicy Bypass -File $calibrationRunner -Repo $Repo",
+            self.wrapper,
+        )
+        self.assertIn(
+            "calibration did not produce expected profile",
+            self.wrapper,
+        )
+
     def test_windows_powershell_wrapper_is_ascii_only(self) -> None:
         self.assertTrue(
             all(ord(char) < 128 for char in self.wrapper),

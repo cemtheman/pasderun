@@ -14,7 +14,18 @@ $output = Join-Path $Repo "build\phase10_6\low_poly_girl_canonical_ballet_profil
 $script = Join-Path $Repo "tools\ballet_motion\build_canonical_ballet_profile_v1.py"
 
 if (-not (Test-Path $calibration)) {
-    throw "Phase 10.6.1 calibration profile missing. Run tools\blender\run_ballet_rig_calibration_v1.ps1 first."
+    $calibrationRunner = Join-Path $Repo "tools\blender\run_ballet_rig_calibration_v1.ps1"
+    if (-not (Test-Path $calibrationRunner)) {
+        throw "Phase 10.6.1 calibration runner missing: $calibrationRunner"
+    }
+
+    Write-Host "Phase 10.6.1 calibration profile missing; generating prerequisite..."
+    & powershell -ExecutionPolicy Bypass -File $calibrationRunner -Repo $Repo
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    if (-not (Test-Path $calibration)) {
+        throw "Phase 10.6.1 calibration did not produce expected profile: $calibration"
+    }
 }
 
 Write-Host "PHASE 10.6.2 - CANONICAL BALLET SKELETON"
