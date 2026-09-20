@@ -49,7 +49,8 @@
       "elbow line reads rounded rather than locked",
       "hand and forearm read continuous without flipped palm/axial break",
       "shoulders remain down and neck visually free",
-      "bras bas and en avant: wrist and hand endpoints may approach the centerline but must not cross or interpenetrate"
+      "bras bas and en avant: wrist and hand endpoints may approach the centerline but must not cross or interpenetrate",
+      "bras bas and en avant: calibrated Middle_L/Middle_R terminal fingertip references remain distinct with a small positive near-touch gap"
     ],
     "lower_body": [
       "fifth reads as crossed/closed rather than parallel stance",

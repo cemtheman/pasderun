@@ -98,6 +98,11 @@ def _canonical_dimensions(canonical_profile: dict) -> dict:
         bones["left_hand"]["length"],
         bones["right_hand"]["length"],
     )
+    middle = _average(
+        bones["left_middle"]["length"],
+        bones["right_middle"]["length"],
+    )
+    hand_middle_chain = hand + middle
     foot = _average(
         float(bones["left_foot"]["length"]) + float(bones["left_toes"]["length"]),
         float(bones["right_foot"]["length"]) + float(bones["right_toes"]["length"]),
@@ -116,6 +121,8 @@ def _canonical_dimensions(canonical_profile: dict) -> dict:
         "upper_arm": upper_arm,
         "forearm": forearm,
         "hand": hand,
+        "middle": middle,
+        "hand_middle_chain": hand_middle_chain,
         "foot": foot,
         "body_height": body_height,
     }
@@ -360,6 +367,32 @@ def _two_bone_elbow(
     )
 
 
+def _fingertip_spacing_contract(
+    intent: dict,
+    dimensions: dict,
+) -> dict | None:
+    spec = intent.get("fingertip_gap_chain_fraction")
+    if spec is None:
+        return None
+
+    minimum_fraction = float(spec["min"])
+    maximum_fraction = float(spec["max"])
+    if not 0.0 < minimum_fraction < maximum_fraction:
+        raise PoseSolveRejected(
+            "Fingertip gap fractions must satisfy 0 < min < max."
+        )
+
+    scale_length = float(dimensions["hand_middle_chain"])
+    return {
+        "scale_basis": "average_hand_plus_middle_chain_length",
+        "scale_length": scale_length,
+        "minimum_fraction": minimum_fraction,
+        "maximum_fraction": maximum_fraction,
+        "minimum_gap": scale_length * minimum_fraction,
+        "maximum_gap": scale_length * maximum_fraction,
+    }
+
+
 def _arm_geometry(
     pose_name: str,
     intent: dict,
@@ -369,6 +402,11 @@ def _arm_geometry(
     upper_arm = dimensions["upper_arm"]
     forearm = dimensions["forearm"]
     hand_length = dimensions["hand"]
+    middle_length = dimensions["middle"]
+    fingertip_contract = _fingertip_spacing_contract(
+        intent,
+        dimensions,
+    )
     shoulder_half = dimensions["shoulder_half_width"]
     shoulder_up = dimensions["shoulder_up"]
     shoulder_front = dimensions["shoulder_front"]
@@ -409,7 +447,13 @@ def _arm_geometry(
         ]
 
         if side == "right":
-            for joint in ("shoulder", "elbow", "wrist", "hand"):
+            for joint in (
+                "shoulder",
+                "elbow",
+                "wrist",
+                "hand",
+                "middle_tip",
+            ):
                 source = landmarks[f"left_{joint}"]
                 landmarks[f"right_{joint}"] = _body_point(
                     -float(source["left"]),
@@ -451,7 +495,11 @@ def _arm_geometry(
             ]
         )
         centerline_policy = intent.get("centerline_hand_policy")
-        if centerline_policy not in (None, "TOUCH_NOT_CROSS"):
+        if centerline_policy not in (
+            None,
+            "TOUCH_NOT_CROSS",
+            "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+        ):
             raise PoseSolveRejected(
                 f"{pose_name}: unknown centerline hand policy "
                 f"{centerline_policy!r}."
@@ -466,10 +514,10 @@ def _arm_geometry(
         if wrist_constraints["minimum_front"] is None:
             wrist_constraints["minimum_front"] = wrist_front_min
 
-        wrist = None
-        elbow = None
-        hand = None
-        for direction in _candidate_unit_directions(preferred_direction):
+        ranked_candidates = []
+        for order_index, direction in enumerate(
+            _candidate_unit_directions(preferred_direction)
+        ):
             candidate_wrist = _add(
                 shoulder,
                 _scale(direction, wrist_distance),
@@ -484,12 +532,66 @@ def _arm_geometry(
                 candidate_wrist,
                 _scale(hand_direction, hand_length),
             )
-            if centerline_policy == "TOUCH_NOT_CROSS":
+            candidate_middle_tip = _add(
+                candidate_hand,
+                _scale(hand_direction, middle_length),
+            )
+
+            if centerline_policy in (
+                "TOUCH_NOT_CROSS",
+                "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+            ):
                 if sign * float(candidate_wrist[0]) < -1e-9:
                     continue
                 if sign * float(candidate_hand[0]) < -1e-9:
                     continue
 
+            fingertip_gap = None
+            if centerline_policy == "FINGERTIP_NEAR_TOUCH_NOT_CROSS":
+                if fingertip_contract is None:
+                    raise PoseSolveRejected(
+                        f"{pose_name}: fingertip gap contract missing."
+                    )
+                side_tip_offset = sign * float(candidate_middle_tip[0])
+                if side_tip_offset < 0.0:
+                    continue
+                fingertip_gap = 2.0 * side_tip_offset
+                if (
+                    fingertip_gap
+                    < float(fingertip_contract["minimum_gap"]) - 1e-9
+                    or fingertip_gap
+                    > float(fingertip_contract["maximum_gap"]) + 1e-9
+                ):
+                    continue
+                rank_key = (
+                    fingertip_gap,
+                    -_dot(direction, preferred_direction),
+                    order_index,
+                )
+            else:
+                rank_key = (float(order_index),)
+
+            ranked_candidates.append(
+                (
+                    rank_key,
+                    candidate_wrist,
+                    candidate_hand,
+                    candidate_middle_tip,
+                )
+            )
+
+        ranked_candidates.sort(key=lambda item: item[0])
+
+        wrist = None
+        elbow = None
+        hand = None
+        middle_tip = None
+        for (
+            _rank_key,
+            candidate_wrist,
+            candidate_hand,
+            candidate_middle_tip,
+        ) in ranked_candidates:
             elbow_constraints = _arm_elbow_constraints(
                 pose_name,
                 side,
@@ -497,8 +599,6 @@ def _arm_geometry(
                 candidate_wrist,
                 grammar,
             )
-            # Grammar owns the hard anterior boundary. Semantic intent only
-            # ranks candidate directions and must not tighten grammar.
             if elbow_constraints["minimum_front"] is None:
                 elbow_constraints["minimum_front"] = elbow_front_min
 
@@ -517,18 +617,25 @@ def _arm_geometry(
             wrist = candidate_wrist
             elbow = candidate_elbow
             hand = candidate_hand
+            middle_tip = candidate_middle_tip
             break
 
-        if wrist is None or elbow is None or hand is None:
+        if (
+            wrist is None
+            or elbow is None
+            or hand is None
+            or middle_tip is None
+        ):
             raise PoseSolveRejected(
-                f"{pose_name}/{side}: no wrist/elbow/hand solution "
-                "satisfies grammar and centerline policy."
+                f"{pose_name}/{side}: no wrist/elbow/hand/fingertip "
+                "solution satisfies grammar and centerline policy."
             )
 
         landmarks[f"{side}_shoulder"] = _body_point(*shoulder)
         landmarks[f"{side}_elbow"] = _body_point(*elbow)
         landmarks[f"{side}_wrist"] = _body_point(*wrist)
         landmarks[f"{side}_hand"] = _body_point(*hand)
+        landmarks[f"{side}_middle_tip"] = _body_point(*middle_tip)
 
     return landmarks
 
@@ -744,6 +851,12 @@ def solve_pose(
             ),
             "joint_dofs": _joint_dofs_for_arm_pose(intent),
         }
+        fingertip_contract = _fingertip_spacing_contract(
+            intent,
+            dimensions,
+        )
+        if fingertip_contract is not None:
+            state["fingertip_spacing_contract"] = fingertip_contract
     elif pose_name == "fifth":
         state = _solve_fifth(intent, dimensions)
     elif pose_name == "plie":
@@ -792,6 +905,24 @@ def solve_pose(
                 f"{pose_name}: arm segment length error {maximum_error}."
             )
         evidence["arm_segment_lengths"] = arm_lengths
+        if "fingertip_spacing_contract" in state:
+            left_tip = state["landmarks"]["left_middle_tip"]
+            right_tip = state["landmarks"]["right_middle_tip"]
+            gap = float(left_tip["left"]) - float(right_tip["left"])
+            contract = state["fingertip_spacing_contract"]
+            if not (
+                float(contract["minimum_gap"]) - 1e-9
+                <= gap
+                <= float(contract["maximum_gap"]) + 1e-9
+            ):
+                raise PoseSolveRejected(
+                    f"{pose_name}: solved fingertip gap {gap} outside "
+                    f"[{contract['minimum_gap']}, {contract['maximum_gap']}]."
+                )
+            evidence["fingertip_spacing"] = {
+                "gap": gap,
+                "status": "PASS",
+            }
 
     return {
         "pose": pose_name,

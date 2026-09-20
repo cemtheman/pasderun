@@ -1286,6 +1286,68 @@ def contact_errors(
     }
 
 
+def armature_point_to_body(
+    point: Vector,
+    canonical: dict,
+) -> dict:
+    frame = canonical["body_frame"]["declared_axes_armature_local"]
+    return {
+        "left": float(point.dot(Vector(frame["left"]).normalized())),
+        "up": float(point.dot(Vector(frame["up"]).normalized())),
+        "front": float(point.dot(Vector(frame["front"]).normalized())),
+    }
+
+
+def realized_middle_fingertip_spacing(
+    armature: bpy.types.Object,
+    canonical: dict,
+    pose_entry: dict,
+) -> dict:
+    non_rot = pose_entry.get("non_rotational_pose_contract", {})
+    contract = non_rot.get("fingertip_spacing_contract")
+    if contract is None:
+        return {"required": False, "status": "NOT_REQUIRED"}
+
+    left_name = canonical["canonical_bones"]["left_middle"]["rig_bone"]
+    right_name = canonical["canonical_bones"]["right_middle"]["rig_bone"]
+    bpy.context.view_layer.update()
+    left_tip = armature_point_to_body(
+        Vector(armature.pose.bones[left_name].tail),
+        canonical,
+    )
+    right_tip = armature_point_to_body(
+        Vector(armature.pose.bones[right_name].tail),
+        canonical,
+    )
+    gap = float(left_tip["left"]) - float(right_tip["left"])
+    minimum = float(contract["minimum_gap"])
+    maximum = float(contract["maximum_gap"])
+    crossed = gap < 0.0
+    passed = (
+        not crossed
+        and minimum - 1e-9 <= gap <= maximum + 1e-9
+    )
+    return {
+        "required": True,
+        "status": "PASS" if passed else "FAIL",
+        "left_middle_rig_bone": left_name,
+        "right_middle_rig_bone": right_name,
+        "left_middle_tip_body": {
+            key: round(value, 8)
+            for key, value in left_tip.items()
+        },
+        "right_middle_tip_body": {
+            key: round(value, 8)
+            for key, value in right_tip.items()
+        },
+        "fingertip_gap": round(gap, 8),
+        "fingertips_crossed": crossed,
+        "minimum_allowed_gap": round(minimum, 8),
+        "maximum_allowed_gap": round(maximum, 8),
+        "scale_basis": contract["scale_basis"],
+    }
+
+
 def body_metrics(canonical: dict) -> dict:
     bones = canonical["canonical_bones"]
     foot_length = sum(
@@ -1552,6 +1614,19 @@ def main() -> None:
             )
 
         consistency = {}
+        fingertip_spacing = {}
+        if pose_name in ("bras_bas", "en_avant"):
+            fingertip_spacing = realized_middle_fingertip_spacing(
+                armature,
+                canonical,
+                pose_entry,
+            )
+            require(
+                fingertip_spacing["status"] == "PASS",
+                f"{pose_name}: realized Middle_L/Middle_R fingertip "
+                f"spacing failed: {fingertip_spacing}.",
+            )
+            consistency["fingertip_spacing"] = fingertip_spacing
 
         if pose_name == "fifth":
             max_shift = (
@@ -1711,6 +1786,7 @@ def main() -> None:
             "releve_contact_realization": releve_realization,
             "contact_proof": proof,
             "contact_consistency": consistency,
+            "fingertip_spacing_realization": fingertip_spacing,
             "blender_pose_applied": True,
             "rendered": False,
         }
@@ -1758,6 +1834,7 @@ def main() -> None:
             "releve_plantar_contact_realization_pass": True,
             "releve_plantar_toe_contact_realization_pass": True,
             "releve_heel_lift_consistency_pass": True,
+            "fingertip_centerline_spacing_pass": True,
             "blender_application_performed": True,
             "render_performed": False,
             "animation_performed": False,
@@ -1778,6 +1855,7 @@ def main() -> None:
     print("PLIE_ROOT_DESCENT=PASS")
     print("RELEVE_PLANTAR_CONTACT_REALIZATION=PASS")
     print("RELEVE_HEEL_LIFT=PASS")
+    print("FINGERTIP_CENTERLINE_SPACING=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

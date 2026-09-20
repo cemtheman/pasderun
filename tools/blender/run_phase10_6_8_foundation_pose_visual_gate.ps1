@@ -120,6 +120,9 @@ if (-not $data.automated_gate.mesh_contact_pass) {
 if (-not $data.automated_gate.upper_body_hand_axial_continuity_pass) {
     throw "Hand axial continuity gate failed."
 }
+if (-not $data.automated_gate.fingertip_centerline_spacing_pass) {
+    throw "Fingertip centerline spacing gate failed."
+}
 if ($data.automated_gate.animation_rendered) {
     throw "Animation is forbidden in Phase 10.6.8."
 }
@@ -137,6 +140,7 @@ Write-Host ""
 Write-Host "PHASE 10.6.8 FOUNDATION POSE VISUAL GATE READY"
 Write-Host "Renders:          18/18"
 Write-Host "Hand continuity:  PASS"
+Write-Host "Fingertip spacing: PASS"
 Write-Host "Static contact:   PASS"
 Write-Host "Human review:     PENDING"
 Write-Host "Contact sheet:    $output"

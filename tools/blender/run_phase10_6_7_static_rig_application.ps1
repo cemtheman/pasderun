@@ -124,6 +124,9 @@ if (-not $data.gate.releve_plantar_toe_contact_realization_pass) {
 if (-not $data.gate.releve_heel_lift_consistency_pass) {
     throw "Releve heel-lift gate failed."
 }
+if (-not $data.gate.fingertip_centerline_spacing_pass) {
+    throw "Fingertip centerline spacing gate failed."
+}
 if (-not $data.gate.blender_application_performed) {
     throw "Blender pose application did not occur."
 }
@@ -147,5 +150,6 @@ Write-Host "Plie root descent: PASS"
 Write-Host "Releve plantar:    PASS"
 Write-Host "Releve plantar+toe: PASS"
 Write-Host "Releve heel lift:  PASS"
+Write-Host "Fingertip spacing: PASS"
 Write-Host "Render/animation/export: NOT PERFORMED"
 Write-Host "Report: $output"

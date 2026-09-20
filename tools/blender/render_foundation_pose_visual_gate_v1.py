@@ -635,12 +635,26 @@ def realize_pose(
             f"{runtime['contact_tolerance']}.",
         )
 
+    fingertip_spacing = {}
+    if pose_name in ("bras_bas", "en_avant"):
+        fingertip_spacing = static_core.realized_middle_fingertip_spacing(
+            armature,
+            canonical,
+            pose_entry,
+        )
+        require(
+            fingertip_spacing["status"] == "PASS",
+            f"{pose_name}: realized middle-fingertip spacing failed "
+            f"before render: {fingertip_spacing}.",
+        )
+
     return {
         "root_up_shift": round(float(shift), 8),
         "contact_mode": mode,
         "contact": contact,
         "full_foot_orientation": orientation,
         "releve_realization": releve,
+        "fingertip_spacing": fingertip_spacing,
     }
 
 
@@ -833,6 +847,7 @@ def main() -> None:
             "static_realization_pass": True,
             "mesh_contact_pass": True,
             "upper_body_hand_axial_continuity_pass": True,
+            "fingertip_centerline_spacing_pass": True,
             "render_count_pass": True,
             "animation_rendered": False,
             "glb_exported": False,
@@ -857,6 +872,7 @@ def main() -> None:
     print("VIEWS_PER_POSE=3")
     print("RENDERS=18")
     print("HAND_AXIAL_CONTINUITY=PASS")
+    print("FINGERTIP_CENTERLINE_SPACING=PASS")
     print("STATIC_CONTACT_REALIZATION=PASS")
     print("ANIMATION=NOT_PERFORMED")
     print("GLB_EXPORT=NOT_PERFORMED")

@@ -775,6 +775,7 @@ def retarget_pose_solution(
             "knee_second_toe_error_deg",
             "com",
             "support_polygon",
+            "fingertip_spacing_contract",
         )
         if key in state
     }

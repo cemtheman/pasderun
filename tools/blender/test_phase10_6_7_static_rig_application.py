@@ -261,6 +261,36 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn("coarse_step_deg", self.script)
         self.assertIn("refine_steps_deg", self.script)
 
+    def test_bras_bas_and_en_avant_use_real_middle_bone_tail_spacing(self) -> None:
+        self.assertIn(
+            "def realized_middle_fingertip_spacing(",
+            self.script,
+        )
+        self.assertIn(
+            'canonical["canonical_bones"]["left_middle"]["rig_bone"]',
+            self.script,
+        )
+        self.assertIn(
+            'canonical["canonical_bones"]["right_middle"]["rig_bone"]',
+            self.script,
+        )
+        self.assertIn(
+            "armature.pose.bones[left_name].tail",
+            self.script,
+        )
+        self.assertIn(
+            "armature.pose.bones[right_name].tail",
+            self.script,
+        )
+        self.assertIn(
+            'pose_name in ("bras_bas", "en_avant")',
+            self.script,
+        )
+        self.assertIn(
+            '"fingertip_centerline_spacing_pass": True',
+            self.script,
+        )
+
     def test_contact_fix_does_not_relax_existing_contact_tolerance(self) -> None:
         self.assertEqual(
             self.contract["proof_thresholds"][
@@ -495,6 +525,16 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertIn(
             "Releve plantar+toe/contact realization gate failed.",
+            self.wrapper,
+        )
+
+    def test_wrapper_requires_fingertip_spacing_gate(self) -> None:
+        self.assertIn(
+            "$data.gate.fingertip_centerline_spacing_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Fingertip centerline spacing gate failed.",
             self.wrapper,
         )
 

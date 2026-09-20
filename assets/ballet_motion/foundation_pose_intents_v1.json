@@ -10,7 +10,7 @@
     "rig_retarget_forbidden_in_this_phase": true,
     "render_forbidden_in_this_phase": true,
     "animation_forbidden_in_this_phase": true,
-    "arm_centerline_policy": "bras_bas and en_avant may approach or touch the centerline, but wrist and hand endpoints may not cross it"
+    "arm_centerline_policy": "bras_bas and en_avant use calibrated middle-fingertip references; wrists/hands do not cross and middle fingertips keep a small positive scale-relative gap"
   },
   "poses": {
     "bras_bas": {
@@ -46,7 +46,11 @@
           "radial_ulnar_deviation": 0
         }
       },
-      "centerline_hand_policy": "TOUCH_NOT_CROSS"
+      "centerline_hand_policy": "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+      "fingertip_gap_chain_fraction": {
+        "min": 0.03,
+        "max": 0.1
+      }
     },
     "en_avant": {
       "kind": "symmetric_arm_chain",
@@ -81,7 +85,11 @@
           "radial_ulnar_deviation": 0
         }
       },
-      "centerline_hand_policy": "TOUCH_NOT_CROSS"
+      "centerline_hand_policy": "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+      "fingertip_gap_chain_fraction": {
+        "min": 0.03,
+        "max": 0.1
+      }
     },
     "second": {
       "kind": "symmetric_arm_chain",

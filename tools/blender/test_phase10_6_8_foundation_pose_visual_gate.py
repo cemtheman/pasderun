@@ -212,6 +212,20 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
 
+    def test_middle_fingertip_spacing_is_realized_before_render(self) -> None:
+        self.assertIn(
+            "static_core.realized_middle_fingertip_spacing(",
+            self.script,
+        )
+        self.assertIn(
+            "realized middle-fingertip spacing failed before render",
+            self.script,
+        )
+        self.assertIn(
+            '"fingertip_centerline_spacing_pass": True',
+            self.script,
+        )
+
     def test_render_count_is_exactly_eighteen(self) -> None:
         self.assertIn(
             '"render_count": len(pose_names) * len(view_names)',
@@ -303,6 +317,16 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
         )
         self.assertIn(
             "--python-exit-code 1",
+            self.wrapper,
+        )
+
+    def test_wrapper_requires_fingertip_spacing_gate(self) -> None:
+        self.assertIn(
+            "$data.automated_gate.fingertip_centerline_spacing_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Fingertip centerline spacing gate failed.",
             self.wrapper,
         )
 

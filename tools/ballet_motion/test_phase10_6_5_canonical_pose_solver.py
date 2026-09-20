@@ -32,6 +32,8 @@ def synthetic_canonical_profile(canonical_spec: dict) -> dict:
         "right_forearm": 0.28,
         "left_hand": 0.10,
         "right_hand": 0.10,
+        "left_middle": 0.06,
+        "right_middle": 0.06,
         "left_foot": 0.22,
         "right_foot": 0.22,
         "left_toes": 0.10,
@@ -254,6 +256,55 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                     sign * float(landmarks[f"{side}_hand"]["left"]),
                     -1e-9,
                 )
+
+    def test_bras_bas_and_en_avant_use_scale_relative_middle_fingertip_gap(self) -> None:
+        for pose in ("bras_bas", "en_avant"):
+            result = solve_pose(
+                pose,
+                self.intents,
+                self.grammar,
+                self.canonical,
+                self.constraints,
+            )
+            state = result["state"]
+            contract = state["fingertip_spacing_contract"]
+            self.assertEqual(
+                contract["scale_basis"],
+                "average_hand_plus_middle_chain_length",
+            )
+            left_tip = state["landmarks"]["left_middle_tip"]
+            right_tip = state["landmarks"]["right_middle_tip"]
+            gap = float(left_tip["left"]) - float(right_tip["left"])
+            self.assertGreater(gap, 0.0)
+            self.assertGreaterEqual(gap + 1e-9, contract["minimum_gap"])
+            self.assertLessEqual(gap, contract["maximum_gap"] + 1e-9)
+            self.assertEqual(
+                result["evidence"]["fingertip_spacing"]["status"],
+                "PASS",
+            )
+
+    def test_middle_reference_is_not_an_articulated_finger_dof(self) -> None:
+        result = solve_pose(
+            "bras_bas",
+            self.intents,
+            self.grammar,
+            self.canonical,
+            self.constraints,
+        )
+        self.assertNotIn("left_middle", result["state"]["joint_dofs"])
+        self.assertNotIn("right_middle", result["state"]["joint_dofs"])
+        self.assertIn("left_middle_tip", result["state"]["landmarks"])
+        self.assertIn("right_middle_tip", result["state"]["landmarks"])
+
+    def test_second_has_no_fingertip_near_touch_contract(self) -> None:
+        result = solve_pose(
+            "second",
+            self.intents,
+            self.grammar,
+            self.canonical,
+            self.constraints,
+        )
+        self.assertNotIn("fingertip_spacing_contract", result["state"])
 
     def test_plie_travel_is_moderate_not_deep_crossing_setup(self) -> None:
         plie = self.intents["poses"]["plie"]
