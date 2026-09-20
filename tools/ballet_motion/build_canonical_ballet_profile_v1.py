@@ -20,6 +20,7 @@ from canonical_math import (
     matrix_from_columns,
     normalize,
     orthogonality_error,
+    orthonormalize_basis,
     project_orthogonal,
     rotation_matrix_to_quaternion_wxyz,
     rounded_matrix,
@@ -202,10 +203,10 @@ def build_bone_entry(
         spec_bone["secondary_axis"],
         frame,
     )
-    rig = rig_rest_basis(calibration_bone)
+    raw_rig = rig_rest_basis(calibration_bone)
 
     canonical_error = orthogonality_error(canonical)
-    rig_error = orthogonality_error(rig)
+    raw_rig_error = orthogonality_error(raw_rig)
     require(
         canonical_error <= float(
             thresholds["canonical_basis_orthogonality_max_error"]
@@ -213,10 +214,22 @@ def build_bone_entry(
         f"{name}: canonical basis orthogonality error {canonical_error}.",
     )
     require(
+        raw_rig_error <= float(
+            thresholds["raw_rig_basis_serialization_error_max"]
+        ),
+        f"{name}: raw rig basis error {raw_rig_error} exceeds "
+        "serialization tolerance.",
+    )
+
+    # Phase 10.6.1 serializes rest axes to decimal JSON. Repair only that
+    # tiny numeric drift before constructing the exact retarget bind.
+    rig = orthonormalize_basis(raw_rig)
+    rig_error = orthogonality_error(rig)
+    require(
         rig_error <= float(
             thresholds["bind_rotation_orthogonality_max_error"]
         ),
-        f"{name}: rig rest basis orthogonality error {rig_error}.",
+        f"{name}: repaired rig rest basis orthogonality error {rig_error}.",
     )
 
     canonical_to_rig = mat_mul(rig, transpose(canonical))
@@ -275,7 +288,13 @@ def build_bone_entry(
             "canonical_basis_orthogonality_error": round(
                 canonical_error, 10
             ),
-            "rig_basis_orthogonality_error": round(rig_error, 10),
+            "raw_rig_basis_orthogonality_error": round(
+                raw_rig_error, 10
+            ),
+            "rig_basis_orthogonality_error_after_repair": round(
+                rig_error, 10
+            ),
+            "rig_basis_repaired_from_serialized_axes": True,
         },
     }
 

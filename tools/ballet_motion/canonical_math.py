@@ -86,6 +86,19 @@ def matrix_from_columns(x: Vector3, y: Vector3, z: Vector3) -> Matrix3:
     ]
 
 
+def orthonormalize_basis(matrix: Matrix3) -> Matrix3:
+    """Repair tiny serialization drift while preserving bone length axis Y."""
+    y_axis = normalize([matrix[row][1] for row in range(3)])
+    z_seed = [matrix[row][2] for row in range(3)]
+    z_axis = normalize(project_orthogonal(z_seed, y_axis))
+    x_axis = normalize(cross(y_axis, z_axis))
+    z_axis = normalize(cross(x_axis, y_axis))
+    result = matrix_from_columns(x_axis, y_axis, z_axis)
+    if determinant(result) <= 0.0:
+        raise ValueError("Orthonormalized basis is not right-handed.")
+    return result
+
+
 def determinant(matrix: Matrix3) -> float:
     a, b, c = matrix[0]
     d, e, f = matrix[1]

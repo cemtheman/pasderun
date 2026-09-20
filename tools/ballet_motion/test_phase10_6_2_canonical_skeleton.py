@@ -7,6 +7,7 @@ from canonical_math import (
     mat_mul,
     matrix_from_columns,
     orthogonality_error,
+    orthonormalize_basis,
     rotation_matrix_to_quaternion_wxyz,
     transpose,
 )
@@ -112,6 +113,37 @@ class Phase1062CanonicalSkeletonTests(unittest.TestCase):
             "canonical_to_rig = mat_mul(rig, transpose(canonical))"
         )
         self.assertLess(rig_check, bind_build)
+
+    def test_small_serialization_drift_is_repaired_not_ignored(self) -> None:
+        raw = [
+            [1.0, 0.000011, 0.0],
+            [0.0, 1.0, 0.000009],
+            [0.0, 0.0, 1.0],
+        ]
+        self.assertGreater(orthogonality_error(raw), 1e-5)
+        repaired = orthonormalize_basis(raw)
+        self.assertLess(orthogonality_error(repaired), 1e-12)
+        self.assertAlmostEqual(determinant(repaired), 1.0, places=9)
+        self.assertIn(
+            "raw_rig_basis_serialization_error_max",
+            self.spec["validator_foundation"],
+        )
+        self.assertIn(
+            "raw rig basis error",
+            self.builder,
+        )
+        self.assertIn(
+            "orthonormalize_basis(raw_rig)",
+            self.builder,
+        )
+        self.assertIn(
+            '"raw_rig_basis_orthogonality_error"',
+            self.builder,
+        )
+        self.assertIn(
+            '"rig_basis_repaired_from_serialized_axes": True',
+            self.builder,
+        )
 
     def test_source_glb_sha_must_match_calibration(self) -> None:
         self.assertIn("actual_sha = sha256_file(source_path)", self.builder)

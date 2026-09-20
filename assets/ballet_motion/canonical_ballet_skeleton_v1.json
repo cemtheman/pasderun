@@ -335,6 +335,7 @@
       "support_polygon_com",
       "contact",
       "palm_orientation_continuity"
-    ]
+    ],
+    "raw_rig_basis_serialization_error_max": 0.00005
   }
 }
