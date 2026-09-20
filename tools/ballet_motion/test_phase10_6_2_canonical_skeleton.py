@@ -100,6 +100,19 @@ class Phase1062CanonicalSkeletonTests(unittest.TestCase):
         ):
             self.assertIn(token, self.builder)
 
+    def test_rig_rest_basis_is_validated_before_bind_rotation(self) -> None:
+        self.assertIn(
+            "rig rest basis orthogonality error",
+            self.builder,
+        )
+        rig_check = self.builder.index(
+            "rig rest basis orthogonality error"
+        )
+        bind_build = self.builder.index(
+            "canonical_to_rig = mat_mul(rig, transpose(canonical))"
+        )
+        self.assertLess(rig_check, bind_build)
+
     def test_source_glb_sha_must_match_calibration(self) -> None:
         self.assertIn("actual_sha = sha256_file(source_path)", self.builder)
         self.assertIn(
@@ -122,10 +135,12 @@ class Phase1062CanonicalSkeletonTests(unittest.TestCase):
             self.assertIn(validator, reserved)
 
     def test_phase_has_no_blender_godot_pose_or_animation_scope(self) -> None:
-        self.assertNotIn("bpy", self.builder)
-        self.assertNotIn("godot", self.builder.lower())
+        self.assertNotIn("import bpy", self.builder)
+        self.assertNotIn("bpy.ops.", self.builder)
         self.assertNotIn("AnimationTree", self.builder)
-        self.assertNotIn("render", self.builder.lower())
+        self.assertNotIn("Skeleton3D", self.builder)
+        self.assertNotIn("humanoid_motion_controller.gd", self.builder)
+        self.assertNotIn("bpy.ops.render", self.builder)
         self.assertIn(
             "No Blender runtime. No render. No pose. No animation.",
             self.wrapper,

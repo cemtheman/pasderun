@@ -207,8 +207,16 @@ def build_bone_entry(
     canonical_error = orthogonality_error(canonical)
     rig_error = orthogonality_error(rig)
     require(
-        canonical_error <= float(thresholds["canonical_basis_orthogonality_max_error"]),
+        canonical_error <= float(
+            thresholds["canonical_basis_orthogonality_max_error"]
+        ),
         f"{name}: canonical basis orthogonality error {canonical_error}.",
+    )
+    require(
+        rig_error <= float(
+            thresholds["bind_rotation_orthogonality_max_error"]
+        ),
+        f"{name}: rig rest basis orthogonality error {rig_error}.",
     )
 
     canonical_to_rig = mat_mul(rig, transpose(canonical))
