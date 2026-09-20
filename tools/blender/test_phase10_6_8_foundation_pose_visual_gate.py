@@ -217,10 +217,17 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             "static_core.realized_middle_fingertip_spacing(",
             self.script,
         )
-        normalized_script = " ".join(self.script.split())
         self.assertIn(
-            "realized middle-fingertip spacing failed before render",
-            normalized_script,
+            'fingertip_spacing["status"] == "PASS"',
+            self.script,
+        )
+        self.assertIn(
+            "realized middle-fingertip spacing failed",
+            self.script,
+        )
+        self.assertIn(
+            "before render:",
+            self.script,
         )
         self.assertIn(
             '"fingertip_centerline_spacing_pass": True',
