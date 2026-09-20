@@ -311,6 +311,16 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         )
         self.assertIn("retarget prerequisite", self.wrapper)
 
+    def test_wrapper_requires_releve_plantar_realization_gate(self) -> None:
+        self.assertIn(
+            "$data.gate.releve_plantar_contact_realization_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "Releve plantar/contact realization gate failed.",
+            self.wrapper,
+        )
+
     def test_windows_powershell_wrapper_is_ascii_only(self) -> None:
         self.assertTrue(
             all(ord(char) < 128 for char in self.wrapper),

@@ -91,6 +91,9 @@ if (-not $data.gate.forefoot_contact_pass) {
 if (-not $data.gate.plie_root_descent_consistency_pass) {
     throw "Plie root-descent gate failed."
 }
+if (-not $data.gate.releve_plantar_contact_realization_pass) {
+    throw "Releve plantar/contact realization gate failed."
+}
 if (-not $data.gate.releve_heel_lift_consistency_pass) {
     throw "Releve heel-lift gate failed."
 }
@@ -114,6 +117,7 @@ Write-Host "Full-foot orient.:  PASS"
 Write-Host "Full-foot contact: PASS"
 Write-Host "Forefoot contact:  PASS"
 Write-Host "Plie root descent: PASS"
+Write-Host "Releve plantar:    PASS"
 Write-Host "Releve heel lift:  PASS"
 Write-Host "Render/animation/export: NOT PERFORMED"
 Write-Host "Report: $output"
