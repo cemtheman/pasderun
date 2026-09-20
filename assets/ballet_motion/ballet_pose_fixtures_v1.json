@@ -1,0 +1,383 @@
+{
+  "schema_version": 1,
+  "phase": "10.6.4",
+  "fixtures": {
+    "bras_bas_valid": {
+      "pose": "bras_bas",
+      "expected": "PASS",
+      "landmarks": {
+        "left_shoulder": {
+          "left": 0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "right_shoulder": {
+          "left": -0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "left_elbow": {
+          "left": 0.38,
+          "up": 1.02,
+          "front": 0.12
+        },
+        "right_elbow": {
+          "left": -0.38,
+          "up": 1.02,
+          "front": 0.12
+        },
+        "left_wrist": {
+          "left": 0.16,
+          "up": 0.72,
+          "front": 0.18
+        },
+        "right_wrist": {
+          "left": -0.16,
+          "up": 0.72,
+          "front": 0.18
+        },
+        "left_hand": {
+          "left": 0.1,
+          "up": 0.68,
+          "front": 0.2
+        },
+        "right_hand": {
+          "left": -0.1,
+          "up": 0.68,
+          "front": 0.2
+        }
+      },
+      "joint_dofs": {
+        "left_upper_arm": {
+          "flexion_extension": 20,
+          "abduction_adduction": 30,
+          "internal_external_rotation": 10
+        },
+        "right_upper_arm": {
+          "flexion_extension": 20,
+          "abduction_adduction": 30,
+          "internal_external_rotation": 10
+        },
+        "left_forearm": {
+          "flexion_extension": 55,
+          "pronation_supination": 15
+        },
+        "right_forearm": {
+          "flexion_extension": 55,
+          "pronation_supination": 15
+        }
+      }
+    },
+    "bras_bas_arms_behind_back": {
+      "pose": "bras_bas",
+      "expected": "FAIL",
+      "expected_failed_validator": "anterior_halfspace",
+      "landmarks": {
+        "left_shoulder": {
+          "left": 0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "right_shoulder": {
+          "left": -0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "left_elbow": {
+          "left": 0.38,
+          "up": 1.02,
+          "front": -0.18
+        },
+        "right_elbow": {
+          "left": -0.38,
+          "up": 1.02,
+          "front": -0.18
+        },
+        "left_wrist": {
+          "left": 0.16,
+          "up": 0.72,
+          "front": -0.28
+        },
+        "right_wrist": {
+          "left": -0.16,
+          "up": 0.72,
+          "front": -0.28
+        },
+        "left_hand": {
+          "left": 0.1,
+          "up": 0.68,
+          "front": -0.3
+        },
+        "right_hand": {
+          "left": -0.1,
+          "up": 0.68,
+          "front": -0.3
+        }
+      },
+      "joint_dofs": {}
+    },
+    "en_avant_valid": {
+      "pose": "en_avant",
+      "expected": "PASS",
+      "landmarks": {
+        "left_shoulder": {
+          "left": 0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "right_shoulder": {
+          "left": -0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "left_elbow": {
+          "left": 0.38,
+          "up": 1.2,
+          "front": 0.24
+        },
+        "right_elbow": {
+          "left": -0.38,
+          "up": 1.2,
+          "front": 0.24
+        },
+        "left_wrist": {
+          "left": 0.14,
+          "up": 1.08,
+          "front": 0.48
+        },
+        "right_wrist": {
+          "left": -0.14,
+          "up": 1.08,
+          "front": 0.48
+        },
+        "left_hand": {
+          "left": 0.08,
+          "up": 1.06,
+          "front": 0.52
+        },
+        "right_hand": {
+          "left": -0.08,
+          "up": 1.06,
+          "front": 0.52
+        }
+      },
+      "joint_dofs": {}
+    },
+    "second_valid": {
+      "pose": "second",
+      "expected": "PASS",
+      "landmarks": {
+        "left_shoulder": {
+          "left": 0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "right_shoulder": {
+          "left": -0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "left_elbow": {
+          "left": 0.74,
+          "up": 1.34,
+          "front": 0.08
+        },
+        "right_elbow": {
+          "left": -0.74,
+          "up": 1.34,
+          "front": 0.08
+        },
+        "left_wrist": {
+          "left": 1.04,
+          "up": 1.26,
+          "front": 0.07
+        },
+        "right_wrist": {
+          "left": -1.04,
+          "up": 1.26,
+          "front": 0.07
+        },
+        "left_hand": {
+          "left": 1.1,
+          "up": 1.23,
+          "front": 0.08
+        },
+        "right_hand": {
+          "left": -1.1,
+          "up": 1.23,
+          "front": 0.08
+        }
+      },
+      "joint_dofs": {}
+    },
+    "fifth_valid": {
+      "pose": "fifth",
+      "expected": "PASS",
+      "landmarks": {
+        "left_heel": {
+          "left": -0.15,
+          "up": 0,
+          "front": 0.12
+        },
+        "left_toe": {
+          "left": 0.15,
+          "up": 0,
+          "front": -0.12
+        },
+        "right_heel": {
+          "left": 0.15,
+          "up": 0,
+          "front": -0.12
+        },
+        "right_toe": {
+          "left": -0.15,
+          "up": 0,
+          "front": 0.12
+        }
+      },
+      "contacts": {
+        "left": "FULL_FOOT",
+        "right": "FULL_FOOT"
+      },
+      "turnout": {
+        "left": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 5,
+          "independent_foot_yaw_deg": 0
+        },
+        "right": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 5,
+          "independent_foot_yaw_deg": 0
+        }
+      },
+      "com": {
+        "left": 0,
+        "front": 0
+      },
+      "support_polygon": [
+        {
+          "left": -0.25,
+          "front": -0.2
+        },
+        {
+          "left": 0.25,
+          "front": -0.2
+        },
+        {
+          "left": 0.25,
+          "front": 0.2
+        },
+        {
+          "left": -0.25,
+          "front": 0.2
+        }
+      ],
+      "joint_dofs": {}
+    },
+    "plie_valid": {
+      "pose": "plie",
+      "expected": "PASS",
+      "contacts": {
+        "left": "FULL_FOOT",
+        "right": "FULL_FOOT"
+      },
+      "turnout": {
+        "left": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 8,
+          "knee_flexion_deg": 45,
+          "independent_foot_yaw_deg": 0
+        },
+        "right": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 8,
+          "knee_flexion_deg": 45,
+          "independent_foot_yaw_deg": 0
+        }
+      },
+      "knee_second_toe_error_deg": {
+        "left": 3,
+        "right": 4
+      },
+      "scalars": {
+        "pelvis_descent": 0.16,
+        "trunk_tilt_deg": 3
+      },
+      "com": {
+        "left": 0,
+        "front": 0
+      },
+      "support_polygon": [
+        {
+          "left": -0.3,
+          "front": -0.2
+        },
+        {
+          "left": 0.3,
+          "front": -0.2
+        },
+        {
+          "left": 0.3,
+          "front": 0.2
+        },
+        {
+          "left": -0.3,
+          "front": 0.2
+        }
+      ],
+      "joint_dofs": {}
+    },
+    "releve_valid": {
+      "pose": "releve",
+      "expected": "PASS",
+      "contacts": {
+        "left": "FOREFOOT",
+        "right": "FOREFOOT"
+      },
+      "turnout": {
+        "left": {
+          "hip_external_rotation_deg": 40,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 3,
+          "independent_foot_yaw_deg": 0
+        },
+        "right": {
+          "hip_external_rotation_deg": 40,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 3,
+          "independent_foot_yaw_deg": 0
+        }
+      },
+      "scalars": {
+        "left_heel_height": 0.14,
+        "right_heel_height": 0.14
+      },
+      "com": {
+        "left": 0,
+        "front": 0.03
+      },
+      "support_polygon": [
+        {
+          "left": -0.18,
+          "front": -0.08
+        },
+        {
+          "left": 0.18,
+          "front": -0.08
+        },
+        {
+          "left": 0.18,
+          "front": 0.14
+        },
+        {
+          "left": -0.18,
+          "front": 0.14
+        }
+      ],
+      "joint_dofs": {}
+    }
+  }
+}
