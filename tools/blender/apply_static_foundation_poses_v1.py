@@ -1520,7 +1520,12 @@ def main() -> None:
                 require(
                     abs(actual - target) <= allowed,
                     f"releve: {side} heel lift error "
-                    f"{abs(actual - target)} > {allowed}.",
+                    f"{abs(actual - target)} > {allowed}; "
+                    f"target={target}; actual={actual}; "
+                    f"selected_plantar={selected_plantar}; "
+                    f"preferred={preferred}; "
+                    f"solver_geometry={releve_realization['geometry']}; "
+                    f"solver_heel_errors={releve_realization['heel_errors']}.",
                 )
             consistency["heel_lift"] = {
                 side: round(value, 8)
