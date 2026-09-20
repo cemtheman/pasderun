@@ -1665,7 +1665,9 @@ def main() -> None:
             )
             require(
                 absolute_error <= allowed,
-                f"plie: pelvis descent error {absolute_error} > {allowed}.",
+                f"plie: pelvis descent error {absolute_error} > {allowed}; "
+                f"target={target_descent}; actual={actual_descent}; "
+                f"root_shift={shift}.",
             )
             consistency.update(
                 {

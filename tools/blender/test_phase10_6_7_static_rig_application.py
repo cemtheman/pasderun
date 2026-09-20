@@ -346,6 +346,15 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn("pose_bone.matrix", self.script)
 
     def test_plie_contact_solve_must_lower_root_and_match_descent(self) -> None:
+        self.assertEqual(
+            self.contract["policy"]["plie_pelvis_descent_source"],
+            "Phase 10.6.5 leg-chain-scaled semantic scalar",
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "plie_full_foot_contact_is_final_root_translation_authority"
+            ]
+        )
         self.assertIn('if pose_name == "plie":', self.script)
         self.assertIn("actual_descent > 0.0", self.script)
         self.assertIn("target_pelvis_descent", self.script)

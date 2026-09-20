@@ -10,7 +10,8 @@
     "rig_retarget_forbidden_in_this_phase": true,
     "render_forbidden_in_this_phase": true,
     "animation_forbidden_in_this_phase": true,
-    "arm_centerline_policy": "bras_bas and en_avant use calibrated middle-fingertip references; wrists/hands do not cross and middle fingertips keep a small positive scale-relative gap"
+    "arm_centerline_policy": "bras_bas and en_avant use calibrated middle-fingertip references; wrists/hands do not cross and middle fingertips keep a small positive scale-relative gap",
+    "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length"
   },
   "poses": {
     "bras_bas": {
@@ -157,7 +158,6 @@
       "hip_external_rotation_deg": 45,
       "knee_external_rotation_deg": 5,
       "knee_flexion_deg": 32,
-      "pelvis_descent_body_fraction": 0.065,
       "trunk_tilt_deg": 3,
       "knee_second_toe_error_deg": 3,
       "support_half_width_fraction": 0.48,
@@ -178,7 +178,8 @@
         "toes": {
           "toe_flexion_extension": 0
         }
-      }
+      },
+      "pelvis_descent_leg_fraction": 0.065
     },
     "releve": {
       "kind": "lower_body",

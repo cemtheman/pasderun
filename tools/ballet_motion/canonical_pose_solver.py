@@ -107,6 +107,14 @@ def _canonical_dimensions(canonical_profile: dict) -> dict:
         float(bones["left_foot"]["length"]) + float(bones["left_toes"]["length"]),
         float(bones["right_foot"]["length"]) + float(bones["right_toes"]["length"]),
     )
+    leg_chain = (
+        float(bones["left_thigh"]["length"])
+        + float(bones["left_shin"]["length"])
+        + float(bones["left_foot"]["length"])
+        + float(bones["right_thigh"]["length"])
+        + float(bones["right_shin"]["length"])
+        + float(bones["right_foot"]["length"])
+    ) / 2.0
 
     head_up = float(bones["head"]["head_body"]["up"])
     left_foot_up = float(bones["left_foot"]["head_body"]["up"])
@@ -124,6 +132,7 @@ def _canonical_dimensions(canonical_profile: dict) -> dict:
         "middle": middle,
         "hand_middle_chain": hand_middle_chain,
         "foot": foot,
+        "leg_chain": leg_chain,
         "body_height": body_height,
     }
     for name, value in values.items():
@@ -663,10 +672,14 @@ def _solve_fifth(intent: dict, dimensions: dict) -> dict:
 
 def _solve_plie(intent: dict, dimensions: dict) -> dict:
     foot = dimensions["foot"]
-    descent = dimensions["body_height"] * float(
-        intent["pelvis_descent_body_fraction"]
+    leg_chain = dimensions["leg_chain"]
+    descent = leg_chain * float(
+        intent["pelvis_descent_leg_fraction"]
     )
-    descent = min(max(descent, 0.06), 0.30)
+    descent = min(
+        max(descent, leg_chain * 0.04),
+        leg_chain * 0.30,
+    )
     half_width = max(
         0.12,
         foot * float(intent["support_half_width_fraction"]),

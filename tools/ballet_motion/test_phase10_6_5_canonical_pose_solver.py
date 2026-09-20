@@ -342,9 +342,40 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             plie["joint_dofs"]["thigh"]["abduction_adduction"],
             6,
         )
+        self.assertNotIn(
+            "pelvis_descent_body_fraction",
+            plie,
+        )
         self.assertLessEqual(
-            plie["pelvis_descent_body_fraction"],
+            plie["pelvis_descent_leg_fraction"],
             0.065,
+        )
+
+    def test_plie_descent_scales_from_leg_chain_not_whole_body(self) -> None:
+        result = solve_pose(
+            "plie",
+            self.intents,
+            self.grammar,
+            self.canonical,
+            self.constraints,
+        )
+        left_leg = (
+            float(self.canonical["canonical_bones"]["left_thigh"]["length"])
+            + float(self.canonical["canonical_bones"]["left_shin"]["length"])
+            + float(self.canonical["canonical_bones"]["left_foot"]["length"])
+        )
+        right_leg = (
+            float(self.canonical["canonical_bones"]["right_thigh"]["length"])
+            + float(self.canonical["canonical_bones"]["right_shin"]["length"])
+            + float(self.canonical["canonical_bones"]["right_foot"]["length"])
+        )
+        expected = ((left_leg + right_leg) * 0.5) * float(
+            self.intents["poses"]["plie"]["pelvis_descent_leg_fraction"]
+        )
+        self.assertAlmostEqual(
+            result["state"]["scalars"]["pelvis_descent"],
+            expected,
+            places=12,
         )
 
     def test_arm_solver_preserves_segment_lengths(self) -> None:
