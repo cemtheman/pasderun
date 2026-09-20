@@ -1453,46 +1453,68 @@ def apply_hand_wrist_candidate(
     )
 
 
+def _bone_descendants(
+    root: bpy.types.Bone,
+) -> list[bpy.types.Bone]:
+    result = []
+    stack = list(root.children)
+    while stack:
+        bone = stack.pop()
+        result.append(bone)
+        stack.extend(list(bone.children))
+    return result
+
+
+def _unique_descendant_matching(
+    root: bpy.types.Bone,
+    predicate,
+    label: str,
+) -> bpy.types.Bone:
+    matches = [
+        bone
+        for bone in _bone_descendants(root)
+        if predicate(bone.name)
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(
+            f"{root.name}: expected one descendant for {label}, "
+            f"got {[bone.name for bone in matches]}."
+        )
+    return matches[0]
+
+
 def _finger_chain_from_hand_hierarchy(
     armature: bpy.types.Object,
     hand_rig_name: str,
     digit: str,
 ) -> list[str]:
     hand_bone = armature.data.bones[hand_rig_name]
-    prefix = f"{digit.capitalize()}_"
-    roots = [
-        child
-        for child in hand_bone.children
-        if child.name.startswith(f"{digit.capitalize()}_1_")
-    ]
-    if len(roots) != 1:
-        raise RuntimeError(
-            f"{hand_rig_name}/{digit}: expected one hierarchy root, "
-            f"got {[bone.name for bone in roots]}."
-        )
+    token = digit.capitalize()
 
-    chain = [roots[0]]
-    while True:
-        children = [
-            child
-            for child in chain[-1].children
-            if child.name.startswith(prefix)
-        ]
-        if not children:
-            break
-        if len(children) != 1:
-            raise RuntimeError(
-                f"{hand_rig_name}/{digit}: ambiguous hierarchy at "
-                f"{chain[-1].name}: {[bone.name for bone in children]}."
-            )
-        chain.append(children[0])
-
-    if len(chain) != 3:
-        raise RuntimeError(
-            f"{hand_rig_name}/{digit}: expected 3 finger bones, "
-            f"got {[bone.name for bone in chain]}."
-        )
-    return [bone.name for bone in chain]
+    # Finger roots are not guaranteed to be direct children of Hand_L/R.
+    # The source rig contains intermediate palm/metacarpal nodes, and Ring
+    # also carries swapped _L/_R suffixes. Therefore hierarchy membership,
+    # not suffix or direct-parent assumptions, is authoritative.
+    first = _unique_descendant_matching(
+        hand_bone,
+        lambda name: name.startswith(f"{token}_1_"),
+        f"{digit} segment 1",
+    )
+    second = _unique_descendant_matching(
+        first,
+        lambda name: name.startswith(f"{token}_2_"),
+        f"{digit} segment 2",
+    )
+    third = _unique_descendant_matching(
+        second,
+        lambda name: (
+            name.startswith(f"{token}_")
+            and not name.startswith(f"{token}_1_")
+            and not name.startswith(f"{token}_2_")
+        ),
+        f"{digit} terminal segment",
+    )
+    return [first.name, second.name, third.name]
 
 
 def _pose_bone_length_direction(
