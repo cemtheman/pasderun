@@ -1613,23 +1613,28 @@ def solve_hand_mesh_wrist_side(
         inner_edge_quantile,
     )
 
-    if float(best["interval_error"]) > epsilon:
-        raise RuntimeError(
-            f"{side}: deformed hand mesh near-touch target is "
-            "unreachable inside wrist preferred envelope; "
-            f"closest_side_offset={final_measurement['side_offset']}; "
-            f"required=[{minimum_side_offset}, "
-            f"{maximum_side_offset}]; "
-            f"solved_flexion={best['flexion_extension_deg']}; "
-            f"solved_deviation={best['radial_ulnar_deviation_deg']}; "
-            f"preferred_flexion=[{fmin}, {fmax}]; "
-            f"preferred_deviation=[{dmin}, {dmax}]; "
-            f"sample_count={final_measurement['sample_count']}."
+    interval_error = float(best["interval_error"])
+    status = "PASS" if interval_error <= epsilon else "FAIL"
+    scale_length = float(spacing["scale_length"])
+    current_clearance_fraction = float(
+        spacing.get("hand_landmark_clearance_fraction", 0.0)
+    )
+    recommended_clearance_fraction = current_clearance_fraction
+    if (
+        status == "FAIL"
+        and float(final_measurement["side_offset"])
+        < minimum_side_offset
+        and scale_length > 1e-12
+    ):
+        shortfall = (
+            minimum_side_offset
+            - float(final_measurement["side_offset"])
         )
+        recommended_clearance_fraction += shortfall / scale_length
 
     return {
         "required": True,
-        "status": "PASS",
+        "status": status,
         "side": side,
         "solved_flexion_extension_deg": round(
             float(best["flexion_extension_deg"]),
@@ -1657,6 +1662,15 @@ def solve_hand_mesh_wrist_side(
         ),
         "minimum_side_offset": round(minimum_side_offset, 8),
         "maximum_side_offset": round(maximum_side_offset, 8),
+        "interval_error": round(interval_error, 8),
+        "current_hand_landmark_clearance_fraction": round(
+            current_clearance_fraction,
+            8,
+        ),
+        "recommended_hand_landmark_clearance_fraction": round(
+            recommended_clearance_fraction,
+            8,
+        ),
         "preferred_envelope": {
             "flexion_extension": {"min": fmin, "max": fmax},
             "radial_ulnar_deviation": {"min": dmin, "max": dmax},
@@ -1695,15 +1709,20 @@ def solve_hand_mesh_wrist_spacing(
         hand_samples,
         inner_edge_quantile,
     )
-    if final_spacing["status"] != "PASS":
-        raise RuntimeError(
-            "Deformed hand mesh wrist solve did not realize bilateral "
-            f"spacing contract: {final_spacing}; "
-            f"side_solutions={side_solutions}."
+    status = (
+        "PASS"
+        if (
+            final_spacing["status"] == "PASS"
+            and all(
+                item["status"] == "PASS"
+                for item in side_solutions.values()
+            )
         )
+        else "FAIL"
+    )
 
     return {
-        "status": "PASS",
+        "status": status,
         "side_solutions": side_solutions,
         "final_mesh_spacing": final_spacing,
         "preferred_only": True,
@@ -1922,6 +1941,7 @@ def main() -> None:
     root_name = canonical["canonical_bones"]["pelvis"]["rig_bone"]
 
     pose_reports = {}
+    hand_mesh_calibration_failures = []
     for pose_name in ("bras_bas", "en_avant", "second", "fifth", "plie", "releve"):
         pose_entry = retarget["poses"][pose_name]
         require(
@@ -2071,6 +2091,16 @@ def main() -> None:
             hand_mesh_spacing = hand_mesh_wrist_solution[
                 "final_mesh_spacing"
             ]
+            if hand_mesh_wrist_solution["status"] != "PASS":
+                hand_mesh_calibration_failures.append(
+                    {
+                        "pose": pose_name,
+                        "side_solutions": hand_mesh_wrist_solution[
+                            "side_solutions"
+                        ],
+                        "final_mesh_spacing": hand_mesh_spacing,
+                    }
+                )
             fingertip_spacing = realized_middle_fingertip_spacing(
                 armature,
                 canonical,
@@ -2250,6 +2280,36 @@ def main() -> None:
             "blender_pose_applied": True,
             "rendered": False,
         }
+
+    if hand_mesh_calibration_failures:
+        diagnostic = {
+            "phase": PHASE,
+            "status": "HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED",
+            "hand_mesh_sampling": {
+                "bone_scope": contract["hand_mesh_sampling"]["bone_scope"],
+                "vertex_group_names": {
+                    side: sorted(groups)
+                    for side, groups in hand_groups.items()
+                },
+                "sample_counts": {
+                    side: len(samples)
+                    for side, samples in hand_samples.items()
+                },
+            },
+            "failures": hand_mesh_calibration_failures,
+        }
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(
+            json.dumps(diagnostic, indent=2),
+            encoding="utf-8",
+        )
+        print("HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED")
+        print(json.dumps(diagnostic, indent=2))
+        raise RuntimeError(
+            "Hand mesh clearance calibration required; "
+            "all bras_bas/en_avant side diagnostics were collected "
+            f"in {output_path}."
+        )
 
     output = {
         "phase": PHASE,

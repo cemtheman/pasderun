@@ -226,6 +226,14 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
+            'hand_mesh_wrist_solution["status"] == "PASS"',
+            self.script,
+        )
+        self.assertIn(
+            "clearance calibration is incomplete",
+            self.script,
+        )
+        self.assertIn(
             '"hand_mesh_centerline_spacing_pass": True',
             self.script,
         )

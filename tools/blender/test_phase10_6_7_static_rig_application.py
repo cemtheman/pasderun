@@ -347,7 +347,19 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            "unreachable inside wrist preferred envelope",
+            '"recommended_hand_landmark_clearance_fraction"',
+            self.script,
+        )
+        self.assertIn(
+            "hand_mesh_calibration_failures = []",
+            self.script,
+        )
+        self.assertIn(
+            "HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED",
+            self.script,
+        )
+        self.assertIn(
+            "all bras_bas/en_avant side diagnostics were collected",
             self.script,
         )
         self.assertIn(

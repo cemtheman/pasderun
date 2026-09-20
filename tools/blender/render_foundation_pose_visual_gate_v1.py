@@ -678,6 +678,11 @@ def realize_pose(
                 static_contract["hand_mesh_wrist_solver"],
             )
         )
+        require(
+            hand_mesh_wrist_solution["status"] == "PASS",
+            f"{pose_name}: deformed hand mesh clearance calibration "
+            f"is incomplete: {hand_mesh_wrist_solution}.",
+        )
         hand_mesh_spacing = hand_mesh_wrist_solution[
             "final_mesh_spacing"
         ]
