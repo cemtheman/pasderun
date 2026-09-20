@@ -322,7 +322,11 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
         ).lower()
         self.assertIn("flipped palm", upper)
         self.assertIn("shoulders", upper)
+        self.assertIn("centerline", upper)
+        self.assertIn("must not cross", upper)
         self.assertIn("squat/frog", lower)
+        self.assertIn("full-foot contact", lower)
+        self.assertIn("interpenetration", lower)
         self.assertIn("releve", lower)
 
     def test_visual_gate_does_not_write_aesthetic_accept(self) -> None:

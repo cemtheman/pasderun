@@ -48,12 +48,15 @@
       "arms remain anterior where grammar requires",
       "elbow line reads rounded rather than locked",
       "hand and forearm read continuous without flipped palm/axial break",
-      "shoulders remain down and neck visually free"
+      "shoulders remain down and neck visually free",
+      "bras bas and en avant: wrist and hand endpoints may approach the centerline but must not cross or interpenetrate"
     ],
     "lower_body": [
       "fifth reads as crossed/closed rather than parallel stance",
       "plie reads as coordinated turnout and descent rather than squat/frog",
-      "releve reads on forefoot with both heels lifted and turnout preserved"
+      "releve reads on forefoot with both heels lifted and turnout preserved",
+      "standing arm poses: heels and forefoot should read as full-foot contact, not toes lifted",
+      "plie: feet must remain visually distinct without ankle/foot interpenetration"
     ],
     "verdict_values": [
       "ACCEPT",

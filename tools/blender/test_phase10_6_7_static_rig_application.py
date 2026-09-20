@@ -271,9 +271,23 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
 
     def test_root_translation_modes_are_explicit(self) -> None:
         modes = self.contract["root_translation_modes"]
-        self.assertEqual(modes["bras_bas"], "KEEP_REST")
-        self.assertEqual(modes["en_avant"], "KEEP_REST")
-        self.assertEqual(modes["second"], "KEEP_REST")
+        self.assertTrue(
+            self.contract["policy"][
+                "standing_arm_poses_full_foot_contact_required"
+            ]
+        )
+        self.assertEqual(
+            modes["bras_bas"],
+            "SOLVE_FULL_FOOT_CONTACT",
+        )
+        self.assertEqual(
+            modes["en_avant"],
+            "SOLVE_FULL_FOOT_CONTACT",
+        )
+        self.assertEqual(
+            modes["second"],
+            "SOLVE_FULL_FOOT_CONTACT",
+        )
         self.assertEqual(modes["fifth"], "SOLVE_FULL_FOOT_CONTACT")
         self.assertEqual(modes["plie"], "SOLVE_FULL_FOOT_CONTACT")
         self.assertEqual(modes["releve"], "SOLVE_FOREFOOT_CONTACT")

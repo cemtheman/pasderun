@@ -9,7 +9,8 @@
     "pose_validation_source": "Phase 10.6.4 grammar",
     "rig_retarget_forbidden_in_this_phase": true,
     "render_forbidden_in_this_phase": true,
-    "animation_forbidden_in_this_phase": true
+    "animation_forbidden_in_this_phase": true,
+    "arm_centerline_policy": "bras_bas and en_avant may approach or touch the centerline, but wrist and hand endpoints may not cross it"
   },
   "poses": {
     "bras_bas": {
@@ -44,7 +45,8 @@
           "flexion_extension": 0,
           "radial_ulnar_deviation": 0
         }
-      }
+      },
+      "centerline_hand_policy": "TOUCH_NOT_CROSS"
     },
     "en_avant": {
       "kind": "symmetric_arm_chain",
@@ -78,7 +80,8 @@
           "flexion_extension": 0,
           "radial_ulnar_deviation": 0
         }
-      }
+      },
+      "centerline_hand_policy": "TOUCH_NOT_CROSS"
     },
     "second": {
       "kind": "symmetric_arm_chain",
@@ -144,21 +147,21 @@
     "plie": {
       "kind": "lower_body",
       "hip_external_rotation_deg": 45,
-      "knee_external_rotation_deg": 8,
-      "knee_flexion_deg": 45,
-      "pelvis_descent_body_fraction": 0.09,
+      "knee_external_rotation_deg": 5,
+      "knee_flexion_deg": 32,
+      "pelvis_descent_body_fraction": 0.065,
       "trunk_tilt_deg": 3,
       "knee_second_toe_error_deg": 3,
       "support_half_width_fraction": 0.48,
       "support_half_depth_fraction": 0.34,
       "joint_dofs": {
         "thigh": {
-          "flexion_extension": 30,
-          "abduction_adduction": 8,
+          "flexion_extension": 18,
+          "abduction_adduction": 6,
           "internal_external_rotation": 45
         },
         "shin": {
-          "flexion_extension": 45
+          "flexion_extension": 32
         },
         "foot": {
           "plantar_dorsiflexion": 0,

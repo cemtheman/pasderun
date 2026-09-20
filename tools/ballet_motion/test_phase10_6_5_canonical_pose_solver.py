@@ -227,6 +227,50 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                     places=12,
                 )
 
+    def test_bras_bas_and_en_avant_touch_not_cross_centerline(self) -> None:
+        self.assertEqual(
+            self.intents["poses"]["bras_bas"]["centerline_hand_policy"],
+            "TOUCH_NOT_CROSS",
+        )
+        self.assertEqual(
+            self.intents["poses"]["en_avant"]["centerline_hand_policy"],
+            "TOUCH_NOT_CROSS",
+        )
+        for pose in ("bras_bas", "en_avant"):
+            result = solve_pose(
+                pose,
+                self.intents,
+                self.grammar,
+                self.canonical,
+                self.constraints,
+            )
+            landmarks = result["state"]["landmarks"]
+            for side, sign in (("left", 1.0), ("right", -1.0)):
+                self.assertGreaterEqual(
+                    sign * float(landmarks[f"{side}_wrist"]["left"]),
+                    -1e-9,
+                )
+                self.assertGreaterEqual(
+                    sign * float(landmarks[f"{side}_hand"]["left"]),
+                    -1e-9,
+                )
+
+    def test_plie_travel_is_moderate_not_deep_crossing_setup(self) -> None:
+        plie = self.intents["poses"]["plie"]
+        self.assertLessEqual(plie["knee_flexion_deg"], 32)
+        self.assertLessEqual(
+            plie["joint_dofs"]["thigh"]["flexion_extension"],
+            18,
+        )
+        self.assertLessEqual(
+            plie["joint_dofs"]["thigh"]["abduction_adduction"],
+            6,
+        )
+        self.assertLessEqual(
+            plie["pelvis_descent_body_fraction"],
+            0.065,
+        )
+
     def test_arm_solver_preserves_segment_lengths(self) -> None:
         for pose in ("bras_bas", "en_avant", "second"):
             result = solve_pose(

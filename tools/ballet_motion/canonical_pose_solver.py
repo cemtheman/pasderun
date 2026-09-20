@@ -436,6 +436,27 @@ def _arm_geometry(
             float(pole_spec["front"]),
         ]
 
+        hand_spec = intent["hand_direction"]
+        hand_lateral_key = (
+            "inward" if "inward" in hand_spec else "outward"
+        )
+        hand_lateral_sign = (
+            -sign if hand_lateral_key == "inward" else sign
+        )
+        hand_direction = _normalize(
+            [
+                hand_lateral_sign * float(hand_spec[hand_lateral_key]),
+                -float(hand_spec["down"]),
+                float(hand_spec["front"]),
+            ]
+        )
+        centerline_policy = intent.get("centerline_hand_policy")
+        if centerline_policy not in (None, "TOUCH_NOT_CROSS"):
+            raise PoseSolveRejected(
+                f"{pose_name}: unknown centerline hand policy "
+                f"{centerline_policy!r}."
+            )
+
         wrist_constraints = _wrist_constraints(
             pose_name,
             side,
@@ -447,6 +468,7 @@ def _arm_geometry(
 
         wrist = None
         elbow = None
+        hand = None
         for direction in _candidate_unit_directions(preferred_direction):
             candidate_wrist = _add(
                 shoulder,
@@ -457,6 +479,16 @@ def _arm_geometry(
                 wrist_constraints,
             ):
                 continue
+
+            candidate_hand = _add(
+                candidate_wrist,
+                _scale(hand_direction, hand_length),
+            )
+            if centerline_policy == "TOUCH_NOT_CROSS":
+                if sign * float(candidate_wrist[0]) < -1e-9:
+                    continue
+                if sign * float(candidate_hand[0]) < -1e-9:
+                    continue
 
             elbow_constraints = _arm_elbow_constraints(
                 pose_name,
@@ -484,28 +516,14 @@ def _arm_geometry(
 
             wrist = candidate_wrist
             elbow = candidate_elbow
+            hand = candidate_hand
             break
 
-        if wrist is None or elbow is None:
+        if wrist is None or elbow is None or hand is None:
             raise PoseSolveRejected(
-                f"{pose_name}/{side}: no wrist/elbow solution satisfies grammar."
+                f"{pose_name}/{side}: no wrist/elbow/hand solution "
+                "satisfies grammar and centerline policy."
             )
-
-        hand_spec = intent["hand_direction"]
-        hand_lateral_key = (
-            "inward" if "inward" in hand_spec else "outward"
-        )
-        hand_lateral_sign = (
-            -sign if hand_lateral_key == "inward" else sign
-        )
-        hand_direction = _normalize(
-            [
-                hand_lateral_sign * float(hand_spec[hand_lateral_key]),
-                -float(hand_spec["down"]),
-                float(hand_spec["front"]),
-            ]
-        )
-        hand = _add(wrist, _scale(hand_direction, hand_length))
 
         landmarks[f"{side}_shoulder"] = _body_point(*shoulder)
         landmarks[f"{side}_elbow"] = _body_point(*elbow)
