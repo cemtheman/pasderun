@@ -64,6 +64,9 @@ if ($data.foundation_gate.rig_retarget_performed) {
 if ($data.foundation_gate.render_performed) {
     throw "Render is forbidden in Phase 10.6.5."
 }
+if ($data.foundation_gate.animation_performed) {
+    throw "Animation is forbidden in Phase 10.6.5."
+}
 
 $poseCount = @($data.solutions.PSObject.Properties).Count
 $probeCount = @($data.rejection_probes.PSObject.Properties).Count

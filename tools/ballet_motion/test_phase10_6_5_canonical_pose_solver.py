@@ -263,6 +263,20 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
     def test_wrapper_is_ascii_safe_for_windows_powershell(self) -> None:
         self.assertTrue(all(ord(char) < 128 for char in self.wrapper))
 
+    def test_wrapper_enforces_no_retarget_render_or_animation(self) -> None:
+        self.assertIn(
+            "$data.foundation_gate.rig_retarget_performed",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.foundation_gate.render_performed",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.foundation_gate.animation_performed",
+            self.wrapper,
+        )
+
     def test_output_contract_is_phase_10_6_5(self) -> None:
         self.assertIn('PHASE = "10.6.5"', self.builder)
         self.assertIn(
