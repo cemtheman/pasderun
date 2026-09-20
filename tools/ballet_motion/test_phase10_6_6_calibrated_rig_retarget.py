@@ -375,9 +375,26 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             upper["hand"]["axial_roll_policy"],
             "NO_INDEPENDENT_HAND_AXIAL_ROLL",
         )
+        semantic_policy = upper["hand"]["semantic_direction_policy"]
+        self.assertTrue(
+            semantic_policy.startswith(
+                "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE"
+            )
+        )
+        self.assertIn(
+            "FINAL_CENTERLINE_SPACING_DEFERRED_TO_PHASE_10_6_7_DEFORMED_MESH",
+            semantic_policy,
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "middle_fingertip_visual_spacing_gate_forbidden"
+            ]
+        )
         self.assertEqual(
-            upper["hand"]["semantic_direction_policy"],
-            "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE",
+            self.contract["policy"][
+                "final_hand_centerline_spacing_authority"
+            ],
+            "Phase 10.6.7 deformed hand mesh",
         )
         self.assertEqual(
             upper["hand"]["limit_source"],
