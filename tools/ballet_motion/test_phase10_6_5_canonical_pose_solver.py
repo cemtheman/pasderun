@@ -252,11 +252,11 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
     def test_bras_bas_and_en_avant_touch_not_cross_centerline(self) -> None:
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["centerline_hand_policy"],
-            "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+            "HAND_MESH_NEAR_TOUCH_NOT_CROSS",
         )
         self.assertEqual(
             self.intents["poses"]["en_avant"]["centerline_hand_policy"],
-            "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+            "HAND_MESH_NEAR_TOUCH_NOT_CROSS",
         )
         for pose in ("bras_bas", "en_avant"):
             result = solve_pose(
@@ -277,7 +277,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                     -1e-9,
                 )
 
-    def test_bras_bas_and_en_avant_declare_scale_relative_middle_fingertip_gap(self) -> None:
+    def test_bras_bas_and_en_avant_declare_scale_relative_hand_mesh_gap(self) -> None:
         for pose in ("bras_bas", "en_avant"):
             result = solve_pose(
                 pose,
@@ -287,7 +287,7 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 self.constraints,
             )
             state = result["state"]
-            contract = state["fingertip_spacing_contract"]
+            contract = state["hand_mesh_spacing_contract"]
             self.assertEqual(
                 contract["scale_basis"],
                 "average_hand_plus_middle_chain_length",
@@ -298,8 +298,8 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                 contract["minimum_gap"],
             )
             self.assertEqual(
-                result["evidence"]["fingertip_spacing"]["status"],
-                "DEFERRED_TO_CALIBRATED_RETARGET",
+                result["evidence"]["hand_mesh_spacing"]["status"],
+                "DEFERRED_TO_BLENDER_DEFORMED_MESH",
             )
             self.assertNotIn("left_middle_tip", state["landmarks"])
             self.assertNotIn("right_middle_tip", state["landmarks"])
@@ -317,11 +317,11 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         self.assertNotIn("left_middle_tip", result["state"]["landmarks"])
         self.assertNotIn("right_middle_tip", result["state"]["landmarks"])
         self.assertEqual(
-            result["evidence"]["fingertip_spacing"]["status"],
-            "DEFERRED_TO_CALIBRATED_RETARGET",
+            result["evidence"]["hand_mesh_spacing"]["status"],
+            "DEFERRED_TO_BLENDER_DEFORMED_MESH",
         )
 
-    def test_second_has_no_fingertip_near_touch_contract(self) -> None:
+    def test_second_has_no_hand_mesh_near_touch_contract(self) -> None:
         result = solve_pose(
             "second",
             self.intents,
@@ -329,32 +329,40 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
             self.canonical,
             self.constraints,
         )
-        self.assertNotIn("fingertip_spacing_contract", result["state"])
+        self.assertNotIn("hand_mesh_spacing_contract", result["state"])
 
-    def test_upper_body_mesh_clearance_uses_proximal_rounding_only_for_first_two_poses(self) -> None:
+    def test_upper_body_mesh_clearance_retreats_wrist_without_overbending_elbow(self) -> None:
         self.assertEqual(
             self.intents["poses"]["bras_bas"]["elbow_angle_deg"],
-            115,
+            125,
         )
         self.assertEqual(
             self.intents["poses"]["en_avant"]["elbow_angle_deg"],
-            110,
+            125,
         )
         self.assertEqual(
             self.intents["poses"]["second"]["elbow_angle_deg"],
             145,
         )
+        self.assertEqual(
+            self.intents["poses"]["bras_bas"]["wrist_direction"]["inward"],
+            0.58,
+        )
+        self.assertEqual(
+            self.intents["poses"]["en_avant"]["wrist_direction"]["inward"],
+            0.27,
+        )
         for pose in ("bras_bas", "en_avant"):
-            self.assertGreaterEqual(
-                self.intents["poses"][pose]["elbow_angle_deg"],
-                95,
+            self.assertIn(
+                "hand_mesh_gap_chain_fraction",
+                self.intents["poses"][pose],
             )
-            self.assertLessEqual(
-                self.intents["poses"][pose]["elbow_angle_deg"],
-                165,
+            self.assertNotIn(
+                "fingertip_gap_chain_fraction",
+                self.intents["poses"][pose],
             )
         self.assertIn(
-            "preferred wrist envelope",
+            "deformed-mesh wrist solve",
             self.intents["policy"][
                 "hand_mesh_proximal_clearance_strategy"
             ],

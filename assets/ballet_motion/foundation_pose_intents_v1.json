@@ -10,16 +10,16 @@
     "rig_retarget_forbidden_in_this_phase": true,
     "render_forbidden_in_this_phase": true,
     "animation_forbidden_in_this_phase": true,
-    "arm_centerline_policy": "bras_bas and en_avant use calibrated middle-fingertip references; wrists/hands do not cross and middle fingertips keep a small positive scale-relative gap",
+    "arm_centerline_policy": "bras_bas and en_avant keep wrist/hand landmarks on their own side; final near-touch spacing is owned by Phase 10.6.7 deformed hand mesh; Middle_L/Middle_R are diagnostic only",
     "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length",
-    "hand_mesh_proximal_clearance_strategy": "after deformed-mesh proof exhausts the preferred wrist envelope, reduce only bras_bas/en_avant elbow opening so the proximal arm carries centerline retreat; wrist remains preferred-only final trim"
+    "hand_mesh_proximal_clearance_strategy": "preserve rounded elbow opening and retreat the wrist target slightly outward; Phase 10.6.7 preferred-only deformed-mesh wrist solve performs final trim"
   },
   "poses": {
     "bras_bas": {
       "kind": "symmetric_arm_chain",
-      "elbow_angle_deg": 115,
+      "elbow_angle_deg": 125,
       "wrist_direction": {
-        "inward": 0.62,
+        "inward": 0.58,
         "down": 0.78,
         "front": 0.22
       },
@@ -48,17 +48,17 @@
           "radial_ulnar_deviation": 0
         }
       },
-      "centerline_hand_policy": "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
-      "fingertip_gap_chain_fraction": {
+      "centerline_hand_policy": "HAND_MESH_NEAR_TOUCH_NOT_CROSS",
+      "hand_mesh_gap_chain_fraction": {
         "min": 0.03,
         "max": 0.1
       }
     },
     "en_avant": {
       "kind": "symmetric_arm_chain",
-      "elbow_angle_deg": 110,
+      "elbow_angle_deg": 125,
       "wrist_direction": {
-        "inward": 0.3,
+        "inward": 0.27,
         "down": 0.18,
         "front": 0.94
       },
@@ -87,8 +87,8 @@
           "radial_ulnar_deviation": 0
         }
       },
-      "centerline_hand_policy": "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
-      "fingertip_gap_chain_fraction": {
+      "centerline_hand_policy": "HAND_MESH_NEAR_TOUCH_NOT_CROSS",
+      "hand_mesh_gap_chain_fraction": {
         "min": 0.03,
         "max": 0.1
       }

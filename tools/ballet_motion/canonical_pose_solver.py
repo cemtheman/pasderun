@@ -376,11 +376,11 @@ def _two_bone_elbow(
     )
 
 
-def _fingertip_spacing_contract(
+def _hand_mesh_spacing_contract(
     intent: dict,
     dimensions: dict,
 ) -> dict | None:
-    spec = intent.get("fingertip_gap_chain_fraction")
+    spec = intent.get("hand_mesh_gap_chain_fraction")
     if spec is None:
         return None
 
@@ -411,7 +411,7 @@ def _arm_geometry(
     upper_arm = dimensions["upper_arm"]
     forearm = dimensions["forearm"]
     hand_length = dimensions["hand"]
-    fingertip_contract = _fingertip_spacing_contract(
+    hand_mesh_contract = _hand_mesh_spacing_contract(
         intent,
         dimensions,
     )
@@ -505,7 +505,7 @@ def _arm_geometry(
         if centerline_policy not in (
             None,
             "TOUCH_NOT_CROSS",
-            "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+            "HAND_MESH_NEAR_TOUCH_NOT_CROSS",
         ):
             raise PoseSolveRejected(
                 f"{pose_name}: unknown centerline hand policy "
@@ -541,7 +541,7 @@ def _arm_geometry(
             )
             if centerline_policy in (
                 "TOUCH_NOT_CROSS",
-                "FINGERTIP_NEAR_TOUCH_NOT_CROSS",
+                "HAND_MESH_NEAR_TOUCH_NOT_CROSS",
             ):
                 if sign * float(candidate_wrist[0]) < -1e-9:
                     continue
@@ -804,12 +804,12 @@ def solve_pose(
             ),
             "joint_dofs": _joint_dofs_for_arm_pose(intent),
         }
-        fingertip_contract = _fingertip_spacing_contract(
+        hand_mesh_contract = _hand_mesh_spacing_contract(
             intent,
             dimensions,
         )
-        if fingertip_contract is not None:
-            state["fingertip_spacing_contract"] = fingertip_contract
+        if hand_mesh_contract is not None:
+            state["hand_mesh_spacing_contract"] = hand_mesh_contract
     elif pose_name == "fifth":
         state = _solve_fifth(intent, dimensions)
     elif pose_name == "plie":
@@ -858,10 +858,10 @@ def solve_pose(
                 f"{pose_name}: arm segment length error {maximum_error}."
             )
         evidence["arm_segment_lengths"] = arm_lengths
-        if "fingertip_spacing_contract" in state:
-            evidence["fingertip_spacing"] = {
-                "status": "DEFERRED_TO_CALIBRATED_RETARGET",
-                "authority": "Phase 10.6.6 calibrated Hand->Middle rest/bind geometry",
+        if "hand_mesh_spacing_contract" in state:
+            evidence["hand_mesh_spacing"] = {
+                "status": "DEFERRED_TO_BLENDER_DEFORMED_MESH",
+                "authority": "Phase 10.6.7 deformed Hand_L/Middle_L and Hand_R/Middle_R mesh geometry",
             }
 
     return {

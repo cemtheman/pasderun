@@ -21,7 +21,9 @@
     "animation_forbidden": true,
     "semantic_limb_length_axis_preservation_required": true,
     "rest_bind_swing_may_not_rotate_solved_limb_length_axis": true,
-    "rest_bind_roll_component_may_be_preserved": true
+    "rest_bind_roll_component_may_be_preserved": true,
+    "middle_fingertip_visual_spacing_gate_forbidden": true,
+    "final_hand_centerline_spacing_authority": "Phase 10.6.7 deformed hand mesh"
   },
   "composition": {
     "convention": "POSTMULTIPLY_LOCAL_ROTATIONS_IN_LISTED_ORDER",
@@ -102,7 +104,7 @@
       "orientation_source": "WRIST_LANDMARK_DIRECTION_SOLVED_IN_DECLARED_2DOF",
       "axial_roll_policy": "NO_INDEPENDENT_HAND_AXIAL_ROLL",
       "parent_orientation_source": "POSED_FOREARM_FRAME_PLUS_CANONICAL_HAND_REST_RELATION",
-      "semantic_direction_policy": "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE",
+      "semantic_direction_policy": "SEMANTIC_PREFERENCE_CLAMPED_TO_WRIST_2DOF_PREFERRED_ENVELOPE; FINAL_CENTERLINE_SPACING_DEFERRED_TO_PHASE_10_6_7_DEFORMED_MESH",
       "limit_source": "PHASE_10_6_3_WRIST_2DOF_PREFERRED",
       "solver": {
         "coarse_step_deg": 1,
