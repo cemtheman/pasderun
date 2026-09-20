@@ -378,6 +378,226 @@
         }
       ],
       "joint_dofs": {}
+    },
+    "second_locked_t_pose": {
+      "pose": "second",
+      "expected": "FAIL",
+      "expected_failed_validator": "wrist_below_shoulder",
+      "landmarks": {
+        "left_shoulder": {
+          "left": 0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "right_shoulder": {
+          "left": -0.5,
+          "up": 1.4,
+          "front": 0
+        },
+        "left_elbow": {
+          "left": 0.8,
+          "up": 1.4,
+          "front": 0.05
+        },
+        "right_elbow": {
+          "left": -0.8,
+          "up": 1.4,
+          "front": 0.05
+        },
+        "left_wrist": {
+          "left": 1.1,
+          "up": 1.4,
+          "front": 0.05
+        },
+        "right_wrist": {
+          "left": -1.1,
+          "up": 1.4,
+          "front": 0.05
+        },
+        "left_hand": {
+          "left": 1.18,
+          "up": 1.4,
+          "front": 0.05
+        },
+        "right_hand": {
+          "left": -1.18,
+          "up": 1.4,
+          "front": 0.05
+        }
+      },
+      "joint_dofs": {}
+    },
+    "fifth_forbidden_foot_yaw": {
+      "pose": "fifth",
+      "expected": "FAIL",
+      "landmarks": {
+        "left_heel": {
+          "left": -0.15,
+          "up": 0,
+          "front": 0.12
+        },
+        "left_toe": {
+          "left": 0.15,
+          "up": 0,
+          "front": -0.12
+        },
+        "right_heel": {
+          "left": 0.15,
+          "up": 0,
+          "front": -0.12
+        },
+        "right_toe": {
+          "left": -0.15,
+          "up": 0,
+          "front": 0.12
+        }
+      },
+      "contacts": {
+        "left": "FULL_FOOT",
+        "right": "FULL_FOOT"
+      },
+      "turnout": {
+        "left": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 5,
+          "independent_foot_yaw_deg": 8
+        },
+        "right": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 5,
+          "independent_foot_yaw_deg": 0
+        }
+      },
+      "com": {
+        "left": 0,
+        "front": 0
+      },
+      "support_polygon": [
+        {
+          "left": -0.25,
+          "front": -0.2
+        },
+        {
+          "left": 0.25,
+          "front": -0.2
+        },
+        {
+          "left": 0.25,
+          "front": 0.2
+        },
+        {
+          "left": -0.25,
+          "front": 0.2
+        }
+      ],
+      "joint_dofs": {},
+      "expected_failed_validator": "turnout_chain"
+    },
+    "plie_forbidden_foot_yaw": {
+      "pose": "plie",
+      "expected": "FAIL",
+      "contacts": {
+        "left": "FULL_FOOT",
+        "right": "FULL_FOOT"
+      },
+      "turnout": {
+        "left": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 8,
+          "knee_flexion_deg": 45,
+          "independent_foot_yaw_deg": 8
+        },
+        "right": {
+          "hip_external_rotation_deg": 45,
+          "knee_external_rotation_deg": 8,
+          "knee_flexion_deg": 45,
+          "independent_foot_yaw_deg": 0
+        }
+      },
+      "knee_second_toe_error_deg": {
+        "left": 3,
+        "right": 4
+      },
+      "scalars": {
+        "pelvis_descent": 0.16,
+        "trunk_tilt_deg": 3
+      },
+      "com": {
+        "left": 0,
+        "front": 0
+      },
+      "support_polygon": [
+        {
+          "left": -0.3,
+          "front": -0.2
+        },
+        {
+          "left": 0.3,
+          "front": -0.2
+        },
+        {
+          "left": 0.3,
+          "front": 0.2
+        },
+        {
+          "left": -0.3,
+          "front": 0.2
+        }
+      ],
+      "joint_dofs": {},
+      "expected_failed_validator": "turnout_chain"
+    },
+    "releve_forbidden_foot_yaw": {
+      "pose": "releve",
+      "expected": "FAIL",
+      "contacts": {
+        "left": "FOREFOOT",
+        "right": "FOREFOOT"
+      },
+      "turnout": {
+        "left": {
+          "hip_external_rotation_deg": 40,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 3,
+          "independent_foot_yaw_deg": 8
+        },
+        "right": {
+          "hip_external_rotation_deg": 40,
+          "knee_external_rotation_deg": 4,
+          "knee_flexion_deg": 3,
+          "independent_foot_yaw_deg": 0
+        }
+      },
+      "scalars": {
+        "left_heel_height": 0.14,
+        "right_heel_height": 0.14
+      },
+      "com": {
+        "left": 0,
+        "front": 0.03
+      },
+      "support_polygon": [
+        {
+          "left": -0.18,
+          "front": -0.08
+        },
+        {
+          "left": 0.18,
+          "front": -0.08
+        },
+        {
+          "left": 0.18,
+          "front": 0.14
+        },
+        {
+          "left": -0.18,
+          "front": 0.14
+        }
+      ],
+      "joint_dofs": {},
+      "expected_failed_validator": "turnout_chain"
     }
   }
 }

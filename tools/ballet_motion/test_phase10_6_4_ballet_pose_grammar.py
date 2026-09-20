@@ -64,6 +64,29 @@ class Phase1064BalletPoseGrammarTests(unittest.TestCase):
             {item["type"] for item in checks},
         )
 
+    def test_locked_t_pose_second_regression_is_explicit(self) -> None:
+        fixture = self.fixtures["fixtures"]["second_locked_t_pose"]
+        self.assertEqual(fixture["expected"], "FAIL")
+        self.assertEqual(
+            fixture["expected_failed_validator"],
+            "wrist_below_shoulder",
+        )
+
+    def test_independent_foot_yaw_regressions_cover_lower_body_poses(self) -> None:
+        for pose in ("fifth", "plie", "releve"):
+            fixture = self.fixtures["fixtures"][
+                f"{pose}_forbidden_foot_yaw"
+            ]
+            self.assertEqual(fixture["expected"], "FAIL")
+            self.assertEqual(
+                fixture["expected_failed_validator"],
+                "turnout_chain",
+            )
+            self.assertNotEqual(
+                fixture["turnout"]["left"]["independent_foot_yaw_deg"],
+                0,
+            )
+
     def test_fifth_is_contact_turnout_balance_and_closure(self) -> None:
         kinds = {item["type"] for item in self.grammar["poses"]["fifth"]["checks"]}
         self.assertTrue(

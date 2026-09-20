@@ -110,6 +110,26 @@ def main() -> None:
         in fixture_results["bras_bas_arms_behind_back"]["failed_validators"],
         "Arms-behind-back must fail anterior halfspace.",
     )
+    require(
+        fixture_results["second_locked_t_pose"]["status"] == "FAIL",
+        "Locked T-pose second-position regression must fail.",
+    )
+    require(
+        "wrist_below_shoulder"
+        in fixture_results["second_locked_t_pose"]["failed_validators"],
+        "Locked T-pose must fail wrist-below-shoulder geometry.",
+    )
+    for pose_name in regression["independent_foot_yaw_must_fail"]:
+        fixture_name = f"{pose_name}_forbidden_foot_yaw"
+        require(
+            fixture_results[fixture_name]["status"] == "FAIL",
+            f"{pose_name}: independent foot yaw regression must fail.",
+        )
+        require(
+            "turnout_chain"
+            in fixture_results[fixture_name]["failed_validators"],
+            f"{pose_name}: foot yaw must fail turnout_chain.",
+        )
 
     output = {
         "phase": PHASE,
@@ -136,6 +156,8 @@ def main() -> None:
             "required_pose_set_complete": True,
             "fixture_results": fixture_results,
             "arms_behind_back_is_blocked": True,
+            "locked_t_pose_second_is_blocked": True,
+            "independent_foot_yaw_is_blocked": True,
             "render_block_on_geometry_failure": True,
             "animation_block_on_geometry_failure": True,
         },
