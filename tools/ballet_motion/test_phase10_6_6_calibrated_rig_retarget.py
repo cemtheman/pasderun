@@ -14,6 +14,7 @@ from calibrated_rig_retarget import (
     _joint_delta,
     _rig_pose_from_canonical,
     _upper_limb_target_bases,
+    _wrist_2dof_target_basis,
     validate_rest_identity,
 )
 from rig_retarget_math import (
@@ -351,7 +352,7 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
         )
         self.assertLess(matrix_max_error(reconstructed, child_pose), 1e-12)
 
-    def test_upper_limb_contract_uses_landmark_frames_and_axial_roll_only(self) -> None:
+    def test_upper_limb_contract_uses_landmarks_and_declared_roll_authority(self) -> None:
         upper = self.contract["upper_limb_roll"]
         self.assertEqual(
             upper["upper_arm"]["source_dof"],
@@ -362,8 +363,86 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             "pronation_supination",
         )
         self.assertIsNone(upper["hand"]["source_dof"])
+        self.assertEqual(
+            upper["hand"]["orientation_source"],
+            "WRIST_LANDMARK_DIRECTION_SOLVED_IN_DECLARED_2DOF",
+        )
+        self.assertEqual(
+            upper["hand"]["axial_roll_policy"],
+            "NO_INDEPENDENT_HAND_AXIAL_ROLL",
+        )
         self.assertIn("basis_from_length_and_front(", self.retarget)
         self.assertIn("local_twist_y(", self.retarget)
+        self.assertIn("_wrist_2dof_target_basis(", self.retarget)
+
+    def test_wrist_2dof_target_matches_landmark_without_axial_roll(self) -> None:
+        parent_pose = mat_mul(
+            axis_rotation("Y", 31.0),
+            axis_rotation("X", -17.0),
+        )
+        parent_rest = identity3()
+        hand_rest = identity3()
+
+        intended_delta = mat_mul(
+            axis_rotation("X", 18.0),
+            axis_rotation("Z", -12.0),
+        )
+        intended_basis = mat_mul(parent_pose, intended_delta)
+        direction = [
+            intended_basis[row][1]
+            for row in range(3)
+        ]
+
+        target, evidence = _wrist_2dof_target_basis(
+            direction,
+            parent_pose,
+            parent_rest,
+            hand_rest,
+        )
+        recovered_local = mat_mul(
+            transpose(parent_pose),
+            target,
+        )
+        expected_local = intended_delta
+
+        self.assertLess(
+            matrix_max_error(recovered_local, expected_local),
+            1e-10,
+        )
+        self.assertAlmostEqual(
+            evidence["flexion_extension_deg"],
+            18.0,
+            places=8,
+        )
+        self.assertAlmostEqual(
+            evidence["radial_ulnar_deviation_deg"],
+            -12.0,
+            places=8,
+        )
+        self.assertGreater(
+            evidence["length_axis_alignment_dot"],
+            0.999999999,
+        )
+
+    def test_hand_basis_is_not_reseeded_from_body_front(self) -> None:
+        start = self.retarget.index('if role == "hand":')
+        end = self.retarget.index(
+            "targets[bone_name] = basis",
+            start,
+        )
+        hand_path = self.retarget[start:end]
+        self.assertIn(
+            "_wrist_2dof_target_basis(",
+            hand_path,
+        )
+        self.assertNotIn(
+            "basis_from_length_and_front(",
+            hand_path,
+        )
+        self.assertNotIn(
+            "local_twist_y(",
+            hand_path,
+        )
 
     def test_retarget_outputs_parent_relative_matrix_and_quaternion(self) -> None:
         self.assertIn('"local_pose_delta_matrix"', self.retarget)

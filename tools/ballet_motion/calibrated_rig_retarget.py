@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import math
 
 from canonical_math import (
     dot,
@@ -101,6 +102,56 @@ def _topological_order(canonical_profile: dict) -> list[str]:
     return emitted
 
 
+def _wrist_2dof_target_basis(
+    desired_length_direction: list[float],
+    parent_pose_basis: list[list[float]],
+    parent_rest_basis: list[list[float]],
+    hand_rest_basis: list[list[float]],
+) -> tuple[list[list[float]], dict]:
+    direction = normalize(desired_length_direction)
+    rest_local = mat_mul(
+        transpose(parent_rest_basis),
+        hand_rest_basis,
+    )
+    base = mat_mul(parent_pose_basis, rest_local)
+    local_direction = mat_vec(transpose(base), direction)
+    local_direction = normalize(local_direction)
+
+    x = max(-1.0, min(1.0, float(local_direction[0])))
+    deviation_rad = math.asin(-x)
+    cos_deviation = math.cos(deviation_rad)
+    if abs(cos_deviation) <= 1e-8:
+        raise RigRetargetRejected(
+            "Wrist landmark direction is singular for declared wrist_2dof."
+        )
+
+    flexion_rad = math.atan2(
+        float(local_direction[2]),
+        float(local_direction[1]),
+    )
+    flexion_deg = math.degrees(flexion_rad)
+    deviation_deg = math.degrees(deviation_rad)
+
+    delta = mat_mul(
+        axis_rotation("X", flexion_deg),
+        axis_rotation("Z", deviation_deg),
+    )
+    target = mat_mul(base, delta)
+    target_y = normalize([target[row][1] for row in range(3)])
+    alignment = dot(target_y, direction)
+    if alignment < 0.999999:
+        raise RigRetargetRejected(
+            "Declared wrist_2dof cannot reconstruct hand landmark "
+            f"direction; alignment={alignment}."
+        )
+
+    return target, {
+        "flexion_extension_deg": flexion_deg,
+        "radial_ulnar_deviation_deg": deviation_deg,
+        "length_axis_alignment_dot": alignment,
+    }
+
+
 def _upper_limb_target_bases(
     state: dict,
     canonical_profile: dict,
@@ -153,19 +204,39 @@ def _upper_limb_target_bases(
                 landmarks[end_name],
                 canonical_profile,
             )
-            basis = basis_from_length_and_front(
-                direction,
-                front,
-                up,
-                left,
-            )
 
-            roll = axis_contract["upper_limb_roll"][role]
-            source_dof = roll["source_dof"]
-            if source_dof is not None:
-                dof_values = state.get("joint_dofs", {}).get(bone_name, {})
-                angle = float(dof_values.get(source_dof, 0.0))
-                basis = local_twist_y(basis, angle)
+            if role == "hand":
+                parent_name = f"{side}_forearm"
+                if parent_name not in targets:
+                    raise RigRetargetRejected(
+                        f"{bone_name}: posed forearm frame is unavailable."
+                    )
+                bones = canonical_profile["canonical_bones"]
+                basis, _wrist_evidence = _wrist_2dof_target_basis(
+                    direction,
+                    targets[parent_name],
+                    _rest_basis(bones[parent_name]),
+                    _rest_basis(bones[bone_name]),
+                )
+            else:
+                basis = basis_from_length_and_front(
+                    direction,
+                    front,
+                    up,
+                    left,
+                )
+
+                roll = axis_contract["upper_limb_roll"][role]
+                source_dof = roll["source_dof"]
+                if source_dof is not None:
+                    dof_values = state.get("joint_dofs", {}).get(
+                        bone_name,
+                        {},
+                    )
+                    angle = float(
+                        dof_values.get(source_dof, 0.0)
+                    )
+                    basis = local_twist_y(basis, angle)
 
             targets[bone_name] = basis
 

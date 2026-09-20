@@ -4,7 +4,7 @@
   "contract_id": "canonical_to_calibrated_rig_orientation_v1",
   "policy": {
     "canonical_pose_source": "Phase 10.6.5 validated solutions only",
-    "upper_limb_orientation_source": "landmark-derived absolute canonical frames",
+    "upper_limb_orientation_source": "upper arm/forearm landmark frames with declared axial roll; hand landmark direction solved exactly through wrist_2dof",
     "lower_limb_orientation_source": "canonical local joint DOFs plus derived knee turnout coupling",
     "euler_application_forbidden": true,
     "matrix_and_quaternion_output_only": true,
@@ -95,7 +95,10 @@
     },
     "hand": {
       "source_dof": null,
-      "axis": null
+      "axis": null,
+      "orientation_source": "WRIST_LANDMARK_DIRECTION_SOLVED_IN_DECLARED_2DOF",
+      "axial_roll_policy": "NO_INDEPENDENT_HAND_AXIAL_ROLL",
+      "parent_orientation_source": "POSED_FOREARM_FRAME_PLUS_CANONICAL_HAND_REST_RELATION"
     }
   },
   "thresholds": {
