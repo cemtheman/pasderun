@@ -357,7 +357,7 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         ]
         self.assertEqual(
             runtime_solver["method"],
-            "BOUNDED_BISECTION_ON_SCALE_RELATIVE_CANONICAL_CLEARANCE",
+            "BOUNDED_BISECTION_ON_FEASIBILITY_MARGIN",
         )
         self.assertEqual(runtime_solver["feasibility_iterations"], 28)
         self.assertEqual(runtime_solver["root_iterations"], 20)
@@ -397,16 +397,26 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             "HAND_MESH_CLEARANCE_CALIBRATION_REQUIRED",
             self.script,
         )
-        self.assertIn(
-            "def solve_hand_mesh_wrist_spacing(",
-            self.script,
+        self.assertEqual(
+            runtime_solver["constraint_function"],
+            "min(left_side_offset,right_side_offset,bilateral_gap-minimum_gap)",
+        )
+        self.assertEqual(
+            runtime_solver["upper_constraint"],
+            "bilateral_gap<=maximum_gap",
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_secondary_wrist_trim_forbidden"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_retarget_wrist_seed_preserved_required"
+            ]
         )
         self.assertIn(
-            "def solve_hand_mesh_wrist_side(",
-            self.script,
-        )
-        self.assertIn(
-            'constraints["joint_limits"]["wrist_2dof"]["dofs"]',
+            '"secondary_wrist_trim_applied": False',
             self.script,
         )
         self.assertIn(
@@ -414,25 +424,8 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            '"hand_mesh_wrist_realization_pass": True',
+            '"hand_mesh_retarget_wrist_seed_preserved_pass": True',
             self.script,
-        )
-        self.assertEqual(
-            self.contract["hand_mesh_wrist_solver"][
-                "coarse_step_deg"
-            ],
-            5,
-        )
-        self.assertEqual(
-            self.contract["hand_mesh_wrist_solver"][
-                "refine_steps_deg"
-            ],
-            [1, 0.2, 0.05],
-        )
-        self.assertTrue(
-            self.contract["hand_mesh_wrist_solver"][
-                "independent_axial_roll_forbidden"
-            ]
         )
 
     def test_contact_fix_does_not_relax_existing_contact_tolerance(self) -> None:
@@ -709,12 +702,20 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.wrapper,
         )
 
-    def test_wrapper_requires_hand_mesh_spacing_and_wrist_gates(self) -> None:
+    def test_wrapper_requires_hand_mesh_spacing_and_wrist_seed_gates(self) -> None:
         self.assertIn(
             "$data.gate.hand_mesh_centerline_spacing_pass",
             self.wrapper,
         )
         self.assertIn(
+            "$data.gate.hand_mesh_retarget_wrist_seed_preserved_pass",
+            self.wrapper,
+        )
+        self.assertIn(
+            "$data.gate.hand_mesh_runtime_clearance_solver_pass",
+            self.wrapper,
+        )
+        self.assertNotIn(
             "$data.gate.hand_mesh_wrist_realization_pass",
             self.wrapper,
         )

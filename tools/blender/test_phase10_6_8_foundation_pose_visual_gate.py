@@ -238,11 +238,15 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            '"hand_mesh_wrist_realization_pass": True',
+            '"hand_mesh_retarget_wrist_seed_preserved_pass": True',
             self.script,
         )
         self.assertIn(
             '"hand_mesh_runtime_clearance_solver_pass": True',
+            self.script,
+        )
+        self.assertNotIn(
+            "static_core.solve_hand_mesh_wrist_spacing(",
             self.script,
         )
 
@@ -366,12 +370,16 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
             self.wrapper,
         )
 
-    def test_wrapper_requires_hand_mesh_spacing_and_wrist_gates(self) -> None:
+    def test_wrapper_requires_hand_mesh_spacing_and_wrist_seed_gates(self) -> None:
         self.assertIn(
             "$data.automated_gate.hand_mesh_centerline_spacing_pass",
             self.wrapper,
         )
         self.assertIn(
+            "$data.automated_gate.hand_mesh_retarget_wrist_seed_preserved_pass",
+            self.wrapper,
+        )
+        self.assertNotIn(
             "$data.automated_gate.hand_mesh_wrist_realization_pass",
             self.wrapper,
         )

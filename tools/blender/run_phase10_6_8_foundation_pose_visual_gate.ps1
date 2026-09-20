@@ -144,8 +144,8 @@ if (-not $data.automated_gate.upper_body_hand_axial_continuity_pass) {
 if (-not $data.automated_gate.hand_mesh_centerline_spacing_pass) {
     throw "Hand mesh centerline spacing gate failed."
 }
-if (-not $data.automated_gate.hand_mesh_wrist_realization_pass) {
-    throw "Hand mesh wrist realization gate failed."
+if (-not $data.automated_gate.hand_mesh_retarget_wrist_seed_preserved_pass) {
+    throw "Hand mesh retarget wrist seed preservation gate failed."
 }
 if (-not $data.automated_gate.hand_mesh_runtime_clearance_solver_pass) {
     throw "Hand mesh runtime clearance solver gate failed."
@@ -171,7 +171,7 @@ Write-Host "PHASE 10.6.8 FOUNDATION POSE VISUAL GATE READY"
 Write-Host "Renders:          18/18"
 Write-Host "Hand continuity:  PASS"
 Write-Host "Hand mesh spacing: PASS"
-Write-Host "Hand mesh wrist:   PASS"
+Write-Host "Wrist seed:        RETARGET SEED PRESERVED"
 Write-Host "Hand mesh solve:   BOUNDED ROOT SOLVE PASS"
 Write-Host "Middle bone tip:   DIAGNOSTIC ONLY"
 Write-Host "Static contact:   PASS"

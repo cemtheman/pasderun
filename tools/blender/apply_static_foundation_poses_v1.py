@@ -1801,7 +1801,6 @@ def solve_runtime_hand_mesh_pose(
     pose_name: str,
     hand_samples: dict,
     inner_edge_quantile: float,
-    wrist_solver_contract: dict,
     runtime_solver_contract: dict,
     pose_solver,
     retarget_solver,
@@ -1855,6 +1854,9 @@ def solve_runtime_hand_mesh_pose(
         runtime_solver_contract["feasibility_iterations"]
     )
     root_iterations = int(runtime_solver_contract["root_iterations"])
+    epsilon = float(
+        runtime_solver_contract["feasibility_margin_epsilon"]
+    )
 
     zero_candidate = try_candidate(0.0)
     if zero_candidate is None:
@@ -1897,52 +1899,65 @@ def solve_runtime_hand_mesh_pose(
             )
             for side in ("left", "right")
         }
-        minimum_side_offset = min(
-            float(item["side_offset"])
-            for item in sides.values()
+        realized = realized_hand_mesh_centerline_spacing(
+            armature,
+            canonical,
+            pose_entry,
+            hand_samples,
+            inner_edge_quantile,
+        )
+        minimum_gap = float(spacing["minimum_gap"])
+        maximum_gap = float(spacing["maximum_gap"])
+        gap = float(realized["mesh_centerline_gap"])
+        left_side = float(sides["left"]["side_offset"])
+        right_side = float(sides["right"]["side_offset"])
+        lower_margin = min(
+            left_side,
+            right_side,
+            gap - minimum_gap,
         )
         return {
             **candidate,
             "clearance_fraction": float(clearance_fraction),
             "sides": sides,
-            "minimum_side_offset": minimum_side_offset,
             "spacing_contract": spacing,
+            "realized_spacing": realized,
+            "bilateral_gap": gap,
+            "minimum_gap": minimum_gap,
+            "maximum_gap": maximum_gap,
+            "lower_margin": lower_margin,
         }
 
     low_eval = evaluate(0.0)
-    spacing = low_eval["spacing_contract"]
-    target_side_offset = (
-        float(spacing["minimum_gap"])
-        + float(spacing["maximum_gap"])
-    ) * 0.25
-    minimum_side_allowed = float(spacing["minimum_gap"]) * 0.5
-    maximum_side_allowed = float(spacing["maximum_gap"]) * 0.5
 
-    if (
-        minimum_side_allowed
-        <= low_eval["minimum_side_offset"]
-        <= maximum_side_allowed
-    ):
-        winning_fraction = 0.0
+    def is_feasible(item: dict) -> bool:
+        return (
+            float(item["lower_margin"]) >= epsilon
+            and float(item["bilateral_gap"])
+            <= float(item["maximum_gap"]) + epsilon
+        )
+
+    if is_feasible(low_eval):
+        winner = low_eval
         root_steps_used = 0
     else:
         high_eval = evaluate(maximum_feasible)
         if (
-            high_eval["minimum_side_offset"]
-            <= low_eval["minimum_side_offset"] + 1e-9
+            float(high_eval["lower_margin"])
+            <= float(low_eval["lower_margin"]) + 1e-9
         ):
             raise RuntimeError(
                 f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                "deformed hand-mesh clearance is not monotonic over the "
-                "validated canonical feasibility interval."
+                "deformed hand-mesh feasibility margin is not monotonic "
+                "over the validated canonical interval."
             )
-        if high_eval["minimum_side_offset"] < target_side_offset:
+        if float(high_eval["lower_margin"]) < epsilon:
             raise RuntimeError(
                 f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
                 f"maximum_feasible_clearance_fraction={maximum_feasible}; "
-                f"best_minimum_side_offset="
-                f"{high_eval['minimum_side_offset']}; "
-                f"target_side_offset={target_side_offset}."
+                f"best_lower_margin={high_eval['lower_margin']}; "
+                f"bilateral_gap={high_eval['bilateral_gap']}; "
+                f"side_offsets={high_eval['sides']}."
             )
 
         lower = 0.0
@@ -1954,51 +1969,69 @@ def solve_runtime_hand_mesh_pose(
             root_steps_used += 1
             midpoint = (lower + upper) * 0.5
             mid_eval = evaluate(midpoint)
-            mid_value = float(mid_eval["minimum_side_offset"])
-            low_value = float(lower_eval["minimum_side_offset"])
-            high_value = float(upper_eval["minimum_side_offset"])
+            mid_margin = float(mid_eval["lower_margin"])
+            low_margin = float(lower_eval["lower_margin"])
+            high_margin = float(upper_eval["lower_margin"])
             if (
-                mid_value < low_value - 1e-8
-                or mid_value > high_value + 1e-8
+                mid_margin < low_margin - 1e-8
+                or mid_margin > high_margin + 1e-8
             ):
                 raise RuntimeError(
                     f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
-                    "deformed hand-mesh clearance violated monotonic "
-                    "bracketing during bounded root solve."
+                    "deformed hand-mesh feasibility margin violated "
+                    "monotonic bracketing during bounded root solve."
                 )
-            if mid_value < target_side_offset:
-                lower = midpoint
-                lower_eval = mid_eval
-            else:
+            if mid_margin >= epsilon:
                 upper = midpoint
                 upper_eval = mid_eval
-        winning_fraction = upper
+            else:
+                lower = midpoint
+                lower_eval = mid_eval
+        winner = upper_eval
 
-    winner = evaluate(winning_fraction)
-    pose_entry = winner["pose_entry"]
-    wrist_solution = solve_hand_mesh_wrist_spacing(
-        armature,
-        canonical,
-        constraints,
-        pose_entry,
-        hand_samples,
-        inner_edge_quantile,
-        wrist_solver_contract,
-    )
-    if wrist_solution["status"] != "PASS":
+    gap = float(winner["bilateral_gap"])
+    if gap > float(winner["maximum_gap"]) + epsilon:
         raise RuntimeError(
-            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS after bounded "
-            f"canonical clearance solve; clearance_fraction="
-            f"{winning_fraction}; wrist_solution={wrist_solution}."
+            f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; first "
+            "non-crossing/min-gap solution exceeds the maximum "
+            f"declared bilateral gap: gap={gap}; "
+            f"maximum={winner['maximum_gap']}."
+        )
+
+    for side in ("left", "right"):
+        side_offset = float(winner["sides"][side]["side_offset"])
+        if side_offset < -epsilon:
+            raise RuntimeError(
+                f"{pose_name}: INFEASIBLE_WITHIN_CONSTRAINTS; "
+                f"{side} hand crosses centerline by {-side_offset}."
+            )
+
+    pose_entry = winner["pose_entry"]
+    wrist_seed = pose_entry["evidence"]["hand_wrist_solution"]
+    if not pose_entry["evidence"]["hand_wrist_preferred_envelope_pass"]:
+        raise RuntimeError(
+            f"{pose_name}: retarget wrist seed left preferred envelope."
         )
 
     return {
         "status": "PASS",
         "pose_entry": pose_entry,
-        "wrist_solution": wrist_solution,
+        "final_mesh_spacing": winner["realized_spacing"],
+        "wrist_seed_evidence": {
+            "status": "PASS",
+            "source": "PHASE_10_6_6_RETARGET_SEMANTIC_WRIST_SEED",
+            "preferred_envelope_pass": True,
+            "secondary_wrist_trim_applied": False,
+            "independent_axial_roll": "BLOCKED",
+            "hand_wrist_solution": wrist_seed,
+        },
         "evidence": {
             "method": runtime_solver_contract["method"],
+            "constraint_function": runtime_solver_contract[
+                "constraint_function"
+            ],
             "authored_clearance_constant": False,
+            "secondary_wrist_trim_applied": False,
             "physical_upper_bound_fraction": round(
                 physical_upper,
                 10,
@@ -2008,16 +2041,11 @@ def solve_runtime_hand_mesh_pose(
                 10,
             ),
             "solved_clearance_fraction": round(
-                winning_fraction,
+                float(winner["clearance_fraction"]),
                 10,
             ),
-            "target_side_offset": round(target_side_offset, 10),
-            "minimum_side_allowed": round(
-                minimum_side_allowed,
-                10,
-            ),
-            "maximum_side_allowed": round(
-                maximum_side_allowed,
+            "feasibility_margin": round(
+                float(winner["lower_margin"]),
                 10,
             ),
             "semantic_mesh_side_offsets": {
@@ -2027,14 +2055,23 @@ def solve_runtime_hand_mesh_pose(
                 )
                 for side, item in winner["sides"].items()
             },
+            "bilateral_gap": round(
+                float(winner["bilateral_gap"]),
+                10,
+            ),
+            "minimum_gap": round(
+                float(winner["minimum_gap"]),
+                10,
+            ),
+            "maximum_gap": round(
+                float(winner["maximum_gap"]),
+                10,
+            ),
             "feasibility_iterations": feasibility_iterations,
             "root_iterations_used": root_steps_used,
-            "final_mesh_spacing": wrist_solution[
-                "final_mesh_spacing"
-            ],
+            "final_mesh_spacing": winner["realized_spacing"],
         },
     }
-
 
 def body_metrics(canonical: dict) -> dict:
     bones = canonical["canonical_bones"]
@@ -2243,16 +2280,15 @@ def main() -> None:
                 pose_name,
                 hand_samples,
                 float(hand_sampling["inner_edge_quantile"]),
-                contract["hand_mesh_wrist_solver"],
                 contract["hand_mesh_runtime_clearance_solver"],
                 pose_solver,
                 retarget_solver,
             )
             pose_entry = hand_mesh_runtime_solution["pose_entry"]
             hand_mesh_wrist_solution = hand_mesh_runtime_solution[
-                "wrist_solution"
+                "wrist_seed_evidence"
             ]
-            hand_mesh_spacing = hand_mesh_wrist_solution[
+            hand_mesh_spacing = hand_mesh_runtime_solution[
                 "final_mesh_spacing"
             ]
 
@@ -2613,7 +2649,7 @@ def main() -> None:
             "releve_heel_lift_consistency_pass": True,
             "middle_bone_tip_diagnostic_recorded": True,
             "hand_mesh_centerline_spacing_pass": True,
-            "hand_mesh_wrist_realization_pass": True,
+            "hand_mesh_retarget_wrist_seed_preserved_pass": True,
             "hand_mesh_runtime_clearance_solver_pass": True,
             "blender_application_performed": True,
             "render_performed": False,
@@ -2637,7 +2673,7 @@ def main() -> None:
     print("RELEVE_HEEL_LIFT=PASS")
     print("MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY")
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
-    print("HAND_MESH_WRIST_REALIZATION=PASS")
+    print("HAND_MESH_RETARGET_WRIST_SEED_PRESERVED=PASS")
     print("HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")

@@ -564,7 +564,6 @@ def realize_pose(
                         "inner_edge_quantile"
                     ]
                 ),
-                static_contract["hand_mesh_wrist_solver"],
                 static_contract[
                     "hand_mesh_runtime_clearance_solver"
                 ],
@@ -578,9 +577,9 @@ def realize_pose(
         )
         pose_entry = hand_mesh_runtime_solution["pose_entry"]
         hand_mesh_wrist_solution = hand_mesh_runtime_solution[
-            "wrist_solution"
+            "wrist_seed_evidence"
         ]
-        hand_mesh_spacing = hand_mesh_wrist_solution[
+        hand_mesh_spacing = hand_mesh_runtime_solution[
             "final_mesh_spacing"
         ]
 
@@ -931,7 +930,7 @@ def main() -> None:
             "upper_body_hand_axial_continuity_pass": True,
             "middle_bone_tip_diagnostic_recorded": True,
             "hand_mesh_centerline_spacing_pass": True,
-            "hand_mesh_wrist_realization_pass": True,
+            "hand_mesh_retarget_wrist_seed_preserved_pass": True,
             "hand_mesh_runtime_clearance_solver_pass": True,
             "render_count_pass": True,
             "animation_rendered": False,
@@ -959,7 +958,7 @@ def main() -> None:
     print("HAND_AXIAL_CONTINUITY=PASS")
     print("MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY")
     print("HAND_MESH_CENTERLINE_SPACING=PASS")
-    print("HAND_MESH_WRIST_REALIZATION=PASS")
+    print("HAND_MESH_RETARGET_WRIST_SEED_PRESERVED=PASS")
     print("HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS")
     print("STATIC_CONTACT_REALIZATION=PASS")
     print("ANIMATION=NOT_PERFORMED")
