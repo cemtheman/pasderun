@@ -316,6 +316,24 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.contract["hand_mesh_sampling"]["bone_scope"],
             "HAND_ROOT_PLUS_ALL_DESCENDANTS",
         )
+        self.assertEqual(
+            self.contract["hand_mesh_sampling"]["inner_edge_quantile"],
+            0.0,
+        )
+        self.assertEqual(
+            self.contract["hand_mesh_sampling"]["inner_edge_measurement"],
+            "STRICT_EXTREME_VERTEX",
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_centerline_strict_no_cross_required"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "hand_mesh_centerline_outlier_tolerance_forbidden"
+            ]
+        )
         self.assertIn(
             "def rig_bone_subtree_names(",
             self.script,
