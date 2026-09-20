@@ -261,7 +261,7 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn("coarse_step_deg", self.script)
         self.assertIn("refine_steps_deg", self.script)
 
-    def test_bras_bas_and_en_avant_use_real_middle_bone_tail_spacing(self) -> None:
+    def test_bras_bas_and_en_avant_record_middle_bone_tail_diagnostic(self) -> None:
         self.assertIn(
             "def realized_middle_fingertip_spacing(",
             self.script,
@@ -306,6 +306,33 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.contract["policy"][
                 "middle_bone_tail_is_diagnostic_not_visual_authority"
             ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "partial_hand_or_single_finger_sampling_forbidden"
+            ]
+        )
+        self.assertEqual(
+            self.contract["hand_mesh_sampling"]["bone_scope"],
+            "HAND_ROOT_PLUS_ALL_DESCENDANTS",
+        )
+        self.assertIn(
+            "def rig_bone_subtree_names(",
+            self.script,
+        )
+        self.assertIn(
+            "def hand_rig_vertex_groups(",
+            self.script,
+        )
+        self.assertIn(
+            "stack.extend(list(bone.children))",
+            self.script,
+        )
+        self.assertNotIn(
+            'canonical["canonical_bones"]["left_middle"]["rig_bone"],\n'
+            '        },\n'
+            '        "right": {',
+            self.script,
         )
         self.assertIn(
             "def realized_hand_mesh_centerline_spacing(",

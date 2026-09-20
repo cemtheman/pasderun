@@ -34,7 +34,9 @@
     "middle_bone_tail_is_diagnostic_not_visual_authority": true,
     "hand_mesh_wrist_realization_required": true,
     "hand_mesh_wrist_solver_preferred_only": true,
-    "middle_bone_tip_is_diagnostic_after_mesh_realization": true
+    "middle_bone_tip_is_diagnostic_after_mesh_realization": true,
+    "hand_mesh_vertices_source": "all deformed mesh vertices weighted to Hand_L/Hand_R and every descendant rig bone",
+    "partial_hand_or_single_finger_sampling_forbidden": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -77,7 +79,8 @@
   },
   "hand_mesh_sampling": {
     "minimum_vertex_group_weight": 0.15,
-    "inner_edge_quantile": 0.02
+    "inner_edge_quantile": 0.02,
+    "bone_scope": "HAND_ROOT_PLUS_ALL_DESCENDANTS"
   },
   "hand_mesh_wrist_solver": {
     "coarse_step_deg": 5,

@@ -179,9 +179,46 @@ def relevant_mesh_objects(
             meshes.append(obj)
     if not meshes:
         raise RuntimeError(
-            "No deformed mesh object contains required foot/toe vertex groups."
+            "No deformed mesh object contains required vertex groups."
         )
     return meshes
+
+
+def rig_bone_subtree_names(
+    armature: bpy.types.Object,
+    root_bone_name: str,
+) -> set[str]:
+    root = armature.data.bones.get(root_bone_name)
+    if root is None:
+        raise RuntimeError(
+            f"Rig bone subtree root missing: {root_bone_name}."
+        )
+
+    names: set[str] = set()
+    stack = [root]
+    while stack:
+        bone = stack.pop()
+        if bone.name in names:
+            continue
+        names.add(bone.name)
+        stack.extend(list(bone.children))
+    return names
+
+
+def hand_rig_vertex_groups(
+    armature: bpy.types.Object,
+    canonical: dict,
+) -> dict[str, set[str]]:
+    groups = {}
+    for side in ("left", "right"):
+        hand_root = canonical["canonical_bones"][
+            f"{side}_hand"
+        ]["rig_bone"]
+        groups[side] = rig_bone_subtree_names(
+            armature,
+            hand_root,
+        )
+    return groups
 
 
 def collect_weighted_samples(
@@ -211,7 +248,7 @@ def collect_weighted_samples(
                 samples.append((obj.name, int(vertex.index)))
     if not samples:
         raise RuntimeError(
-            f"No vertices meet foot/toe weight threshold for {sorted(group_names)}."
+            f"No vertices meet vertex-group weight threshold for {sorted(group_names)}."
         )
     return samples
 
@@ -1586,7 +1623,8 @@ def solve_hand_mesh_wrist_side(
             f"solved_flexion={best['flexion_extension_deg']}; "
             f"solved_deviation={best['radial_ulnar_deviation_deg']}; "
             f"preferred_flexion=[{fmin}, {fmax}]; "
-            f"preferred_deviation=[{dmin}, {dmax}]."
+            f"preferred_deviation=[{dmin}, {dmax}]; "
+            f"sample_count={final_measurement['sample_count']}."
         )
 
     return {
@@ -1828,16 +1866,10 @@ def main() -> None:
     required_groups = set().union(*foot_groups.values())
     meshes = relevant_mesh_objects(armature, required_groups)
 
-    hand_groups = {
-        "left": {
-            canonical["canonical_bones"]["left_hand"]["rig_bone"],
-            canonical["canonical_bones"]["left_middle"]["rig_bone"],
-        },
-        "right": {
-            canonical["canonical_bones"]["right_hand"]["rig_bone"],
-            canonical["canonical_bones"]["right_middle"]["rig_bone"],
-        },
-    }
+    hand_groups = hand_rig_vertex_groups(
+        armature,
+        canonical,
+    )
     hand_required_groups = set().union(*hand_groups.values())
     hand_meshes = relevant_mesh_objects(
         armature,
@@ -2244,6 +2276,23 @@ def main() -> None:
             },
             "rest_anchor_heights": rest_heights,
             "contact_tolerance": round(contact_tolerance, 8),
+        },
+        "hand_mesh_sampling": {
+            "bone_scope": contract["hand_mesh_sampling"]["bone_scope"],
+            "vertex_group_names": {
+                side: sorted(groups)
+                for side, groups in hand_groups.items()
+            },
+            "sample_counts": {
+                side: len(samples)
+                for side, samples in hand_samples.items()
+            },
+            "minimum_vertex_group_weight": float(
+                hand_sampling["minimum_vertex_group_weight"]
+            ),
+            "inner_edge_quantile": float(
+                hand_sampling["inner_edge_quantile"]
+            ),
         },
         "body_metrics": {
             key: round(value, 8)

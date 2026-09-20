@@ -479,16 +479,10 @@ def prepare_contact_runtime(
         up_axis,
         float(sampling["low_height_quantile"]),
     )
-    hand_groups = {
-        "left": {
-            canonical["canonical_bones"]["left_hand"]["rig_bone"],
-            canonical["canonical_bones"]["left_middle"]["rig_bone"],
-        },
-        "right": {
-            canonical["canonical_bones"]["right_hand"]["rig_bone"],
-            canonical["canonical_bones"]["right_middle"]["rig_bone"],
-        },
-    }
+    hand_groups = static_core.hand_rig_vertex_groups(
+        armature,
+        canonical,
+    )
     hand_meshes = static_core.relevant_mesh_objects(
         armature,
         set().union(*hand_groups.values()),

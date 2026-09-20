@@ -214,6 +214,14 @@ class Phase1068FoundationPoseVisualGateTests(unittest.TestCase):
 
     def test_deformed_hand_mesh_spacing_is_final_authority_before_render(self) -> None:
         self.assertIn(
+            "static_core.hand_rig_vertex_groups(",
+            self.script,
+        )
+        self.assertNotIn(
+            'canonical["canonical_bones"]["left_middle"]["rig_bone"],',
+            self.script,
+        )
+        self.assertIn(
             "static_core.solve_hand_mesh_wrist_spacing(",
             self.script,
         )
