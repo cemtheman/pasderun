@@ -646,22 +646,37 @@ class Phase1066CalibratedRigRetargetTests(unittest.TestCase):
             self.wrapper,
         )
 
-    def test_builder_and_wrapper_require_calibrated_middle_fingertip_gate(self) -> None:
-        self.assertIn(
+    def test_middle_fingertip_visual_gate_is_deferred_to_blender_mesh(self) -> None:
+        self.assertTrue(
+            self.contract["policy"][
+                "middle_fingertip_visual_spacing_gate_forbidden"
+            ]
+        )
+        self.assertEqual(
+            self.contract["policy"][
+                "final_hand_centerline_spacing_authority"
+            ],
+            "Phase 10.6.7 deformed hand mesh",
+        )
+        self.assertNotIn(
             "calibrated_middle_fingertip_spacing_pass",
             self.builder,
         )
-        self.assertIn(
+        self.assertNotIn(
             "$data.gate.calibrated_middle_fingertip_spacing_pass",
             self.wrapper,
         )
-        self.assertIn(
-            "Calibrated middle-fingertip spacing gate failed.",
-            self.wrapper,
-        )
-        self.assertIn(
+        self.assertNotIn(
             "CALIBRATED_MIDDLE_FINGERTIP_SPACING=PASS",
             self.builder,
+        )
+        self.assertNotIn(
+            "_middle_fingertip_context(",
+            self.retarget,
+        )
+        self.assertNotIn(
+            "_middle_fingertip_from_hand_target(",
+            self.retarget,
         )
 
     def test_output_tracks_retarget_source_sha(self) -> None:

@@ -8,7 +8,6 @@ import math
 from canonical_math import (
     dot,
     mat_mul,
-    mat_vec,
     normalize,
     orthonormalize_basis,
     rotation_matrix_to_quaternion_wxyz,
@@ -164,146 +163,6 @@ def _topological_order(canonical_profile: dict) -> list[str]:
     return emitted
 
 
-def _body_point_to_armature(
-    point: dict,
-    canonical_profile: dict,
-) -> list[float]:
-    return _body_vector_to_armature(
-        [
-            float(point["left"]),
-            float(point["up"]),
-            float(point["front"]),
-        ],
-        canonical_profile,
-    )
-
-
-def _middle_fingertip_context(
-    side: str,
-    wrist_landmark: dict,
-    state: dict,
-    canonical_profile: dict,
-) -> dict | None:
-    spacing = state.get("fingertip_spacing_contract")
-    if spacing is None:
-        return None
-
-    bones = canonical_profile["canonical_bones"]
-    hand_name = f"{side}_hand"
-    middle_name = f"{side}_middle"
-    hand = bones[hand_name]
-    middle = bones[middle_name]
-
-    hand_rest_rig = _rig_rest_basis(hand)
-    hand_head_rest = _body_point_to_armature(
-        hand["head_body"],
-        canonical_profile,
-    )
-    middle_head_rest = _body_point_to_armature(
-        middle["head_body"],
-        canonical_profile,
-    )
-    rest_head_offset = [
-        middle_head_rest[index] - hand_head_rest[index]
-        for index in range(3)
-    ]
-    rest_head_offset_hand_local = mat_vec(
-        transpose(hand_rest_rig),
-        rest_head_offset,
-    )
-
-    hand_rest_canonical = _rest_basis(hand)
-    middle_rest_canonical = _rest_basis(middle)
-    middle_rest_local_canonical = mat_mul(
-        transpose(hand_rest_canonical),
-        middle_rest_canonical,
-    )
-
-    frame = canonical_profile["body_frame"]["declared_axes_armature_local"]
-    return {
-        "side": side,
-        "side_sign": 1.0 if side == "left" else -1.0,
-        "body_left_axis": normalize(frame["left"]),
-        "wrist_armature": _body_point_to_armature(
-            wrist_landmark,
-            canonical_profile,
-        ),
-        "hand_length": float(hand["length"]),
-        "middle_length": float(middle["length"]),
-        "hand_bone": hand,
-        "middle_bone": middle,
-        "middle_rest_local_canonical": middle_rest_local_canonical,
-        "middle_head_offset_hand_rig_local": (
-            rest_head_offset_hand_local
-        ),
-        "minimum_side_offset": float(spacing["minimum_gap"]) * 0.5,
-        "maximum_side_offset": float(spacing["maximum_gap"]) * 0.5,
-        "minimum_gap": float(spacing["minimum_gap"]),
-        "maximum_gap": float(spacing["maximum_gap"]),
-        "scale_basis": spacing["scale_basis"],
-    }
-
-
-def _middle_fingertip_from_hand_target(
-    hand_canonical_target: list[list[float]],
-    context: dict,
-) -> dict:
-    hand_rig_target, _mode, _roll = _rig_target_from_canonical_pose(
-        hand_canonical_target,
-        context["hand_bone"],
-        True,
-    )
-
-    middle_head_offset = mat_vec(
-        hand_rig_target,
-        context["middle_head_offset_hand_rig_local"],
-    )
-    wrist = context["wrist_armature"]
-    middle_head = [
-        wrist[index] + middle_head_offset[index]
-        for index in range(3)
-    ]
-
-    middle_canonical_target = mat_mul(
-        hand_canonical_target,
-        context["middle_rest_local_canonical"],
-    )
-    middle_rig_target, _middle_mode, _middle_roll = (
-        _rig_target_from_canonical_pose(
-            middle_canonical_target,
-            context["middle_bone"],
-            True,
-        )
-    )
-    middle_y = normalize(
-        [middle_rig_target[row][1] for row in range(3)]
-    )
-    middle_tip = [
-        middle_head[index]
-        + middle_y[index] * float(context["middle_length"])
-        for index in range(3)
-    ]
-    body_left = float(dot(middle_tip, context["body_left_axis"]))
-    side_offset = float(context["side_sign"]) * body_left
-    minimum = float(context["minimum_side_offset"])
-    maximum = float(context["maximum_side_offset"])
-    if side_offset < minimum:
-        interval_error = minimum - side_offset
-    elif side_offset > maximum:
-        interval_error = side_offset - maximum
-    else:
-        interval_error = 0.0
-    return {
-        "tip_armature": middle_tip,
-        "body_left": body_left,
-        "side_offset": side_offset,
-        "estimated_bilateral_gap": side_offset * 2.0,
-        "interval_error": interval_error,
-        "minimum_side_offset": minimum,
-        "maximum_side_offset": maximum,
-    }
-
-
 def _wrist_2dof_target_basis(
     desired_length_direction: list[float],
     parent_pose_basis: list[list[float]],
@@ -311,7 +170,6 @@ def _wrist_2dof_target_basis(
     hand_rest_basis: list[list[float]],
     constraint_profile: dict,
     axis_contract: dict,
-    fingertip_context: dict | None = None,
 ) -> tuple[list[list[float]], dict]:
     direction = normalize(desired_length_direction)
     rest_local = mat_mul(
@@ -345,37 +203,18 @@ def _wrist_2dof_target_basis(
         target = mat_mul(base, delta)
         target_y = normalize([target[row][1] for row in range(3)])
         alignment = dot(target_y, direction)
-        fingertip = (
-            _middle_fingertip_from_hand_target(
-                target,
-                fingertip_context,
-            )
-            if fingertip_context is not None
-            else None
+        key = (
+            -alignment,
+            abs(flexion_deg) + abs(deviation_deg),
+            abs(flexion_deg),
+            abs(deviation_deg),
         )
-        if fingertip is None:
-            key = (
-                -alignment,
-                abs(flexion_deg) + abs(deviation_deg),
-                abs(flexion_deg),
-                abs(deviation_deg),
-            )
-        else:
-            key = (
-                float(fingertip["interval_error"]),
-                float(fingertip["side_offset"]),
-                -alignment,
-                abs(flexion_deg) + abs(deviation_deg),
-                abs(flexion_deg),
-                abs(deviation_deg),
-            )
         candidate = (
             key,
             target,
             flexion_deg,
             deviation_deg,
             alignment,
-            fingertip,
         )
         if best is None or key < best[0]:
             best = candidate
@@ -411,24 +250,7 @@ def _wrist_2dof_target_basis(
         solved_flexion,
         solved_deviation,
         alignment,
-        fingertip,
     ) = best
-
-    if fingertip_context is not None:
-        if fingertip is None:
-            raise RigRetargetRejected(
-                "Middle fingertip evidence missing from wrist solve."
-            )
-        if float(fingertip["interval_error"]) > 1e-6:
-            raise RigRetargetRejected(
-                f"{fingertip_context['side']}: calibrated middle fingertip "
-                "near-touch target is unreachable inside wrist preferred "
-                f"envelope; closest_side_offset={fingertip['side_offset']}; "
-                f"required=[{fingertip['minimum_side_offset']}, "
-                f"{fingertip['maximum_side_offset']}]; "
-                f"estimated_bilateral_gap="
-                f"{fingertip['estimated_bilateral_gap']}."
-            )
 
     evidence = {
         "flexion_extension_deg": round(
@@ -456,31 +278,6 @@ def _wrist_2dof_target_basis(
         "preferred_envelope_status": "PASS",
         "independent_axial_hand_roll": "BLOCKED",
     }
-    if fingertip is not None:
-        evidence["calibrated_middle_fingertip"] = {
-            "status": "PASS",
-            "side": fingertip_context["side"],
-            "side_offset": round(
-                float(fingertip["side_offset"]),
-                10,
-            ),
-            "estimated_bilateral_gap": round(
-                float(fingertip["estimated_bilateral_gap"]),
-                10,
-            ),
-            "minimum_side_offset": round(
-                float(fingertip["minimum_side_offset"]),
-                10,
-            ),
-            "maximum_side_offset": round(
-                float(fingertip["maximum_side_offset"]),
-                10,
-            ),
-            "scale_basis": fingertip_context["scale_basis"],
-            "middle_rig_bone": fingertip_context[
-                "middle_bone"
-            ]["rig_bone"],
-        }
     return target, evidence
 
 
@@ -546,12 +343,6 @@ def _upper_limb_target_bases(
                         f"{bone_name}: posed forearm frame is unavailable."
                     )
                 bones = canonical_profile["canonical_bones"]
-                fingertip_context = _middle_fingertip_context(
-                    side,
-                    landmarks[f"{side}_wrist"],
-                    state,
-                    canonical_profile,
-                )
                 basis, wrist_evidence = _wrist_2dof_target_basis(
                     direction,
                     targets[parent_name],
@@ -559,7 +350,6 @@ def _upper_limb_target_bases(
                     _rest_basis(bones[bone_name]),
                     constraint_profile,
                     axis_contract,
-                    fingertip_context,
                 )
                 hand_evidence[bone_name] = wrist_evidence
             else:
@@ -969,40 +759,6 @@ def retarget_pose_solution(
             f"{hard_arm_alignment}"
         )
 
-    calibrated_fingertip = {}
-    if "fingertip_spacing_contract" in state:
-        for side in ("left", "right"):
-            hand_name = f"{side}_hand"
-            item = hand_wrist_evidence.get(hand_name, {}).get(
-                "calibrated_middle_fingertip"
-            )
-            if item is None or item.get("status") != "PASS":
-                raise RigRetargetRejected(
-                    f"{side}: calibrated middle fingertip solve missing."
-                )
-            calibrated_fingertip[side] = item
-
-        actual_gap = (
-            float(calibrated_fingertip["left"]["side_offset"])
-            + float(calibrated_fingertip["right"]["side_offset"])
-        )
-        spacing = state["fingertip_spacing_contract"]
-        if not (
-            float(spacing["minimum_gap"]) - 1e-6
-            <= actual_gap
-            <= float(spacing["maximum_gap"]) + 1e-6
-        ):
-            raise RigRetargetRejected(
-                "Calibrated bilateral middle-fingertip gap outside "
-                f"contract: {actual_gap} not in "
-                f"[{spacing['minimum_gap']}, {spacing['maximum_gap']}]."
-            )
-        calibrated_fingertip["bilateral_gap"] = round(
-            actual_gap,
-            10,
-        )
-        calibrated_fingertip["status"] = "PASS"
-
     canonical_output = {
         name: {
             "armature_basis": rounded_matrix(basis),
@@ -1026,7 +782,7 @@ def retarget_pose_solution(
             "knee_second_toe_error_deg",
             "com",
             "support_polygon",
-            "fingertip_spacing_contract",
+            "hand_mesh_spacing_contract",
         )
         if key in state
     }
@@ -1070,8 +826,7 @@ def retarget_pose_solution(
             "hand_wrist_solution": hand_wrist_evidence,
             "hand_semantic_direction_is_preference": True,
             "hand_wrist_preferred_envelope_pass": True,
-            "calibrated_middle_fingertip_spacing": calibrated_fingertip,
-            "calibrated_middle_fingertip_spacing_pass": True,
+            "middle_fingertip_visual_authority": "DEFERRED_TO_BLENDER_DEFORMED_MESH",
             "semantic_limb_length_axis_alignment_dot": (
                 semantic_length_alignment
             ),

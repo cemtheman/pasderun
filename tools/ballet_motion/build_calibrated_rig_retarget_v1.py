@@ -134,15 +134,6 @@ def main() -> None:
         ),
         "Semantic limb length-axis preservation gate failed.",
     )
-    require(
-        all(
-            item["evidence"][
-                "calibrated_middle_fingertip_spacing_pass"
-            ]
-            for item in retargeted.values()
-        ),
-        "Calibrated middle-fingertip spacing gate failed.",
-    )
 
     output = {
         "phase": PHASE,
@@ -168,7 +159,6 @@ def main() -> None:
             "hierarchy_reconstruction_pass": True,
             "arm_length_axis_alignment_pass": True,
             "hand_wrist_preferred_envelope_pass": True,
-            "calibrated_middle_fingertip_spacing_pass": True,
             "semantic_limb_length_axis_preservation_pass": True,
             "orientation_retarget_pass": True,
             "root_translation_applied": False,
@@ -191,7 +181,6 @@ def main() -> None:
     print("HIERARCHY_RECONSTRUCTION=PASS")
     print("ARM_LENGTH_AXIS_ALIGNMENT=PASS")
     print("HAND_WRIST_PREFERRED_ENVELOPE=PASS")
-    print("CALIBRATED_MIDDLE_FINGERTIP_SPACING=PASS")
     print("SEMANTIC_LIMB_LENGTH_AXIS=PASS")
     print("ROOT_TRANSLATION=NOT_APPLIED")
     print("BLENDER_APPLICATION=NOT_PERFORMED")

@@ -76,7 +76,6 @@ if (-not $data.gate.canonical_roundtrip_pass) { throw "Canonical roundtrip gate 
 if (-not $data.gate.hierarchy_reconstruction_pass) { throw "Hierarchy reconstruction gate failed." }
 if (-not $data.gate.arm_length_axis_alignment_pass) { throw "Arm length-axis gate failed." }
 if (-not $data.gate.hand_wrist_preferred_envelope_pass) { throw "Hand wrist preferred-envelope gate failed." }
-if (-not $data.gate.calibrated_middle_fingertip_spacing_pass) { throw "Calibrated middle-fingertip spacing gate failed." }
 if (-not $data.gate.semantic_limb_length_axis_preservation_pass) { throw "Semantic limb length-axis preservation gate failed." }
 if (-not $data.gate.orientation_retarget_pass) { throw "Orientation retarget gate failed." }
 if ($data.gate.root_translation_applied) { throw "Root translation is out of scope." }
@@ -102,7 +101,6 @@ Write-Host "Canonical roundtrip:    PASS"
 Write-Host "Hierarchy reconstruction: PASS"
 Write-Host "Arm length-axis:        PASS"
 Write-Host "Hand wrist envelope:    PASS"
-Write-Host "Middle fingertip gap:   PASS"
 Write-Host "Semantic limb axis:     PASS"
 Write-Host "Root/contact translation: NOT APPLIED"
 Write-Host "Blender/render:         NOT PERFORMED"
