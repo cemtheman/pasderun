@@ -17,7 +17,11 @@
     "source_glb_mutation_forbidden": true,
     "full_foot_orientation_correction_required": true,
     "full_foot_orientation_source": "constrained ankle_2dof solve aligning canonical foot UP with declared BODY_UP",
-    "ankle_contact_correction_must_stay_preferred": true
+    "ankle_contact_correction_must_stay_preferred": true,
+    "releve_contact_realization_required": true,
+    "releve_heel_height_source": "Phase 10.6.5 semantic heel-height scalar realized against deformed mesh",
+    "releve_plantar_solver_preferred_only": true,
+    "releve_toe_flexion_preserved_from_retarget": true
   },
   "contact_sampling": {
     "minimum_vertex_group_weight": 0.15,
@@ -43,6 +47,11 @@
     "releve_heel_lift_relative_error_max": 0.45,
     "releve_heel_lift_absolute_foot_fraction_max": 0.2,
     "releve_heel_must_rise_min_foot_fraction": 0.05,
-    "full_foot_up_alignment_min_dot": 0.999999
+    "full_foot_up_alignment_min_dot": 0.999999,
+    "releve_plantar_search_coarse_step_deg": 1,
+    "releve_plantar_search_refine_steps_deg": [
+      0.1,
+      0.01
+    ]
   }
 }

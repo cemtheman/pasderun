@@ -675,6 +675,241 @@ def rotation_application_errors(
     }
 
 
+def extract_exact_ankle_inversion(
+    canonical_local_delta: Matrix,
+    side: str,
+) -> float:
+    side_sign = 1.0 if side == "left" else -1.0
+    value = max(
+        -1.0,
+        min(1.0, float(canonical_local_delta[0][2])),
+    )
+    return math.degrees(math.asin(value)) / side_sign
+
+
+def apply_releve_plantar_candidate(
+    armature: bpy.types.Object,
+    canonical: dict,
+    pose_entry: dict,
+    plantar_dorsiflexion: float,
+) -> dict:
+    evidence = {}
+    for side in ("left", "right"):
+        canonical_name = f"{side}_foot"
+        bone = canonical["canonical_bones"][canonical_name]
+        local_delta = matrix3(
+            pose_entry["canonical_pose"][canonical_name][
+                "local_pose_delta_matrix"
+            ]
+        )
+        inversion = extract_exact_ankle_inversion(
+            local_delta,
+            side,
+        )
+        parent_pose, rest_local = canonical_parent_and_rest_local(
+            armature,
+            canonical,
+            canonical_name,
+        )
+        desired_canonical = canonical_foot_basis_from_ankle_dofs(
+            parent_pose,
+            rest_local,
+            plantar_dorsiflexion,
+            inversion,
+            side,
+        )
+        bind = matrix3(
+            bone["retarget_bind"][
+                "canonical_to_rig_rotation_matrix"
+            ]
+        )
+        desired_rig = bind @ desired_canonical
+        apply_absolute_rig_rotation_via_matrix_basis(
+            armature,
+            bone["rig_bone"],
+            desired_rig,
+        )
+        evidence[side] = {
+            "rig_bone": bone["rig_bone"],
+            "plantar_dorsiflexion_deg": round(
+                float(plantar_dorsiflexion),
+                8,
+            ),
+            "inversion_eversion_deg": round(
+                float(inversion),
+                8,
+            ),
+        }
+    return evidence
+
+
+def candidate_releve_geometry(
+    armature: bpy.types.Object,
+    anchors: dict,
+    rest_heights: dict,
+    up_axis: Vector,
+    low_height_quantile: float,
+) -> dict:
+    posed = contact_heights(
+        armature,
+        anchors,
+        up_axis,
+        low_height_quantile,
+    )
+    shift = root_shift_for_contact(
+        "SOLVE_FOREFOOT_CONTACT",
+        rest_heights,
+        posed,
+    )
+
+    heel_lifts = {
+        side: (
+            float(posed[side]["rear"])
+            + float(shift)
+            - float(rest_heights[side]["rear"])
+        )
+        for side in ("left", "right")
+    }
+    fore_errors = {
+        side: (
+            float(posed[side]["fore"])
+            + float(shift)
+            - float(rest_heights[side]["fore"])
+        )
+        for side in ("left", "right")
+    }
+    return {
+        "root_shift": float(shift),
+        "heel_lifts": heel_lifts,
+        "fore_errors": fore_errors,
+        "max_fore_error": max(
+            abs(value)
+            for value in fore_errors.values()
+        ),
+    }
+
+
+def solve_releve_plantar_for_mesh_heel_height(
+    armature: bpy.types.Object,
+    canonical: dict,
+    pose_entry: dict,
+    constraints: dict,
+    anchors: dict,
+    rest_heights: dict,
+    up_axis: Vector,
+    low_height_quantile: float,
+    target_heights: dict,
+    coarse_step_deg: float,
+    refine_steps_deg: list[float],
+) -> dict:
+    preferred = constraints["joint_limits"]["ankle_2dof"]["dofs"][
+        "plantar_dorsiflexion"
+    ]["preferred"]
+    minimum = float(preferred["min"])
+    maximum = float(preferred["max"])
+
+    best = None
+
+    def evaluate(plantar: float) -> None:
+        nonlocal best
+        if not minimum <= plantar <= maximum:
+            return
+        apply_rotation_deltas(armature, pose_entry)
+        application = apply_releve_plantar_candidate(
+            armature,
+            canonical,
+            pose_entry,
+            plantar,
+        )
+        geometry = candidate_releve_geometry(
+            armature,
+            anchors,
+            rest_heights,
+            up_axis,
+            low_height_quantile,
+        )
+        heel_errors = {
+            side: abs(
+                float(geometry["heel_lifts"][side])
+                - float(target_heights[side])
+            )
+            for side in ("left", "right")
+        }
+        maximum_heel_error = max(heel_errors.values())
+        bilateral_error = abs(
+            float(geometry["heel_lifts"]["left"])
+            - float(geometry["heel_lifts"]["right"])
+        )
+        key = (
+            maximum_heel_error,
+            float(geometry["max_fore_error"]),
+            bilateral_error,
+            abs(float(plantar)),
+        )
+        candidate = {
+            "key": key,
+            "plantar_dorsiflexion_deg": float(plantar),
+            "application": application,
+            "geometry": geometry,
+            "heel_errors": heel_errors,
+        }
+        if best is None or key < best["key"]:
+            best = candidate
+
+    step = float(coarse_step_deg)
+    plantar = minimum
+    while plantar <= maximum + 1e-9:
+        evaluate(plantar)
+        plantar += step
+
+    if best is None:
+        raise RuntimeError(
+            "Releve plantar solver found no preferred candidate."
+        )
+
+    for refine_step in refine_steps_deg:
+        center = float(best["plantar_dorsiflexion_deg"])
+        for offset in range(-10, 11):
+            evaluate(
+                center + offset * float(refine_step)
+            )
+
+    # Re-apply the winning candidate so Blender is left in solved state.
+    apply_rotation_deltas(armature, pose_entry)
+    application = apply_releve_plantar_candidate(
+        armature,
+        canonical,
+        pose_entry,
+        float(best["plantar_dorsiflexion_deg"]),
+    )
+    geometry = candidate_releve_geometry(
+        armature,
+        anchors,
+        rest_heights,
+        up_axis,
+        low_height_quantile,
+    )
+
+    return {
+        "plantar_dorsiflexion_deg": float(
+            best["plantar_dorsiflexion_deg"]
+        ),
+        "application": application,
+        "geometry": geometry,
+        "heel_errors": {
+            side: abs(
+                float(geometry["heel_lifts"][side])
+                - float(target_heights[side])
+            )
+            for side in ("left", "right")
+        },
+        "preferred_envelope": {
+            "min": minimum,
+            "max": maximum,
+        },
+    }
+
+
 def root_shift_for_contact(
     mode: str,
     rest_heights: dict,
@@ -890,6 +1125,7 @@ def main() -> None:
 
         mode = contract["root_translation_modes"][pose_name]
         contact_orientation = {}
+        releve_realization = {}
         if mode == "SOLVE_FULL_FOOT_CONTACT":
             contact_orientation = realize_full_foot_orientation(
                 armature,
@@ -902,6 +1138,37 @@ def main() -> None:
                         "full_foot_up_alignment_min_dot"
                     ]
                 ),
+            )
+
+        non_rot = pose_entry.get("non_rotational_pose_contract", {})
+        scalars = non_rot.get("translation_contact_scalars", {})
+
+        if pose_name == "releve":
+            target_heights = {
+                "left": float(scalars["left_heel_height"]),
+                "right": float(scalars["right_heel_height"]),
+            }
+            releve_realization = solve_releve_plantar_for_mesh_heel_height(
+                armature,
+                canonical,
+                pose_entry,
+                constraints,
+                anchors,
+                rest_heights,
+                up_axis,
+                float(sampling["low_height_quantile"]),
+                target_heights,
+                float(
+                    thresholds[
+                        "releve_plantar_search_coarse_step_deg"
+                    ]
+                ),
+                [
+                    float(value)
+                    for value in thresholds[
+                        "releve_plantar_search_refine_steps_deg"
+                    ]
+                ],
             )
 
         before_heights = contact_heights(
@@ -941,8 +1208,6 @@ def main() -> None:
             )
 
         consistency = {}
-        non_rot = pose_entry.get("non_rotational_pose_contract", {})
-        scalars = non_rot.get("translation_contact_scalars", {})
 
         if pose_name == "fifth":
             max_shift = (
@@ -1005,6 +1270,16 @@ def main() -> None:
                 )
                 for side in ("left", "right")
             }
+            preferred = releve_realization["preferred_envelope"]
+            selected_plantar = float(
+                releve_realization["plantar_dorsiflexion_deg"]
+            )
+            require(
+                float(preferred["min"])
+                <= selected_plantar
+                <= float(preferred["max"]),
+                "releve: plantar solver left preferred envelope.",
+            )
             minimum_lift = (
                 metrics["foot_chain_length"]
                 * float(
@@ -1050,6 +1325,11 @@ def main() -> None:
                 "left": round(target_left, 8),
                 "right": round(target_right, 8),
             }
+            consistency["solved_plantar_dorsiflexion_deg"] = round(
+                selected_plantar,
+                8,
+            )
+            consistency["plantar_preferred_envelope"] = preferred
 
         pose_reports[pose_name] = {
             "root_translation_mode": mode,
@@ -1060,6 +1340,7 @@ def main() -> None:
             "root_up_shift": round(float(shift), 8),
             "rotation_application": rotation_errors,
             "contact_orientation_realization": contact_orientation,
+            "releve_contact_realization": releve_realization,
             "contact_proof": proof,
             "contact_consistency": consistency,
             "blender_pose_applied": True,
@@ -1106,6 +1387,7 @@ def main() -> None:
             "full_foot_contact_pass": True,
             "forefoot_contact_pass": True,
             "plie_root_descent_consistency_pass": True,
+            "releve_plantar_contact_realization_pass": True,
             "releve_heel_lift_consistency_pass": True,
             "blender_application_performed": True,
             "render_performed": False,
@@ -1125,6 +1407,7 @@ def main() -> None:
     print("FULL_FOOT_CONTACT=PASS")
     print("FOREFOOT_CONTACT=PASS")
     print("PLIE_ROOT_DESCENT=PASS")
+    print("RELEVE_PLANTAR_CONTACT_REALIZATION=PASS")
     print("RELEVE_HEEL_LIFT=PASS")
     print("BLENDER_APPLICATION=PERFORMED")
     print("RENDER=NOT_PERFORMED")

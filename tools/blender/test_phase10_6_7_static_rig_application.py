@@ -198,6 +198,69 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
         self.assertIn("target_pelvis_descent", self.script)
         self.assertIn("actual_contact_solved_descent", self.script)
 
+    def test_releve_realizes_semantic_heel_height_by_solving_plantar(self) -> None:
+        self.assertTrue(
+            self.contract["policy"][
+                "releve_contact_realization_required"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "releve_plantar_solver_preferred_only"
+            ]
+        )
+        self.assertTrue(
+            self.contract["policy"][
+                "releve_toe_flexion_preserved_from_retarget"
+            ]
+        )
+        self.assertIn(
+            "def solve_releve_plantar_for_mesh_heel_height(",
+            self.script,
+        )
+        self.assertIn(
+            '["plantar_dorsiflexion"]["preferred"]',
+            self.script,
+        )
+        self.assertIn(
+            "apply_releve_plantar_candidate(",
+            self.script,
+        )
+        self.assertIn(
+            "candidate_releve_geometry(",
+            self.script,
+        )
+        self.assertIn(
+            "releve_plantar_contact_realization_pass",
+            self.script,
+        )
+
+    def test_releve_solver_does_not_modify_toe_flexion(self) -> None:
+        solver_start = self.script.index(
+            "def solve_releve_plantar_for_mesh_heel_height("
+        )
+        solver_end = self.script.index(
+            "def root_shift_for_contact(",
+            solver_start,
+        )
+        solver_source = self.script[solver_start:solver_end]
+        self.assertNotIn("toes", solver_source)
+        self.assertNotIn("toe_flexion", solver_source)
+
+    def test_releve_target_tolerance_is_not_relaxed(self) -> None:
+        self.assertEqual(
+            self.contract["proof_thresholds"][
+                "releve_heel_lift_relative_error_max"
+            ],
+            0.45,
+        )
+        self.assertEqual(
+            self.contract["proof_thresholds"][
+                "releve_heel_lift_absolute_foot_fraction_max"
+            ],
+            0.2,
+        )
+
     def test_releve_forefoot_contact_and_heel_lift_are_both_proved(self) -> None:
         self.assertIn('if pose_name == "releve":', self.script)
         self.assertIn("heel_lifts", self.script)
