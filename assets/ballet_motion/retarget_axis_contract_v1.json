@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "phase": "10.6.6",
+  "contract_id": "canonical_to_calibrated_rig_orientation_v1",
+  "policy": {
+    "canonical_pose_source": "Phase 10.6.5 validated solutions only",
+    "upper_limb_orientation_source": "landmark-derived absolute canonical frames",
+    "lower_limb_orientation_source": "canonical local joint DOFs plus derived knee turnout coupling",
+    "euler_application_forbidden": true,
+    "matrix_and_quaternion_output_only": true,
+    "retarget_bind_source": "Phase 10.6.2 per-bone calibrated bind",
+    "rest_identity_required": true,
+    "canonical_roundtrip_required": true,
+    "parent_relative_rig_delta_required": true,
+    "orientation_retarget_only": true,
+    "non_rotational_pose_contract_passthrough": true,
+    "root_translation_applied": false,
+    "contact_translation_applied": false,
+    "blender_application_forbidden": true,
+    "render_forbidden": true,
+    "animation_forbidden": true
+  },
+  "composition": {
+    "convention": "POSTMULTIPLY_LOCAL_ROTATIONS_IN_LISTED_ORDER",
+    "local_axes": "X_Y_Z_OF_CANONICAL_BONE_REST_FRAME",
+    "angle_units": "degrees"
+  },
+  "lower_body_joint_axes": {
+    "hip_ball": [
+      {
+        "dof": "flexion_extension",
+        "axis": "X",
+        "scale": 1,
+        "side_sign": false
+      },
+      {
+        "dof": "abduction_adduction",
+        "axis": "Z",
+        "scale": 1,
+        "side_sign": true
+      },
+      {
+        "dof": "internal_external_rotation",
+        "axis": "Y",
+        "scale": 1,
+        "side_sign": true
+      }
+    ],
+    "knee_hinge": [
+      {
+        "dof": "flexion_extension",
+        "axis": "X",
+        "scale": -1,
+        "side_sign": false
+      },
+      {
+        "derived": "knee_external_rotation_deg",
+        "axis": "Y",
+        "scale": 1,
+        "side_sign": true
+      }
+    ],
+    "ankle_2dof": [
+      {
+        "dof": "plantar_dorsiflexion",
+        "axis": "X",
+        "scale": -1,
+        "side_sign": false
+      },
+      {
+        "dof": "inversion_eversion",
+        "axis": "Y",
+        "scale": 1,
+        "side_sign": true
+      }
+    ],
+    "mtp_hinge": [
+      {
+        "dof": "toe_flexion_extension",
+        "axis": "X",
+        "scale": 1,
+        "side_sign": false
+      }
+    ]
+  },
+  "upper_limb_roll": {
+    "upper_arm": {
+      "source_dof": "internal_external_rotation",
+      "axis": "POSED_LENGTH_Y"
+    },
+    "forearm": {
+      "source_dof": "pronation_supination",
+      "axis": "POSED_LENGTH_Y"
+    },
+    "hand": {
+      "source_dof": null,
+      "axis": null
+    }
+  },
+  "thresholds": {
+    "orthogonality_max_error": 0.00001,
+    "determinant_min": 0.9999,
+    "determinant_max": 1.0001,
+    "bind_roundtrip_max_error": 0.00001,
+    "hierarchy_reconstruction_max_error": 0.00001,
+    "arm_length_axis_alignment_min_dot": 0.99999,
+    "rest_identity_max_error": 0.00001
+  }
+}
