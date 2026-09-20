@@ -202,6 +202,31 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
                     f"{pose} failed for arm ratio {upper_arm}/{forearm}",
                 )
 
+    def test_symmetric_arm_poses_are_exact_canonical_mirrors(self) -> None:
+        for pose in ("bras_bas", "en_avant", "second"):
+            result = solve_pose(
+                pose,
+                self.intents,
+                self.grammar,
+                self.canonical,
+                self.constraints,
+            )
+            landmarks = result["state"]["landmarks"]
+            for joint in ("shoulder", "elbow", "wrist", "hand"):
+                left = landmarks[f"left_{joint}"]
+                right = landmarks[f"right_{joint}"]
+                self.assertAlmostEqual(
+                    left["left"] + right["left"],
+                    0.0,
+                    places=12,
+                )
+                self.assertAlmostEqual(left["up"], right["up"], places=12)
+                self.assertAlmostEqual(
+                    left["front"],
+                    right["front"],
+                    places=12,
+                )
+
     def test_arm_solver_preserves_segment_lengths(self) -> None:
         for pose in ("bras_bas", "en_avant", "second"):
             result = solve_pose(

@@ -408,6 +408,16 @@ def _arm_geometry(
             shoulder_front,
         ]
 
+        if side == "right":
+            for joint in ("shoulder", "elbow", "wrist", "hand"):
+                source = landmarks[f"left_{joint}"]
+                landmarks[f"right_{joint}"] = _body_point(
+                    -float(source["left"]),
+                    float(source["up"]),
+                    float(source["front"]),
+                )
+            continue
+
         raw_direction = intent["wrist_direction"]
         lateral_key = "inward" if "inward" in raw_direction else "outward"
         lateral_sign = -sign if lateral_key == "inward" else sign
