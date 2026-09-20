@@ -17,7 +17,7 @@ if (-not (Test-Path $calibration)) {
     throw "Phase 10.6.1 calibration profile missing. Run tools\blender\run_ballet_rig_calibration_v1.ps1 first."
 }
 
-Write-Host "PHASE 10.6.2 — CANONICAL BALLET SKELETON"
+Write-Host "PHASE 10.6.2 - CANONICAL BALLET SKELETON"
 Write-Host "No Blender runtime. No render. No pose. No animation."
 Write-Host "Calibration: $calibration"
 Write-Host "Spec:        $spec"
