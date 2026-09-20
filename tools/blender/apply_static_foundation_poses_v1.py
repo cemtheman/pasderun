@@ -1518,7 +1518,7 @@ def solve_hand_mesh_wrist_side(
 
         semantic_deviation = (
             abs(flexion_extension_deg - semantic_flexion)
-            + abs(radial_ulnar_deviation_deg - semantic_deviation_target)
+            + abs(radial_ulnar_deviation_deg - semantic_deviation_seed)
         )
         key = (
             interval_error,

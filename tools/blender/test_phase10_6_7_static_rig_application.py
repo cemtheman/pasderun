@@ -316,11 +316,11 @@ class Phase1067StaticRigApplicationTests(unittest.TestCase):
             self.script,
         )
         self.assertIn(
-            "deformed hand mesh centerline spacing ",
+            "deformed hand mesh near-touch target is ",
             self.script,
         )
         self.assertIn(
-            'f"failed: {hand_mesh_spacing}; "',
+            "unreachable inside wrist preferred envelope",
             self.script,
         )
         self.assertIn(
