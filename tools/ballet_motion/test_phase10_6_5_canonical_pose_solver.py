@@ -331,6 +331,35 @@ class Phase1065CanonicalPoseSolverTests(unittest.TestCase):
         )
         self.assertNotIn("fingertip_spacing_contract", result["state"])
 
+    def test_upper_body_mesh_clearance_uses_proximal_rounding_only_for_first_two_poses(self) -> None:
+        self.assertEqual(
+            self.intents["poses"]["bras_bas"]["elbow_angle_deg"],
+            115,
+        )
+        self.assertEqual(
+            self.intents["poses"]["en_avant"]["elbow_angle_deg"],
+            110,
+        )
+        self.assertEqual(
+            self.intents["poses"]["second"]["elbow_angle_deg"],
+            145,
+        )
+        for pose in ("bras_bas", "en_avant"):
+            self.assertGreaterEqual(
+                self.intents["poses"][pose]["elbow_angle_deg"],
+                95,
+            )
+            self.assertLessEqual(
+                self.intents["poses"][pose]["elbow_angle_deg"],
+                165,
+            )
+        self.assertIn(
+            "preferred wrist envelope",
+            self.intents["policy"][
+                "hand_mesh_proximal_clearance_strategy"
+            ],
+        )
+
     def test_plie_travel_is_moderate_not_deep_crossing_setup(self) -> None:
         plie = self.intents["poses"]["plie"]
         self.assertLessEqual(plie["knee_flexion_deg"], 32)

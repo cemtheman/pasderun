@@ -11,12 +11,13 @@
     "render_forbidden_in_this_phase": true,
     "animation_forbidden_in_this_phase": true,
     "arm_centerline_policy": "bras_bas and en_avant use calibrated middle-fingertip references; wrists/hands do not cross and middle fingertips keep a small positive scale-relative gap",
-    "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length"
+    "plie_pelvis_descent_scale_basis": "average_thigh_plus_shin_plus_foot_chain_length",
+    "hand_mesh_proximal_clearance_strategy": "after deformed-mesh proof exhausts the preferred wrist envelope, reduce only bras_bas/en_avant elbow opening so the proximal arm carries centerline retreat; wrist remains preferred-only final trim"
   },
   "poses": {
     "bras_bas": {
       "kind": "symmetric_arm_chain",
-      "elbow_angle_deg": 125,
+      "elbow_angle_deg": 115,
       "wrist_direction": {
         "inward": 0.62,
         "down": 0.78,
@@ -55,7 +56,7 @@
     },
     "en_avant": {
       "kind": "symmetric_arm_chain",
-      "elbow_angle_deg": 125,
+      "elbow_angle_deg": 110,
       "wrist_direction": {
         "inward": 0.3,
         "down": 0.18,
