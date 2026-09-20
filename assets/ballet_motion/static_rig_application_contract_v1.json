@@ -131,36 +131,36 @@
   },
   "ballet_hand_shape": {
     "style": "RELAXED_CLASSICAL_BALLET_HAND",
-    "goal": "elongated grouped fingers with soft natural separation; thumb quiet and gathered toward index side",
+    "goal": "elongated grouped classical ballet fingers with subtle distal softness; thumb quiet and gathered toward index side",
     "palm_frame": "WRIST_TO_MIDDLE_ROOT_LONGITUDINAL_AND_PINKY_TO_INDEX_WIDTH",
     "segment_direction_model": "PALM_LONG_PLUS_SEMANTIC_LATERAL_SLOPE_PLUS_REDUCED_EXISTING_NORMAL_COMPONENT",
-    "existing_normal_component_preservation": 0.35,
-    "maximum_abs_existing_normal_component": 0.12,
+    "existing_normal_component_preservation": 0.6,
+    "maximum_abs_existing_normal_component": 0.16,
     "lateral_slope_by_digit": {
       "index": [
-        0.12,
-        0.07,
-        0.035
+        0.065,
+        0.035,
+        0.015
       ],
       "middle": [
-        0.025,
-        0.01,
+        0.012,
+        0.006,
         0
       ],
       "ring": [
-        -0.025,
-        -0.01,
-        0
+        -0.018,
+        -0.009,
+        -0.002
       ],
       "pinky": [
-        -0.12,
-        -0.075,
-        -0.04
+        -0.07,
+        -0.04,
+        -0.018
       ],
       "thumb": [
-        0.45,
-        0.28,
-        0.14
+        0.22,
+        0.14,
+        0.07
       ]
     },
     "segment_count_per_digit": 3,
@@ -170,6 +170,7 @@
       "ring",
       "pinky",
       "thumb"
-    ]
+    ],
+    "polish_note": "hand-only visual polish: reduce fan spread, preserve more existing out-of-palm curvature, keep wrist/arm chain untouched"
   }
 }
