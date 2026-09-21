@@ -55,13 +55,16 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Motion overshoot must remain forbidden.")
 
     rotation = contract["interpolation"]["rotation"]
-    if rotation["shoulder"] != "QUATERNION_SHORTEST_ARC_SLERP":
+    if rotation["arm_chain_baseline"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
-            "Shoulder must remain on shortest-arc quaternion interpolation."
+            "Arm-chain baseline must retain shortest-arc quaternion interpolation."
         )
-    if rotation["elbow"] != "WRIST_PRESERVING_ELBOW_POLE_SWIVEL":
+    if (
+        rotation["elbow_pole_correction"]
+        != "WRIST_PRESERVING_TWO_BONE_CHAIN_SWIVEL"
+    ):
         raise ValueError(
-            "Elbow motion must use the wrist-preserving pole swivel."
+            "Elbow-pole correction must use the wrist-preserving two-bone swivel."
         )
     if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
