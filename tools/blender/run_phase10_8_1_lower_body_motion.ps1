@@ -60,6 +60,9 @@ Write-Host "GLB export: NO"
 Write-Host ""
 
 if (-not $UseExistingArtifacts) {
+    & python -c "import ast,pathlib; ast.parse(pathlib.Path(r'$script').read_text(encoding='utf-8'))"
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
     & python $test
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
