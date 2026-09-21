@@ -68,6 +68,15 @@ def validate_contract(contract: dict) -> None:
             "Wrist 2DOF interpolation must use the wrist role minimum-jerk progress."
         )
 
+    locked_noise = float(
+        contract["validation"]["accepted_endpoint_locked_noise_max"]
+    )
+    if not 0.0 < locked_noise <= 0.000001:
+        raise ValueError(
+            "Accepted locked-endpoint numerical-noise ceiling must stay within "
+            "(0, 1e-6]."
+        )
+
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
         raise ValueError("Intermediate centerline clearance projection must remain enabled.")
