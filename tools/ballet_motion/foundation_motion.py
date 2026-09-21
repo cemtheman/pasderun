@@ -87,8 +87,10 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Rounded waypoint curve changed.")
     if not waypoint.get("endpoint_exact", False):
         raise ValueError("Rounded waypoint must preserve exact endpoints.")
-    if not waypoint.get("waypoint_exact_at_motion_progress", False):
-        raise ValueError("Rounded waypoint must be exact at its declared midpoint.")
+    if not waypoint.get("waypoint_exact_before_clearance_projection", False):
+        raise ValueError(
+            "Rounded waypoint must be exact before the safety clearance projection."
+        )
 
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
