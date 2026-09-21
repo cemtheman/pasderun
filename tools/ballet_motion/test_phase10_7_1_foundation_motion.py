@@ -96,60 +96,71 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
-    def test_waypoint_affects_only_elbow_role(self) -> None:
-        waypoint = self.contract["interpolation"]["rounded_transition_waypoint"]
+    def test_wrist_preserving_elbow_swivel_contract(self) -> None:
+        swivel = self.contract["interpolation"]["elbow_pole_swivel"]
         rotation = self.contract["interpolation"]["rotation"]
-        self.assertEqual(waypoint["affected_roles"], ["elbow"])
         self.assertEqual(
-            rotation["shoulder"],
+            rotation["arm_chain_baseline"],
             "QUATERNION_SHORTEST_ARC_SLERP",
         )
         self.assertEqual(
-            rotation["elbow"],
-            "PARENT_AWARE_ARMATURE_SPACE_WAYPOINT_SLERP",
+            rotation["elbow_pole_correction"],
+            "WRIST_PRESERVING_TWO_BONE_CHAIN_SWIVEL",
+        )
+        self.assertEqual(
+            swivel["method"],
+            "TWO_BONE_ELBOW_CIRCLE_SWIVEL",
+        )
+        self.assertEqual(
+            swivel["wrist_target_authority"],
+            "BASELINE_INTERPOLATED_WRIST_POSITION",
+        )
+        self.assertLessEqual(
+            float(swivel["wrist_position_preservation_max"]),
+            0.0001,
         )
 
-    def test_compact_minimum_jerk_waypoint_weight(self) -> None:
-        waypoint = self.contract["interpolation"]["rounded_transition_waypoint"]
+    def test_compact_minimum_jerk_swivel_weight(self) -> None:
+        waypoint = self.contract["interpolation"]["elbow_pole_swivel"]
         self.assertEqual(
-            motion.compact_minimum_jerk_waypoint_weight(0.0, waypoint),
+            motion.compact_minimum_jerk_swivel_weight(0.0, waypoint),
             0.0,
         )
         self.assertEqual(
-            motion.compact_minimum_jerk_waypoint_weight(0.25, waypoint),
+            motion.compact_minimum_jerk_swivel_weight(0.25, waypoint),
             0.0,
         )
         self.assertEqual(
-            motion.compact_minimum_jerk_waypoint_weight(0.5, waypoint),
+            motion.compact_minimum_jerk_swivel_weight(0.5, waypoint),
             1.0,
         )
         self.assertEqual(
-            motion.compact_minimum_jerk_waypoint_weight(0.75, waypoint),
+            motion.compact_minimum_jerk_swivel_weight(0.75, waypoint),
             0.0,
         )
         self.assertEqual(
-            motion.compact_minimum_jerk_waypoint_weight(1.0, waypoint),
+            motion.compact_minimum_jerk_swivel_weight(1.0, waypoint),
             0.0,
         )
         for index in range(101):
             p = index / 100.0
-            value = motion.compact_minimum_jerk_waypoint_weight(p, waypoint)
-            mirror = motion.compact_minimum_jerk_waypoint_weight(1.0 - p, waypoint)
+            value = motion.compact_minimum_jerk_swivel_weight(p, waypoint)
+            mirror = motion.compact_minimum_jerk_swivel_weight(1.0 - p, waypoint)
             self.assertGreaterEqual(value, 0.0)
             self.assertLessEqual(value, 1.0)
             self.assertAlmostEqual(value, mirror, places=12)
             if p <= 0.25 or p >= 0.75:
                 self.assertEqual(value, 0.0)
 
-    def test_early_frames_have_zero_waypoint_influence(self) -> None:
-        waypoint = self.contract["interpolation"]["rounded_transition_waypoint"]
+    def test_early_frames_have_zero_swivel_influence(self) -> None:
+        waypoint = self.contract["interpolation"]["elbow_pole_swivel"]
         for frame in range(
             int(self.contract["transition"]["frame_start"]),
             16,
         ):
             t = motion.normalized_time(frame, self.contract)
             self.assertEqual(
-                motion.compact_minimum_jerk_waypoint_weight(t, waypoint),
+                motion.compact_minimum_jerk_swivel_weight(t, waypoint),
                 0.0,
             )
 
