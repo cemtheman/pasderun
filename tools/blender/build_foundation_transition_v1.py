@@ -324,6 +324,12 @@ def realize_rounded_waypoint(
         "intent_rule": contract["interpolation"][
             "rounded_transition_waypoint"
         ]["intent_rule"],
+        "application_space": contract["interpolation"][
+            "rounded_transition_waypoint"
+        ]["application_space"],
+        "parent_pose_assumption": contract["interpolation"][
+            "rounded_transition_waypoint"
+        ]["parent_pose_assumption"],
         "elbow_angle_deg": elbows,
         "canonical_solver": solution["evidence"],
         "retarget": pose_entry["evidence"],
@@ -824,6 +830,30 @@ def key_motion(
     scene.render.fps = int(contract["transition"]["fps"])
     scene.frame_set(frame_start)
     return frame_start, frame_end, {
+        "rounded_elbow_waypoint": {
+            "method": contract["interpolation"]["rotation"]["elbow"],
+            "application_space": contract["interpolation"][
+                "rounded_transition_waypoint"
+            ]["application_space"],
+            "parent_pose_assumption": contract["interpolation"][
+                "rounded_transition_waypoint"
+            ]["parent_pose_assumption"],
+            "activation_start": float(
+                contract["interpolation"]["rounded_transition_waypoint"][
+                    "activation_start"
+                ]
+            ),
+            "activation_center": float(
+                contract["interpolation"]["rounded_transition_waypoint"][
+                    "motion_progress"
+                ]
+            ),
+            "activation_end": float(
+                contract["interpolation"]["rounded_transition_waypoint"][
+                    "activation_end"
+                ]
+            ),
+        },
         "wrist_2dof_interpolation": {
             "method": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
             "intermediate_only": True,
@@ -1318,7 +1348,7 @@ def main() -> None:
         visual_contract,
         runtime,
         contract,
-        )
+    )
     )
     motion_cache = prepare_motion_cache(
         armature,
