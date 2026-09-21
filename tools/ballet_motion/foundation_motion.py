@@ -59,9 +59,9 @@ def validate_contract(contract: dict) -> None:
         raise ValueError(
             "Shoulder must remain on shortest-arc quaternion interpolation."
         )
-    if rotation["elbow"] != "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND":
+    if rotation["elbow"] != "PARENT_AWARE_ARMATURE_SPACE_WAYPOINT_SLERP":
         raise ValueError(
-            "Elbow must use the rounded transition waypoint path."
+            "Elbow waypoint must be parent-aware in armature space."
         )
     if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
@@ -113,6 +113,10 @@ def validate_contract(contract: dict) -> None:
         raise ValueError(
             "Rounded waypoint must be exact before the safety clearance projection."
         )
+    if waypoint.get("application_space") != "ARMATURE_SPACE_ABSOLUTE_FOREARM_BASIS":
+        raise ValueError("Elbow waypoint application space changed.")
+    if waypoint.get("parent_pose_assumption") != "CURRENT_RUNTIME_SHOULDER_POSE":
+        raise ValueError("Elbow waypoint must use the current runtime shoulder pose.")
 
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
