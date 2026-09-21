@@ -155,9 +155,21 @@ def realize_endpoint(
         constraints,
         visual_contract,
     )
+    wrist_positions = {
+        side: [
+            float(value)
+            for value in Vector(
+                armature.pose.bones[
+                    canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"]
+                ].tail
+            )
+        ]
+        for side in ("left", "right")
+    }
     return snapshot_local_pose(armature), {
         "realization": realization,
         "wrist_continuity": wrist,
+        "wrist_positions_armature_space": wrist_positions,
     }
 
 
@@ -166,8 +178,7 @@ def elbow_pole_target_vectors(
     intent_spec: dict,
     contract: dict,
 ) -> dict[str, Vector]:
-    swivel = contract["interpolation"]["elbow_pole_swivel"]
-    source_pose = swivel["source_pose"]
+    source_pose = contract["transition"]["start_pose"]
     pole = intent_spec["poses"][source_pose]["elbow_pole"]
     frame = canonical["body_frame"]["declared_axes_armature_local"]
     left_axis = Vector(frame["left"]).normalized()
@@ -331,31 +342,46 @@ def apply_wrist_2dof_interpolation(
     return evidence
 
 
-def apply_wrist_preserving_elbow_pole_swivel(
+def apply_rounded_task_space_arm_path(
     armature: bpy.types.Object,
     canonical: dict,
     motion_cache: dict,
     pole_targets: dict[str, Vector],
-    swivel_weight: float,
+    endpoint_wrist_positions: dict,
+    normalized_t: float,
     contract: dict,
     frame: int,
 ) -> dict:
-    weight = float(swivel_weight)
-    evidence = {
-        "frame": int(frame),
-        "weight": weight,
-        "sides": {},
-    }
-    if weight <= 0.0:
-        return evidence
+    if frame in (
+        int(contract["transition"]["frame_start"]),
+        motion.frame_end(contract),
+    ):
+        return {"frame": int(frame), "endpoint_exact": True, "sides": {}}
 
+    progress = motion.rounded_wrist_progress(normalized_t)
+    arc_weight = motion.rounded_wrist_arc_weight(normalized_t)
+    path = contract["interpolation"]["rounded_wrist_path"]
+    outward_fraction = float(path["outward_chain_fraction"])
+    up_fraction = float(path["up_chain_fraction"])
     wrist_error_limit = float(
-        contract["interpolation"]["elbow_pole_swivel"][
-            "wrist_position_preservation_max"
-        ]
+        contract["validation"]["task_space_wrist_target_error_max"]
+    )
+    length_error_limit = float(
+        contract["validation"]["two_bone_length_error_max"]
     )
 
-    for side in ("left", "right"):
+    frame_axes = canonical["body_frame"]["declared_axes_armature_local"]
+    left_axis = Vector(frame_axes["left"]).normalized()
+    up_axis = Vector(frame_axes["up"]).normalized()
+    evidence = {
+        "frame": int(frame),
+        "progress": float(progress),
+        "arc_weight": float(arc_weight),
+        "endpoint_exact": False,
+        "sides": {},
+    }
+
+    for side, sign in (("left", 1.0), ("right", -1.0)):
         upper_name = canonical["canonical_bones"][
             f"{side}_upper_arm"
         ]["rig_bone"]
@@ -366,52 +392,63 @@ def apply_wrist_preserving_elbow_pole_swivel(
         forearm = armature.pose.bones[forearm_name]
 
         shoulder = Vector(upper.head)
-        elbow = Vector(forearm.head)
+        baseline_elbow = Vector(forearm.head)
         baseline_wrist = Vector(forearm.tail)
-        shoulder_to_wrist = baseline_wrist - shoulder
-        require(
-            shoulder_to_wrist.length > 1e-9,
-            f"Frame {frame}/{side}: degenerate shoulder-wrist axis.",
-        )
-        axis = shoulder_to_wrist.normalized()
+        l1 = (baseline_elbow - shoulder).length
+        l2 = (baseline_wrist - baseline_elbow).length
+        require(l1 > 1e-9 and l2 > 1e-9, f"Frame {frame}/{side}: degenerate arm.")
 
-        # The baseline elbow lies on the exact two-bone intersection circle
-        # around the shoulder-wrist axis. Rotating only its radial component
-        # around that axis changes the bend plane while preserving both bone
-        # lengths and the baseline wrist target.
-        circle_center = (
-            shoulder
-            + axis * (elbow - shoulder).dot(axis)
-        )
-        radial = elbow - circle_center
-        require(
-            radial.length > 1e-9,
-            f"Frame {frame}/{side}: degenerate elbow swivel radius.",
+        start_wrist = Vector(endpoint_wrist_positions["start"][side])
+        end_wrist = Vector(endpoint_wrist_positions["end"][side])
+        chain_length = l1 + l2
+        target_wrist = start_wrist.lerp(end_wrist, progress)
+        target_wrist += (
+            left_axis * (sign * outward_fraction * chain_length * arc_weight)
+            + up_axis * (up_fraction * chain_length * arc_weight)
         )
 
-        target = pole_targets[side]
-        target_radial = target - axis * target.dot(axis)
+        shoulder_to_target = target_wrist - shoulder
+        distance = shoulder_to_target.length
+        require(
+            abs(l1 - l2) + 1e-9 < distance < l1 + l2 - 1e-9,
+            f"Frame {frame}/{side}: rounded wrist target unreachable; "
+            f"distance={distance}, reach=[{abs(l1-l2)}, {l1+l2}].",
+        )
+        axis = shoulder_to_target.normalized()
+        center_distance = (
+            l1 * l1 - l2 * l2 + distance * distance
+        ) / (2.0 * distance)
+        radius_sq = l1 * l1 - center_distance * center_distance
+        require(
+            radius_sq > 1e-12,
+            f"Frame {frame}/{side}: degenerate two-bone elbow circle.",
+        )
+        radius = math.sqrt(radius_sq)
+        circle_center = shoulder + axis * center_distance
+
+        baseline_radial = baseline_elbow - (
+            shoulder + axis * (baseline_elbow - shoulder).dot(axis)
+        )
+        require(
+            baseline_radial.length > 1e-9,
+            f"Frame {frame}/{side}: degenerate baseline elbow radial.",
+        )
+        current_unit = baseline_radial.normalized()
+        pole = pole_targets[side]
+        target_radial = pole - axis * pole.dot(axis)
         require(
             target_radial.length > 1e-9,
-            f"Frame {frame}/{side}: elbow-pole target parallel to arm axis.",
+            f"Frame {frame}/{side}: pole parallel to wrist axis.",
         )
-        current_unit = radial.normalized()
         target_unit = target_radial.normalized()
-        signed_angle = math.atan2(
+        pole_angle = math.atan2(
             axis.dot(current_unit.cross(target_unit)),
             max(-1.0, min(1.0, current_unit.dot(target_unit))),
         )
-        applied_angle = signed_angle * weight
-        target_elbow = (
-            circle_center
-            + Matrix.Rotation(applied_angle, 3, axis) @ radial
-        )
-
-        baseline_opening = elbow_opening_deg(
-            armature,
-            upper_name,
-            forearm_name,
-        )
+        radial_unit = (
+            Matrix.Rotation(pole_angle * arc_weight, 3, axis) @ current_unit
+        ).normalized()
+        target_elbow = circle_center + radial_unit * radius
 
         static_core._orient_pose_bone_length_to_direction(
             armature,
@@ -423,41 +460,40 @@ def apply_wrist_preserving_elbow_pole_swivel(
         bpy.context.view_layer.update()
 
         realized_elbow = Vector(forearm.head)
-        forearm_target = baseline_wrist - realized_elbow
-        require(
-            forearm_target.length > 1e-9,
-            f"Frame {frame}/{side}: degenerate forearm target.",
-        )
         static_core._orient_pose_bone_length_to_direction(
             armature,
             forearm_name,
-            forearm_target,
+            target_wrist - realized_elbow,
         )
         forearm.location = motion_cache[forearm_name]["location"].copy()
         forearm.scale = motion_cache[forearm_name]["scale"].copy()
         bpy.context.view_layer.update()
 
+        final_elbow = Vector(forearm.head)
         final_wrist = Vector(forearm.tail)
-        wrist_error = (final_wrist - baseline_wrist).length
+        wrist_error = (final_wrist - target_wrist).length
+        upper_length_error = abs((final_elbow - shoulder).length - l1)
+        forearm_length_error = abs((final_wrist - final_elbow).length - l2)
         require(
             wrist_error <= wrist_error_limit,
-            f"Frame {frame}/{side}: elbow-pole swivel moved wrist "
+            f"Frame {frame}/{side}: task-space wrist target error "
             f"{wrist_error} > {wrist_error_limit}.",
         )
-        final_opening = elbow_opening_deg(
-            armature,
-            upper_name,
-            forearm_name,
+        require(
+            upper_length_error <= length_error_limit
+            and forearm_length_error <= length_error_limit,
+            f"Frame {frame}/{side}: two-bone length error exceeds "
+            f"{length_error_limit}; upper={upper_length_error}, "
+            f"forearm={forearm_length_error}.",
         )
 
         evidence["sides"][side] = {
-            "signed_target_angle_deg": math.degrees(signed_angle),
-            "applied_angle_deg": math.degrees(applied_angle),
-            "baseline_wrist": [float(v) for v in baseline_wrist],
+            "target_wrist": [float(v) for v in target_wrist],
             "final_wrist": [float(v) for v in final_wrist],
-            "wrist_position_error": float(wrist_error),
-            "baseline_elbow_opening_deg": float(baseline_opening),
-            "final_elbow_opening_deg": float(final_opening),
+            "wrist_target_error": float(wrist_error),
+            "upper_length_error": float(upper_length_error),
+            "forearm_length_error": float(forearm_length_error),
+            "pole_blend_weight": float(arc_weight),
         }
 
     return evidence
@@ -681,6 +717,7 @@ def key_motion(
     motion_cache: dict,
     wrist_cache: dict,
     pole_targets: dict[str, Vector],
+    endpoint_wrist_positions: dict,
     contract: dict,
 ) -> tuple[int, int, dict]:
     frame_start = int(contract["transition"]["frame_start"])
@@ -691,7 +728,7 @@ def key_motion(
 
     clearance_frames = []
     wrist_frames = []
-    swivel_frames = []
+    task_space_frames = []
     for frame in range(frame_start, frame_end + 1):
         trace = set_interpolated_pose(
             armature,
@@ -700,22 +737,18 @@ def key_motion(
             frame,
             contract,
         )
-        swivel_contract = contract["interpolation"]["elbow_pole_swivel"]
-        swivel_weight = motion.compact_minimum_jerk_swivel_weight(
-            motion.normalized_time(frame, contract),
-            swivel_contract,
-        )
-        swivel_evidence = apply_wrist_preserving_elbow_pole_swivel(
+        task_space_evidence = apply_rounded_task_space_arm_path(
             armature,
             canonical,
             motion_cache,
             pole_targets,
-            swivel_weight,
+            endpoint_wrist_positions,
+            motion.normalized_time(frame, contract),
             contract,
             frame,
         )
-        if swivel_weight > 0.0:
-            swivel_frames.append(swivel_evidence)
+        if frame not in (frame_start, frame_end):
+            task_space_frames.append(task_space_evidence)
 
         wrist_evidence = apply_wrist_2dof_interpolation(
             armature,
@@ -761,30 +794,12 @@ def key_motion(
     scene.render.fps = int(contract["transition"]["fps"])
     scene.frame_set(frame_start)
     return frame_start, frame_end, {
-        "elbow_pole_swivel": {
-            "method": contract["interpolation"]["elbow_pole_swivel"]["method"],
-            "target_pole_authority": contract["interpolation"][
-                "elbow_pole_swivel"
-            ]["target_pole_authority"],
-            "wrist_target_authority": contract["interpolation"][
-                "elbow_pole_swivel"
-            ]["wrist_target_authority"],
-            "activation_start": float(
-                contract["interpolation"]["elbow_pole_swivel"]["activation_start"]
-            ),
-            "activation_center": float(
-                contract["interpolation"]["elbow_pole_swivel"]["motion_progress"]
-            ),
-            "activation_end": float(
-                contract["interpolation"]["elbow_pole_swivel"]["activation_end"]
-            ),
-            "wrist_position_preservation_max": float(
-                contract["interpolation"]["elbow_pole_swivel"][
-                    "wrist_position_preservation_max"
-                ]
-            ),
-            "active_frame_count": len(swivel_frames),
-            "frames": swivel_frames,
+        "rounded_task_space_wrist_path": {
+            "method": contract["interpolation"]["rotation"]["arm_chain_solution"],
+            "path": contract["interpolation"]["rounded_wrist_path"],
+            "elbow_pole": contract["interpolation"]["elbow_pole"],
+            "sample_count": len(task_space_frames),
+            "frames": task_space_frames,
         },
         "wrist_2dof_interpolation": {
             "method": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
@@ -1288,6 +1303,10 @@ def main() -> None:
         end_evidence,
         motion_cache,
     )
+    endpoint_wrist_positions = {
+        "start": start_evidence["wrist_positions_armature_space"],
+        "end": end_evidence["wrist_positions_armature_space"],
+    }
 
     for name, matrix in start_pose.items():
         armature.pose.bones[name].matrix_basis = matrix.copy()
@@ -1301,6 +1320,7 @@ def main() -> None:
         motion_cache,
         wrist_cache,
         pole_targets,
+        endpoint_wrist_positions,
         contract,
     )
     diagnostics = validate_motion(
@@ -1349,13 +1369,10 @@ def main() -> None:
             end_name: end_evidence,
             "locked_endpoint_local_matrix_error": locked_endpoint_error,
         },
-        "elbow_pole_swivel": {
-            "source_pose": contract["interpolation"]["elbow_pole_swivel"][
-                "source_pose"
-            ],
-            "target_pole_authority": contract["interpolation"][
-                "elbow_pole_swivel"
-            ]["target_pole_authority"],
+        "rounded_task_space_wrist_path": {
+            "contract": contract["interpolation"]["rounded_wrist_path"],
+            "pole_contract": contract["interpolation"]["elbow_pole"],
+            "endpoint_wrist_positions_armature_space": endpoint_wrist_positions,
             "pole_targets_armature_space": {
                 side: [float(value) for value in vector]
                 for side, vector in pole_targets.items()
@@ -1371,8 +1388,8 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
-            "baseline_arm_chain_shortest_arc": True,
-            "wrist_preserving_elbow_pole_swivel": True,
+            "rounded_task_space_wrist_path": True,
+            "two_bone_task_space_arm_solution": True,
             "finger_quaternion_shortest_arc": True,
             "wrist_canonical_2dof_reconstruction": True,
             "minimum_jerk_timing": True,
