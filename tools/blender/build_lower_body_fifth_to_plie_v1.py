@@ -415,7 +415,14 @@ def set_frame_pose(
         q.normalize()
         bone.rotation_quaternion = q
         bone.scale = item["scale"].copy()
-        bone.location = item["start_location"].copy()
+        if rig_name == root_name:
+            # Phase 10.6 root contact solve returns an absolute armature-space
+            # translation from rest, not an increment from the prior pose.
+            # Clear matrix-basis translation before measuring the deformed
+            # contact plane so the solver's result can be applied absolutely.
+            bone.location = Vector((0.0, 0.0, 0.0))
+        else:
+            bone.location = item["start_location"].copy()
 
     bpy.context.view_layer.update()
     contact = solve_intermediate_full_foot_contact(
