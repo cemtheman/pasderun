@@ -146,6 +146,25 @@ def _preferred_range(constraints: dict, joint_class: str, dof: str) -> tuple[flo
     return float(preferred["min"]), float(preferred["max"])
 
 
+def interpolate_bounded_scalar(
+    start_value: float,
+    end_value: float,
+    progress: float,
+) -> float:
+    p = clamp01(progress)
+    start = float(start_value)
+    end = float(end_value)
+    value = start + (end - start) * p
+    minimum = min(start, end)
+    maximum = max(start, end)
+    if not minimum - 1e-12 <= value <= maximum + 1e-12:
+        raise ValueError(
+            f"Bounded interpolation overshoot: {value} outside "
+            f"[{minimum}, {maximum}]."
+        )
+    return value
+
+
 def semantic_dof_proxy(
     normalized_t: float,
     contract: dict,
