@@ -83,8 +83,15 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Rounded waypoint may affect only shoulder and elbow.")
     if waypoint["intent_rule"] != "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE":
         raise ValueError("Rounded waypoint intent rule changed.")
-    if waypoint["curve"] != "CENTERED_QUARTIC_ATTRACTION":
+    if waypoint["curve"] != "COMPACT_MINIMUM_JERK_BUMP":
         raise ValueError("Rounded waypoint curve changed.")
+    activation_start = float(waypoint["activation_start"])
+    center = float(waypoint["motion_progress"])
+    activation_end = float(waypoint["activation_end"])
+    if not 0.0 < activation_start < center < activation_end < 1.0:
+        raise ValueError("Rounded waypoint activation window is invalid.")
+    if abs((center - activation_start) - (activation_end - center)) > 1e-12:
+        raise ValueError("Rounded waypoint activation window must remain symmetric.")
     if not waypoint.get("endpoint_exact", False):
         raise ValueError("Rounded waypoint must preserve exact endpoints.")
     if not waypoint.get("waypoint_exact_before_clearance_projection", False):
@@ -184,9 +191,21 @@ def _preferred_range(constraints: dict, joint_class: str, dof: str) -> tuple[flo
     return float(preferred["min"]), float(preferred["max"])
 
 
-def centered_quartic_waypoint_weight(progress: float) -> float:
+def compact_minimum_jerk_waypoint_weight(
+    progress: float,
+    waypoint_contract: dict,
+) -> float:
     p = clamp01(progress)
-    return 16.0 * p * p * (1.0 - p) * (1.0 - p)
+    start = float(waypoint_contract["activation_start"])
+    center = float(waypoint_contract["motion_progress"])
+    end = float(waypoint_contract["activation_end"])
+    if p <= start or p >= end:
+        return 0.0
+    if p <= center:
+        local = (p - start) / (center - start)
+        return minimum_jerk(local)
+    local = (end - p) / (end - center)
+    return minimum_jerk(local)
 
 
 def interpolate_bounded_scalar(
