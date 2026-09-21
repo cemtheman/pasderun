@@ -254,7 +254,7 @@ def realize_rounded_waypoint(
     visual_contract: dict,
     runtime: dict,
     contract: dict,
-) -> tuple[dict[str, Matrix], dict]:
+) -> tuple[dict[str, Matrix], dict[str, Matrix], dict]:
     start_name = contract["transition"]["start_pose"]
     end_name = contract["transition"]["end_pose"]
     waypoint_name = "__phase10_7_rounded_transition_waypoint"
@@ -1316,8 +1316,8 @@ def main() -> None:
         retarget_axis_contract,
         static_contract,
         visual_contract,
-            runtime,
-            contract,
+        runtime,
+        contract,
         )
     )
     motion_cache = prepare_motion_cache(
@@ -1407,6 +1407,7 @@ def main() -> None:
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
             "shoulder_quaternion_shortest_arc": True,
+            "parent_aware_elbow_waypoint_path": True,
             "rounded_transition_waypoint_path": True,
             "finger_quaternion_shortest_arc": True,
             "wrist_canonical_2dof_reconstruction": True,
