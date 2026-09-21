@@ -96,6 +96,21 @@ class Phase1072FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
+    def test_locked_endpoint_noise_ceiling_is_numerical_only(self) -> None:
+        validation = self.contract["validation"]
+        self.assertEqual(
+            float(validation["locked_local_matrix_error_max"]),
+            1e-7,
+        )
+        self.assertLessEqual(
+            float(validation["accepted_endpoint_locked_noise_max"]),
+            1e-6,
+        )
+        self.assertGreaterEqual(
+            float(validation["accepted_endpoint_locked_noise_max"]),
+            float(validation["locked_local_matrix_error_max"]),
+        )
+
     def test_bounded_scalar_interpolation_is_exact_and_no_overshoot(self) -> None:
         for start, end in ((-12.5, 18.0), (20.0, -7.0), (0.0, 0.0)):
             self.assertEqual(
