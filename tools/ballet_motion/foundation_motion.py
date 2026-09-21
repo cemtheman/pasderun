@@ -55,9 +55,13 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Motion overshoot must remain forbidden.")
 
     rotation = contract["interpolation"]["rotation"]
-    if rotation["shoulder_elbow"] != "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND":
+    if rotation["shoulder"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
-            "Shoulder/elbow must use the rounded transition waypoint path."
+            "Shoulder must remain on shortest-arc quaternion interpolation."
+        )
+    if rotation["elbow"] != "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND":
+        raise ValueError(
+            "Elbow must use the rounded transition waypoint path."
         )
     if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
@@ -79,9 +83,12 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Rounded transition waypoint must stay centered at progress 0.5.")
     if abs(float(waypoint["semantic_fraction"]) - 0.5) > 1e-12:
         raise ValueError("Rounded transition semantic fraction must stay at 0.5.")
-    if list(waypoint["affected_roles"]) != ["shoulder", "elbow"]:
-        raise ValueError("Rounded waypoint may affect only shoulder and elbow.")
-    if waypoint["intent_rule"] != "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE":
+    if list(waypoint["affected_roles"]) != ["elbow"]:
+        raise ValueError("Rounded waypoint may affect only the elbow role.")
+    if (
+        waypoint["intent_rule"]
+        != "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE_FOREARM_ONLY"
+    ):
         raise ValueError("Rounded waypoint intent rule changed.")
     if waypoint["curve"] != "COMPACT_MINIMUM_JERK_BUMP":
         raise ValueError("Rounded waypoint curve changed.")
