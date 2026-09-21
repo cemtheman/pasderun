@@ -96,51 +96,6 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
-    def test_rounded_task_space_wrist_path_contract(self) -> None:
-        interpolation = self.contract["interpolation"]
-        rotation = interpolation["rotation"]
-        path = interpolation["rounded_wrist_path"]
-        self.assertEqual(
-            rotation["arm_chain_solution"],
-            "TASK_SPACE_TWO_BONE_IK_TO_WRIST_TARGET",
-        )
-        self.assertEqual(
-            path["progression"],
-            "MINIMUM_JERK_ENDPOINT_LERP",
-        )
-        self.assertEqual(
-            path["arc"],
-            "SYMMETRIC_OUTWARD_UP_BUMP",
-        )
-        self.assertEqual(float(path["forward_extra_fraction"]), 0.0)
-        self.assertGreater(float(path["outward_chain_fraction"]), 0.0)
-        self.assertGreater(float(path["up_chain_fraction"]), 0.0)
-
-    def test_rounded_wrist_path_weights_are_exact_and_symmetric(self) -> None:
-        self.assertEqual(motion.rounded_wrist_progress(0.0), 0.0)
-        self.assertEqual(motion.rounded_wrist_progress(1.0), 1.0)
-        self.assertEqual(motion.rounded_wrist_arc_weight(0.0), 0.0)
-        self.assertEqual(motion.rounded_wrist_arc_weight(1.0), 0.0)
-        self.assertEqual(motion.rounded_wrist_arc_weight(0.5), 1.0)
-        for index in range(101):
-            p = index / 100.0
-            value = motion.rounded_wrist_arc_weight(p)
-            mirror = motion.rounded_wrist_arc_weight(1.0 - p)
-            self.assertGreaterEqual(value, 0.0)
-            self.assertLessEqual(value, 1.0)
-            self.assertAlmostEqual(value, mirror, places=12)
-
-    def test_task_space_error_contract_stays_strict(self) -> None:
-        validation = self.contract["validation"]
-        self.assertLessEqual(
-            float(validation["task_space_wrist_target_error_max"]),
-            0.0001,
-        )
-        self.assertLessEqual(
-            float(validation["two_bone_length_error_max"]),
-            0.0001,
-        )
-
     def test_bounded_scalar_interpolation_is_exact_and_no_overshoot(self) -> None:
         for start, end in ((-12.5, 18.0), (20.0, -7.0), (0.0, 0.0)):
             self.assertEqual(

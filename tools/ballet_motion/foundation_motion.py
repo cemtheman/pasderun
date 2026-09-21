@@ -55,16 +55,9 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Motion overshoot must remain forbidden.")
 
     rotation = contract["interpolation"]["rotation"]
-    if (
-        rotation["arm_chain_solution"]
-        != "TASK_SPACE_TWO_BONE_IK_TO_WRIST_TARGET"
-    ):
+    if rotation["shoulder_elbow_fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
-            "Arm chain must use task-space two-bone IK to the wrist target."
-        )
-    if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
-        raise ValueError(
-            "Finger motion must retain shortest-arc quaternion interpolation."
+            "Shoulder/elbow/fingers must retain shortest-arc quaternion interpolation."
         )
     if rotation["wrist"] != "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION":
         raise ValueError(
@@ -74,52 +67,6 @@ def validate_contract(contract: dict) -> None:
         raise ValueError(
             "Wrist 2DOF interpolation must use the wrist role minimum-jerk progress."
         )
-
-    wrist_path = contract["interpolation"]["rounded_wrist_path"]
-    if not wrist_path.get("enabled", False):
-        raise ValueError("Rounded wrist path must remain enabled.")
-    if wrist_path.get("progression") != "MINIMUM_JERK_ENDPOINT_LERP":
-        raise ValueError("Rounded wrist path progression changed.")
-    if wrist_path.get("arc") != "SYMMETRIC_OUTWARD_UP_BUMP":
-        raise ValueError("Rounded wrist path arc changed.")
-    if wrist_path.get("arc_weight") != "4s(1-s)":
-        raise ValueError("Rounded wrist path arc-weight contract changed.")
-    if wrist_path.get("target_space") != "ARMATURE_SPACE":
-        raise ValueError("Rounded wrist path must stay in armature space.")
-    if not wrist_path.get("endpoint_exact", False):
-        raise ValueError("Rounded wrist path must preserve exact endpoints.")
-    outward = float(wrist_path["outward_chain_fraction"])
-    upward = float(wrist_path["up_chain_fraction"])
-    forward_extra = float(wrist_path["forward_extra_fraction"])
-    if not 0.0 < outward <= 0.12:
-        raise ValueError("Rounded wrist outward arc fraction is out of bounds.")
-    if not 0.0 < upward <= 0.10:
-        raise ValueError("Rounded wrist upward arc fraction is out of bounds.")
-    if abs(forward_extra) > 1e-12:
-        raise ValueError("Rounded wrist path may not add extra forward push.")
-
-    elbow_pole = contract["interpolation"]["elbow_pole"]
-    if (
-        elbow_pole.get("authority")
-        != "ACCEPTED_BRAS_BAS_SEMANTIC_ELBOW_POLE"
-    ):
-        raise ValueError("Elbow-pole authority changed.")
-    if (
-        elbow_pole.get("blend_from_baseline_radial")
-        != "ROUNDED_WRIST_ARC_WEIGHT"
-    ):
-        raise ValueError("Elbow-pole blend contract changed.")
-
-    target_error = float(
-        contract["validation"]["task_space_wrist_target_error_max"]
-    )
-    length_error = float(
-        contract["validation"]["two_bone_length_error_max"]
-    )
-    if not 0.0 < target_error <= 0.0001:
-        raise ValueError("Task-space wrist target error limit is invalid.")
-    if not 0.0 < length_error <= 0.0001:
-        raise ValueError("Two-bone length error limit is invalid.")
 
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
@@ -211,15 +158,6 @@ def progress_trace(frame: int, contract: dict) -> dict[str, float]:
 def _preferred_range(constraints: dict, joint_class: str, dof: str) -> tuple[float, float]:
     preferred = constraints["joint_limits"][joint_class]["dofs"][dof]["preferred"]
     return float(preferred["min"]), float(preferred["max"])
-
-
-def rounded_wrist_arc_weight(progress: float) -> float:
-    s = minimum_jerk(progress)
-    return 4.0 * s * (1.0 - s)
-
-
-def rounded_wrist_progress(progress: float) -> float:
-    return minimum_jerk(progress)
 
 
 def interpolate_bounded_scalar(
