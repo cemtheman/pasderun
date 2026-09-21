@@ -3,8 +3,8 @@
 The accepted Phase 10.6 static realization remains the endpoint authority.
 This script captures those exact realized rig states and connects only the
 actual humanoid upper-body chain with deterministic motion: shortest-arc
-shoulder motion, a solver-derived rounded waypoint for the elbow/forearm,
-shortest-arc finger motion, and canonical 2DOF wrist reconstruction. It does not export GLB or touch gameplay/choreography
+shoulder motion, a parent-aware armature-space rounded waypoint for the
+elbow/forearm, shortest-arc finger motion, and canonical 2DOF wrist reconstruction. It does not export GLB or touch gameplay/choreography
 systems.
 """
 
@@ -298,6 +298,15 @@ def realize_rounded_waypoint(
     )
 
     waypoint_pose = snapshot_local_pose(armature)
+    waypoint_absolute_bases = {
+        canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"]:
+            static_core.normalized_basis(
+                armature.pose.bones[
+                    canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"]
+                ].matrix
+            )
+        for side in ("left", "right")
+    }
     elbows = {}
     for side in ("left", "right"):
         elbows[side] = elbow_opening_deg(
@@ -305,7 +314,7 @@ def realize_rounded_waypoint(
             canonical["canonical_bones"][f"{side}_upper_arm"]["rig_bone"],
             canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"],
         )
-    return waypoint_pose, {
+    return waypoint_pose, waypoint_absolute_bases, {
         "name": waypoint_name,
         "semantic_fraction": float(
             contract["interpolation"]["rounded_transition_waypoint"][
@@ -330,6 +339,7 @@ def prepare_motion_cache(
     start_pose: dict[str, Matrix],
     end_pose: dict[str, Matrix],
     waypoint_pose: dict[str, Matrix],
+    waypoint_absolute_bases: dict[str, Matrix],
     contract: dict,
 ) -> dict:
     translation_limit = float(
@@ -374,7 +384,7 @@ def prepare_motion_cache(
         if role in contract["interpolation"][
             "rounded_transition_waypoint"
         ]["affected_roles"]:
-            waypoint_loc, waypoint_q, waypoint_scale = (
+            waypoint_loc, _waypoint_q, waypoint_scale = (
                 waypoint_pose[rig_name].decompose()
             )
             require(
@@ -385,10 +395,13 @@ def prepare_motion_cache(
                 (waypoint_scale - start_scale).length <= scale_limit,
                 f"{rig_name}: waypoint local scale changed.",
             )
-            waypoint_q.normalize()
-            if start_q.dot(waypoint_q) < 0.0:
-                waypoint_q.negate()
-            item["waypoint_quaternion"] = waypoint_q.copy()
+            require(
+                rig_name in waypoint_absolute_bases,
+                f"{rig_name}: absolute forearm waypoint basis missing.",
+            )
+            item["waypoint_armature_basis"] = (
+                waypoint_absolute_bases[rig_name].copy()
+            )
         cache[rig_name] = item
         armature.pose.bones[rig_name].rotation_mode = "QUATERNION"
 
@@ -485,6 +498,43 @@ def apply_wrist_2dof_interpolation(
     return evidence
 
 
+def apply_parent_aware_elbow_waypoint(
+    armature: bpy.types.Object,
+    motion_cache: dict,
+    waypoint_weight: float,
+) -> None:
+    weight = float(waypoint_weight)
+    if weight <= 0.0:
+        return
+
+    for rig_name, item in motion_cache.items():
+        target_basis = item.get("waypoint_armature_basis")
+        if target_basis is None:
+            continue
+
+        bone = armature.pose.bones[rig_name]
+        current_basis = static_core.normalized_basis(bone.matrix)
+        current_q = current_basis.to_quaternion()
+        target_q = target_basis.to_quaternion()
+        current_q.normalize()
+        target_q.normalize()
+        if current_q.dot(target_q) < 0.0:
+            target_q.negate()
+
+        desired_basis = current_q.slerp(
+            target_q,
+            weight,
+        ).to_matrix()
+        static_core.apply_absolute_rig_rotation_via_matrix_basis(
+            armature,
+            rig_name,
+            desired_basis,
+        )
+        bone.location = item["location"].copy()
+        bone.scale = item["scale"].copy()
+        bpy.context.view_layer.update()
+
+
 def set_interpolated_pose(
     armature: bpy.types.Object,
     start_pose: dict[str, Matrix],
@@ -519,16 +569,15 @@ def set_interpolated_pose(
                 item["end_quaternion"],
                 progress,
             )
-            waypoint_q = item.get("waypoint_quaternion")
-            if waypoint_q is not None and waypoint_weight > 0.0:
-                target = waypoint_q.copy()
-                if q.dot(target) < 0.0:
-                    target.negate()
-                q = q.slerp(target, waypoint_weight)
         q.normalize()
         bone.rotation_quaternion = q
 
     bpy.context.view_layer.update()
+    apply_parent_aware_elbow_waypoint(
+        armature,
+        motion_cache,
+        waypoint_weight,
+    )
     return trace
 
 
@@ -1259,15 +1308,17 @@ def main() -> None:
         f"{locked_endpoint_error}.",
     )
 
-    waypoint_pose, waypoint_evidence = realize_rounded_waypoint(
+    waypoint_pose, waypoint_absolute_bases, waypoint_evidence = (
+        realize_rounded_waypoint(
         armature,
         canonical,
         constraints,
         retarget_axis_contract,
         static_contract,
         visual_contract,
-        runtime,
-        contract,
+            runtime,
+            contract,
+        )
     )
     motion_cache = prepare_motion_cache(
         armature,
@@ -1275,6 +1326,7 @@ def main() -> None:
         start_pose,
         end_pose,
         waypoint_pose,
+        waypoint_absolute_bases,
         contract,
     )
     wrist_cache = prepare_wrist_2dof_cache(
