@@ -42,15 +42,16 @@
     "endpoint_local_matrix_error_max": 0.000001,
     "locked_local_matrix_error_max": 0.0000001,
     "locked_world_matrix_error_max": 0.000001,
-    "moving_translation_error_max": 0.0000001,
-    "moving_scale_error_max": 0.0000001,
+    "moving_translation_error_max": 0.000001,
+    "moving_scale_error_max": 0.000001,
     "minimum_hand_mesh_side_offset": 0.0,
     "minimum_elbow_opening_deg": 5.0,
     "maximum_elbow_opening_deg": 179.0,
     "minimum_consecutive_quaternion_dot": 0.0,
     "sample_every_frame": true,
     "wrist_axial_roll_gate": "PHASE_10_6_8_CANONICAL_WRIST_2DOF_RECONSTRUCTION",
-    "preferred_envelope_diagnostic": "ACCEPTED_ENDPOINTS_PLUS_MONOTONE_SEMANTIC_DOF_PROXY"
+    "preferred_envelope_diagnostic": "ACCEPTED_ENDPOINTS_PLUS_MONOTONE_SEMANTIC_DOF_PROXY",
+    "decomposition_noise_policy": "moving translation/scale component checks use the same 1e-6 numerical ceiling as accepted endpoint local-matrix equality; values are locked to the start endpoint and are not interpolated"
   },
   "preview": {
     "views": ["FRONT", "THREE_QUARTER", "SIDE"],
