@@ -1354,6 +1354,7 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
+            "shoulder_quaternion_shortest_arc": True,
             "rounded_transition_waypoint_path": True,
             "finger_quaternion_shortest_arc": True,
             "wrist_canonical_2dof_reconstruction": True,
