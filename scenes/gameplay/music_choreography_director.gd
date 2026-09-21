@@ -7,7 +7,7 @@ extends Node
 const ACTIVATION_TIME := 30.0
 const PREPARATION_ACTION := &"JUMP"
 const SIGNATURE_MOVE := &"GRAND_JETE"
-const SIGNATURE_MOVE_TIME := 53.0
+const SIGNATURE_MOVE_TIME := 68.5
 const SIGNATURE_PRIMARY_CLASS := &"LARGE_TRAVELLING_LEAP"
 
 @export var music_timeline: Node
