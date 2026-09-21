@@ -2,9 +2,9 @@
 
 The accepted Phase 10.6 static realization remains the endpoint authority.
 This script captures those exact realized rig states and connects only the
-actual humanoid upper-body chain with deterministic motion: a solver-derived
-rounded waypoint for shoulder/elbow, shortest-arc finger motion, and canonical
-2DOF wrist reconstruction. It does not export GLB or touch gameplay/choreography
+actual humanoid upper-body chain with deterministic motion: shortest-arc
+shoulder motion, a solver-derived rounded waypoint for the elbow/forearm,
+shortest-arc finger motion, and canonical 2DOF wrist reconstruction. It does not export GLB or touch gameplay/choreography
 systems.
 """
 
