@@ -96,73 +96,50 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
-    def test_wrist_preserving_elbow_swivel_contract(self) -> None:
-        swivel = self.contract["interpolation"]["elbow_pole_swivel"]
-        rotation = self.contract["interpolation"]["rotation"]
+    def test_rounded_task_space_wrist_path_contract(self) -> None:
+        interpolation = self.contract["interpolation"]
+        rotation = interpolation["rotation"]
+        path = interpolation["rounded_wrist_path"]
         self.assertEqual(
-            rotation["arm_chain_baseline"],
-            "QUATERNION_SHORTEST_ARC_SLERP",
-        )
-        self.assertEqual(
-            rotation["elbow_pole_correction"],
-            "WRIST_PRESERVING_TWO_BONE_CHAIN_SWIVEL",
+            rotation["arm_chain_solution"],
+            "TASK_SPACE_TWO_BONE_IK_TO_WRIST_TARGET",
         )
         self.assertEqual(
-            swivel["method"],
-            "TWO_BONE_ELBOW_CIRCLE_SWIVEL",
+            path["progression"],
+            "MINIMUM_JERK_ENDPOINT_LERP",
         )
         self.assertEqual(
-            swivel["wrist_target_authority"],
-            "BASELINE_INTERPOLATED_WRIST_POSITION",
+            path["arc"],
+            "SYMMETRIC_OUTWARD_UP_BUMP",
         )
-        self.assertLessEqual(
-            float(swivel["wrist_position_preservation_max"]),
-            0.0001,
-        )
+        self.assertEqual(float(path["forward_extra_fraction"]), 0.0)
+        self.assertGreater(float(path["outward_chain_fraction"]), 0.0)
+        self.assertGreater(float(path["up_chain_fraction"]), 0.0)
 
-    def test_compact_minimum_jerk_swivel_weight(self) -> None:
-        waypoint = self.contract["interpolation"]["elbow_pole_swivel"]
-        self.assertEqual(
-            motion.compact_minimum_jerk_swivel_weight(0.0, waypoint),
-            0.0,
-        )
-        self.assertEqual(
-            motion.compact_minimum_jerk_swivel_weight(0.25, waypoint),
-            0.0,
-        )
-        self.assertEqual(
-            motion.compact_minimum_jerk_swivel_weight(0.5, waypoint),
-            1.0,
-        )
-        self.assertEqual(
-            motion.compact_minimum_jerk_swivel_weight(0.75, waypoint),
-            0.0,
-        )
-        self.assertEqual(
-            motion.compact_minimum_jerk_swivel_weight(1.0, waypoint),
-            0.0,
-        )
+    def test_rounded_wrist_path_weights_are_exact_and_symmetric(self) -> None:
+        self.assertEqual(motion.rounded_wrist_progress(0.0), 0.0)
+        self.assertEqual(motion.rounded_wrist_progress(1.0), 1.0)
+        self.assertEqual(motion.rounded_wrist_arc_weight(0.0), 0.0)
+        self.assertEqual(motion.rounded_wrist_arc_weight(1.0), 0.0)
+        self.assertEqual(motion.rounded_wrist_arc_weight(0.5), 1.0)
         for index in range(101):
             p = index / 100.0
-            value = motion.compact_minimum_jerk_swivel_weight(p, waypoint)
-            mirror = motion.compact_minimum_jerk_swivel_weight(1.0 - p, waypoint)
+            value = motion.rounded_wrist_arc_weight(p)
+            mirror = motion.rounded_wrist_arc_weight(1.0 - p)
             self.assertGreaterEqual(value, 0.0)
             self.assertLessEqual(value, 1.0)
             self.assertAlmostEqual(value, mirror, places=12)
-            if p <= 0.25 or p >= 0.75:
-                self.assertEqual(value, 0.0)
 
-    def test_early_frames_have_zero_swivel_influence(self) -> None:
-        waypoint = self.contract["interpolation"]["elbow_pole_swivel"]
-        for frame in range(
-            int(self.contract["transition"]["frame_start"]),
-            16,
-        ):
-            t = motion.normalized_time(frame, self.contract)
-            self.assertEqual(
-                motion.compact_minimum_jerk_swivel_weight(t, waypoint),
-                0.0,
-            )
+    def test_task_space_error_contract_stays_strict(self) -> None:
+        validation = self.contract["validation"]
+        self.assertLessEqual(
+            float(validation["task_space_wrist_target_error_max"]),
+            0.0001,
+        )
+        self.assertLessEqual(
+            float(validation["two_bone_length_error_max"]),
+            0.0001,
+        )
 
     def test_bounded_scalar_interpolation_is_exact_and_no_overshoot(self) -> None:
         for start, end in ((-12.5, 18.0), (20.0, -7.0), (0.0, 0.0)):
