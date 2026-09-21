@@ -15,10 +15,10 @@
     "overshoot_forbidden": true
   },
   "joint_windows": {
-    "shoulder": {"start": 0.0, "end": 0.90},
-    "elbow": {"start": 0.08, "end": 0.94},
-    "wrist": {"start": 0.18, "end": 0.98},
-    "fingers": {"start": 0.30, "end": 1.0}
+    "shoulder": {"start": 0.0, "end": 0.985},
+    "elbow": {"start": 0.005, "end": 0.99},
+    "wrist": {"start": 0.01, "end": 0.995},
+    "fingers": {"start": 0.015, "end": 1.0}
   },
   "interpolation": {
     "space": "LOCAL_MATRIX_BASIS",
@@ -49,6 +49,7 @@
     "maximum_elbow_opening_deg": 179.0,
     "minimum_consecutive_quaternion_dot": 0.0,
     "sample_every_frame": true,
+    "maximum_adjacent_role_progress_lag": 0.01,
     "wrist_axial_roll_gate": "PHASE_10_6_8_CANONICAL_WRIST_2DOF_RECONSTRUCTION",
     "preferred_envelope_diagnostic": "ACCEPTED_ENDPOINTS_PLUS_MONOTONE_SEMANTIC_DOF_PROXY",
     "decomposition_noise_policy": "moving translation/scale component checks use the same 1e-6 numerical ceiling as accepted endpoint local-matrix equality; values are locked to the start endpoint and are not interpolated",
