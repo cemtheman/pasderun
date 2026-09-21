@@ -55,9 +55,13 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Motion overshoot must remain forbidden.")
 
     rotation = contract["interpolation"]["rotation"]
-    if rotation["shoulder_elbow_fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
+    if rotation["shoulder_elbow"] != "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND":
         raise ValueError(
-            "Shoulder/elbow/fingers must retain shortest-arc quaternion interpolation."
+            "Shoulder/elbow must use the rounded transition waypoint path."
+        )
+    if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
+        raise ValueError(
+            "Finger motion must retain shortest-arc quaternion interpolation."
         )
     if rotation["wrist"] != "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION":
         raise ValueError(
@@ -67,6 +71,24 @@ def validate_contract(contract: dict) -> None:
         raise ValueError(
             "Wrist 2DOF interpolation must use the wrist role minimum-jerk progress."
         )
+
+    waypoint = contract["interpolation"]["rounded_transition_waypoint"]
+    if not waypoint.get("enabled", False):
+        raise ValueError("Rounded transition waypoint must remain enabled.")
+    if abs(float(waypoint["motion_progress"]) - 0.5) > 1e-12:
+        raise ValueError("Rounded transition waypoint must stay centered at progress 0.5.")
+    if abs(float(waypoint["semantic_fraction"]) - 0.5) > 1e-12:
+        raise ValueError("Rounded transition semantic fraction must stay at 0.5.")
+    if list(waypoint["affected_roles"]) != ["shoulder", "elbow"]:
+        raise ValueError("Rounded waypoint may affect only shoulder and elbow.")
+    if waypoint["intent_rule"] != "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE":
+        raise ValueError("Rounded waypoint intent rule changed.")
+    if waypoint["curve"] != "CENTERED_QUARTIC_ATTRACTION":
+        raise ValueError("Rounded waypoint curve changed.")
+    if not waypoint.get("endpoint_exact", False):
+        raise ValueError("Rounded waypoint must preserve exact endpoints.")
+    if not waypoint.get("waypoint_exact_at_motion_progress", False):
+        raise ValueError("Rounded waypoint must be exact at its declared midpoint.")
 
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
@@ -158,6 +180,11 @@ def progress_trace(frame: int, contract: dict) -> dict[str, float]:
 def _preferred_range(constraints: dict, joint_class: str, dof: str) -> tuple[float, float]:
     preferred = constraints["joint_limits"][joint_class]["dofs"][dof]["preferred"]
     return float(preferred["min"]), float(preferred["max"])
+
+
+def centered_quartic_waypoint_weight(progress: float) -> float:
+    p = clamp01(progress)
+    return 16.0 * p * p * (1.0 - p) * (1.0 - p)
 
 
 def interpolate_bounded_scalar(
