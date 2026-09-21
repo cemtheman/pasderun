@@ -1,6 +1,7 @@
 param(
     [string]$Blender = "",
-    [string]$Repo = ""
+    [string]$Repo = "",
+    [switch]$UseExistingArtifacts
 )
 
 $ErrorActionPreference = "Stop"
@@ -57,11 +58,15 @@ Write-Host "Generated build directories are preserved."
 Write-Host "GLB export: NO"
 Write-Host ""
 
-& python $test
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if (-not $UseExistingArtifacts) {
+    & python $test
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --motion-contract $motionContract --report $report --preview-dir $previewDir
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --motion-contract $motionContract --report $report --preview-dir $previewDir
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+} else {
+    Write-Host "Reusing existing Phase 10.7.1 report and previews; Blender/test execution skipped."
+}
 
 if (-not (Test-Path $report)) {
     throw "Phase 10.7.1 report was not generated: $report"
