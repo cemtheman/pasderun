@@ -81,7 +81,9 @@
       "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
       "endpoint_projection_forbidden": true,
       "child_local_chain_preserved": true
-    }
+    },
+    "accepted_endpoint_locked_noise_max": 0.000001,
+    "accepted_endpoint_locked_noise_policy": "accepted Phase 10.6 locked-bone realization differences up to 1e-6 are treated as numerical noise, then canonicalized to the exact start matrix before motion"
   },
   "preview": {
     "views": [
