@@ -75,6 +75,27 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
         for proximal, distal in zip(widths, widths[1:]):
             self.assertGreaterEqual(proximal, distal)
 
+    def test_adjacent_role_progress_lag_stays_tightly_coupled(self) -> None:
+        maximum = float(
+            self.contract["validation"]["maximum_adjacent_role_progress_lag"]
+        )
+        for index in range(1001):
+            t = index / 1000.0
+            progress = {
+                role: motion.windowed_progress(
+                    t,
+                    self.contract["joint_windows"][role],
+                )
+                for role in motion.ROLE_ORDER
+            }
+            for proximal, distal in zip(
+                motion.ROLE_ORDER,
+                motion.ROLE_ORDER[1:],
+            ):
+                lag = progress[proximal] - progress[distal]
+                self.assertGreaterEqual(lag + 1e-12, 0.0)
+                self.assertLessEqual(lag, maximum + 1e-12)
+
     def test_semantic_proxy_never_leaves_preferred_envelope(self) -> None:
         for index in range(101):
             evidence = motion.semantic_dof_proxy(
