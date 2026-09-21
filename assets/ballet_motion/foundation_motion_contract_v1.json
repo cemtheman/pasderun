@@ -38,8 +38,8 @@
       "fingers": "QUATERNION_SHORTEST_ARC_SLERP",
       "wrist": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
       "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS",
-      "shoulder": "QUATERNION_SHORTEST_ARC_SLERP",
-      "elbow": "WRIST_PRESERVING_ELBOW_POLE_SWIVEL"
+      "arm_chain_baseline": "QUATERNION_SHORTEST_ARC_SLERP",
+      "elbow_pole_correction": "WRIST_PRESERVING_TWO_BONE_CHAIN_SWIVEL"
     },
     "start_endpoint": "EXACT_PHASE_10_6_REALIZED_BRAS_BAS",
     "end_endpoint": "EXACT_PHASE_10_6_REALIZED_EN_AVANT",
