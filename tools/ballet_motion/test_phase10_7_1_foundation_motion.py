@@ -96,6 +96,31 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
+    def test_bounded_scalar_interpolation_is_exact_and_no_overshoot(self) -> None:
+        for start, end in ((-12.5, 18.0), (20.0, -7.0), (0.0, 0.0)):
+            self.assertEqual(
+                motion.interpolate_bounded_scalar(start, end, 0.0),
+                start,
+            )
+            self.assertEqual(
+                motion.interpolate_bounded_scalar(start, end, 1.0),
+                end,
+            )
+            minimum = min(start, end)
+            maximum = max(start, end)
+            previous = None
+            for index in range(101):
+                p = index / 100.0
+                value = motion.interpolate_bounded_scalar(start, end, p)
+                self.assertGreaterEqual(value + 1e-12, minimum)
+                self.assertLessEqual(value - 1e-12, maximum)
+                if previous is not None:
+                    if end >= start:
+                        self.assertGreaterEqual(value + 1e-12, previous)
+                    else:
+                        self.assertLessEqual(value - 1e-12, previous)
+                previous = value
+
     def test_semantic_proxy_never_leaves_preferred_envelope(self) -> None:
         for index in range(101):
             evidence = motion.semantic_dof_proxy(
