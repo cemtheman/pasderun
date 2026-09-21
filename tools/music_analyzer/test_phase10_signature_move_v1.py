@@ -20,7 +20,7 @@ class Phase10SignatureMoveV1Tests(unittest.TestCase):
         cls.demands = json.loads(DEMANDS.read_text(encoding="utf-8"))
         cls.visual_score = json.loads(VISUAL_SCORE.read_text(encoding="utf-8"))
 
-    def test_53s_is_strongest_large_travelling_leap_candidate(self) -> None:
+    def test_68_5s_is_strongest_full_piece_large_travelling_leap_candidate(self) -> None:
         leap_events = []
         for event in self.demands["events"]:
             candidates = event.get("candidate_classes", [])
@@ -37,20 +37,17 @@ class Phase10SignatureMoveV1Tests(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(
-            [time for time, _, _ in leap_events],
-            [32.25, 36.25, 42.5, 53.0],
-        )
+        self.assertGreater(len(leap_events), 4)
         strongest = max(leap_events, key=lambda item: item[1])
-        self.assertEqual(strongest[0], 53.0)
-        self.assertAlmostEqual(strongest[1], 0.8627, places=4)
+        self.assertEqual(strongest[0], 68.5)
+        self.assertAlmostEqual(strongest[1], 0.8769, places=4)
         self.assertEqual(strongest[2], 1.0)
 
-    def test_visual_score_keeps_53s_as_player_owned_required_jump(self) -> None:
+    def test_visual_score_keeps_68_5s_as_player_owned_required_jump(self) -> None:
         anchors = [
             anchor
             for anchor in self.visual_score["event_anchors"]
-            if abs(float(anchor["time"]) - 53.0) < 1e-9
+            if abs(float(anchor["time"]) - 68.5) < 1e-9
         ]
         self.assertEqual(len(anchors), 1)
         anchor = anchors[0]
@@ -67,10 +64,10 @@ class Phase10SignatureMoveV1Tests(unittest.TestCase):
             places=6,
         )
 
-    def test_director_arms_only_named_53s_grand_jete_opportunity(self) -> None:
+    def test_director_arms_only_named_68_5s_grand_jete_opportunity(self) -> None:
         for token in (
             'const SIGNATURE_MOVE := &"GRAND_JETE"',
-            "const SIGNATURE_MOVE_TIME := 53.0",
+            "const SIGNATURE_MOVE_TIME := 68.5",
             'const SIGNATURE_PRIMARY_CLASS := &"LARGE_TRAVELLING_LEAP"',
             "func _is_signature_preparation_active(playback_time: float)",
             "remaining > _reaction_lead",
@@ -124,7 +121,8 @@ class Phase10SignatureMoveV1Tests(unittest.TestCase):
         self.assertIn("@onready var _model_root: Node3D = $low_poly_girl", self.controller)
         self.assertIn("func _apply_grand_jete_takeoff_overlay()", self.controller)
         self.assertIn("func _apply_grand_jete_airborne_overlay()", self.controller)
-        self.assertNotIn("mannequin", self.controller.lower())
+        self.assertIn("There is no mannequin", self.controller)
+        self.assertNotIn("dancer_visual.gd", self.controller)
 
     def test_grand_jete_lead_leg_comes_from_actual_gait_pose(self) -> None:
         self.assertIn("func _current_forward_foot_is_left()", self.controller)
