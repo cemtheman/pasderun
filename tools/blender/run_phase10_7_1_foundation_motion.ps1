@@ -53,7 +53,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.7.1 - BRAS BAS -> EN AVANT FOUNDATION MOTION"
 Write-Host "Endpoint authority: accepted Phase 10.6 realized poses"
-Write-Host "Interpolation: shoulder shortest-arc; rounded elbow waypoint; finger shortest-arc; wrist canonical 2DOF; minimum jerk"
+Write-Host "Interpolation: shortest-arc arm baseline; wrist-preserving elbow-pole swivel; finger shortest-arc; wrist canonical 2DOF; minimum jerk"
 Write-Host "Generated build directories are preserved."
 Write-Host "GLB export: NO"
 Write-Host ""
@@ -85,14 +85,11 @@ if (-not $data.automated_gate.start_endpoint_exact) {
 if (-not $data.automated_gate.end_endpoint_exact) {
     throw "End endpoint gate failed."
 }
-if (-not $data.automated_gate.shoulder_quaternion_shortest_arc) {
-    throw "Shoulder quaternion interpolation gate failed."
+if (-not $data.automated_gate.baseline_arm_chain_shortest_arc) {
+    throw "Baseline arm-chain interpolation gate failed."
 }
-if (-not $data.automated_gate.parent_aware_elbow_waypoint_path) {
-    throw "Parent-aware elbow waypoint gate failed."
-}
-if (-not $data.automated_gate.rounded_transition_waypoint_path) {
-    throw "Rounded transition waypoint gate failed."
+if (-not $data.automated_gate.wrist_preserving_elbow_pole_swivel) {
+    throw "Wrist-preserving elbow-pole swivel gate failed."
 }
 if (-not $data.automated_gate.finger_quaternion_shortest_arc) {
     throw "Finger quaternion interpolation gate failed."
