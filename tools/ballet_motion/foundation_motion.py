@@ -54,6 +54,20 @@ def validate_contract(contract: dict) -> None:
     if not contract["curve"].get("overshoot_forbidden", False):
         raise ValueError("Motion overshoot must remain forbidden.")
 
+    rotation = contract["interpolation"]["rotation"]
+    if rotation["shoulder_elbow_fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
+        raise ValueError(
+            "Shoulder/elbow/fingers must retain shortest-arc quaternion interpolation."
+        )
+    if rotation["wrist"] != "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION":
+        raise ValueError(
+            "Wrist interpolation must remain in canonical 2DOF space."
+        )
+    if rotation["wrist_curve"] != "ROLE_MINIMUM_JERK_PROGRESS":
+        raise ValueError(
+            "Wrist 2DOF interpolation must use the wrist role minimum-jerk progress."
+        )
+
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
         raise ValueError("Intermediate centerline clearance projection must remain enabled.")
