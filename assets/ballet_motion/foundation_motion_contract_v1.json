@@ -39,30 +39,26 @@
       "wrist": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
       "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS",
       "shoulder": "QUATERNION_SHORTEST_ARC_SLERP",
-      "elbow": "PARENT_AWARE_ARMATURE_SPACE_WAYPOINT_SLERP"
-    },
-    "rounded_transition_waypoint": {
-      "enabled": true,
-      "activation_start": 0.25,
-      "motion_progress": 0.5,
-      "activation_end": 0.75,
-      "semantic_fraction": 0.5,
-      "affected_roles": [
-        "elbow"
-      ],
-      "intent_rule": "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE_FOREARM_ONLY",
-      "curve": "COMPACT_MINIMUM_JERK_BUMP",
-      "endpoint_exact": true,
-      "waypoint_exact_before_clearance_projection": true,
-      "source_authority": "PHASE_10_6_CANONICAL_SOLVER_AND_CALIBRATED_RETARGET",
-      "application_space": "ARMATURE_SPACE_ABSOLUTE_FOREARM_BASIS",
-      "parent_pose_assumption": "CURRENT_RUNTIME_SHOULDER_POSE"
+      "elbow": "WRIST_PRESERVING_ELBOW_POLE_SWIVEL"
     },
     "start_endpoint": "EXACT_PHASE_10_6_REALIZED_BRAS_BAS",
     "end_endpoint": "EXACT_PHASE_10_6_REALIZED_EN_AVANT",
     "moving_bone_translation": "LOCK_TO_START",
     "moving_bone_scale": "LOCK_TO_START",
-    "locked_bones": "EXACT_START_MATRIX_BASIS"
+    "locked_bones": "EXACT_START_MATRIX_BASIS",
+    "elbow_pole_swivel": {
+      "enabled": true,
+      "activation_start": 0.25,
+      "motion_progress": 0.5,
+      "activation_end": 0.75,
+      "source_pose": "bras_bas",
+      "target_pole_authority": "ACCEPTED_BRAS_BAS_SEMANTIC_ELBOW_POLE",
+      "curve": "COMPACT_MINIMUM_JERK_BUMP",
+      "method": "TWO_BONE_ELBOW_CIRCLE_SWIVEL",
+      "wrist_target_authority": "BASELINE_INTERPOLATED_WRIST_POSITION",
+      "wrist_position_preservation_max": 0.00001,
+      "endpoint_exact": true
+    }
   },
   "authority": {
     "motion_authority": "SINGLE_HUMANOID_RIG",
