@@ -96,6 +96,18 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
+    def test_centered_quartic_waypoint_weight(self) -> None:
+        self.assertEqual(motion.centered_quartic_waypoint_weight(0.0), 0.0)
+        self.assertEqual(motion.centered_quartic_waypoint_weight(0.5), 1.0)
+        self.assertEqual(motion.centered_quartic_waypoint_weight(1.0), 0.0)
+        for index in range(101):
+            p = index / 100.0
+            value = motion.centered_quartic_waypoint_weight(p)
+            mirror = motion.centered_quartic_waypoint_weight(1.0 - p)
+            self.assertGreaterEqual(value, 0.0)
+            self.assertLessEqual(value, 1.0)
+            self.assertAlmostEqual(value, mirror, places=12)
+
     def test_bounded_scalar_interpolation_is_exact_and_no_overshoot(self) -> None:
         for start, end in ((-12.5, 18.0), (20.0, -7.0), (0.0, 0.0)):
             self.assertEqual(
