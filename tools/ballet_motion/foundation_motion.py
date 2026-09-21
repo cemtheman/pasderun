@@ -54,6 +54,22 @@ def validate_contract(contract: dict) -> None:
     if not contract["curve"].get("overshoot_forbidden", False):
         raise ValueError("Motion overshoot must remain forbidden.")
 
+    projection = contract["validation"]["centerline_clearance_projection"]
+    if not projection.get("enabled", False):
+        raise ValueError("Intermediate centerline clearance projection must remain enabled.")
+    guard = float(projection["intermediate_guard_side_offset"])
+    if not 0.0 <= guard <= 0.005:
+        raise ValueError("Intermediate hand-clearance guard must stay within [0, 0.005].")
+    maximum = float(projection["maximum_shoulder_correction_deg"])
+    if not 0.0 < maximum <= 5.0:
+        raise ValueError("Centerline shoulder correction must stay within (0, 5] degrees.")
+    iterations = int(projection["bisection_iterations"])
+    if not 8 <= iterations <= 32:
+        raise ValueError("Centerline projection bisection iterations must stay within [8, 32].")
+    axes = list(projection["candidate_axes"])
+    if not axes or any(axis not in ("front", "up") for axis in axes):
+        raise ValueError("Centerline projection may use only declared front/up body axes.")
+
     windows = contract["joint_windows"]
     starts = [float(windows[role]["start"]) for role in ROLE_ORDER]
     ends = [float(windows[role]["end"]) for role in ROLE_ORDER]
