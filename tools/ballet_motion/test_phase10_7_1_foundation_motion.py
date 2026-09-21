@@ -96,6 +96,19 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
                 self.assertGreaterEqual(lag + 1e-12, 0.0)
                 self.assertLessEqual(lag, maximum + 1e-12)
 
+    def test_waypoint_affects_only_elbow_role(self) -> None:
+        waypoint = self.contract["interpolation"]["rounded_transition_waypoint"]
+        rotation = self.contract["interpolation"]["rotation"]
+        self.assertEqual(waypoint["affected_roles"], ["elbow"])
+        self.assertEqual(
+            rotation["shoulder"],
+            "QUATERNION_SHORTEST_ARC_SLERP",
+        )
+        self.assertEqual(
+            rotation["elbow"],
+            "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND",
+        )
+
     def test_compact_minimum_jerk_waypoint_weight(self) -> None:
         waypoint = self.contract["interpolation"]["rounded_transition_waypoint"]
         self.assertEqual(
