@@ -90,6 +90,14 @@ def validate_contract(contract: dict) -> None:
     activation_end = float(waypoint["activation_end"])
     if not 0.0 < activation_start < center < activation_end < 1.0:
         raise ValueError("Rounded waypoint activation window is invalid.")
+    if (
+        abs(activation_start - 0.25) > 1e-12
+        or abs(center - 0.5) > 1e-12
+        or abs(activation_end - 0.75) > 1e-12
+    ):
+        raise ValueError(
+            "Rounded waypoint activation must remain 0.25 -> 0.50 -> 0.75."
+        )
     if abs((center - activation_start) - (activation_end - center)) > 1e-12:
         raise ValueError("Rounded waypoint activation window must remain symmetric.")
     if not waypoint.get("endpoint_exact", False):
