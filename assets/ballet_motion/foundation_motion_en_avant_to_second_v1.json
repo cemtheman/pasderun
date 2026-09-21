@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "phase": "10.7.2",
+  "contract_id": "foundation_motion_en_avant_to_second_v1",
+  "transition": {
+    "start_pose": "en_avant",
+    "end_pose": "second",
+    "duration_seconds": 2,
+    "fps": 30,
+    "frame_start": 1
+  },
+  "curve": {
+    "type": "MINIMUM_JERK",
+    "formula": "10t^3-15t^4+6t^5",
+    "overshoot_forbidden": true
+  },
+  "joint_windows": {
+    "shoulder": {
+      "start": 0,
+      "end": 0.985
+    },
+    "elbow": {
+      "start": 0.005,
+      "end": 0.99
+    },
+    "wrist": {
+      "start": 0.01,
+      "end": 0.995
+    },
+    "fingers": {
+      "start": 0.015,
+      "end": 1
+    }
+  },
+  "interpolation": {
+    "space": "LOCAL_MATRIX_BASIS",
+    "rotation": {
+      "shoulder_elbow_fingers": "QUATERNION_SHORTEST_ARC_SLERP",
+      "wrist": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
+      "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS"
+    },
+    "start_endpoint": "EXACT_PHASE_10_6_REALIZED_EN_AVANT",
+    "end_endpoint": "EXACT_PHASE_10_6_REALIZED_SECOND",
+    "moving_bone_translation": "LOCK_TO_START",
+    "moving_bone_scale": "LOCK_TO_START",
+    "locked_bones": "EXACT_START_MATRIX_BASIS"
+  },
+  "authority": {
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "endpoint_pose_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "actual_rig_hierarchy_authority": true,
+    "mannequin_motion_forbidden": true,
+    "parallel_motion_authority_forbidden": true,
+    "lower_body_contact_redesign_forbidden": true,
+    "hand_system_redesign_forbidden": true
+  },
+  "validation": {
+    "endpoint_local_matrix_error_max": 0.000001,
+    "locked_local_matrix_error_max": 1e-7,
+    "locked_world_matrix_error_max": 0.000001,
+    "moving_translation_error_max": 0.000001,
+    "moving_scale_error_max": 0.000001,
+    "minimum_hand_mesh_side_offset": 0,
+    "minimum_elbow_opening_deg": 5,
+    "maximum_elbow_opening_deg": 179,
+    "minimum_consecutive_quaternion_dot": 0,
+    "sample_every_frame": true,
+    "maximum_adjacent_role_progress_lag": 0.01,
+    "wrist_axial_roll_gate": "PHASE_10_6_8_CANONICAL_WRIST_2DOF_RECONSTRUCTION",
+    "preferred_envelope_diagnostic": "ACCEPTED_ENDPOINTS_PLUS_MONOTONE_SEMANTIC_DOF_PROXY",
+    "decomposition_noise_policy": "moving translation/scale component checks use the same 1e-6 numerical ceiling as accepted endpoint local-matrix equality; values are locked to the start endpoint and are not interpolated",
+    "centerline_clearance_projection": {
+      "enabled": true,
+      "intermediate_guard_side_offset": 0.0001,
+      "maximum_shoulder_correction_deg": 3,
+      "candidate_axes": [
+        "front",
+        "up"
+      ],
+      "bisection_iterations": 18,
+      "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+      "endpoint_projection_forbidden": true,
+      "child_local_chain_preserved": true
+    }
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_transition_only": true,
+    "glb_export_forbidden": true,
+    "opening_reverence_forbidden": true,
+    "final_reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_reaction_changes_forbidden": true,
+    "signature_move_forbidden": true,
+    "scoring_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
