@@ -41,6 +41,7 @@ const STUMBLE_DURATION := 0.36
 const RECOVERY_DURATION := 0.72
 const OPENING_REVERENCE := &"OPENING_REVERENCE"
 const FINAL_REVERENCE := &"FINAL_REVERENCE"
+const SIGNATURE_GRAND_JETE := &"GRAND_JETE"
 const STUMBLE_TORSO_PITCH := deg_to_rad(32.0)
 const STAGE_BOW_DURATION := 2.25
 const STAGE_BOW_TURN_IN := 0.32
@@ -76,6 +77,10 @@ var _idle_global_poses: Dictionary = {}
 var _stage_entry_globals: Dictionary = {}
 var _trip_uses_left_foot := false
 var _landing_support_left := false
+var _prepared_signature_move: StringName = &""
+var _active_signature_move: StringName = &""
+var _signature_preparation_consumed := false
+var _grand_jete_lead_left := true
 
 
 func _ready() -> void:
@@ -177,6 +182,20 @@ func trigger_music_accent() -> void:
 	_music_accent_remaining = MUSIC_ACCENT_VISUAL_TIME
 
 
+func set_signature_move_preparation(move: StringName, active: bool) -> void:
+	if active:
+		if _prepared_signature_move != move:
+			_prepared_signature_move = move
+			_signature_preparation_consumed = false
+		return
+	if _prepared_signature_move == move:
+		_prepared_signature_move = &""
+
+
+func get_active_signature_move() -> StringName:
+	return _active_signature_move
+
+
 func get_visual_state() -> StringName:
 	return _current_state
 
@@ -242,6 +261,11 @@ func _set_visual_state(state: StringName, force := false) -> void:
 	_current_state = state
 	_state_elapsed = 0.0
 
+	if state == STATE_JUMP:
+		_activate_prepared_signature_move()
+	elif state == STATE_LANDING:
+		_active_signature_move = &""
+
 	match state:
 		STATE_NEUTRAL:
 			_model_root.transform = _model_base_transform
@@ -280,8 +304,12 @@ func _apply_visual_overlay(state: StringName) -> void:
 	match state:
 		STATE_JUMP:
 			_apply_jump_overlay()
+			if _active_signature_move == SIGNATURE_GRAND_JETE:
+				_apply_grand_jete_takeoff_overlay()
 		STATE_AIRBORNE:
 			_apply_airborne_overlay()
+			if _active_signature_move == SIGNATURE_GRAND_JETE:
+				_apply_grand_jete_airborne_overlay()
 		STATE_LANDING:
 			_apply_landing_overlay()
 		STATE_STUMBLE:
@@ -577,6 +605,117 @@ func _apply_airborne_overlay() -> void:
 		Vector3(0.02, 0.999, 0.0).normalized(),
 		0.18
 	)
+
+
+func _activate_prepared_signature_move() -> void:
+	if (
+		_prepared_signature_move != SIGNATURE_GRAND_JETE
+		or _signature_preparation_consumed
+	):
+		return
+	_active_signature_move = SIGNATURE_GRAND_JETE
+	_signature_preparation_consumed = true
+	_grand_jete_lead_left = _current_forward_foot_is_left()
+
+
+func _current_forward_foot_is_left() -> bool:
+	var left_foot := _bone_index("left_foot")
+	var right_foot := _bone_index("right_foot")
+	if left_foot < 0 or right_foot < 0:
+		return true
+	return (
+		_bone_world_position(left_foot).x
+		>= _bone_world_position(right_foot).x
+	)
+
+
+func _apply_grand_jete_takeoff_overlay() -> void:
+	var phase := clampf(_state_elapsed / TAKEOFF_VISUAL_TIME, 0.0, 1.0)
+	var strength := 0.62 * smoothstep(0.0, 1.0, phase)
+	_apply_grand_jete_split(strength)
+	_apply_grand_jete_arms(0.54 * strength / 0.62)
+	_apply_toe_line(maxf(0.24, 0.36 * strength / 0.62))
+
+
+func _apply_grand_jete_airborne_overlay() -> void:
+	_apply_grand_jete_split(0.78)
+	_apply_grand_jete_arms(0.62)
+	_apply_toe_line(0.42)
+
+
+func _apply_grand_jete_split(strength: float) -> void:
+	var lead_left := _grand_jete_lead_left
+	var trail_left := not lead_left
+	var lead_side := _travel_pair_side_sign(lead_left)
+	var trail_side := _travel_pair_side_sign(trail_left)
+
+	var lead_hip := _bone_index(
+		"left_upper_leg" if lead_left else "right_upper_leg"
+	)
+	var lead_knee := _bone_index(
+		"left_lower_leg" if lead_left else "right_lower_leg"
+	)
+	var lead_foot := _bone_index(
+		"left_foot" if lead_left else "right_foot"
+	)
+	var trail_hip := _bone_index(
+		"left_upper_leg" if trail_left else "right_upper_leg"
+	)
+	var trail_knee := _bone_index(
+		"left_lower_leg" if trail_left else "right_lower_leg"
+	)
+	var trail_foot := _bone_index(
+		"left_foot" if trail_left else "right_foot"
+	)
+
+	_steer_segment_world_direction(
+		lead_hip,
+		lead_knee,
+		Vector3(0.95, -0.29, lead_side * 0.05).normalized(),
+		strength
+	)
+	_steer_segment_world_direction(
+		lead_knee,
+		lead_foot,
+		Vector3(0.985, -0.16, lead_side * 0.03).normalized(),
+		0.92 * strength
+	)
+	_steer_segment_world_direction(
+		trail_hip,
+		trail_knee,
+		Vector3(-0.90, -0.42, trail_side * 0.05).normalized(),
+		strength
+	)
+	_steer_segment_world_direction(
+		trail_knee,
+		trail_foot,
+		Vector3(-0.965, -0.25, trail_side * 0.03).normalized(),
+		0.92 * strength
+	)
+
+
+func _apply_grand_jete_arms(strength: float) -> void:
+	for left in [true, false]:
+		var side := _travel_pair_side_sign(left)
+		var shoulder := _bone_index(
+			"left_upper_arm" if left else "right_upper_arm"
+		)
+		var elbow := _bone_index(
+			"left_lower_arm" if left else "right_lower_arm"
+		)
+		var hand := _bone_index("left_hand" if left else "right_hand")
+		_steer_segment_world_direction(
+			shoulder,
+			elbow,
+			Vector3(0.10, 0.10, side * 0.99).normalized(),
+			strength
+		)
+		_steer_segment_world_direction(
+			elbow,
+			hand,
+			Vector3(0.34, -0.14, -side * 0.93).normalized(),
+			0.72 * strength
+		)
 
 
 func _apply_landing_overlay() -> void:
