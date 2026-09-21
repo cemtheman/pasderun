@@ -5,7 +5,7 @@
   "transition": {
     "start_pose": "bras_bas",
     "end_pose": "en_avant",
-    "duration_seconds": 2.0,
+    "duration_seconds": 2,
     "fps": 30,
     "frame_start": 1
   },
@@ -15,18 +15,31 @@
     "overshoot_forbidden": true
   },
   "joint_windows": {
-    "shoulder": {"start": 0.0, "end": 0.985},
-    "elbow": {"start": 0.005, "end": 0.99},
-    "wrist": {"start": 0.01, "end": 0.995},
-    "fingers": {"start": 0.015, "end": 1.0}
+    "shoulder": {
+      "start": 0,
+      "end": 0.985
+    },
+    "elbow": {
+      "start": 0.005,
+      "end": 0.99
+    },
+    "wrist": {
+      "start": 0.01,
+      "end": 0.995
+    },
+    "fingers": {
+      "start": 0.015,
+      "end": 1
+    }
   },
   "interpolation": {
     "space": "LOCAL_MATRIX_BASIS",
     "rotation": {
-      "shoulder_elbow": "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND",
       "fingers": "QUATERNION_SHORTEST_ARC_SLERP",
       "wrist": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
-      "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS"
+      "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS",
+      "shoulder": "QUATERNION_SHORTEST_ARC_SLERP",
+      "elbow": "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND"
     },
     "rounded_transition_waypoint": {
       "enabled": true,
@@ -34,8 +47,10 @@
       "motion_progress": 0.5,
       "activation_end": 0.75,
       "semantic_fraction": 0.5,
-      "affected_roles": ["shoulder", "elbow"],
-      "intent_rule": "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE",
+      "affected_roles": [
+        "elbow"
+      ],
+      "intent_rule": "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE_FOREARM_ONLY",
       "curve": "COMPACT_MINIMUM_JERK_BUMP",
       "endpoint_exact": true,
       "waypoint_exact_before_clearance_projection": true,
@@ -58,14 +73,14 @@
   },
   "validation": {
     "endpoint_local_matrix_error_max": 0.000001,
-    "locked_local_matrix_error_max": 0.0000001,
+    "locked_local_matrix_error_max": 1e-7,
     "locked_world_matrix_error_max": 0.000001,
     "moving_translation_error_max": 0.000001,
     "moving_scale_error_max": 0.000001,
-    "minimum_hand_mesh_side_offset": 0.0,
-    "minimum_elbow_opening_deg": 5.0,
-    "maximum_elbow_opening_deg": 179.0,
-    "minimum_consecutive_quaternion_dot": 0.0,
+    "minimum_hand_mesh_side_offset": 0,
+    "minimum_elbow_opening_deg": 5,
+    "maximum_elbow_opening_deg": 179,
+    "minimum_consecutive_quaternion_dot": 0,
     "sample_every_frame": true,
     "maximum_adjacent_role_progress_lag": 0.01,
     "wrist_axial_roll_gate": "PHASE_10_6_8_CANONICAL_WRIST_2DOF_RECONSTRUCTION",
@@ -74,8 +89,11 @@
     "centerline_clearance_projection": {
       "enabled": true,
       "intermediate_guard_side_offset": 0.0001,
-      "maximum_shoulder_correction_deg": 3.0,
-      "candidate_axes": ["front", "up"],
+      "maximum_shoulder_correction_deg": 3,
+      "candidate_axes": [
+        "front",
+        "up"
+      ],
       "bisection_iterations": 18,
       "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
       "endpoint_projection_forbidden": true,
@@ -83,7 +101,11 @@
     }
   },
   "preview": {
-    "views": ["FRONT", "THREE_QUARTER", "SIDE"],
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
     "resolution": 480,
     "container": "MPEG4",
     "codec": "H264",
