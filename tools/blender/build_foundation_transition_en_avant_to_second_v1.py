@@ -1053,6 +1053,28 @@ def main() -> None:
 
     moving = set(roles)
     locked = set(start_pose) - moving
+    raw_locked_endpoint_error = max(
+        matrix_max_error(start_pose[name], end_pose[name])
+        for name in locked
+    )
+    require(
+        raw_locked_endpoint_error
+        <= float(
+            contract["validation"]["accepted_endpoint_locked_noise_max"]
+        ),
+        "Accepted endpoints differ outside the intended upper-body chain "
+        "beyond the numerical-noise ceiling: "
+        f"{raw_locked_endpoint_error}.",
+    )
+
+    # Phase 10.7 motion authority keeps every non-moving bone exactly at the
+    # start endpoint. The accepted Phase 10.6 endpoint solver may realize
+    # numerically equivalent locked matrices a few float ULPs apart, so after
+    # proving that difference is within the explicit noise ceiling, normalize
+    # those locked end matrices to the exact start authority.
+    for name in locked:
+        end_pose[name] = start_pose[name].copy()
+
     locked_endpoint_error = max(
         matrix_max_error(start_pose[name], end_pose[name])
         for name in locked
@@ -1060,7 +1082,7 @@ def main() -> None:
     require(
         locked_endpoint_error
         <= float(contract["validation"]["locked_local_matrix_error_max"]),
-        "Accepted endpoints differ outside the intended upper-body chain: "
+        "Locked endpoint canonicalization failed: "
         f"{locked_endpoint_error}.",
     )
 
@@ -1135,6 +1157,11 @@ def main() -> None:
         "endpoint_realization": {
             start_name: start_evidence,
             end_name: end_evidence,
+            "raw_locked_endpoint_local_matrix_error": raw_locked_endpoint_error,
+            "accepted_endpoint_locked_noise_max": float(
+                contract["validation"]["accepted_endpoint_locked_noise_max"]
+            ),
+            "locked_endpoint_canonicalized_to_start": True,
             "locked_endpoint_local_matrix_error": locked_endpoint_error,
         },
         "diagnostics": diagnostics,
@@ -1147,6 +1174,7 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
+            "locked_endpoint_noise_canonicalized": True,
             "local_quaternion_shortest_arc_non_wrist": True,
             "wrist_canonical_2dof_reconstruction": True,
             "minimum_jerk_timing": True,
