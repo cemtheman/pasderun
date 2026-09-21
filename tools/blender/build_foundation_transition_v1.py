@@ -2,8 +2,9 @@
 
 The accepted Phase 10.6 static realization remains the endpoint authority.
 This script captures those exact realized rig states and connects only the
-actual humanoid upper-body chain with deterministic local quaternion motion.
-It does not export GLB or touch gameplay/choreography systems.
+actual humanoid upper-body chain with deterministic motion: shortest-arc local
+quaternions for shoulder/elbow/fingers and canonical 2DOF reconstruction for
+the wrist. It does not export GLB or touch gameplay/choreography systems.
 """
 
 from __future__ import annotations
