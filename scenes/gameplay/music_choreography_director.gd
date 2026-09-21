@@ -6,6 +6,9 @@ extends Node
 
 const ACTIVATION_TIME := 30.0
 const PREPARATION_ACTION := &"JUMP"
+const SIGNATURE_MOVE := &"GRAND_JETE"
+const SIGNATURE_MOVE_TIME := 53.0
+const SIGNATURE_PRIMARY_CLASS := &"LARGE_TRAVELLING_LEAP"
 
 @export var music_timeline: Node
 @export var dancer: CharacterBody3D
@@ -19,6 +22,7 @@ var _reaction_lead := 0.75
 var _visual: Node
 var _last_role := &""
 var _preparing_jump := false
+var _preparing_signature := false
 
 
 func _ready() -> void:
@@ -54,9 +58,19 @@ func _process(_delta: float) -> void:
 		_preparing_jump = preparing
 		_visual.call("set_music_action_preparation", PREPARATION_ACTION, preparing)
 
-	_show_debug("%s%s" % [
+	var signature_preparing := _is_signature_preparation_active(playback_time)
+	if signature_preparing != _preparing_signature:
+		_preparing_signature = signature_preparing
+		_visual.call(
+			"set_signature_move_preparation",
+			SIGNATURE_MOVE,
+			signature_preparing
+		)
+
+	_show_debug("%s%s%s" % [
 		String(role),
 		" | PREP JUMP" if preparing else "",
+		" | GRAND JETE" if signature_preparing else "",
 	])
 
 
@@ -112,6 +126,27 @@ func _has_upcoming_required_jump(playback_time: float) -> bool:
 			return true
 		if anchor_time - playback_time > _reaction_lead:
 			return false
+	return false
+
+
+func _is_signature_preparation_active(playback_time: float) -> bool:
+	var remaining := SIGNATURE_MOVE_TIME - playback_time
+	if remaining < 0.0 or remaining > _reaction_lead:
+		return false
+	for candidate: Variant in _anchors:
+		if typeof(candidate) != TYPE_DICTIONARY:
+			continue
+		var anchor: Dictionary = candidate
+		if absf(float(anchor.get("time", -1.0)) - SIGNATURE_MOVE_TIME) > 0.0001:
+			continue
+		if StringName(anchor.get("primary_class", "")) != SIGNATURE_PRIMARY_CLASS:
+			return false
+		var interaction: Dictionary = anchor.get("interaction", {})
+		return (
+			bool(interaction.get("required", false))
+			and StringName(interaction.get("candidate_action", ""))
+			== PREPARATION_ACTION
+		)
 	return false
 
 
