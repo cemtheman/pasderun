@@ -85,6 +85,9 @@ if (-not $data.automated_gate.start_endpoint_exact) {
 if (-not $data.automated_gate.end_endpoint_exact) {
     throw "End endpoint gate failed."
 }
+if (-not $data.automated_gate.shoulder_quaternion_shortest_arc) {
+    throw "Shoulder quaternion interpolation gate failed."
+}
 if (-not $data.automated_gate.rounded_transition_waypoint_path) {
     throw "Rounded transition waypoint gate failed."
 }
