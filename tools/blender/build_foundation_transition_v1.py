@@ -2,10 +2,10 @@
 
 The accepted Phase 10.6 static realization remains the endpoint authority.
 This script captures those exact realized rig states and connects only the
-actual humanoid upper-body chain with deterministic motion: shortest-arc
-shoulder motion, a parent-aware armature-space rounded waypoint for the
-elbow/forearm, shortest-arc finger motion, and canonical 2DOF wrist reconstruction. It does not export GLB or touch gameplay/choreography
-systems.
+actual humanoid upper-body chain with deterministic motion: a shortest-arc
+arm-chain baseline, a wrist-preserving two-bone elbow-pole swivel for rounded
+port-de-bras shaping, shortest-arc finger motion, and canonical 2DOF wrist
+reconstruction. It does not export GLB or touch gameplay/choreography systems.
 """
 
 from __future__ import annotations
@@ -471,11 +471,6 @@ def set_interpolated_pose(
     contract: dict,
 ) -> dict[str, float]:
     trace = motion.progress_trace(frame, contract)
-    normalized_t = motion.normalized_time(frame, contract)
-    waypoint_weight = motion.compact_minimum_jerk_waypoint_weight(
-        normalized_t,
-        contract["interpolation"]["rounded_transition_waypoint"],
-    )
     moving = set(motion_cache)
 
     for bone in armature.pose.bones:
@@ -685,6 +680,7 @@ def key_motion(
     start_pose: dict[str, Matrix],
     motion_cache: dict,
     wrist_cache: dict,
+    pole_targets: dict[str, Vector],
     contract: dict,
 ) -> tuple[int, int, dict]:
     frame_start = int(contract["transition"]["frame_start"])
@@ -695,6 +691,7 @@ def key_motion(
 
     clearance_frames = []
     wrist_frames = []
+    swivel_frames = []
     for frame in range(frame_start, frame_end + 1):
         trace = set_interpolated_pose(
             armature,
@@ -703,6 +700,23 @@ def key_motion(
             frame,
             contract,
         )
+        swivel_contract = contract["interpolation"]["elbow_pole_swivel"]
+        swivel_weight = motion.compact_minimum_jerk_swivel_weight(
+            motion.normalized_time(frame, contract),
+            swivel_contract,
+        )
+        swivel_evidence = apply_wrist_preserving_elbow_pole_swivel(
+            armature,
+            canonical,
+            motion_cache,
+            pole_targets,
+            swivel_weight,
+            contract,
+            frame,
+        )
+        if swivel_weight > 0.0:
+            swivel_frames.append(swivel_evidence)
+
         wrist_evidence = apply_wrist_2dof_interpolation(
             armature,
             canonical,
@@ -747,29 +761,30 @@ def key_motion(
     scene.render.fps = int(contract["transition"]["fps"])
     scene.frame_set(frame_start)
     return frame_start, frame_end, {
-        "rounded_elbow_waypoint": {
-            "method": contract["interpolation"]["rotation"]["elbow"],
-            "application_space": contract["interpolation"][
-                "rounded_transition_waypoint"
-            ]["application_space"],
-            "parent_pose_assumption": contract["interpolation"][
-                "rounded_transition_waypoint"
-            ]["parent_pose_assumption"],
+        "elbow_pole_swivel": {
+            "method": contract["interpolation"]["elbow_pole_swivel"]["method"],
+            "target_pole_authority": contract["interpolation"][
+                "elbow_pole_swivel"
+            ]["target_pole_authority"],
+            "wrist_target_authority": contract["interpolation"][
+                "elbow_pole_swivel"
+            ]["wrist_target_authority"],
             "activation_start": float(
-                contract["interpolation"]["rounded_transition_waypoint"][
-                    "activation_start"
-                ]
+                contract["interpolation"]["elbow_pole_swivel"]["activation_start"]
             ),
             "activation_center": float(
-                contract["interpolation"]["rounded_transition_waypoint"][
-                    "motion_progress"
-                ]
+                contract["interpolation"]["elbow_pole_swivel"]["motion_progress"]
             ),
             "activation_end": float(
-                contract["interpolation"]["rounded_transition_waypoint"][
-                    "activation_end"
+                contract["interpolation"]["elbow_pole_swivel"]["activation_end"]
+            ),
+            "wrist_position_preservation_max": float(
+                contract["interpolation"]["elbow_pole_swivel"][
+                    "wrist_position_preservation_max"
                 ]
             ),
+            "active_frame_count": len(swivel_frames),
+            "frames": swivel_frames,
         },
         "wrist_2dof_interpolation": {
             "method": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
@@ -1255,25 +1270,16 @@ def main() -> None:
         f"{locked_endpoint_error}.",
     )
 
-    waypoint_pose, waypoint_absolute_bases, waypoint_evidence = (
-        realize_rounded_waypoint(
-        armature,
+    pole_targets = elbow_pole_target_vectors(
         canonical,
-        constraints,
-        retarget_axis_contract,
-        static_contract,
-        visual_contract,
-        runtime,
+        intent_spec,
         contract,
-    )
     )
     motion_cache = prepare_motion_cache(
         armature,
         roles,
         start_pose,
         end_pose,
-        waypoint_pose,
-        waypoint_absolute_bases,
         contract,
     )
     wrist_cache = prepare_wrist_2dof_cache(
@@ -1294,6 +1300,7 @@ def main() -> None:
         start_pose,
         motion_cache,
         wrist_cache,
+        pole_targets,
         contract,
     )
     diagnostics = validate_motion(
@@ -1342,7 +1349,18 @@ def main() -> None:
             end_name: end_evidence,
             "locked_endpoint_local_matrix_error": locked_endpoint_error,
         },
-        "rounded_transition_waypoint": waypoint_evidence,
+        "elbow_pole_swivel": {
+            "source_pose": contract["interpolation"]["elbow_pole_swivel"][
+                "source_pose"
+            ],
+            "target_pole_authority": contract["interpolation"][
+                "elbow_pole_swivel"
+            ]["target_pole_authority"],
+            "pole_targets_armature_space": {
+                side: [float(value) for value in vector]
+                for side, vector in pole_targets.items()
+            },
+        },
         "diagnostics": diagnostics,
         "motion_generation": motion_generation,
         "preview": {
@@ -1353,9 +1371,8 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
-            "shoulder_quaternion_shortest_arc": True,
-            "parent_aware_elbow_waypoint_path": True,
-            "rounded_transition_waypoint_path": True,
+            "baseline_arm_chain_shortest_arc": True,
+            "wrist_preserving_elbow_pole_swivel": True,
             "finger_quaternion_shortest_arc": True,
             "wrist_canonical_2dof_reconstruction": True,
             "minimum_jerk_timing": True,
