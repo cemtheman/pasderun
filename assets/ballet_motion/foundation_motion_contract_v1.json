@@ -39,7 +39,7 @@
       "wrist": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
       "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS",
       "shoulder": "QUATERNION_SHORTEST_ARC_SLERP",
-      "elbow": "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND"
+      "elbow": "PARENT_AWARE_ARMATURE_SPACE_WAYPOINT_SLERP"
     },
     "rounded_transition_waypoint": {
       "enabled": true,
@@ -54,7 +54,9 @@
       "curve": "COMPACT_MINIMUM_JERK_BUMP",
       "endpoint_exact": true,
       "waypoint_exact_before_clearance_projection": true,
-      "source_authority": "PHASE_10_6_CANONICAL_SOLVER_AND_CALIBRATED_RETARGET"
+      "source_authority": "PHASE_10_6_CANONICAL_SOLVER_AND_CALIBRATED_RETARGET",
+      "application_space": "ARMATURE_SPACE_ABSOLUTE_FOREARM_BASIS",
+      "parent_pose_assumption": "CURRENT_RUNTIME_SHOULDER_POSE"
     },
     "start_endpoint": "EXACT_PHASE_10_6_REALIZED_BRAS_BAS",
     "end_endpoint": "EXACT_PHASE_10_6_REALIZED_EN_AVANT",
