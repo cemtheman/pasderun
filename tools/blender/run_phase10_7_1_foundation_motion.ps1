@@ -53,7 +53,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.7.1 - BRAS BAS -> EN AVANT FOUNDATION MOTION"
 Write-Host "Endpoint authority: accepted Phase 10.6 realized poses"
-Write-Host "Interpolation: rounded shoulder/elbow waypoint; finger shortest-arc; wrist canonical 2DOF; minimum jerk"
+Write-Host "Interpolation: shoulder shortest-arc; rounded elbow waypoint; finger shortest-arc; wrist canonical 2DOF; minimum jerk"
 Write-Host "Generated build directories are preserved."
 Write-Host "GLB export: NO"
 Write-Host ""
