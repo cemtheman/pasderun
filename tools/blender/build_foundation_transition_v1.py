@@ -11,7 +11,6 @@ systems.
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import math
 import sys
@@ -162,181 +161,32 @@ def realize_endpoint(
     }
 
 
-def _blend_numeric_mapping(
-    start: dict,
-    end: dict,
-    fraction: float,
-) -> dict:
-    require(
-        set(start) == set(end),
-        f"Waypoint mapping keys differ: {sorted(start)} != {sorted(end)}.",
-    )
-    return {
-        key: motion.interpolate_bounded_scalar(
-            float(start[key]),
-            float(end[key]),
-            fraction,
-        )
-        for key in start
-    }
-
-
-def build_rounded_waypoint_intent(
-    start_intent: dict,
-    end_intent: dict,
-    contract: dict,
-) -> dict:
-    waypoint_contract = contract["interpolation"][
-        "rounded_transition_waypoint"
-    ]
-    fraction = float(waypoint_contract["semantic_fraction"])
-
-    require(
-        start_intent["kind"] == "symmetric_arm_chain"
-        and end_intent["kind"] == "symmetric_arm_chain",
-        "Rounded waypoint requires symmetric arm-chain endpoints.",
-    )
-    require(
-        abs(
-            float(start_intent["elbow_angle_deg"])
-            - float(end_intent["elbow_angle_deg"])
-        )
-        <= 1e-12,
-        "Rounded waypoint may not invent a new elbow angle.",
-    )
-    require(
-        start_intent.get("centerline_hand_policy")
-        == end_intent.get("centerline_hand_policy"),
-        "Rounded waypoint requires matching endpoint centerline policy.",
-    )
-    require(
-        start_intent.get("hand_mesh_gap_chain_fraction")
-        == end_intent.get("hand_mesh_gap_chain_fraction"),
-        "Rounded waypoint requires matching endpoint hand-gap contract.",
-    )
-
-    intent = copy.deepcopy(start_intent)
-    intent["wrist_direction"] = _blend_numeric_mapping(
-        start_intent["wrist_direction"],
-        end_intent["wrist_direction"],
-        fraction,
-    )
-    intent["hand_direction"] = _blend_numeric_mapping(
-        start_intent["hand_direction"],
-        end_intent["hand_direction"],
-        fraction,
-    )
-    # Preserve the accepted bras-bas elbow pole through the midpoint. The
-    # visual rejection showed that rotating this bend plane too early makes
-    # the arm read as a forward push instead of a rounded port de bras.
-    intent["elbow_pole"] = copy.deepcopy(start_intent["elbow_pole"])
-
-    intent["joint_dofs"] = {}
-    for joint_name in start_intent["joint_dofs"]:
-        require(
-            joint_name in end_intent["joint_dofs"],
-            f"Waypoint joint missing from end intent: {joint_name}.",
-        )
-        intent["joint_dofs"][joint_name] = _blend_numeric_mapping(
-            start_intent["joint_dofs"][joint_name],
-            end_intent["joint_dofs"][joint_name],
-            fraction,
-        )
-    return intent
-
-
-def realize_rounded_waypoint(
-    armature: bpy.types.Object,
+def elbow_pole_target_vectors(
     canonical: dict,
-    constraints: dict,
-    retarget_axis_contract: dict,
-    static_contract: dict,
-    visual_contract: dict,
-    runtime: dict,
+    intent_spec: dict,
     contract: dict,
-) -> tuple[dict[str, Matrix], dict[str, Matrix], dict]:
-    start_name = contract["transition"]["start_pose"]
-    end_name = contract["transition"]["end_pose"]
-    waypoint_name = "__phase10_7_rounded_transition_waypoint"
+) -> dict[str, Vector]:
+    swivel = contract["interpolation"]["elbow_pole_swivel"]
+    source_pose = swivel["source_pose"]
+    pole = intent_spec["poses"][source_pose]["elbow_pole"]
+    frame = canonical["body_frame"]["declared_axes_armature_local"]
+    left_axis = Vector(frame["left"]).normalized()
+    up_axis = Vector(frame["up"]).normalized()
+    front_axis = Vector(frame["front"]).normalized()
 
-    waypoint_intent = build_rounded_waypoint_intent(
-        runtime["intent_spec"]["poses"][start_name],
-        runtime["intent_spec"]["poses"][end_name],
-        contract,
-    )
-    temp_intents = copy.deepcopy(runtime["intent_spec"])
-    temp_grammar = copy.deepcopy(runtime["grammar_profile"])
-    temp_intents["poses"][waypoint_name] = waypoint_intent
-    temp_grammar["poses"][waypoint_name] = copy.deepcopy(
-        temp_grammar["poses"][start_name]
-    )
-
-    solution = runtime["pose_solver"].solve_pose(
-        waypoint_name,
-        temp_intents,
-        temp_grammar,
-        canonical,
-        constraints,
-    )
-    pose_entry = runtime["retarget_solver"].retarget_pose_solution(
-        solution,
-        canonical,
-        constraints,
-        retarget_axis_contract,
-    )
-    static_core.apply_rotation_deltas(armature, pose_entry)
-    hand_shape = static_core.apply_ballet_hand_shape(
-        armature,
-        canonical,
-        static_contract,
-    )
-    wrist = visual_gate.validate_hand_axial_continuity(
-        armature,
-        canonical,
-        constraints,
-        visual_contract,
-    )
-
-    waypoint_pose = snapshot_local_pose(armature)
-    waypoint_absolute_bases = {
-        canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"]:
-            static_core.normalized_basis(
-                armature.pose.bones[
-                    canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"]
-                ].matrix
-            )
-        for side in ("left", "right")
-    }
-    elbows = {}
-    for side in ("left", "right"):
-        elbows[side] = elbow_opening_deg(
-            armature,
-            canonical["canonical_bones"][f"{side}_upper_arm"]["rig_bone"],
-            canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"],
+    targets = {}
+    for side, sign in (("left", 1.0), ("right", -1.0)):
+        target = (
+            left_axis * (sign * float(pole["outward"]))
+            + up_axis * (-float(pole["down"]))
+            + front_axis * float(pole["front"])
         )
-    return waypoint_pose, waypoint_absolute_bases, {
-        "name": waypoint_name,
-        "semantic_fraction": float(
-            contract["interpolation"]["rounded_transition_waypoint"][
-                "semantic_fraction"
-            ]
-        ),
-        "intent_rule": contract["interpolation"][
-            "rounded_transition_waypoint"
-        ]["intent_rule"],
-        "application_space": contract["interpolation"][
-            "rounded_transition_waypoint"
-        ]["application_space"],
-        "parent_pose_assumption": contract["interpolation"][
-            "rounded_transition_waypoint"
-        ]["parent_pose_assumption"],
-        "elbow_angle_deg": elbows,
-        "canonical_solver": solution["evidence"],
-        "retarget": pose_entry["evidence"],
-        "wrist_continuity": wrist,
-        "ballet_hand_shape": hand_shape,
-        "endpoint_authority_mutated": False,
-    }
+        require(
+            target.length > 1e-9,
+            f"{side}: degenerate semantic elbow-pole target.",
+        )
+        targets[side] = target.normalized()
+    return targets
 
 
 def prepare_motion_cache(
@@ -344,8 +194,6 @@ def prepare_motion_cache(
     roles: dict[str, str],
     start_pose: dict[str, Matrix],
     end_pose: dict[str, Matrix],
-    waypoint_pose: dict[str, Matrix],
-    waypoint_absolute_bases: dict[str, Matrix],
     contract: dict,
 ) -> dict:
     translation_limit = float(
@@ -387,27 +235,6 @@ def prepare_motion_cache(
                 start_q.rotation_difference(end_q).angle
             ),
         }
-        if role in contract["interpolation"][
-            "rounded_transition_waypoint"
-        ]["affected_roles"]:
-            waypoint_loc, _waypoint_q, waypoint_scale = (
-                waypoint_pose[rig_name].decompose()
-            )
-            require(
-                (waypoint_loc - start_loc).length <= translation_limit,
-                f"{rig_name}: waypoint local translation changed.",
-            )
-            require(
-                (waypoint_scale - start_scale).length <= scale_limit,
-                f"{rig_name}: waypoint local scale changed.",
-            )
-            require(
-                rig_name in waypoint_absolute_bases,
-                f"{rig_name}: absolute forearm waypoint basis missing.",
-            )
-            item["waypoint_armature_basis"] = (
-                waypoint_absolute_bases[rig_name].copy()
-            )
         cache[rig_name] = item
         armature.pose.bones[rig_name].rotation_mode = "QUATERNION"
 
@@ -504,41 +331,136 @@ def apply_wrist_2dof_interpolation(
     return evidence
 
 
-def apply_parent_aware_elbow_waypoint(
+def apply_wrist_preserving_elbow_pole_swivel(
     armature: bpy.types.Object,
+    canonical: dict,
     motion_cache: dict,
-    waypoint_weight: float,
-) -> None:
-    weight = float(waypoint_weight)
+    pole_targets: dict[str, Vector],
+    swivel_weight: float,
+    contract: dict,
+    frame: int,
+) -> dict:
+    weight = float(swivel_weight)
+    evidence = {
+        "frame": int(frame),
+        "weight": weight,
+        "sides": {},
+    }
     if weight <= 0.0:
-        return
+        return evidence
 
-    for rig_name, item in motion_cache.items():
-        target_basis = item.get("waypoint_armature_basis")
-        if target_basis is None:
-            continue
+    wrist_error_limit = float(
+        contract["interpolation"]["elbow_pole_swivel"][
+            "wrist_position_preservation_max"
+        ]
+    )
 
-        bone = armature.pose.bones[rig_name]
-        current_basis = static_core.normalized_basis(bone.matrix)
-        current_q = current_basis.to_quaternion()
-        target_q = target_basis.to_quaternion()
-        current_q.normalize()
-        target_q.normalize()
-        if current_q.dot(target_q) < 0.0:
-            target_q.negate()
+    for side in ("left", "right"):
+        upper_name = canonical["canonical_bones"][
+            f"{side}_upper_arm"
+        ]["rig_bone"]
+        forearm_name = canonical["canonical_bones"][
+            f"{side}_forearm"
+        ]["rig_bone"]
+        upper = armature.pose.bones[upper_name]
+        forearm = armature.pose.bones[forearm_name]
 
-        desired_basis = current_q.slerp(
-            target_q,
-            weight,
-        ).to_matrix()
-        static_core.apply_absolute_rig_rotation_via_matrix_basis(
-            armature,
-            rig_name,
-            desired_basis,
+        shoulder = Vector(upper.head)
+        elbow = Vector(forearm.head)
+        baseline_wrist = Vector(forearm.tail)
+        shoulder_to_wrist = baseline_wrist - shoulder
+        require(
+            shoulder_to_wrist.length > 1e-9,
+            f"Frame {frame}/{side}: degenerate shoulder-wrist axis.",
         )
-        bone.location = item["location"].copy()
-        bone.scale = item["scale"].copy()
+        axis = shoulder_to_wrist.normalized()
+
+        # The baseline elbow lies on the exact two-bone intersection circle
+        # around the shoulder-wrist axis. Rotating only its radial component
+        # around that axis changes the bend plane while preserving both bone
+        # lengths and the baseline wrist target.
+        circle_center = (
+            shoulder
+            + axis * (elbow - shoulder).dot(axis)
+        )
+        radial = elbow - circle_center
+        require(
+            radial.length > 1e-9,
+            f"Frame {frame}/{side}: degenerate elbow swivel radius.",
+        )
+
+        target = pole_targets[side]
+        target_radial = target - axis * target.dot(axis)
+        require(
+            target_radial.length > 1e-9,
+            f"Frame {frame}/{side}: elbow-pole target parallel to arm axis.",
+        )
+        current_unit = radial.normalized()
+        target_unit = target_radial.normalized()
+        signed_angle = math.atan2(
+            axis.dot(current_unit.cross(target_unit)),
+            max(-1.0, min(1.0, current_unit.dot(target_unit))),
+        )
+        applied_angle = signed_angle * weight
+        target_elbow = (
+            circle_center
+            + Matrix.Rotation(applied_angle, 3, axis) @ radial
+        )
+
+        baseline_opening = elbow_opening_deg(
+            armature,
+            upper_name,
+            forearm_name,
+        )
+
+        static_core._orient_pose_bone_length_to_direction(
+            armature,
+            upper_name,
+            target_elbow - shoulder,
+        )
+        upper.location = motion_cache[upper_name]["location"].copy()
+        upper.scale = motion_cache[upper_name]["scale"].copy()
         bpy.context.view_layer.update()
+
+        realized_elbow = Vector(forearm.head)
+        forearm_target = baseline_wrist - realized_elbow
+        require(
+            forearm_target.length > 1e-9,
+            f"Frame {frame}/{side}: degenerate forearm target.",
+        )
+        static_core._orient_pose_bone_length_to_direction(
+            armature,
+            forearm_name,
+            forearm_target,
+        )
+        forearm.location = motion_cache[forearm_name]["location"].copy()
+        forearm.scale = motion_cache[forearm_name]["scale"].copy()
+        bpy.context.view_layer.update()
+
+        final_wrist = Vector(forearm.tail)
+        wrist_error = (final_wrist - baseline_wrist).length
+        require(
+            wrist_error <= wrist_error_limit,
+            f"Frame {frame}/{side}: elbow-pole swivel moved wrist "
+            f"{wrist_error} > {wrist_error_limit}.",
+        )
+        final_opening = elbow_opening_deg(
+            armature,
+            upper_name,
+            forearm_name,
+        )
+
+        evidence["sides"][side] = {
+            "signed_target_angle_deg": math.degrees(signed_angle),
+            "applied_angle_deg": math.degrees(applied_angle),
+            "baseline_wrist": [float(v) for v in baseline_wrist],
+            "final_wrist": [float(v) for v in final_wrist],
+            "wrist_position_error": float(wrist_error),
+            "baseline_elbow_opening_deg": float(baseline_opening),
+            "final_elbow_opening_deg": float(final_opening),
+        }
+
+    return evidence
 
 
 def set_interpolated_pose(
@@ -579,11 +501,6 @@ def set_interpolated_pose(
         bone.rotation_quaternion = q
 
     bpy.context.view_layer.update()
-    apply_parent_aware_elbow_waypoint(
-        armature,
-        motion_cache,
-        waypoint_weight,
-    )
     return trace
 
 
