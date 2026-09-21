@@ -210,6 +210,96 @@ def prepare_motion_cache(
     return cache
 
 
+def prepare_wrist_2dof_cache(
+    canonical: dict,
+    start_evidence: dict,
+    end_evidence: dict,
+    motion_cache: dict,
+) -> dict:
+    cache = {}
+    for side in ("left", "right"):
+        rig_name = canonical["canonical_bones"][f"{side}_hand"]["rig_bone"]
+        require(
+            motion_cache[rig_name]["role"] == "wrist",
+            f"{side}: canonical hand is not classified as wrist motion.",
+        )
+        start = start_evidence["wrist_continuity"][side]
+        end = end_evidence["wrist_continuity"][side]
+        cache[side] = {
+            "rig_name": rig_name,
+            "start_flexion_extension_deg": float(
+                start["flexion_extension_deg"]
+            ),
+            "end_flexion_extension_deg": float(
+                end["flexion_extension_deg"]
+            ),
+            "start_radial_ulnar_deviation_deg": float(
+                start["radial_ulnar_deviation_deg"]
+            ),
+            "end_radial_ulnar_deviation_deg": float(
+                end["radial_ulnar_deviation_deg"]
+            ),
+        }
+    return cache
+
+
+def apply_wrist_2dof_interpolation(
+    armature: bpy.types.Object,
+    canonical: dict,
+    motion_cache: dict,
+    wrist_cache: dict,
+    trace: dict[str, float],
+    frame: int,
+    frame_start: int,
+    frame_end: int,
+) -> dict:
+    progress = float(trace["wrist"])
+    evidence = {
+        "frame": int(frame),
+        "progress": progress,
+        "endpoint_matrix_preserved": frame in (frame_start, frame_end),
+        "sides": {},
+    }
+
+    # Accepted Phase 10.6 endpoint matrices remain exact authority. The
+    # canonical 2DOF reconstruction is used only between those endpoints.
+    if frame in (frame_start, frame_end):
+        return evidence
+
+    for side, item in wrist_cache.items():
+        flexion = motion.interpolate_bounded_scalar(
+            item["start_flexion_extension_deg"],
+            item["end_flexion_extension_deg"],
+            progress,
+        )
+        deviation = motion.interpolate_bounded_scalar(
+            item["start_radial_ulnar_deviation_deg"],
+            item["end_radial_ulnar_deviation_deg"],
+            progress,
+        )
+        static_core.apply_hand_wrist_candidate(
+            armature,
+            canonical,
+            side,
+            flexion,
+            deviation,
+        )
+
+        rig_name = item["rig_name"]
+        hand = armature.pose.bones[rig_name]
+        hand.location = motion_cache[rig_name]["location"].copy()
+        hand.scale = motion_cache[rig_name]["scale"].copy()
+        bpy.context.view_layer.update()
+
+        evidence["sides"][side] = {
+            "flexion_extension_deg": float(flexion),
+            "radial_ulnar_deviation_deg": float(deviation),
+            "independent_axial_roll": "BLOCKED",
+        }
+
+    return evidence
+
+
 def set_interpolated_pose(
     armature: bpy.types.Object,
     start_pose: dict[str, Matrix],
@@ -426,6 +516,7 @@ def key_motion(
     runtime: dict,
     start_pose: dict[str, Matrix],
     motion_cache: dict,
+    wrist_cache: dict,
     contract: dict,
 ) -> tuple[int, int, dict]:
     frame_start = int(contract["transition"]["frame_start"])
@@ -435,14 +526,28 @@ def key_motion(
         armature.animation_data_clear()
 
     clearance_frames = []
+    wrist_frames = []
     for frame in range(frame_start, frame_end + 1):
-        set_interpolated_pose(
+        trace = set_interpolated_pose(
             armature,
             start_pose,
             motion_cache,
             frame,
             contract,
         )
+        wrist_evidence = apply_wrist_2dof_interpolation(
+            armature,
+            canonical,
+            motion_cache,
+            wrist_cache,
+            trace,
+            frame,
+            frame_start,
+            frame_end,
+        )
+        if frame not in (frame_start, frame_end):
+            wrist_frames.append(wrist_evidence)
+
         clearance = enforce_hand_centerline_clearance(
             armature,
             canonical,
@@ -474,11 +579,22 @@ def key_motion(
     scene.render.fps = int(contract["transition"]["fps"])
     scene.frame_set(frame_start)
     return frame_start, frame_end, {
-        "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
-        "intermediate_only": True,
-        "endpoint_projection_forbidden": True,
-        "corrected_frame_count": len(clearance_frames),
-        "corrected_frames": clearance_frames,
+        "wrist_2dof_interpolation": {
+            "method": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
+            "intermediate_only": True,
+            "endpoint_matrix_preserved": True,
+            "independent_axial_roll": "BLOCKED",
+            "endpoint_dofs": wrist_cache,
+            "sample_count": len(wrist_frames),
+            "frames": wrist_frames,
+        },
+        "centerline_clearance_projection": {
+            "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+            "intermediate_only": True,
+            "endpoint_projection_forbidden": True,
+            "corrected_frame_count": len(clearance_frames),
+            "corrected_frames": clearance_frames,
+        },
     }
 
 
@@ -954,17 +1070,24 @@ def main() -> None:
         end_pose,
         contract,
     )
+    wrist_cache = prepare_wrist_2dof_cache(
+        canonical,
+        start_evidence,
+        end_evidence,
+        motion_cache,
+    )
 
     for name, matrix in start_pose.items():
         armature.pose.bones[name].matrix_basis = matrix.copy()
     bpy.context.view_layer.update()
 
-    frame_start, frame_end, clearance_projection = key_motion(
+    frame_start, frame_end, motion_generation = key_motion(
         armature,
         canonical,
         runtime,
         start_pose,
         motion_cache,
+        wrist_cache,
         contract,
     )
     diagnostics = validate_motion(
@@ -1014,7 +1137,7 @@ def main() -> None:
             "locked_endpoint_local_matrix_error": locked_endpoint_error,
         },
         "diagnostics": diagnostics,
-        "centerline_clearance_projection": clearance_projection,
+        "motion_generation": motion_generation,
         "preview": {
             **preview_evidence,
             "files": preview_paths,
@@ -1023,7 +1146,8 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
-            "local_quaternion_shortest_arc": True,
+            "local_quaternion_shortest_arc_non_wrist": True,
+            "wrist_canonical_2dof_reconstruction": True,
             "minimum_jerk_timing": True,
             "proximal_to_distal_windows": True,
             "no_overshoot_timing": True,
