@@ -106,7 +106,7 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
         )
         self.assertEqual(
             rotation["elbow"],
-            "ROUNDED_TRANSITION_WAYPOINT_SPHERICAL_BLEND",
+            "PARENT_AWARE_ARMATURE_SPACE_WAYPOINT_SLERP",
         )
 
     def test_compact_minimum_jerk_waypoint_weight(self) -> None:
