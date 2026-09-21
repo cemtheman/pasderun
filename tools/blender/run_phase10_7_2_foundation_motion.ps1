@@ -85,6 +85,9 @@ if (-not $data.automated_gate.start_endpoint_exact) {
 if (-not $data.automated_gate.end_endpoint_exact) {
     throw "End endpoint gate failed."
 }
+if (-not $data.automated_gate.locked_endpoint_noise_canonicalized) {
+    throw "Locked endpoint numerical-noise canonicalization gate failed."
+}
 if (-not $data.automated_gate.local_quaternion_shortest_arc_non_wrist) {
     throw "Non-wrist quaternion interpolation gate failed."
 }
