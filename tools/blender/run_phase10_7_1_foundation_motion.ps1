@@ -53,7 +53,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.7.1 - BRAS BAS -> EN AVANT FOUNDATION MOTION"
 Write-Host "Endpoint authority: accepted Phase 10.6 realized poses"
-Write-Host "Interpolation: shortest-arc arm baseline; wrist-preserving elbow-pole swivel; finger shortest-arc; wrist canonical 2DOF; minimum jerk"
+Write-Host "Interpolation: rounded task-space wrist path; two-bone arm IK; finger shortest-arc; wrist canonical 2DOF; minimum jerk"
 Write-Host "Generated build directories are preserved."
 Write-Host "GLB export: NO"
 Write-Host ""
@@ -85,11 +85,11 @@ if (-not $data.automated_gate.start_endpoint_exact) {
 if (-not $data.automated_gate.end_endpoint_exact) {
     throw "End endpoint gate failed."
 }
-if (-not $data.automated_gate.baseline_arm_chain_shortest_arc) {
-    throw "Baseline arm-chain interpolation gate failed."
+if (-not $data.automated_gate.rounded_task_space_wrist_path) {
+    throw "Rounded task-space wrist-path gate failed."
 }
-if (-not $data.automated_gate.wrist_preserving_elbow_pole_swivel) {
-    throw "Wrist-preserving elbow-pole swivel gate failed."
+if (-not $data.automated_gate.two_bone_task_space_arm_solution) {
+    throw "Two-bone task-space arm-solution gate failed."
 }
 if (-not $data.automated_gate.finger_quaternion_shortest_arc) {
     throw "Finger quaternion interpolation gate failed."
