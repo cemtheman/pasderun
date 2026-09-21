@@ -52,7 +52,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.7.1 - BRAS BAS -> EN AVANT FOUNDATION MOTION"
 Write-Host "Endpoint authority: accepted Phase 10.6 realized poses"
-Write-Host "Interpolation: local quaternion shortest-arc + minimum jerk"
+Write-Host "Interpolation: shoulder/elbow/fingers quaternion shortest-arc; wrist canonical 2DOF; minimum jerk"
 Write-Host "Generated build directories are preserved."
 Write-Host "GLB export: NO"
 Write-Host ""
@@ -80,14 +80,20 @@ if (-not $data.automated_gate.start_endpoint_exact) {
 if (-not $data.automated_gate.end_endpoint_exact) {
     throw "End endpoint gate failed."
 }
-if (-not $data.automated_gate.local_quaternion_shortest_arc) {
-    throw "Quaternion interpolation gate failed."
+if (-not $data.automated_gate.local_quaternion_shortest_arc_non_wrist) {
+    throw "Non-wrist quaternion interpolation gate failed."
+}
+if (-not $data.automated_gate.wrist_canonical_2dof_reconstruction) {
+    throw "Wrist canonical 2DOF interpolation gate failed."
 }
 if (-not $data.automated_gate.minimum_jerk_timing) {
     throw "Minimum-jerk timing gate failed."
 }
 if (-not $data.automated_gate.proximal_to_distal_windows) {
     throw "Proximal-to-distal timing gate failed."
+}
+if (-not $data.automated_gate.no_overshoot_timing) {
+    throw "No-overshoot timing gate failed."
 }
 if (-not $data.automated_gate.lower_body_root_stable) {
     throw "Lower-body/root stability gate failed."
