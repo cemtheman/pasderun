@@ -38,26 +38,27 @@
       "fingers": "QUATERNION_SHORTEST_ARC_SLERP",
       "wrist": "CANONICAL_WRIST_2DOF_COMPONENT_INTERPOLATION",
       "wrist_curve": "ROLE_MINIMUM_JERK_PROGRESS",
-      "arm_chain_baseline": "QUATERNION_SHORTEST_ARC_SLERP",
-      "elbow_pole_correction": "WRIST_PRESERVING_TWO_BONE_CHAIN_SWIVEL"
+      "arm_chain_solution": "TASK_SPACE_TWO_BONE_IK_TO_WRIST_TARGET"
     },
     "start_endpoint": "EXACT_PHASE_10_6_REALIZED_BRAS_BAS",
     "end_endpoint": "EXACT_PHASE_10_6_REALIZED_EN_AVANT",
     "moving_bone_translation": "LOCK_TO_START",
     "moving_bone_scale": "LOCK_TO_START",
     "locked_bones": "EXACT_START_MATRIX_BASIS",
-    "elbow_pole_swivel": {
+    "rounded_wrist_path": {
       "enabled": true,
-      "activation_start": 0.25,
-      "motion_progress": 0.5,
-      "activation_end": 0.75,
-      "source_pose": "bras_bas",
-      "target_pole_authority": "ACCEPTED_BRAS_BAS_SEMANTIC_ELBOW_POLE",
-      "curve": "COMPACT_MINIMUM_JERK_BUMP",
-      "method": "TWO_BONE_ELBOW_CIRCLE_SWIVEL",
-      "wrist_target_authority": "BASELINE_INTERPOLATED_WRIST_POSITION",
-      "wrist_position_preservation_max": 0.00001,
+      "progression": "MINIMUM_JERK_ENDPOINT_LERP",
+      "arc": "SYMMETRIC_OUTWARD_UP_BUMP",
+      "arc_weight": "4s(1-s)",
+      "outward_chain_fraction": 0.05,
+      "up_chain_fraction": 0.035,
+      "forward_extra_fraction": 0,
+      "target_space": "ARMATURE_SPACE",
       "endpoint_exact": true
+    },
+    "elbow_pole": {
+      "authority": "ACCEPTED_BRAS_BAS_SEMANTIC_ELBOW_POLE",
+      "blend_from_baseline_radial": "ROUNDED_WRIST_ARC_WEIGHT"
     }
   },
   "authority": {
@@ -96,7 +97,9 @@
       "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
       "endpoint_projection_forbidden": true,
       "child_local_chain_preserved": true
-    }
+    },
+    "task_space_wrist_target_error_max": 0.00001,
+    "two_bone_length_error_max": 0.00001
   },
   "preview": {
     "views": [
