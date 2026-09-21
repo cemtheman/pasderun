@@ -55,16 +55,12 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Motion overshoot must remain forbidden.")
 
     rotation = contract["interpolation"]["rotation"]
-    if rotation["arm_chain_baseline"] != "QUATERNION_SHORTEST_ARC_SLERP":
-        raise ValueError(
-            "Arm-chain baseline must retain shortest-arc quaternion interpolation."
-        )
     if (
-        rotation["elbow_pole_correction"]
-        != "WRIST_PRESERVING_TWO_BONE_CHAIN_SWIVEL"
+        rotation["arm_chain_solution"]
+        != "TASK_SPACE_TWO_BONE_IK_TO_WRIST_TARGET"
     ):
         raise ValueError(
-            "Elbow-pole correction must use the wrist-preserving two-bone swivel."
+            "Arm chain must use task-space two-bone IK to the wrist target."
         )
     if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
@@ -79,47 +75,51 @@ def validate_contract(contract: dict) -> None:
             "Wrist 2DOF interpolation must use the wrist role minimum-jerk progress."
         )
 
-    swivel = contract["interpolation"]["elbow_pole_swivel"]
-    if not swivel.get("enabled", False):
-        raise ValueError("Elbow-pole swivel must remain enabled.")
-    if swivel.get("source_pose") != "bras_bas":
-        raise ValueError("Elbow-pole swivel source pose must remain bras_bas.")
+    wrist_path = contract["interpolation"]["rounded_wrist_path"]
+    if not wrist_path.get("enabled", False):
+        raise ValueError("Rounded wrist path must remain enabled.")
+    if wrist_path.get("progression") != "MINIMUM_JERK_ENDPOINT_LERP":
+        raise ValueError("Rounded wrist path progression changed.")
+    if wrist_path.get("arc") != "SYMMETRIC_OUTWARD_UP_BUMP":
+        raise ValueError("Rounded wrist path arc changed.")
+    if wrist_path.get("arc_weight") != "4s(1-s)":
+        raise ValueError("Rounded wrist path arc-weight contract changed.")
+    if wrist_path.get("target_space") != "ARMATURE_SPACE":
+        raise ValueError("Rounded wrist path must stay in armature space.")
+    if not wrist_path.get("endpoint_exact", False):
+        raise ValueError("Rounded wrist path must preserve exact endpoints.")
+    outward = float(wrist_path["outward_chain_fraction"])
+    upward = float(wrist_path["up_chain_fraction"])
+    forward_extra = float(wrist_path["forward_extra_fraction"])
+    if not 0.0 < outward <= 0.12:
+        raise ValueError("Rounded wrist outward arc fraction is out of bounds.")
+    if not 0.0 < upward <= 0.10:
+        raise ValueError("Rounded wrist upward arc fraction is out of bounds.")
+    if abs(forward_extra) > 1e-12:
+        raise ValueError("Rounded wrist path may not add extra forward push.")
+
+    elbow_pole = contract["interpolation"]["elbow_pole"]
     if (
-        swivel.get("target_pole_authority")
+        elbow_pole.get("authority")
         != "ACCEPTED_BRAS_BAS_SEMANTIC_ELBOW_POLE"
     ):
-        raise ValueError("Elbow-pole swivel target authority changed.")
-    if swivel.get("curve") != "COMPACT_MINIMUM_JERK_BUMP":
-        raise ValueError("Elbow-pole swivel curve changed.")
-    if swivel.get("method") != "TWO_BONE_ELBOW_CIRCLE_SWIVEL":
-        raise ValueError("Elbow-pole swivel method changed.")
+        raise ValueError("Elbow-pole authority changed.")
     if (
-        swivel.get("wrist_target_authority")
-        != "BASELINE_INTERPOLATED_WRIST_POSITION"
+        elbow_pole.get("blend_from_baseline_radial")
+        != "ROUNDED_WRIST_ARC_WEIGHT"
     ):
-        raise ValueError("Elbow-pole swivel wrist target authority changed.")
-    activation_start = float(swivel["activation_start"])
-    center = float(swivel["motion_progress"])
-    activation_end = float(swivel["activation_end"])
-    if not 0.0 < activation_start < center < activation_end < 1.0:
-        raise ValueError("Elbow-pole swivel activation window is invalid.")
-    if (
-        abs(activation_start - 0.25) > 1e-12
-        or abs(center - 0.5) > 1e-12
-        or abs(activation_end - 0.75) > 1e-12
-    ):
-        raise ValueError(
-            "Elbow-pole swivel activation must remain 0.25 -> 0.50 -> 0.75."
-        )
-    if abs((center - activation_start) - (activation_end - center)) > 1e-12:
-        raise ValueError("Elbow-pole swivel activation window must remain symmetric.")
-    wrist_error = float(swivel["wrist_position_preservation_max"])
-    if not 0.0 < wrist_error <= 0.0001:
-        raise ValueError(
-            "Elbow-pole swivel wrist preservation limit must stay within (0, 1e-4]."
-        )
-    if not swivel.get("endpoint_exact", False):
-        raise ValueError("Elbow-pole swivel must preserve exact endpoints.")
+        raise ValueError("Elbow-pole blend contract changed.")
+
+    target_error = float(
+        contract["validation"]["task_space_wrist_target_error_max"]
+    )
+    length_error = float(
+        contract["validation"]["two_bone_length_error_max"]
+    )
+    if not 0.0 < target_error <= 0.0001:
+        raise ValueError("Task-space wrist target error limit is invalid.")
+    if not 0.0 < length_error <= 0.0001:
+        raise ValueError("Two-bone length error limit is invalid.")
 
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
@@ -213,21 +213,13 @@ def _preferred_range(constraints: dict, joint_class: str, dof: str) -> tuple[flo
     return float(preferred["min"]), float(preferred["max"])
 
 
-def compact_minimum_jerk_swivel_weight(
-    progress: float,
-    swivel_contract: dict,
-) -> float:
-    p = clamp01(progress)
-    start = float(swivel_contract["activation_start"])
-    center = float(swivel_contract["motion_progress"])
-    end = float(swivel_contract["activation_end"])
-    if p <= start or p >= end:
-        return 0.0
-    if p <= center:
-        local = (p - start) / (center - start)
-        return minimum_jerk(local)
-    local = (end - p) / (end - center)
-    return minimum_jerk(local)
+def rounded_wrist_arc_weight(progress: float) -> float:
+    s = minimum_jerk(progress)
+    return 4.0 * s * (1.0 - s)
+
+
+def rounded_wrist_progress(progress: float) -> float:
+    return minimum_jerk(progress)
 
 
 def interpolate_bounded_scalar(
