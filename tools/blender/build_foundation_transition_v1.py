@@ -494,8 +494,9 @@ def set_interpolated_pose(
 ) -> dict[str, float]:
     trace = motion.progress_trace(frame, contract)
     normalized_t = motion.normalized_time(frame, contract)
-    waypoint_weight = motion.centered_quartic_waypoint_weight(
-        normalized_t
+    waypoint_weight = motion.compact_minimum_jerk_waypoint_weight(
+        normalized_t,
+        contract["interpolation"]["rounded_transition_waypoint"],
     )
     moving = set(motion_cache)
 
