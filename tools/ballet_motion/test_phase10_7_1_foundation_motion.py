@@ -128,6 +128,18 @@ class Phase1071FoundationMotionTests(unittest.TestCase):
             if p <= 0.25 or p >= 0.75:
                 self.assertEqual(value, 0.0)
 
+    def test_early_frames_have_zero_waypoint_influence(self) -> None:
+        waypoint = self.contract["interpolation"]["rounded_transition_waypoint"]
+        for frame in range(
+            int(self.contract["transition"]["frame_start"]),
+            16,
+        ):
+            t = motion.normalized_time(frame, self.contract)
+            self.assertEqual(
+                motion.compact_minimum_jerk_waypoint_weight(t, waypoint),
+                0.0,
+            )
+
     def test_bounded_scalar_interpolation_is_exact_and_no_overshoot(self) -> None:
         for start, end in ((-12.5, 18.0), (20.0, -7.0), (0.0, 0.0)):
             self.assertEqual(
