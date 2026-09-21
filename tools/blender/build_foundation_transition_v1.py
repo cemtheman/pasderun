@@ -10,6 +10,7 @@ the wrist. It does not export GLB or touch gameplay/choreography systems.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import math
 import sys
@@ -160,11 +161,174 @@ def realize_endpoint(
     }
 
 
+def _blend_numeric_mapping(
+    start: dict,
+    end: dict,
+    fraction: float,
+) -> dict:
+    require(
+        set(start) == set(end),
+        f"Waypoint mapping keys differ: {sorted(start)} != {sorted(end)}.",
+    )
+    return {
+        key: motion.interpolate_bounded_scalar(
+            float(start[key]),
+            float(end[key]),
+            fraction,
+        )
+        for key in start
+    }
+
+
+def build_rounded_waypoint_intent(
+    start_intent: dict,
+    end_intent: dict,
+    contract: dict,
+) -> dict:
+    waypoint_contract = contract["interpolation"][
+        "rounded_transition_waypoint"
+    ]
+    fraction = float(waypoint_contract["semantic_fraction"])
+
+    require(
+        start_intent["kind"] == "symmetric_arm_chain"
+        and end_intent["kind"] == "symmetric_arm_chain",
+        "Rounded waypoint requires symmetric arm-chain endpoints.",
+    )
+    require(
+        abs(
+            float(start_intent["elbow_angle_deg"])
+            - float(end_intent["elbow_angle_deg"])
+        )
+        <= 1e-12,
+        "Rounded waypoint may not invent a new elbow angle.",
+    )
+    require(
+        start_intent.get("centerline_hand_policy")
+        == end_intent.get("centerline_hand_policy"),
+        "Rounded waypoint requires matching endpoint centerline policy.",
+    )
+    require(
+        start_intent.get("hand_mesh_gap_chain_fraction")
+        == end_intent.get("hand_mesh_gap_chain_fraction"),
+        "Rounded waypoint requires matching endpoint hand-gap contract.",
+    )
+
+    intent = copy.deepcopy(start_intent)
+    intent["wrist_direction"] = _blend_numeric_mapping(
+        start_intent["wrist_direction"],
+        end_intent["wrist_direction"],
+        fraction,
+    )
+    intent["hand_direction"] = _blend_numeric_mapping(
+        start_intent["hand_direction"],
+        end_intent["hand_direction"],
+        fraction,
+    )
+    # Preserve the accepted bras-bas elbow pole through the midpoint. The
+    # visual rejection showed that rotating this bend plane too early makes
+    # the arm read as a forward push instead of a rounded port de bras.
+    intent["elbow_pole"] = copy.deepcopy(start_intent["elbow_pole"])
+
+    intent["joint_dofs"] = {}
+    for joint_name in start_intent["joint_dofs"]:
+        require(
+            joint_name in end_intent["joint_dofs"],
+            f"Waypoint joint missing from end intent: {joint_name}.",
+        )
+        intent["joint_dofs"][joint_name] = _blend_numeric_mapping(
+            start_intent["joint_dofs"][joint_name],
+            end_intent["joint_dofs"][joint_name],
+            fraction,
+        )
+    return intent
+
+
+def realize_rounded_waypoint(
+    armature: bpy.types.Object,
+    canonical: dict,
+    constraints: dict,
+    retarget_axis_contract: dict,
+    static_contract: dict,
+    visual_contract: dict,
+    runtime: dict,
+    contract: dict,
+) -> tuple[dict[str, Matrix], dict]:
+    start_name = contract["transition"]["start_pose"]
+    end_name = contract["transition"]["end_pose"]
+    waypoint_name = "__phase10_7_rounded_transition_waypoint"
+
+    waypoint_intent = build_rounded_waypoint_intent(
+        runtime["intent_spec"]["poses"][start_name],
+        runtime["intent_spec"]["poses"][end_name],
+        contract,
+    )
+    temp_intents = copy.deepcopy(runtime["intent_spec"])
+    temp_grammar = copy.deepcopy(runtime["grammar_profile"])
+    temp_intents["poses"][waypoint_name] = waypoint_intent
+    temp_grammar["poses"][waypoint_name] = copy.deepcopy(
+        temp_grammar["poses"][start_name]
+    )
+
+    solution = runtime["pose_solver"].solve_pose(
+        waypoint_name,
+        temp_intents,
+        temp_grammar,
+        canonical,
+        constraints,
+    )
+    pose_entry = runtime["retarget_solver"].retarget_pose_solution(
+        solution,
+        canonical,
+        constraints,
+        retarget_axis_contract,
+    )
+    static_core.apply_rotation_deltas(armature, pose_entry)
+    hand_shape = static_core.apply_ballet_hand_shape(
+        armature,
+        canonical,
+        static_contract,
+    )
+    wrist = visual_gate.validate_hand_axial_continuity(
+        armature,
+        canonical,
+        constraints,
+        visual_contract,
+    )
+
+    waypoint_pose = snapshot_local_pose(armature)
+    elbows = {}
+    for side in ("left", "right"):
+        elbows[side] = elbow_opening_deg(
+            armature,
+            canonical["canonical_bones"][f"{side}_upper_arm"]["rig_bone"],
+            canonical["canonical_bones"][f"{side}_forearm"]["rig_bone"],
+        )
+    return waypoint_pose, {
+        "name": waypoint_name,
+        "semantic_fraction": float(
+            contract["interpolation"]["rounded_transition_waypoint"][
+                "semantic_fraction"
+            ]
+        ),
+        "intent_rule": contract["interpolation"][
+            "rounded_transition_waypoint"
+        ]["intent_rule"],
+        "elbow_angle_deg": elbows,
+        "canonical_solver": solution["evidence"],
+        "retarget": pose_entry["evidence"],
+        "wrist_continuity": wrist,
+        "ballet_hand_shape": hand_shape,
+        "endpoint_authority_mutated": False,
+    }
+
+
 def prepare_motion_cache(
     armature: bpy.types.Object,
     roles: dict[str, str],
     start_pose: dict[str, Matrix],
     end_pose: dict[str, Matrix],
+    waypoint_pose: dict[str, Matrix],
     contract: dict,
 ) -> dict:
     translation_limit = float(
@@ -196,7 +360,7 @@ def prepare_motion_cache(
         if start_q.dot(end_q) < 0.0:
             end_q.negate()
 
-        cache[rig_name] = {
+        item = {
             "role": role,
             "location": start_loc.copy(),
             "scale": start_scale.copy(),
@@ -206,6 +370,25 @@ def prepare_motion_cache(
                 start_q.rotation_difference(end_q).angle
             ),
         }
+        if role in contract["interpolation"][
+            "rounded_transition_waypoint"
+        ]["affected_roles"]:
+            waypoint_loc, waypoint_q, waypoint_scale = (
+                waypoint_pose[rig_name].decompose()
+            )
+            require(
+                (waypoint_loc - start_loc).length <= translation_limit,
+                f"{rig_name}: waypoint local translation changed.",
+            )
+            require(
+                (waypoint_scale - start_scale).length <= scale_limit,
+                f"{rig_name}: waypoint local scale changed.",
+            )
+            waypoint_q.normalize()
+            if start_q.dot(waypoint_q) < 0.0:
+                waypoint_q.negate()
+            item["waypoint_quaternion"] = waypoint_q.copy()
+        cache[rig_name] = item
         armature.pose.bones[rig_name].rotation_mode = "QUATERNION"
 
     return cache
@@ -309,6 +492,10 @@ def set_interpolated_pose(
     contract: dict,
 ) -> dict[str, float]:
     trace = motion.progress_trace(frame, contract)
+    normalized_t = motion.normalized_time(frame, contract)
+    waypoint_weight = motion.centered_quartic_waypoint_weight(
+        normalized_t
+    )
     moving = set(motion_cache)
 
     for bone in armature.pose.bones:
@@ -330,6 +517,12 @@ def set_interpolated_pose(
                 item["end_quaternion"],
                 progress,
             )
+            waypoint_q = item.get("waypoint_quaternion")
+            if waypoint_q is not None and waypoint_weight > 0.0:
+                target = waypoint_q.copy()
+                if q.dot(target) < 0.0:
+                    target.negate()
+                q = q.slerp(target, waypoint_weight)
         q.normalize()
         bone.rotation_quaternion = q
 
@@ -1064,11 +1257,22 @@ def main() -> None:
         f"{locked_endpoint_error}.",
     )
 
+    waypoint_pose, waypoint_evidence = realize_rounded_waypoint(
+        armature,
+        canonical,
+        constraints,
+        retarget_axis_contract,
+        static_contract,
+        visual_contract,
+        runtime,
+        contract,
+    )
     motion_cache = prepare_motion_cache(
         armature,
         roles,
         start_pose,
         end_pose,
+        waypoint_pose,
         contract,
     )
     wrist_cache = prepare_wrist_2dof_cache(
@@ -1137,6 +1341,7 @@ def main() -> None:
             end_name: end_evidence,
             "locked_endpoint_local_matrix_error": locked_endpoint_error,
         },
+        "rounded_transition_waypoint": waypoint_evidence,
         "diagnostics": diagnostics,
         "motion_generation": motion_generation,
         "preview": {
@@ -1147,7 +1352,8 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
-            "local_quaternion_shortest_arc_non_wrist": True,
+            "rounded_transition_waypoint_path": True,
+            "finger_quaternion_shortest_arc": True,
             "wrist_canonical_2dof_reconstruction": True,
             "minimum_jerk_timing": True,
             "proximal_to_distal_windows": True,
