@@ -59,9 +59,9 @@ def validate_contract(contract: dict) -> None:
         raise ValueError(
             "Shoulder must remain on shortest-arc quaternion interpolation."
         )
-    if rotation["elbow"] != "PARENT_AWARE_ARMATURE_SPACE_WAYPOINT_SLERP":
+    if rotation["elbow"] != "WRIST_PRESERVING_ELBOW_POLE_SWIVEL":
         raise ValueError(
-            "Elbow waypoint must be parent-aware in armature space."
+            "Elbow motion must use the wrist-preserving pole swivel."
         )
     if rotation["fingers"] != "QUATERNION_SHORTEST_ARC_SLERP":
         raise ValueError(
@@ -76,47 +76,47 @@ def validate_contract(contract: dict) -> None:
             "Wrist 2DOF interpolation must use the wrist role minimum-jerk progress."
         )
 
-    waypoint = contract["interpolation"]["rounded_transition_waypoint"]
-    if not waypoint.get("enabled", False):
-        raise ValueError("Rounded transition waypoint must remain enabled.")
-    if abs(float(waypoint["motion_progress"]) - 0.5) > 1e-12:
-        raise ValueError("Rounded transition waypoint must stay centered at progress 0.5.")
-    if abs(float(waypoint["semantic_fraction"]) - 0.5) > 1e-12:
-        raise ValueError("Rounded transition semantic fraction must stay at 0.5.")
-    if list(waypoint["affected_roles"]) != ["elbow"]:
-        raise ValueError("Rounded waypoint may affect only the elbow role.")
+    swivel = contract["interpolation"]["elbow_pole_swivel"]
+    if not swivel.get("enabled", False):
+        raise ValueError("Elbow-pole swivel must remain enabled.")
+    if swivel.get("source_pose") != "bras_bas":
+        raise ValueError("Elbow-pole swivel source pose must remain bras_bas.")
     if (
-        waypoint["intent_rule"]
-        != "MIDPOINT_DIRECTIONS_PRESERVE_BRAS_BAS_ELBOW_POLE_FOREARM_ONLY"
+        swivel.get("target_pole_authority")
+        != "ACCEPTED_BRAS_BAS_SEMANTIC_ELBOW_POLE"
     ):
-        raise ValueError("Rounded waypoint intent rule changed.")
-    if waypoint["curve"] != "COMPACT_MINIMUM_JERK_BUMP":
-        raise ValueError("Rounded waypoint curve changed.")
-    activation_start = float(waypoint["activation_start"])
-    center = float(waypoint["motion_progress"])
-    activation_end = float(waypoint["activation_end"])
+        raise ValueError("Elbow-pole swivel target authority changed.")
+    if swivel.get("curve") != "COMPACT_MINIMUM_JERK_BUMP":
+        raise ValueError("Elbow-pole swivel curve changed.")
+    if swivel.get("method") != "TWO_BONE_ELBOW_CIRCLE_SWIVEL":
+        raise ValueError("Elbow-pole swivel method changed.")
+    if (
+        swivel.get("wrist_target_authority")
+        != "BASELINE_INTERPOLATED_WRIST_POSITION"
+    ):
+        raise ValueError("Elbow-pole swivel wrist target authority changed.")
+    activation_start = float(swivel["activation_start"])
+    center = float(swivel["motion_progress"])
+    activation_end = float(swivel["activation_end"])
     if not 0.0 < activation_start < center < activation_end < 1.0:
-        raise ValueError("Rounded waypoint activation window is invalid.")
+        raise ValueError("Elbow-pole swivel activation window is invalid.")
     if (
         abs(activation_start - 0.25) > 1e-12
         or abs(center - 0.5) > 1e-12
         or abs(activation_end - 0.75) > 1e-12
     ):
         raise ValueError(
-            "Rounded waypoint activation must remain 0.25 -> 0.50 -> 0.75."
+            "Elbow-pole swivel activation must remain 0.25 -> 0.50 -> 0.75."
         )
     if abs((center - activation_start) - (activation_end - center)) > 1e-12:
-        raise ValueError("Rounded waypoint activation window must remain symmetric.")
-    if not waypoint.get("endpoint_exact", False):
-        raise ValueError("Rounded waypoint must preserve exact endpoints.")
-    if not waypoint.get("waypoint_exact_before_clearance_projection", False):
+        raise ValueError("Elbow-pole swivel activation window must remain symmetric.")
+    wrist_error = float(swivel["wrist_position_preservation_max"])
+    if not 0.0 < wrist_error <= 0.0001:
         raise ValueError(
-            "Rounded waypoint must be exact before the safety clearance projection."
+            "Elbow-pole swivel wrist preservation limit must stay within (0, 1e-4]."
         )
-    if waypoint.get("application_space") != "ARMATURE_SPACE_ABSOLUTE_FOREARM_BASIS":
-        raise ValueError("Elbow waypoint application space changed.")
-    if waypoint.get("parent_pose_assumption") != "CURRENT_RUNTIME_SHOULDER_POSE":
-        raise ValueError("Elbow waypoint must use the current runtime shoulder pose.")
+    if not swivel.get("endpoint_exact", False):
+        raise ValueError("Elbow-pole swivel must preserve exact endpoints.")
 
     projection = contract["validation"]["centerline_clearance_projection"]
     if not projection.get("enabled", False):
@@ -210,14 +210,14 @@ def _preferred_range(constraints: dict, joint_class: str, dof: str) -> tuple[flo
     return float(preferred["min"]), float(preferred["max"])
 
 
-def compact_minimum_jerk_waypoint_weight(
+def compact_minimum_jerk_swivel_weight(
     progress: float,
-    waypoint_contract: dict,
+    swivel_contract: dict,
 ) -> float:
     p = clamp01(progress)
-    start = float(waypoint_contract["activation_start"])
-    center = float(waypoint_contract["motion_progress"])
-    end = float(waypoint_contract["activation_end"])
+    start = float(swivel_contract["activation_start"])
+    center = float(swivel_contract["motion_progress"])
+    end = float(swivel_contract["activation_end"])
     if p <= start or p >= end:
         return 0.0
     if p <= center:
