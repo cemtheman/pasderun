@@ -87,6 +87,33 @@ def validate_contract(contract: dict) -> None:
         windowed_progress(0.0, windows[role])
         windowed_progress(1.0, windows[role])
 
+    maximum_lag = float(
+        contract["validation"]["maximum_adjacent_role_progress_lag"]
+    )
+    if not 0.0 < maximum_lag <= 0.05:
+        raise ValueError(
+            "Maximum adjacent role progress lag must stay within (0, 0.05]."
+        )
+    for index in range(1001):
+        t = index / 1000.0
+        progress = {
+            role: windowed_progress(t, windows[role])
+            for role in ROLE_ORDER
+        }
+        for proximal, distal in zip(ROLE_ORDER, ROLE_ORDER[1:]):
+            lag = progress[proximal] - progress[distal]
+            if lag < -1e-12:
+                raise ValueError(
+                    f"Distal role {distal} may not lead proximal role "
+                    f"{proximal}; t={t}, lag={lag}."
+                )
+            if lag > maximum_lag + 1e-12:
+                raise ValueError(
+                    f"Adjacent role progress lag exceeds contract; "
+                    f"{proximal}->{distal}, t={t}, lag={lag}, "
+                    f"maximum={maximum_lag}."
+                )
+
 
 def frame_end(contract: dict) -> int:
     validate_contract(contract)
