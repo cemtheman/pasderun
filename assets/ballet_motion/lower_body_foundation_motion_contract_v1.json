@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "phase": "10.8.1",
+  "contract_id": "foundation_motion_fifth_to_plie_v1",
+  "transition": {
+    "start_pose": "fifth",
+    "end_pose": "plie",
+    "duration_seconds": 2,
+    "fps": 30,
+    "frame_start": 1
+  },
+  "curve": {
+    "type": "MINIMUM_JERK",
+    "formula": "10t^3-15t^4+6t^5",
+    "overshoot_forbidden": true
+  },
+  "interpolation": {
+    "space": "LOCAL_MATRIX_BASIS",
+    "rotation": "QUATERNION_SHORTEST_ARC_SLERP",
+    "progress": "SYNCHRONOUS_MINIMUM_JERK",
+    "non_root_translation": "LOCK_TO_START",
+    "scale": "LOCK_TO_START",
+    "pelvis_translation": "PER_FRAME_DEFORMED_MESH_FULL_FOOT_CONTACT_SOLVE",
+    "locked_bones": "EXACT_START_MATRIX_BASIS",
+    "start_endpoint": "EXACT_PHASE_10_6_REALIZED_FIFTH",
+    "end_endpoint": "EXACT_PHASE_10_6_REALIZED_PLIE"
+  },
+  "authority": {
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "endpoint_pose_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "contact_authority": "DEFORMED_FOOT_MESH_REAR_AND_FORE_CONTACT",
+    "actual_rig_hierarchy_authority": true,
+    "mannequin_motion_forbidden": true,
+    "parallel_motion_authority_forbidden": true,
+    "upper_body_motion_forbidden": true,
+    "releve_heel_lift_forbidden": true,
+    "toe_pivot_motion_forbidden": true
+  },
+  "validation": {
+    "endpoint_local_matrix_error_max": 0.000001,
+    "endpoint_change_detection_error_min": 0.000001,
+    "accepted_endpoint_locked_noise_max": 0.000001,
+    "locked_local_matrix_error_max": 1e-7,
+    "moving_non_root_translation_error_max": 0.000001,
+    "moving_scale_error_max": 0.000001,
+    "minimum_consecutive_quaternion_dot": 0,
+    "sample_every_frame": true,
+    "full_foot_contact_required_every_frame": true,
+    "root_horizontal_translation_max": 0.000001,
+    "root_descent_monotonic_epsilon": 0.00001,
+    "semantic_preferred_envelope_required": true,
+    "allowed_moving_canonical_bones": [
+      "pelvis",
+      "left_thigh",
+      "left_shin",
+      "left_foot",
+      "left_toes",
+      "right_thigh",
+      "right_shin",
+      "right_foot",
+      "right_toes"
+    ],
+    "required_motion_canonical_bones": [
+      "pelvis",
+      "left_thigh",
+      "left_shin",
+      "right_thigh",
+      "right_shin"
+    ]
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_transition_only": true,
+    "glb_export_forbidden": true,
+    "opening_reverence_forbidden": true,
+    "final_reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_reaction_changes_forbidden": true,
+    "signature_move_forbidden": true,
+    "scoring_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
