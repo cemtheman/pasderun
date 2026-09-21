@@ -246,18 +246,195 @@ def set_interpolated_pose(
     return trace
 
 
+def enforce_hand_centerline_clearance(
+    armature: bpy.types.Object,
+    canonical: dict,
+    runtime: dict,
+    contract: dict,
+    motion_cache: dict,
+    frame: int,
+    frame_start: int,
+    frame_end: int,
+) -> dict:
+    projection = contract["validation"]["centerline_clearance_projection"]
+    samples = runtime["hand_samples"]
+    inner_q = float(runtime["hand_sampling"]["inner_edge_quantile"])
+    minimum = float(contract["validation"]["minimum_hand_mesh_side_offset"])
+    guard = float(projection["intermediate_guard_side_offset"])
+    target = minimum if frame in (frame_start, frame_end) else max(minimum, guard)
+
+    result = {
+        "frame": int(frame),
+        "target_side_offset": float(target),
+        "sides": {},
+    }
+    frame_axes = canonical["body_frame"]["declared_axes_armature_local"]
+    axis_vectors = {
+        name: Vector(frame_axes[name]).normalized()
+        for name in projection["candidate_axes"]
+    }
+    max_angle = float(projection["maximum_shoulder_correction_deg"])
+    iterations = int(projection["bisection_iterations"])
+
+    for side in ("left", "right"):
+        measurement = static_core.hand_mesh_inner_edge(
+            armature,
+            canonical,
+            samples[side],
+            side,
+            inner_q,
+        )
+        initial_offset = float(measurement["side_offset"])
+        side_result = {
+            "initial_side_offset": initial_offset,
+            "correction_applied": False,
+            "axis": None,
+            "angle_deg": 0.0,
+            "final_side_offset": initial_offset,
+        }
+        result["sides"][side] = side_result
+
+        # Exact Phase 10.6 endpoint matrices remain authoritative. Endpoints
+        # are checked against the hard no-crossing floor but never projected.
+        if frame in (frame_start, frame_end):
+            require(
+                initial_offset >= minimum - 1e-9,
+                f"Frame {frame}: accepted {side} endpoint crosses centerline "
+                f"({initial_offset}).",
+            )
+            continue
+
+        if initial_offset >= target - 1e-9:
+            continue
+
+        shoulder_name = canonical["canonical_bones"][
+            f"{side}_upper_arm"
+        ]["rig_bone"]
+        shoulder = armature.pose.bones[shoulder_name]
+        baseline = shoulder.matrix_basis.copy()
+        baseline_location, _baseline_q, baseline_scale = baseline.decompose()
+
+        def restore_baseline() -> None:
+            shoulder.matrix_basis = baseline.copy()
+            bpy.context.view_layer.update()
+
+        def evaluate(axis_name: str, angle_deg: float) -> dict:
+            restore_baseline()
+            static_core.apply_single_shoulder_sweep(
+                armature,
+                canonical,
+                side,
+                axis_vectors[axis_name],
+                angle_deg,
+            )
+            # The clearance projection is rotational only. Preserve the
+            # interpolated translation/scale contract exactly.
+            shoulder.location = baseline_location.copy()
+            shoulder.scale = baseline_scale.copy()
+            bpy.context.view_layer.update()
+            measured = static_core.hand_mesh_inner_edge(
+                armature,
+                canonical,
+                samples[side],
+                side,
+                inner_q,
+            )
+            return {
+                "axis": axis_name,
+                "angle_deg": float(angle_deg),
+                "side_offset": float(measured["side_offset"]),
+            }
+
+        brackets = []
+        for axis_name in axis_vectors:
+            for endpoint_angle in (-max_angle, max_angle):
+                candidate = evaluate(axis_name, endpoint_angle)
+                if candidate["side_offset"] >= target:
+                    brackets.append(candidate)
+
+        require(
+            bool(brackets),
+            f"Frame {frame}: {side} hand centerline clearance cannot be "
+            f"restored within +/-{max_angle} deg shoulder projection; "
+            f"initial={initial_offset}, target={target}.",
+        )
+
+        solutions = []
+        for bracket in brackets:
+            axis_name = bracket["axis"]
+            low = 0.0
+            high = float(bracket["angle_deg"])
+            for _ in range(iterations):
+                mid = (low + high) * 0.5
+                candidate = evaluate(axis_name, mid)
+                if candidate["side_offset"] >= target:
+                    high = mid
+                else:
+                    low = mid
+            solution = evaluate(axis_name, high)
+            solutions.append(solution)
+
+        best = min(
+            solutions,
+            key=lambda item: (
+                abs(float(item["angle_deg"])),
+                abs(float(item["side_offset"]) - target),
+                item["axis"],
+            ),
+        )
+        final = evaluate(best["axis"], float(best["angle_deg"]))
+        require(
+            final["side_offset"] >= minimum - 1e-9,
+            f"Frame {frame}: {side} clearance projection failed; "
+            f"final={final['side_offset']}.",
+        )
+
+        # Explicitly reassert the motion-cache scale/location authority after
+        # the projection, in case Blender decomposed the rotation assignment.
+        shoulder.location = motion_cache[shoulder_name]["location"].copy()
+        shoulder.scale = motion_cache[shoulder_name]["scale"].copy()
+        bpy.context.view_layer.update()
+        final_measurement = static_core.hand_mesh_inner_edge(
+            armature,
+            canonical,
+            samples[side],
+            side,
+            inner_q,
+        )
+        final_offset = float(final_measurement["side_offset"])
+        require(
+            final_offset >= minimum - 1e-9,
+            f"Frame {frame}: {side} final hand crossed centerline "
+            f"after scale/location restore ({final_offset}).",
+        )
+
+        side_result.update(
+            {
+                "correction_applied": True,
+                "axis": best["axis"],
+                "angle_deg": float(best["angle_deg"]),
+                "final_side_offset": final_offset,
+            }
+        )
+
+    return result
+
+
 def key_motion(
     armature: bpy.types.Object,
+    canonical: dict,
+    runtime: dict,
     start_pose: dict[str, Matrix],
     motion_cache: dict,
     contract: dict,
-) -> tuple[int, int]:
+) -> tuple[int, int, dict]:
     frame_start = int(contract["transition"]["frame_start"])
     frame_end = motion.frame_end(contract)
 
     if armature.animation_data is not None:
         armature.animation_data_clear()
 
+    clearance_frames = []
     for frame in range(frame_start, frame_end + 1):
         set_interpolated_pose(
             armature,
@@ -266,6 +443,22 @@ def key_motion(
             frame,
             contract,
         )
+        clearance = enforce_hand_centerline_clearance(
+            armature,
+            canonical,
+            runtime,
+            contract,
+            motion_cache,
+            frame,
+            frame_start,
+            frame_end,
+        )
+        if any(
+            item["correction_applied"]
+            for item in clearance["sides"].values()
+        ):
+            clearance_frames.append(clearance)
+
         for rig_name in motion_cache:
             bone = armature.pose.bones[rig_name]
             bone.keyframe_insert(data_path="location", frame=frame)
@@ -280,7 +473,13 @@ def key_motion(
     scene.frame_end = frame_end
     scene.render.fps = int(contract["transition"]["fps"])
     scene.frame_set(frame_start)
-    return frame_start, frame_end
+    return frame_start, frame_end, {
+        "method": "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+        "intermediate_only": True,
+        "endpoint_projection_forbidden": True,
+        "corrected_frame_count": len(clearance_frames),
+        "corrected_frames": clearance_frames,
+    }
 
 
 def elbow_opening_deg(
@@ -760,8 +959,10 @@ def main() -> None:
         armature.pose.bones[name].matrix_basis = matrix.copy()
     bpy.context.view_layer.update()
 
-    frame_start, frame_end = key_motion(
+    frame_start, frame_end, clearance_projection = key_motion(
         armature,
+        canonical,
+        runtime,
         start_pose,
         motion_cache,
         contract,
@@ -813,6 +1014,7 @@ def main() -> None:
             "locked_endpoint_local_matrix_error": locked_endpoint_error,
         },
         "diagnostics": diagnostics,
+        "centerline_clearance_projection": clearance_projection,
         "preview": {
             **preview_evidence,
             "files": preview_paths,
