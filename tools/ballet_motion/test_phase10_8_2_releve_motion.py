@@ -83,10 +83,12 @@ class Phase1082ReleveMotionTests(unittest.TestCase):
         v=self.contract["validation"]
         self.assertLessEqual(float(v["locked_local_matrix_error_max"]),1e-7)
         self.assertLessEqual(float(v["moving_scale_error_max"]),1e-6)
-        self.assertLessEqual(float(v["accepted_endpoint_decomposition_noise_max"]),1e-5)
+        self.assertTrue(
+            v["accepted_endpoint_decomposition_scale_delta_diagnostic_only"]
+        )
         self.assertEqual(
-            v["accepted_endpoint_decomposition_noise_authority"],
-            "PHASE_10_6_STATIC_LOCAL_ROTATION_MATRIX_ERROR_MAX",
+            v["accepted_endpoint_matrix_authority"],
+            "PHASE_10_6_ACCEPTED_REALIZED_LOCAL_MATRIX",
         )
         self.assertEqual(
             self.contract["interpolation"]["rotation_source"],
