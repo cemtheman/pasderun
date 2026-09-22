@@ -43,7 +43,9 @@
     "root_contact_authority": "LOWER_BODY_CONTACT_SOLVER",
     "mannequin_motion_forbidden": true,
     "parallel_motion_authority_forbidden": true,
-    "glb_export_forbidden": true
+    "glb_export_forbidden": true,
+    "coordinated_boundary_clearance_adaptation": "REUSE_ACCEPTED_MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+    "source_endpoint_projection_rule_preserved_outside_shared_boundary": true
   },
   "validation": {
     "arm_lower_semantic_overlap_count_max": 0,
@@ -61,7 +63,11 @@
       62
     ],
     "no_duplicate_boundary_key_authority": true,
-    "post_overlay_contact_required": true
+    "post_overlay_contact_required": true,
+    "coordinated_boundary_clearance_projection_max_shoulder_correction_deg": 3,
+    "coordinated_boundary_nonshoulder_arm_local_matrix_error_max": 0.000001,
+    "coordinated_boundary_minimum_hand_side_offset": 0,
+    "coordinated_boundary_projection_only_frame": 61
   },
   "preview": {
     "views": [
