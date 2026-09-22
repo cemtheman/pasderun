@@ -43,6 +43,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--refinement-contract",required=True)
     p.add_argument("--report",required=True)
     p.add_argument("--preview-dir",required=True)
+    p.add_argument("--diagnostic-only",action="store_true")
+    p.add_argument("--diagnostic-report",default="")
     return p.parse_args(sys.argv[sys.argv.index("--")+1:])
 
 
@@ -241,6 +243,188 @@ def elbow_geometry(
     return {
         "sides":result,
         "both_elbows_below_shoulder_line":all_below,
+    }
+
+
+def arm_endpoint_local_deltas(
+    start_pose: dict,
+    end_pose: dict,
+    roles: dict[str,str],
+) -> dict:
+    """Measure what the accepted endpoint realizations actually change."""
+    result={}
+    for rig_name,role in sorted(roles.items()):
+        if role not in ("shoulder","elbow","wrist"):
+            continue
+        start_matrix=start_pose[rig_name]
+        end_matrix=end_pose[rig_name]
+        start_loc,start_q,start_scale=start_matrix.decompose()
+        end_loc,end_q,end_scale=end_matrix.decompose()
+        start_q.normalize()
+        end_q.normalize()
+        if start_q.dot(end_q) < 0.0:
+            end_q.negate()
+        result[rig_name]={
+            "role":role,
+            "rotation_delta_deg":math.degrees(
+                start_q.rotation_difference(end_q).angle
+            ),
+            "translation_delta":float((end_loc-start_loc).length),
+            "scale_delta":float((end_scale-start_scale).length),
+        }
+    return result
+
+
+def hand_centroid_geometry(
+    armature,
+    runtime,
+    axes,
+) -> dict:
+    result={}
+    for side in ("left","right"):
+        points=static_core.evaluated_sample_points(
+            armature,
+            runtime["hand_samples"][side],
+        )
+        require(points,f"{side}: hand diagnostic sample set is empty.")
+        centroid=Vector((0.0,0.0,0.0))
+        for point in points:
+            centroid+=point
+        centroid/=len(points)
+        result[side]={
+            "sample_count":len(points),
+            "centroid":list(map(float,centroid)),
+            "left":float(centroid.dot(axes["left"])),
+            "front":float(centroid.dot(axes["front"])),
+            "up":float(centroid.dot(axes["up"])),
+        }
+    return result
+
+
+def diagnostic_arm_probe(
+    armature,
+    canonical,
+    runtime,
+    axes,
+    contract,
+    lower_pose,
+    arm_pose,
+) -> dict:
+    restore(armature,lower_pose)
+    for name,matrix in arm_pose.items():
+        armature.pose.bones[name].matrix_basis=matrix.copy()
+    bpy.context.view_layer.update()
+
+    pre_hand=hand_geometry(armature,canonical,runtime,axes)
+    pre_centroid=hand_centroid_geometry(armature,runtime,axes)
+    pre_elbow=elbow_geometry(armature,canonical,axes)
+
+    apply_bow(armature,canonical,contract)
+
+    post_hand=hand_geometry(armature,canonical,runtime,axes)
+    post_centroid=hand_centroid_geometry(armature,runtime,axes)
+    post_elbow=elbow_geometry(armature,canonical,axes)
+    return {
+        "before_bow":{
+            "hand_geometry":pre_hand,
+            "hand_centroids":pre_centroid,
+            "elbow_geometry":pre_elbow,
+        },
+        "after_bow":{
+            "hand_geometry":post_hand,
+            "hand_centroids":post_centroid,
+            "elbow_geometry":post_elbow,
+        },
+        "bow_effect":{
+            "gap_shoulder_width_fraction_delta":float(
+                post_hand["gap_shoulder_width_fraction"]
+                - pre_hand["gap_shoulder_width_fraction"]
+            ),
+            "left_midpoint_offset_delta":float(
+                post_hand["midpoint_side_offsets"]["left"]
+                - pre_hand["midpoint_side_offsets"]["left"]
+            ),
+            "right_midpoint_offset_delta":float(
+                post_hand["midpoint_side_offsets"]["right"]
+                - pre_hand["midpoint_side_offsets"]["right"]
+            ),
+        },
+    }
+
+
+def arm_authority_diagnostic(
+    armature,
+    canonical,
+    runtime,
+    axes,
+    contract,
+    lower_pose,
+    arm_roles,
+    bras_bas_pose,
+    en_avant_pose,
+) -> dict:
+    def exact(pose: dict) -> dict:
+        return {
+            name:pose[name].copy()
+            for name in arm_roles
+        }
+
+    def interpolated(shoulder: float,elbow: float) -> dict:
+        return endpoint_interpolated_arm_pose(
+            bras_bas_pose,
+            en_avant_pose,
+            arm_roles,
+            {
+                "shoulder_progress":float(shoulder),
+                "elbow_progress":float(elbow),
+            },
+        )
+
+    probes=[
+        ("exact_bras_bas",exact(bras_bas_pose)),
+        ("exact_en_avant",exact(en_avant_pose)),
+        ("shoulder_08_only",interpolated(0.08,0.0)),
+        ("elbow_08_only",interpolated(0.0,0.08)),
+        ("shoulder_16_only",interpolated(0.16,0.0)),
+        ("elbow_16_only",interpolated(0.0,0.16)),
+        ("combined_08",interpolated(0.08,0.08)),
+        ("en_avant_shoulder_only",interpolated(1.0,0.0)),
+        ("en_avant_elbow_only",interpolated(0.0,1.0)),
+        (
+            "en_avant_shoulder_elbow_bras_wrist_fingers",
+            interpolated(1.0,1.0),
+        ),
+    ]
+
+    rows=[]
+    for name,pose in probes:
+        rows.append({
+            "name":name,
+            **diagnostic_arm_probe(
+                armature,
+                canonical,
+                runtime,
+                axes,
+                contract,
+                lower_pose,
+                pose,
+            ),
+        })
+
+    return {
+        "mode":"ARM_AUTHORITY_DIAGNOSTIC_ONLY",
+        "arm_role_map":{
+            name:role
+            for name,role in sorted(arm_roles.items())
+        },
+        "endpoint_local_deltas":arm_endpoint_local_deltas(
+            bras_bas_pose,en_avant_pose,arm_roles
+        ),
+        "probe_count":len(rows),
+        "probes":rows,
+        "authority_selected":False,
+        "optimizer_used":False,
+        "centerline_projection_used":False,
     }
 
 
@@ -518,7 +702,7 @@ def main() -> None:
     arm_names=set(arm_roles)
     arm_authority=contract["upper_body"]["arm_source_authority"]
 
-    bras_bas_pose,_=arm_motion.realize_endpoint(
+    bras_bas_pose,bras_bas_endpoint_evidence=arm_motion.realize_endpoint(
         arm_authority["start_pose"],
         armature,
         canonical,
@@ -529,7 +713,7 @@ def main() -> None:
         visual_contract,
         runtime,
     )
-    en_avant_pose,_=arm_motion.realize_endpoint(
+    en_avant_pose,en_avant_endpoint_evidence=arm_motion.realize_endpoint(
         arm_authority["upper_bound_reference_pose"],
         armature,
         canonical,
@@ -540,6 +724,87 @@ def main() -> None:
         visual_contract,
         runtime,
     )
+
+    if args.diagnostic_only:
+        require(
+            bool(args.diagnostic_report),
+            "--diagnostic-report is required with --diagnostic-only.",
+        )
+        diagnostic=arm_authority_diagnostic(
+            armature,
+            canonical,
+            runtime,
+            axes,
+            contract,
+            lower_pose,
+            arm_roles,
+            bras_bas_pose,
+            en_avant_pose,
+        )
+        diagnostic_payload={
+            "phase":PHASE,
+            "contract_id":contract["contract_id"],
+            "mode":"ARM_AUTHORITY_DIAGNOSTIC_ONLY",
+            "frozen_lower_authority":{
+                "source_phase":"10.11.2",
+                "source_contract_id":source_contract["contract_id"],
+                "selected_parameters":frozen_parameters,
+                "source_geometry":frozen_geometry,
+            },
+            "endpoint_realization_evidence":{
+                "bras_bas":bras_bas_endpoint_evidence,
+                "en_avant":en_avant_endpoint_evidence,
+            },
+            "arm_diagnostic":diagnostic,
+            "policy":{
+                "authority_selected":False,
+                "animation_authored":False,
+                "glb_exported":False,
+                "human_visual_verdict":False,
+            },
+        }
+        diagnostic_path=Path(args.diagnostic_report).resolve()
+        diagnostic_path.parent.mkdir(parents=True,exist_ok=True)
+        serialized=json.dumps(
+            crossed_base.json_ready(diagnostic_payload),
+            indent=2,
+            allow_nan=False,
+        )
+        json.loads(serialized)
+        diagnostic_path.write_text(serialized,encoding="utf-8")
+
+        print("PHASE10_11_4_ARM_AUTHORITY_DIAGNOSTIC=PASS")
+        print(f"PROBES={diagnostic['probe_count']}")
+        for rig_name,row in diagnostic["endpoint_local_deltas"].items():
+            print(
+                "ENDPOINT_LOCAL_DELTA="
+                f"{rig_name}|{row['role']}|"
+                f"rotation_deg={row['rotation_delta_deg']:.6f}|"
+                f"translation={row['translation_delta']:.9f}|"
+                f"scale={row['scale_delta']:.9f}"
+            )
+        for row in diagnostic["probes"]:
+            before=row["before_bow"]["hand_geometry"]
+            after=row["after_bow"]["hand_geometry"]
+            centroids=row["after_bow"]["hand_centroids"]
+            bow_delta=row["bow_effect"]["gap_shoulder_width_fraction_delta"]
+            print(
+                "ARM_PROBE="
+                f"{row['name']}|"
+                f"pre_gap={before['gap_shoulder_width_fraction']:.6f}|"
+                f"post_gap={after['gap_shoulder_width_fraction']:.6f}|"
+                f"bow_gap_delta={bow_delta:.9f}|"
+                f"left_front={centroids['left']['front']:.6f}|"
+                f"right_front={centroids['right']['front']:.6f}|"
+                f"left_up={centroids['left']['up']:.6f}|"
+                f"right_up={centroids['right']['up']:.6f}"
+            )
+        print("AUTHORITY_SELECTED=NO")
+        print("CENTERLINE_PROJECTION=NOT_USED")
+        print("ANIMATION_AUTHORED=NO")
+        print("GLB_EXPORT=NOT_PERFORMED")
+        print(f"DIAGNOSTIC_REPORT={diagnostic_path}")
+        return
 
     candidates=[]
     winners=[]

@@ -1,7 +1,8 @@
 param(
     [string]$Blender = "",
     [string]$Repo = "",
-    [switch]$UseExistingArtifacts
+    [switch]$UseExistingArtifacts,
+    [switch]$DiagnosticOnly
 )
 
 $ErrorActionPreference="Stop"
@@ -30,6 +31,7 @@ $contract=Join-Path $Repo "assets\ballet_motion\opening_reverence_final_upper_re
 $script=Join-Path $Repo "tools\blender\build_opening_reverence_final_upper_refinement_v1.py"
 $test=Join-Path $Repo "tools\ballet_motion\test_phase10_11_4_reverence_final_upper_refinement.py"
 $report=Join-Path $Repo "build\phase10_11\opening_reverence_final_upper_refinement_v1_report.json"
+$diagnosticReport=Join-Path $Repo "build\phase10_11\opening_reverence_final_upper_refinement_arm_diagnostic_v1.json"
 $previewDir=Join-Path $Repo "build\phase10_11\opening_reverence_final_upper_refinement_preview_v1"
 
 foreach ($required in @(
@@ -49,7 +51,14 @@ Write-Host "Bow: canonical-X trunk/head refinement"
 Write-Host "Centerline projection: FORBIDDEN"
 Write-Host "Animation/turn/run/music: NO"
 Write-Host "GLB export: NO"
+if ($DiagnosticOnly) {
+    Write-Host "Mode: ARM AUTHORITY DIAGNOSTIC ONLY - no authority selection, no previews"
+}
 Write-Host ""
+
+if ($DiagnosticOnly -and $UseExistingArtifacts) {
+    throw "-DiagnosticOnly cannot be combined with -UseExistingArtifacts."
+}
 
 if (-not $UseExistingArtifacts) {
     & python -c "import ast,pathlib; ast.parse(pathlib.Path(r'$script').read_text(encoding='utf-8'))"
@@ -57,6 +66,44 @@ if (-not $UseExistingArtifacts) {
 
     & python $test
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    if ($DiagnosticOnly) {
+        if (Test-Path $diagnosticReport) {
+            Remove-Item $diagnosticReport -Force
+        }
+        & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --source-crossed-contract $sourceCrossed --refinement-contract $contract --report $report --preview-dir $previewDir --diagnostic-only --diagnostic-report $diagnosticReport
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        if (-not (Test-Path $diagnosticReport)) {
+            throw "Phase 10.11.4 arm diagnostic report missing: $diagnosticReport"
+        }
+        $diag=Get-Content $diagnosticReport -Raw | ConvertFrom-Json
+        if ($diag.mode -ne "ARM_AUTHORITY_DIAGNOSTIC_ONLY") {
+            throw "Phase 10.11.4 diagnostic mode mismatch."
+        }
+        if ($diag.arm_diagnostic.authority_selected) {
+            throw "Diagnostic pass must not select a new arm authority."
+        }
+        if ($diag.arm_diagnostic.optimizer_used) {
+            throw "Diagnostic pass must not run an optimizer."
+        }
+        if ($diag.arm_diagnostic.centerline_projection_used) {
+            throw "Diagnostic pass must not use centerline projection."
+        }
+        if ($diag.policy.animation_authored -or $diag.policy.glb_exported) {
+            throw "Diagnostic pass must not author animation or export GLB."
+        }
+
+        Write-Host ""
+        Write-Host "PHASE 10.11.4 ARM AUTHORITY DIAGNOSTIC PASS"
+        Write-Host "Probes:           $($diag.arm_diagnostic.probe_count)"
+        Write-Host "Authority:        NOT SELECTED"
+        Write-Host "Optimizer:        NOT USED"
+        Write-Host "Projection:       NOT USED"
+        Write-Host "Animation:        NOT AUTHORED"
+        Write-Host "GLB export:       NOT PERFORMED"
+        Write-Host "Diagnostic report: $diagnosticReport"
+        exit 0
+    }
 
     & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --source-crossed-contract $sourceCrossed --refinement-contract $contract --report $report --preview-dir $previewDir
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
