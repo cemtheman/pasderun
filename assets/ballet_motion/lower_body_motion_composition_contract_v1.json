@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "phase": "10.9.2",
+  "contract_id": "foundation_lower_composition_fifth_plie_releve_v1",
+  "sequence": [
+    {
+      "source_phase": "10.8.1",
+      "source_contract_id": "foundation_motion_fifth_to_plie_v1",
+      "start_pose": "fifth",
+      "end_pose": "plie",
+      "frame_start": 1,
+      "frame_end": 61,
+      "contact_mode": "FULL_FOOT"
+    },
+    {
+      "source_phase": "10.8.2",
+      "source_contract_id": "foundation_motion_plie_to_releve_v1",
+      "start_pose": "plie",
+      "end_pose": "releve",
+      "frame_start": 61,
+      "frame_end": 121,
+      "contact_mode": "FOREFOOT_AFTER_BOUNDARY"
+    }
+  ],
+  "timeline": {
+    "fps": 30,
+    "frame_start": 1,
+    "shared_boundary_frame": 61,
+    "frame_end": 121,
+    "boundary_pose": "plie",
+    "inserted_hold_frames": 0
+  },
+  "authority": {
+    "composition_only": true,
+    "source_primitive_math_reimplementation_forbidden": true,
+    "source_primitive_modules_required": [
+      "build_lower_body_fifth_to_plie_v1",
+      "build_lower_body_plie_to_releve_v1"
+    ],
+    "endpoint_pose_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "accepted_trunk_hierarchy_motion_preserved": true,
+    "glb_export_forbidden": true
+  },
+  "validation": {
+    "shared_boundary_local_matrix_error_max": 0.000001,
+    "boundary_output_local_matrix_error_max": 0.000001,
+    "minimum_consecutive_quaternion_dot": 0,
+    "root_descent_monotonic_epsilon": 0.00001,
+    "root_rise_monotonic_epsilon": 0.00001,
+    "heel_lift_monotonic_epsilon": 0.00001,
+    "root_horizontal_translation_max": 0.000001,
+    "sample_every_frame": true,
+    "boundary_frames": [
+      60,
+      61,
+      62
+    ],
+    "no_duplicate_boundary_key_authority": true,
+    "source_human_gates_required": [
+      "10.8.1",
+      "10.8.2"
+    ]
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_composition_chain_only": true,
+    "arm_composition_changes_forbidden": true,
+    "reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_changes_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
