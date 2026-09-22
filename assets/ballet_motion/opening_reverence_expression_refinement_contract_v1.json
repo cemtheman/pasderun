@@ -17,28 +17,32 @@
   },
   "upper_body": {
     "arm_source_semantics": "BRAS_BAS_DERIVED_LOW_OVAL",
-    "fixed": {
-      "upper_arm_flexion_extension_deg": 18,
-      "upper_arm_internal_external_rotation_deg": 10,
-      "forearm_pronation_supination_deg": 15,
-      "hand_flexion_extension_deg": 0,
-      "hand_radial_ulnar_deviation_deg": 0
+    "arm_source_authority": {
+      "start_pose": "bras_bas",
+      "upper_bound_reference_pose": "second",
+      "endpoint_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+      "interpolation_space": "LOCAL_MATRIX_BASIS",
+      "shoulder_elbow_rotation": "QUATERNION_SHORTEST_ARC_SLERP",
+      "moving_translation": "LOCK_TO_BRAS_BAS",
+      "moving_scale": "LOCK_TO_BRAS_BAS",
+      "wrist_policy": "EXACT_BRAS_BAS",
+      "fingers_policy": "EXACT_BRAS_BAS"
     },
     "search": {
-      "upper_arm_abduction_adduction_deg": [
-        36,
-        42,
-        48
+      "shoulder_progress": [
+        0.1,
+        0.2,
+        0.3
       ],
-      "forearm_flexion_extension_deg": [
-        44,
-        50,
-        56
+      "elbow_progress": [
+        0.1,
+        0.2,
+        0.3
       ]
     },
     "second_position_guard": {
-      "maximum_upper_arm_abduction_adduction_deg": 50,
-      "rationale": "Remain a low oval reverence arm rather than approach accepted second at 90 deg."
+      "maximum_progress_toward_second": 0.3,
+      "rationale": "Remain a low oval reverence arm; never travel beyond 30% of the accepted bras_bas-to-second local rotation arc."
     },
     "bow": {
       "trunk_extra_flexion_deg": 16,
@@ -70,14 +74,14 @@
     "hand_side_offset_asymmetry_hand_chain_fraction_max": 0.12
   },
   "validation": {
-    "all_arm_joint_values_within_preferred_envelope": true,
     "frozen_lower_chain_local_matrix_error_max": 0.000001,
     "frozen_lower_geometry_must_repass": true,
     "hand_centerline_crossing_forbidden": true,
     "no_centerline_projection_allowed": true,
     "no_permanent_constraints": true,
     "imported_action_must_be_cleared": true,
-    "report_json_serializable_required": true
+    "report_json_serializable_required": true,
+    "accepted_arm_endpoint_bounded_interpolation_required": true
   },
   "preview": {
     "views": [
