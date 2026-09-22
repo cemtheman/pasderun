@@ -87,8 +87,8 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             r'\[node name="RouteFork[0-9]{2}" type="Node3D" parent="Level"\]',
             self.course,
         )
-        self.assertEqual(len(platforms), 24)
-        self.assertEqual(len(gaps), 19)
+        self.assertEqual(len(platforms), 26)
+        self.assertEqual(len(gaps), 22)
         self.assertEqual(len(forks), 5)
 
     def test_forks_are_distributed_and_have_natural_input_topology(self) -> None:
@@ -176,8 +176,8 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
                 re.DOTALL,
             )
         ]
-        self.assertEqual(len(gap_x), 19)
-        self.assertEqual(len(set(gap_x)), 19)
+        self.assertEqual(len(gap_x), 22)
+        self.assertEqual(len(set(gap_x)), 22)
         self.assertEqual(self.course.count('_DESCENT" type="Marker3D"'), 4)
         downward_transitions = 5
         self.assertGreaterEqual(4 / downward_transitions, 0.5)
@@ -210,7 +210,7 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
 
     def test_meaningful_action_spacing_stays_below_twenty_five_units(self) -> None:
         action_x = [
-            161.0, 175.75, 192.25, 215.0, 235.25,
+            150.372, 161.0, 175.75, 192.25, 202.48, 215.0, 227.556, 235.25,
             250.75, 268.0, 291.0, 315.25,
             330.75, 347.25, 371.0, 395.25,
             410.75, 427.25, 450.0, 462.75, 475.0, 490.25,
