@@ -108,6 +108,21 @@ class Phase1081LowerBodyFoundationMotionTests(unittest.TestCase):
             1e-5,
         )
 
+    def test_endpoint_decomposition_noise_is_separate_from_motion_scale(self) -> None:
+        validation = self.contract["validation"]
+        self.assertLessEqual(
+            float(validation["accepted_endpoint_decomposition_noise_max"]),
+            5e-6,
+        )
+        self.assertLessEqual(
+            float(validation["moving_scale_error_max"]),
+            1e-6,
+        )
+        self.assertGreater(
+            float(validation["accepted_endpoint_decomposition_noise_max"]),
+            float(validation["moving_scale_error_max"]),
+        )
+
     def test_plie_trunk_hierarchy_authority_is_explicit(self) -> None:
         authority = self.contract["authority"]
         validation = self.contract["validation"]
