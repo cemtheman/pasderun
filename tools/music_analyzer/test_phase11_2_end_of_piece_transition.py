@@ -60,7 +60,7 @@ class Phase112EndOfPieceTransitionTests(unittest.TestCase):
         completion_x = float(match.group(1))
         self.assertAlmostEqual(completion_x / 4.0, 140.016, places=4)
 
-        self.assertIn("COMPLETION_APPROACH_DISTANCE := 0.55", RECOVERY)
+        self.assertIn("COMPLETION_APPROACH_DISTANCE := 0.35", RECOVERY)
         begin = RECOVERY.index("func _begin_completion_ceremony() -> void:")
         update = RECOVERY.index("func _update_completion_ceremony", begin)
         begin_block = RECOVERY[begin:update]
