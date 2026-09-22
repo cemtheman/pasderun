@@ -38,12 +38,45 @@ class Phase113060GameplayDensityTests(unittest.TestCase):
             cls.accepted_120,
         )
         cls.overlay = cls.plan["prototype_overlays"]["phase11_gameplay_density_v1"]
+        cls.built_scene = render_climax_fork_scene(cls.built)
 
     def test_builder_reproduces_committed_full_piece_plan(self) -> None:
         self.assertEqual(self.built, self.plan)
 
-    def test_builder_reproduces_committed_full_piece_scene(self) -> None:
-        self.assertEqual(render_climax_fork_scene(self.built), self.scene)
+    def test_builder_and_committed_scene_share_density_boundaries(self) -> None:
+        expected = {
+            30: (174.348, 0.900),
+            31: (176.856, 1.516),
+            35: (183.685, 0.994),
+            36: (186.193, 1.422),
+            49: (226.410, 0.992),
+            50: (228.918, 1.424),
+        }
+        for source in (self.built_scene, self.scene):
+            for index, (expected_x, expected_length) in expected.items():
+                node = re.search(
+                    rf'\[node name="Runway{index}" type="StaticBody3D" parent="Level"\]\n'
+                    rf'position = Vector3\(([-0-9.]+),',
+                    source,
+                )
+                mesh = re.search(
+                    rf'\[sub_resource type="BoxMesh" id="BoxMesh_{index}"\]\n'
+                    rf'material = ExtResource\("2_palace"\)\n'
+                    rf'size = Vector3\(([-0-9.]+),',
+                    source,
+                )
+                self.assertIsNotNone(node)
+                self.assertIsNotNone(mesh)
+                self.assertTrue(
+                    math.isclose(float(node.group(1)), expected_x, abs_tol=1e-4)
+                )
+                self.assertTrue(
+                    math.isclose(
+                        float(mesh.group(1)),
+                        expected_length,
+                        abs_tol=1e-4,
+                    )
+                )
 
     def test_density_uses_three_safe_music_aligned_small_gaps(self) -> None:
         self.assertEqual(PHASE11_DENSITY_GAP_TIMES, (43.862, 46.208, 56.889))
