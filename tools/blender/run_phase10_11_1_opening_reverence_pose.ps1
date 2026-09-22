@@ -26,6 +26,7 @@ $intents=Join-Path $Repo "assets\ballet_motion\foundation_pose_intents_v1.json"
 $staticContract=Join-Path $Repo "assets\ballet_motion\static_rig_application_contract_v1.json"
 $visualContract=Join-Path $Repo "assets\ballet_motion\foundation_pose_visual_gate_v1.json"
 $reverenceContract=Join-Path $Repo "assets\ballet_motion\opening_reverence_pose_contract_v1.json"
+$lowerMotionContract=Join-Path $Repo "assets\ballet_motion\lower_body_foundation_motion_contract_v1.json"
 $script=Join-Path $Repo "tools\blender\build_opening_reverence_acknowledgement_pose_v1.py"
 $test=Join-Path $Repo "tools\ballet_motion\test_phase10_11_1_opening_reverence_pose.py"
 $report=Join-Path $Repo "build\phase10_11\opening_reverence_acknowledgement_pose_v1_report.json"
@@ -33,7 +34,7 @@ $previewDir=Join-Path $Repo "build\phase10_11\opening_reverence_acknowledgement_
 
 foreach ($required in @(
     $canonical,$constraints,$grammar,$retarget,$axis,$intents,
-    $staticContract,$visualContract,$reverenceContract,$script,$test
+    $staticContract,$visualContract,$reverenceContract,$lowerMotionContract,$script,$test
 )) {
     if (-not (Test-Path $required)) {
         throw "Phase 10.11.1 prerequisite missing: $required"
@@ -41,8 +42,8 @@ foreach ($required in @(
 }
 
 Write-Host "PHASE 10.11.1 - OPENING REVERENCE ACKNOWLEDGEMENT POSE"
-Write-Host "Lower authority: accepted plie"
-Write-Host "Arm authority:   accepted second"
+Write-Host "Lower authority: accepted fifth->plie frame 31 demi-plie"
+Write-Host "Arm authority:   accepted bras_bas"
 Write-Host "New authoring:   canonical-X trunk/head inclination only"
 Write-Host "Animation:       NO"
 Write-Host "Turn/run/music:  NO"
@@ -56,7 +57,7 @@ if (-not $UseExistingArtifacts) {
     & python $test
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --reverence-contract $reverenceContract --report $report --preview-dir $previewDir
+    & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --reverence-contract $reverenceContract --lower-motion-contract $lowerMotionContract --report $report --preview-dir $previewDir
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 } else {
     Write-Host "Reusing existing Phase 10.11.1 artifacts."
@@ -72,8 +73,8 @@ if ($data.phase -ne "10.11.1") {
 }
 
 foreach ($gate in @(
-    "accepted_plie_reused",
-    "accepted_second_reused",
+    "accepted_fifth_to_plie_motion_reused",
+    "accepted_bras_bas_reused",
     "independent_arm_authoring_absent",
     "independent_leg_authoring_absent",
     "axial_overlay_only",
