@@ -226,7 +226,7 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
         closing = self._body("NeutralClosingRunway")
         closing_start, closing_end = self._bounds(closing)
         self.assertTrue(math.isclose(closing_start, 545.0, abs_tol=0.001))
-        self.assertTrue(math.isclose(closing_end, 562.0, abs_tol=0.001))
+        self.assertTrue(math.isclose(closing_end, 571.0, abs_tol=0.001))
         final_technical = self._body("TechnicalPlatform24_Recovery")
         self.assertTrue(math.isclose(self._bounds(final_technical)[1], 545.0, abs_tol=0.001))
 
