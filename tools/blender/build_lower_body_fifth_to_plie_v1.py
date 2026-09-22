@@ -280,7 +280,14 @@ def prepare_motion_cache(
     translation_limit = float(
         contract["validation"]["moving_non_root_translation_error_max"]
     )
-    scale_limit = float(contract["validation"]["moving_scale_error_max"])
+    runtime_scale_limit = float(
+        contract["validation"]["moving_scale_error_max"]
+    )
+    endpoint_scale_noise_limit = float(
+        contract["validation"][
+            "accepted_endpoint_decomposition_noise_max"
+        ]
+    )
     cache = {}
 
     for rig_name in sorted(moving):
@@ -300,8 +307,9 @@ def prepare_motion_cache(
                 f"{translation_error} > {translation_limit}.",
             )
         require(
-            scale_error <= scale_limit,
-            f"{rig_name}: local scale changed {scale_error} > {scale_limit}.",
+            scale_error <= endpoint_scale_noise_limit,
+            f"{rig_name}: accepted endpoint decomposition scale noise "
+            f"{scale_error} > {endpoint_scale_noise_limit}.",
         )
 
         cache[rig_name] = {
@@ -316,6 +324,12 @@ def prepare_motion_cache(
             ),
             "translation_error": float(translation_error),
             "scale_error": float(scale_error),
+            "endpoint_decomposition_noise_limit": float(
+                endpoint_scale_noise_limit
+            ),
+            "runtime_scale_lock_limit": float(
+                runtime_scale_limit
+            ),
         }
 
     return cache
@@ -534,6 +548,10 @@ def key_motion(
     epsilon = float(
         contract["validation"]["root_descent_monotonic_epsilon"]
     )
+    runtime_scale_limit = float(
+        contract["validation"]["moving_scale_error_max"]
+    )
+    maximum_intermediate_scale_lock_error = 0.0
 
     for frame in range(frame_start, frame_end + 1):
         evidence = set_frame_pose(
@@ -562,6 +580,27 @@ def key_motion(
                 f"{evidence['root_up_shift']}, epsilon={epsilon}.",
             )
         previous_shift = evidence["root_up_shift"]
+
+        scale_lock_error = 0.0
+        if frame not in (frame_start, frame_end):
+            for rig_name in moving:
+                actual_scale = armature.pose.bones[rig_name].scale
+                expected_scale = motion_cache[rig_name]["scale"]
+                error = (Vector(actual_scale) - Vector(expected_scale)).length
+                scale_lock_error = max(scale_lock_error, error)
+            maximum_intermediate_scale_lock_error = max(
+                maximum_intermediate_scale_lock_error,
+                scale_lock_error,
+            )
+            require(
+                scale_lock_error <= runtime_scale_limit,
+                f"Frame {frame}: intermediate scale lock error "
+                f"{scale_lock_error} > {runtime_scale_limit}.",
+            )
+
+        evidence["intermediate_scale_lock_error"] = float(
+            scale_lock_error
+        )
         frame_evidence.append(evidence)
 
         for rig_name in moving:
@@ -587,6 +626,10 @@ def key_motion(
         "frames": frame_evidence,
         "root_descent_monotone": True,
         "full_foot_contact_every_frame": True,
+        "maximum_intermediate_scale_lock_error": float(
+            maximum_intermediate_scale_lock_error
+        ),
+        "intermediate_scale_locked": True,
     }
 
 
@@ -1097,9 +1140,29 @@ def main() -> None:
                 "translation_error": float(
                     item["translation_error"]
                 ),
-                "scale_error": float(item["scale_error"]),
+                "accepted_endpoint_decomposition_scale_noise": float(
+                    item["scale_error"]
+                ),
+                "endpoint_decomposition_noise_limit": float(
+                    item["endpoint_decomposition_noise_limit"]
+                ),
+                "runtime_scale_lock_limit": float(
+                    item["runtime_scale_lock_limit"]
+                ),
             }
             for name, item in motion_cache.items()
+        },
+        "accepted_endpoint_decomposition": {
+            "maximum_scale_noise": max(
+                float(item["scale_error"])
+                for item in motion_cache.values()
+            ),
+            "limit": float(
+                contract["validation"][
+                    "accepted_endpoint_decomposition_noise_max"
+                ]
+            ),
+            "status": "PASS",
         },
         "motion_generation": generation,
         "diagnostics": diagnostics,
@@ -1114,6 +1177,8 @@ def main() -> None:
             "phase10_6_endpoint_motion_authority": True,
             "accepted_trunk_hierarchy_motion": True,
             "quaternion_shortest_arc": True,
+            "accepted_endpoint_decomposition_noise_bounded": True,
+            "intermediate_scale_locked": True,
             "minimum_jerk_timing": True,
             "full_foot_contact_every_frame": True,
             "pelvis_descent_monotone": True,
