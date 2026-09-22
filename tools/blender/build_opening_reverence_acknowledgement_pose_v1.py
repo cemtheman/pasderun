@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -38,6 +39,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--visual-contract",required=True)
     p.add_argument("--reverence-contract",required=True)
     p.add_argument("--lower-motion-contract",required=True)
+    p.add_argument("--arm-motion-contract",required=True)
     p.add_argument("--report",required=True)
     p.add_argument("--preview-dir",required=True)
     return p.parse_args(sys.argv[sys.argv.index("--")+1:])
@@ -181,16 +183,23 @@ def main() -> None:
     visual_contract=load_json(args.visual_contract)
     contract=load_json(args.reverence_contract)
     lower_contract=load_json(args.lower_motion_contract)
+    arm_contract=load_json(args.arm_motion_contract)
 
     report_path=Path(args.report).resolve()
     preview_dir=Path(args.preview_dir).resolve()
 
     reverence.validate_contract(contract)
     lower_motion.motion.validate_contract(lower_contract)
+    arm_motion.motion.validate_contract(arm_contract)
     require(
         lower_contract["contract_id"]
         == contract["source_pose_authority"]["lower_body_source_contract_id"],
         "Reverence lower-body source contract mismatch.",
+    )
+    require(
+        arm_contract["contract_id"]
+        == contract["source_pose_authority"]["arm_motion_contract_id"],
+        "Reverence arm source contract mismatch.",
     )
     require(canonical["phase"]=="10.6.2","Requires accepted 10.6.2.")
     require(retarget["phase"]=="10.6.6","Requires accepted 10.6.6.")
@@ -340,6 +349,63 @@ def main() -> None:
     )
     bpy.context.view_layer.update()
 
+    pre_clearance_pose=snapshot(armature)
+    shoulder_names={
+        canonical["canonical_bones"]["left_upper_arm"]["rig_bone"],
+        canonical["canonical_bones"]["right_upper_arm"]["rig_bone"],
+    }
+    shoulder_cache={}
+    for name in shoulder_names:
+        location,_rotation,scale=armature.pose.bones[
+            name
+        ].matrix_basis.decompose()
+        shoulder_cache[name]={
+            "location":location.copy(),
+            "scale":scale.copy(),
+        }
+
+    projection=arm_contract["validation"][
+        "centerline_clearance_projection"
+    ]
+    require(
+        projection["method"]
+        == "MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+        "Reverence must reuse the accepted shoulder projection method.",
+    )
+    require(
+        abs(
+            float(projection["intermediate_guard_side_offset"])
+            - float(
+                contract["validation"]["clearance_target_side_offset"]
+            )
+        )
+        <= 1e-12,
+        "Reverence clearance target differs from accepted arm projection guard.",
+    )
+    require(
+        float(projection["maximum_shoulder_correction_deg"])
+        <= float(
+            contract["validation"]["shoulder_clearance_correction_deg_max"]
+        ),
+        "Source arm projection exceeds reverence correction ceiling.",
+    )
+
+    # Treat this combined reverence pose as an intermediate context rather
+    # than a Phase 10.7 endpoint. The accepted projection may therefore make
+    # the minimum shoulder-only correction required to keep the deformed hand
+    # mesh outside the centerline guard.
+    clearance=arm_motion.enforce_hand_centerline_clearance(
+        armature,
+        canonical,
+        runtime,
+        arm_contract,
+        shoulder_cache,
+        1,
+        0,
+        2,
+    )
+    bpy.context.view_layer.update()
+
     final_pose=snapshot(armature)
 
     lower_names={
@@ -364,18 +430,53 @@ def main() -> None:
         f"Accepted sampled demi-plié lower chain changed: {lower_error}.",
     )
 
-    arm_error=max(
-        matrix_max_error(final_pose[name],bras_bas_pose[name])
-        for name in arm_names
+    nonshoulder_arm_names=arm_names-shoulder_names
+    arm_nonshoulder_error=max(
+        (
+            matrix_max_error(final_pose[name],bras_bas_pose[name])
+            for name in nonshoulder_arm_names
+        ),
+        default=0.0,
     )
     require(
-        arm_error
+        arm_nonshoulder_error
         <= float(
             contract["validation"][
-                "arm_explicit_chain_local_matrix_error_max"
+                "arm_nonshoulder_chain_local_matrix_error_max"
             ]
         ),
-        f"Accepted bras-bas arm local matrices changed: {arm_error}.",
+        "Accepted bras-bas non-shoulder arm local matrices changed: "
+        f"{arm_nonshoulder_error}.",
+    )
+
+    shoulder_correction_deg={}
+    max_shoulder_correction=0.0
+    for side in ("left","right"):
+        name=canonical["canonical_bones"][
+            f"{side}_upper_arm"
+        ]["rig_bone"]
+        before_q=pre_clearance_pose[name].to_quaternion()
+        after_q=final_pose[name].to_quaternion()
+        before_q.normalize()
+        after_q.normalize()
+        correction=math.degrees(
+            before_q.rotation_difference(after_q).angle
+        )
+        shoulder_correction_deg[side]=correction
+        max_shoulder_correction=max(
+            max_shoulder_correction,
+            correction,
+        )
+    require(
+        max_shoulder_correction
+        <= float(
+            contract["validation"][
+                "shoulder_clearance_correction_deg_max"
+            ]
+        )
+        + 1e-6,
+        "Reverence shoulder clearance correction exceeded ceiling: "
+        f"{max_shoulder_correction}.",
     )
 
     allowed_canonical=set(
@@ -390,10 +491,11 @@ def main() -> None:
         for name in final_pose
         if matrix_max_error(final_pose[name],arm_overlay_pose[name]) > 1e-7
     }
-    unexpected=sorted(changed_after_overlay-allowed_rig)
+    allowed_contextual=allowed_rig|shoulder_names
+    unexpected=sorted(changed_after_overlay-allowed_contextual)
     require(
         not unexpected,
-        "Reverence overlay changed bones outside axial acknowledgement set: "
+        "Reverence pose changed bones outside axial + shoulder clearance set: "
         + ", ".join(unexpected),
     )
 
@@ -437,13 +539,24 @@ def main() -> None:
             "lower_sample_frame":sample_frame,
             "lower_sample_progress":float(lower_sample_evidence["progress"]),
             "arm_pose":"bras_bas",
+            "arm_motion_contract_id":arm_contract["contract_id"],
+            "clearance_projection_method":projection["method"],
             "imported_action_cleared":True,
         },
         "acknowledgement_overlay":overlay,
         "lower_motion_partition":partition,
         "diagnostics":{
             "lower_contact_chain_local_matrix_error":lower_error,
-            "arm_explicit_chain_local_matrix_error":arm_error,
+            "arm_nonshoulder_chain_local_matrix_error":(
+                arm_nonshoulder_error
+            ),
+            "shoulder_clearance_correction_deg":(
+                shoulder_correction_deg
+            ),
+            "maximum_shoulder_clearance_correction_deg":(
+                max_shoulder_correction
+            ),
+            "clearance_projection":clearance,
             "new_orientation_changed_rig_bones":sorted(changed_after_overlay),
             "unexpected_changed_rig_bones":unexpected,
             "full_foot_contact_max_abs_error":float(
@@ -458,9 +571,10 @@ def main() -> None:
             "accepted_bras_bas_reused":True,
             "independent_arm_authoring_absent":True,
             "independent_leg_authoring_absent":True,
-            "axial_overlay_only":True,
+            "axial_plus_bounded_shoulder_clearance_only":True,
             "lower_chain_exact":True,
-            "arm_chain_exact":True,
+            "arm_nonshoulder_chain_exact":True,
+            "shoulder_clearance_bounded":True,
             "full_foot_contact_pass":True,
             "hand_centerline_pass":True,
             "imported_action_cleared":True,
