@@ -274,19 +274,8 @@ def build_full_piece_bridge_extension(
     )
 
     densified_runways, phase11_gaps = _apply_phase11_density_gaps(
-        output["surface_plan"]["runway_intervals"]
+        stitched_runways
     )
-    output["surface_plan"]["runway_intervals"] = densified_runways
-    output.setdefault("prototype_overlays", {})
-    output["prototype_overlays"]["phase11_gameplay_density_v1"] = {
-        "time_range": {"start": 30.0, "end": 60.0},
-        "source": "MUSIC_ACCENT_SMALL_JUMP_UPLIFT",
-        "new_required_actions": True,
-        "gap_count": len(phase11_gaps),
-        "gap_length": PHASE11_DENSITY_GAP_LENGTH,
-        "gaps": phase11_gaps,
-        "accepted_120_source_unchanged": True,
-    }
 
     bridge_windows = _select_final_bridge_windows(visual_score)
     bridge_start = float(bridge_windows[0]["start"])
@@ -295,7 +284,7 @@ def build_full_piece_bridge_extension(
     bridge_end_x = bridge_end * RUN_SPEED
 
     flattened, bridge_y = _flatten_bridge_span(
-        stitched_runways,
+        densified_runways,
         bridge_start_x,
         bridge_end_x,
     )
@@ -309,6 +298,15 @@ def build_full_piece_bridge_extension(
     output["prototype_overlays"] = copy.deepcopy(
         accepted_120_plan.get("prototype_overlays", {})
     )
+    output["prototype_overlays"]["phase11_gameplay_density_v1"] = {
+        "time_range": {"start": 30.0, "end": 60.0},
+        "source": "MUSIC_ACCENT_SMALL_JUMP_UPLIFT",
+        "new_required_actions": True,
+        "gap_count": len(phase11_gaps),
+        "gap_length": PHASE11_DENSITY_GAP_LENGTH,
+        "gaps": phase11_gaps,
+        "accepted_120_source_unchanged": True,
+    }
     output["prototype_overlays"]["architectural_spans_v1"] = [{
         "topology": BRIDGE,
         "shared_route": True,
