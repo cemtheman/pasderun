@@ -46,6 +46,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--preview-dir",required=True)
     p.add_argument("--diagnostic-only",action="store_true")
     p.add_argument("--diagnostic-report",default="")
+    p.add_argument("--visual-candidates-only",action="store_true")
+    p.add_argument("--visual-candidate-report",default="")
     return p.parse_args(sys.argv[sys.argv.index("--")+1:])
 
 
@@ -923,6 +925,97 @@ def current_lower_geometry(
     )
 
 
+def render_visual_candidate_set(
+    armature,
+    canonical,
+    constraints,
+    axis_contract,
+    grammar,
+    intents,
+    static_contract,
+    pose_solver,
+    retarget_solver,
+    runtime,
+    axes,
+    contract,
+    lower_pose,
+    arm_roles,
+    preview_dir: Path,
+) -> dict:
+    """Render fixed evidence-backed candidates for human review only."""
+    restore(armature,lower_pose)
+    shoulder_width=shoulder_width_body_frame(
+        armature,canonical,axes
+    )
+    candidates=[
+        ("forward_15",0.15),
+        ("forward_30",0.30),
+        ("forward_45",0.45),
+    ]
+    rows=[]
+    all_files=[]
+    for name,carriage_progress in candidates:
+        arm_pose,authority=explicit_gap_semantic_arm_pose(
+            armature,
+            canonical,
+            constraints,
+            axis_contract,
+            grammar,
+            intents,
+            static_contract,
+            pose_solver,
+            retarget_solver,
+            runtime,
+            arm_roles,
+            shoulder_width,
+            0.36,
+            carriage_progress,
+        )
+        restore(armature,lower_pose)
+        for bone_name,matrix in arm_pose.items():
+            armature.pose.bones[bone_name].matrix_basis=matrix.copy()
+        bpy.context.view_layer.update()
+        apply_bow(armature,canonical,contract)
+
+        hand=hand_geometry(armature,canonical,runtime,axes)
+        elbow=elbow_geometry(armature,canonical,axes)
+        passed,reasons=arm_candidate_pass(hand,elbow,contract)
+        require(
+            passed,
+            f"{name}: visual candidate failed geometry gate: "
+            + ", ".join(reasons),
+        )
+
+        candidate_dir=preview_dir/name
+        files,preview_evidence=render_previews(
+            armature,canonical,contract,candidate_dir
+        )
+        all_files.extend(files)
+        rows.append({
+            "name":name,
+            "target_gap_shoulder_width_fraction":0.36,
+            "carriage_progress":float(carriage_progress),
+            "hand_geometry":hand,
+            "elbow_geometry":elbow,
+            "authority_evidence":authority,
+            "preview":{**preview_evidence,"files":files},
+        })
+
+    return {
+        "mode":"REVERENCE_VISUAL_CANDIDATES_ONLY",
+        "candidate_count":len(rows),
+        "preview_count":len(all_files),
+        "candidates":rows,
+        "all_preview_files":all_files,
+        "authority_selected":False,
+        "automated_aesthetic_verdict":False,
+        "human_visual_gate":"PENDING_REVIEW",
+        "animation_authored":False,
+        "glb_exported":False,
+        "centerline_projection_used":False,
+    }
+
+
 def render_previews(
     armature,
     canonical,
@@ -1127,6 +1220,92 @@ def main() -> None:
         visual_contract,
         runtime,
     )
+
+    require(
+        not (args.diagnostic_only and args.visual_candidates_only),
+        "--diagnostic-only and --visual-candidates-only are mutually exclusive.",
+    )
+
+    if args.visual_candidates_only:
+        require(
+            bool(args.visual_candidate_report),
+            "--visual-candidate-report is required with --visual-candidates-only.",
+        )
+        visual_result=render_visual_candidate_set(
+            armature,
+            canonical,
+            constraints,
+            axis_contract,
+            grammar,
+            intents,
+            static_contract,
+            pose_solver,
+            retarget_solver,
+            runtime,
+            axes,
+            contract,
+            lower_pose,
+            arm_roles,
+            preview_dir,
+        )
+        visual_payload={
+            "phase":PHASE,
+            "contract_id":contract["contract_id"],
+            "mode":"REVERENCE_VISUAL_CANDIDATES_ONLY",
+            "frozen_lower_authority":{
+                "source_phase":"10.11.2",
+                "source_contract_id":source_contract["contract_id"],
+                "selected_parameters":frozen_parameters,
+                "source_geometry":frozen_geometry,
+            },
+            "visual_candidates":visual_result,
+            "policy":{
+                "authority_selected":False,
+                "optimizer_used":False,
+                "adaptive_search_used":False,
+                "centerline_projection_used":False,
+                "animation_authored":False,
+                "glb_exported":False,
+                "human_visual_verdict":False,
+            },
+        }
+        visual_report_path=Path(args.visual_candidate_report).resolve()
+        visual_report_path.parent.mkdir(parents=True,exist_ok=True)
+        serialized=json.dumps(
+            crossed_base.json_ready(visual_payload),
+            indent=2,
+            allow_nan=False,
+        )
+        json.loads(serialized)
+        visual_report_path.write_text(serialized,encoding="utf-8")
+
+        print("PHASE10_11_4_REVERENCE_VISUAL_CANDIDATES=PASS")
+        print(
+            "VISUAL_CANDIDATES="
+            f"{visual_result['candidate_count']}"
+        )
+        print(
+            "PREVIEWS="
+            f"{visual_result['preview_count']}"
+        )
+        for row in visual_result["candidates"]:
+            hand=row["hand_geometry"]
+            print(
+                "VISUAL_CANDIDATE="
+                f"{row['name']}|"
+                f"carriage={row['carriage_progress']:.2f}|"
+                f"gap={hand['gap_shoulder_width_fraction']:.6f}|"
+                f"asymmetry={hand['midpoint_asymmetry_shoulder_width_fraction']:.6f}|"
+                f"previews={';'.join(row['preview']['files'])}"
+            )
+        print("AUTHORITY_SELECTED=NO")
+        print("AUTOMATED_AESTHETIC_VERDICT=NO")
+        print("HUMAN_VISUAL_REVIEW=PENDING")
+        print("CENTERLINE_PROJECTION=NOT_USED")
+        print("ANIMATION_AUTHORED=NO")
+        print("GLB_EXPORT=NOT_PERFORMED")
+        print(f"VISUAL_REPORT={visual_report_path}")
+        return
 
     if args.diagnostic_only:
         require(
