@@ -139,6 +139,7 @@ def apply_arm_overlay(
     cache,
     wrist_cache,
     contract,
+    coordinated_contract,
     frame,
 ) -> dict:
     arm_names = set(roles)
@@ -173,6 +174,32 @@ def apply_arm_overlay(
         frame_start,
         frame_end,
     )
+    coordinated_boundary = int(
+        coordinated_contract["timeline"]["shared_boundary_frame"]
+    )
+    coordinated_end = int(
+        coordinated_contract["timeline"]["frame_end"]
+    )
+    clearance_frame_start = frame_start
+    clearance_frame_end = frame_end
+    clearance_context = "SOURCE_PRIMITIVE"
+
+    # The shared frame is an endpoint only for the first arm primitive, but
+    # it is not an endpoint of the coordinated phrase. Lower-body plié trunk
+    # motion changes the deformed hand/centerline relationship, so reuse the
+    # already accepted minimal shoulder projection as an intermediate-context
+    # safety adaptation at this one shared frame.
+    if (
+        frame == coordinated_boundary
+        and frame == frame_end
+        and frame != coordinated_end
+    ):
+        clearance_frame_start = int(
+            coordinated_contract["timeline"]["frame_start"]
+        )
+        clearance_frame_end = coordinated_end
+        clearance_context = "COORDINATED_SHARED_BOUNDARY"
+
     clearance = module.enforce_hand_centerline_clearance(
         armature,
         canonical,
@@ -180,9 +207,12 @@ def apply_arm_overlay(
         contract,
         cache,
         frame,
-        frame_start,
-        frame_end,
+        clearance_frame_start,
+        clearance_frame_end,
     )
+    clearance["context"] = clearance_context
+    clearance["source_frame_start"] = frame_start
+    clearance["source_frame_end"] = frame_end
     bpy.context.view_layer.update()
 
     return {
@@ -462,25 +492,86 @@ def validate_animation(
         name: armature.pose.bones[name].matrix_basis.copy()
         for name in set(arm_names) | set(lower_owned_names)
     }
-    arm_error = max_pose_error(
+    shoulder_names = {
+        canonical["canonical_bones"]["left_upper_arm"]["rig_bone"],
+        canonical["canonical_bones"]["right_upper_arm"]["rig_bone"],
+    }
+    nonshoulder_arm_names = set(arm_names) - shoulder_names
+    arm_nonshoulder_error = max_pose_error(
         actual,
         arm_boundary_pose,
-        set(arm_names),
+        nonshoulder_arm_names,
     )
+    require(
+        arm_nonshoulder_error
+        <= float(
+            contract["validation"][
+                "coordinated_boundary_nonshoulder_arm_local_matrix_error_max"
+            ]
+        ),
+        "Coordinated boundary changed non-shoulder arm local matrices: "
+        f"{arm_nonshoulder_error}.",
+    )
+
+    shoulder_correction_deg = {}
+    max_shoulder_correction = 0.0
+    for side in ("left", "right"):
+        name = canonical["canonical_bones"][
+            f"{side}_upper_arm"
+        ]["rig_bone"]
+        accepted_q = arm_boundary_pose[name].to_quaternion()
+        actual_q = actual[name].to_quaternion()
+        accepted_q.normalize()
+        actual_q.normalize()
+        correction = math.degrees(
+            accepted_q.rotation_difference(actual_q).angle
+        )
+        shoulder_correction_deg[side] = correction
+        max_shoulder_correction = max(
+            max_shoulder_correction,
+            correction,
+        )
+
+    correction_limit = float(
+        contract["validation"][
+            "coordinated_boundary_clearance_projection_max_shoulder_correction_deg"
+        ]
+    )
+    require(
+        max_shoulder_correction <= correction_limit + 1e-6,
+        "Coordinated boundary shoulder clearance correction "
+        f"{max_shoulder_correction} > {correction_limit}.",
+    )
+
+    minimum_side_offset = float(
+        contract["validation"][
+            "coordinated_boundary_minimum_hand_side_offset"
+        ]
+    )
+    boundary_hand_side_offsets = {}
+    inner_q = float(
+        runtime["hand_sampling"]["inner_edge_quantile"]
+    )
+    for side in ("left", "right"):
+        measurement = static_core.hand_mesh_inner_edge(
+            armature,
+            canonical,
+            runtime["hand_samples"][side],
+            side,
+            inner_q,
+        )
+        side_offset = float(measurement["side_offset"])
+        boundary_hand_side_offsets[side] = side_offset
+        require(
+            side_offset >= minimum_side_offset - 1e-9,
+            f"Coordinated boundary {side} hand crosses centerline: "
+            f"{side_offset} < {minimum_side_offset}.",
+        )
+
     lower_error = max_pose_error(
         actual,
         lower_boundary_pose,
         set(lower_owned_names),
-    )
-
-    require(
-        arm_error
-        <= float(
-            contract["validation"][
-                "shared_arm_boundary_local_matrix_error_max"
-            ]
-        ),
-        f"Coordinated arm boundary error {arm_error}.",
     )
     require(
         lower_error
@@ -512,7 +603,18 @@ def validate_animation(
         },
         "minimum_consecutive_quaternion_dot": min_dot,
         "maximum_consecutive_combined_step_deg": max_step,
-        "arm_boundary_local_matrix_error": arm_error,
+        "arm_boundary_nonshoulder_local_matrix_error": (
+            arm_nonshoulder_error
+        ),
+        "arm_boundary_shoulder_correction_deg": (
+            shoulder_correction_deg
+        ),
+        "arm_boundary_max_shoulder_correction_deg": (
+            max_shoulder_correction
+        ),
+        "arm_boundary_hand_side_offsets": (
+            boundary_hand_side_offsets
+        ),
         "lower_boundary_local_matrix_error": lower_error,
         "boundary_step_diagnostics_deg": boundary_steps,
         "frames": rows,
@@ -781,6 +883,7 @@ def main() -> None:
                 arm_cache_a,
                 arm_wrist_a,
                 seg_arm_a,
+                contract,
                 frame,
             )
         else:
@@ -805,6 +908,7 @@ def main() -> None:
                 arm_cache_b,
                 arm_wrist_b,
                 seg_arm_b,
+                contract,
                 frame,
             )
 
@@ -892,6 +996,9 @@ def main() -> None:
             "single_key_authority_per_frame": True,
             "source_primitive_math_reimplemented": False,
         },
+        "coordinated_boundary_clearance": generation[
+            int(contract["timeline"]["shared_boundary_frame"]) - 1
+        ]["arm"]["clearance"],
         "diagnostics": diagnostics,
         "preview": {
             **preview_evidence,
@@ -906,7 +1013,10 @@ def main() -> None:
             "arm_explicit_override_policy_applied": True,
             "root_contact_owned_by_lower_solver": True,
             "post_overlay_contact_pass": True,
-            "arm_boundary_pass": True,
+            "arm_source_boundary_identity_pass": True,
+            "coordinated_boundary_clearance_adaptation_pass": True,
+            "coordinated_boundary_nonshoulder_arm_identity_pass": True,
+            "coordinated_boundary_hand_centerline_pass": True,
             "lower_boundary_pass": True,
             "root_descent_monotone": True,
             "root_rise_monotone": True,
