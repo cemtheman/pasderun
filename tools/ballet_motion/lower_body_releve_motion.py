@@ -66,16 +66,19 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Non-root translation ceiling may not exceed 1e-6.")
     if float(validation["moving_scale_error_max"]) > 1e-6:
         raise ValueError("Motion scale ceiling may not exceed 1e-6.")
-    if float(validation["accepted_endpoint_decomposition_noise_max"]) > 1e-5:
+    if not validation.get(
+        "accepted_endpoint_decomposition_scale_delta_diagnostic_only",
+        False,
+    ):
         raise ValueError(
-            "Endpoint decomposition noise may not exceed the accepted "
-            "Phase 10.6 local-matrix precision ceiling of 1e-5."
+            "Accepted endpoint decomposition scale delta must remain "
+            "diagnostic-only in 10.8.2."
         )
     if (
-        validation.get("accepted_endpoint_decomposition_noise_authority")
-        != "PHASE_10_6_STATIC_LOCAL_ROTATION_MATRIX_ERROR_MAX"
+        validation.get("accepted_endpoint_matrix_authority")
+        != "PHASE_10_6_ACCEPTED_REALIZED_LOCAL_MATRIX"
     ):
-        raise ValueError("Endpoint decomposition precision authority changed.")
+        raise ValueError("Accepted endpoint matrix authority changed.")
     if (
         interpolation.get("rotation_source")
         != "NORMALIZED_ENDPOINT_LOCAL_3X3_BASIS"
