@@ -66,8 +66,23 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Non-root translation ceiling may not exceed 1e-6.")
     if float(validation["moving_scale_error_max"]) > 1e-6:
         raise ValueError("Motion scale ceiling may not exceed 1e-6.")
-    if float(validation["accepted_endpoint_decomposition_noise_max"]) > 5e-6:
-        raise ValueError("Endpoint decomposition noise may not exceed 5e-6.")
+    if float(validation["accepted_endpoint_decomposition_noise_max"]) > 1e-5:
+        raise ValueError(
+            "Endpoint decomposition noise may not exceed the accepted "
+            "Phase 10.6 local-matrix precision ceiling of 1e-5."
+        )
+    if (
+        validation.get("accepted_endpoint_decomposition_noise_authority")
+        != "PHASE_10_6_STATIC_LOCAL_ROTATION_MATRIX_ERROR_MAX"
+    ):
+        raise ValueError("Endpoint decomposition precision authority changed.")
+    if (
+        interpolation.get("rotation_source")
+        != "NORMALIZED_ENDPOINT_LOCAL_3X3_BASIS"
+    ):
+        raise ValueError(
+            "10.8.2 rotations must come from normalized endpoint bases."
+        )
     if float(validation["root_horizontal_translation_max"]) > 1e-5:
         raise ValueError("Root horizontal drift ceiling is too loose.")
     if float(validation["root_rise_monotonic_epsilon"]) > 1e-4:
