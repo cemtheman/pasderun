@@ -70,6 +70,17 @@ class Phase10114ReverenceFinalUpperTests(unittest.TestCase):
         self.assertEqual(a["start_pose"],"bras_bas")
         self.assertEqual(a["upper_bound_reference_pose"],"en_avant")
 
+    def test_selected_authority_uses_existing_solver_pipeline(self) -> None:
+        selected=self.contract["upper_body"]["selected_reverence_authority"]
+        self.assertTrue(selected["canonical_solver_required"])
+        self.assertTrue(selected["calibrated_retarget_required"])
+        self.assertEqual(
+            selected["target_gap_shoulder_width_fraction"],
+            self.contract["visual_geometry_targets"][
+                "hand_gap_shoulder_width_fraction_ideal"
+            ],
+        )
+
     def test_bow_is_stronger_but_bounded(self) -> None:
         bow=self.contract["upper_body"]["bow"]
         self.assertEqual(bow["canonical_axis"],"X")
