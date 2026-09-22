@@ -136,5 +136,33 @@ class Phase1012OpeningHandoffTests(unittest.TestCase):
         )
 
 
+    def test_runtime_reverence_replays_forward_30_visual_authority(self) -> None:
+        helper = re.search(
+            r"func _apply_opening_forward_30_authority\([^)]*\).*?(?=\n\nfunc |\Z)",
+            self.controller,
+            re.DOTALL,
+        )
+        phrase = re.search(
+            r"func _apply_opening_reverence_phrase_v1\([^)]*\).*?(?=\n\nfunc |\Z)",
+            self.controller,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(helper)
+        self.assertIsNotNone(phrase)
+        source = helper.group(0)
+
+        self.assertIn("_apply_opening_forward_30_authority(u)", phrase.group(0))
+        self.assertIn("shoulder_width * 0.18", source)
+        self.assertIn("audience_forward * reach * 0.30", source)
+        self.assertIn("var support_foot := _bone_index(\"left_foot\")", source)
+        self.assertIn("var gesture_hip := _bone_index(\"right_upper_leg\")", source)
+        self.assertIn("- audience_forward * leg_length * 0.12", source)
+        self.assertIn("deg_to_rad(18.0)", source)
+        self.assertIn("deg_to_rad(10.0)", source)
+        self.assertNotIn("rotation_degrees", source)
+        self.assertNotIn("rotation.x", source)
+        self.assertNotIn("rotation.y", source)
+        self.assertNotIn("rotation.z", source)
+
 if __name__ == "__main__":
     unittest.main()
