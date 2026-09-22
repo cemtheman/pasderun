@@ -87,6 +87,10 @@ class Phase10113ReverenceExpressionTests(unittest.TestCase):
             g["hand_gap_hand_chain_fraction_ideal"],
             g["hand_gap_hand_chain_fraction_min"],
         )
+        self.assertLessEqual(
+            g["hand_side_offset_asymmetry_hand_chain_fraction_max"],
+            0.15,
+        )
 
     def test_scope_is_static_upper_refinement_only(self) -> None:
         p=self.contract["policy"]
