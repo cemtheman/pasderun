@@ -10,7 +10,9 @@
     "lower_body_sample_semantics": "ACCEPTED_FIFTH_TO_PLIE_MID_DEMI_PLIE",
     "arm_pose": "bras_bas",
     "arm_source": "PHASE_10_6_ACCEPTED_REALIZATION",
-    "explicit_arm_chain_local_matrix_authority": "EXACT_ACCEPTED_BRAS_BAS"
+    "explicit_arm_chain_local_matrix_authority": "EXACT_ACCEPTED_BRAS_BAS",
+    "arm_motion_contract_id": "foundation_motion_bras_bas_to_en_avant_v1",
+    "contextual_clearance_adaptation": "REUSE_ACCEPTED_MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION"
   },
   "acknowledgement_overlay": {
     "trunk_extra_flexion_deg": 10,
@@ -42,7 +44,6 @@
   },
   "validation": {
     "lower_contact_chain_local_matrix_error_max": 0.000001,
-    "arm_explicit_chain_local_matrix_error_max": 0.000001,
     "full_foot_contact_required": true,
     "hand_centerline_crossing_forbidden": true,
     "minimum_hand_side_offset": 0,
@@ -55,7 +56,11 @@
     ],
     "trunk_extra_flexion_deg_max": 12,
     "neck_flexion_deg_max": 4,
-    "head_flexion_deg_max": 6
+    "head_flexion_deg_max": 6,
+    "arm_nonshoulder_chain_local_matrix_error_max": 0.000001,
+    "shoulder_clearance_correction_deg_max": 3,
+    "clearance_target_side_offset": 0.0001,
+    "shoulder_only_contextual_adaptation_required": true
   },
   "preview": {
     "views": [
