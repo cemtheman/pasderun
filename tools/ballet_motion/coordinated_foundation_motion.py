@@ -52,6 +52,19 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Arm/lower semantic overlap must stay forbidden.")
     if authority["root_contact_authority"] != "LOWER_BODY_CONTACT_SOLVER":
         raise ValueError("Root contact authority changed.")
+    if (
+        authority.get("coordinated_boundary_clearance_adaptation")
+        != "REUSE_ACCEPTED_MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION"
+    ):
+        raise ValueError("Coordinated boundary clearance authority changed.")
+    if not authority.get(
+        "source_endpoint_projection_rule_preserved_outside_shared_boundary",
+        False,
+    ):
+        raise ValueError(
+            "Source endpoint projection rule must remain preserved "
+            "outside the coordinated shared boundary."
+        )
     if not authority.get("glb_export_forbidden",False):
         raise ValueError("10.10.1 may not export GLB.")
 
@@ -76,6 +89,29 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Boundary key authority must remain singular.")
     if not validation.get("post_overlay_contact_required",False):
         raise ValueError("Post-overlay foot contact must remain required.")
+    if (
+        float(
+            validation[
+                "coordinated_boundary_clearance_projection_max_shoulder_correction_deg"
+            ]
+        )
+        > 3.0
+    ):
+        raise ValueError("Coordinated boundary shoulder correction exceeds 3 deg.")
+    if (
+        float(
+            validation[
+                "coordinated_boundary_nonshoulder_arm_local_matrix_error_max"
+            ]
+        )
+        > 1e-6
+    ):
+        raise ValueError("Coordinated non-shoulder arm boundary gate is too loose.")
+    if (
+        int(validation["coordinated_boundary_projection_only_frame"])
+        != int(timeline["shared_boundary_frame"])
+    ):
+        raise ValueError("Coordinated boundary projection frame changed.")
 
 
 def expected_frame_count(contract: dict) -> int:
