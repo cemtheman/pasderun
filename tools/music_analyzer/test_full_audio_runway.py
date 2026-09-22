@@ -166,6 +166,27 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             expected_descent_gap = 1.5 if index in merge_gap_forks else 0.0
             self.assertTrue(math.isclose(merge_x - tech_end, expected_descent_gap, abs_tol=0.001))
 
+    def test_phase11_30_to_60_density_adds_three_music_aligned_small_gaps(self) -> None:
+        expected = [
+            ("NeutralRunway01", "NeutralRunway01_B", 150.372),
+            ("TechnicalPlatform03_Recovery", "TechnicalPlatform03_Recovery_B", 202.48),
+            ("TechnicalPlatform04_Interstitial", "TechnicalPlatform04_Interstitial_B", 227.556),
+        ]
+        for left_name, right_name, center_x in expected:
+            _, left_end = self._bounds(self._body(left_name))
+            right_start, _ = self._bounds(self._body(right_name))
+            self.assertTrue(math.isclose(right_start - left_end, 1.3, abs_tol=0.001))
+            self.assertTrue(
+                math.isclose((left_end + right_start) / 2.0, center_x, abs_tol=0.001)
+            )
+
+        for marker in (
+            "GapEvent20_PHASE11_ACCENT_37_593",
+            "GapEvent21_PHASE11_ACCENT_50_620",
+            "GapEvent22_PHASE11_ACCENT_56_889",
+        ):
+            self.assertIn(f'[node name="{marker}" type="Marker3D" parent="Level"]', self.course)
+
     def test_gap_events_are_controller_safe_and_descents_use_gaps(self) -> None:
         gap_x = [
             float(value)
