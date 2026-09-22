@@ -27,6 +27,7 @@ $staticContract=Join-Path $Repo "assets\ballet_motion\static_rig_application_con
 $visualContract=Join-Path $Repo "assets\ballet_motion\foundation_pose_visual_gate_v1.json"
 $reverenceContract=Join-Path $Repo "assets\ballet_motion\opening_reverence_pose_contract_v1.json"
 $lowerMotionContract=Join-Path $Repo "assets\ballet_motion\lower_body_foundation_motion_contract_v1.json"
+$armMotionContract=Join-Path $Repo "assets\ballet_motion\foundation_motion_contract_v1.json"
 $script=Join-Path $Repo "tools\blender\build_opening_reverence_acknowledgement_pose_v1.py"
 $test=Join-Path $Repo "tools\ballet_motion\test_phase10_11_1_opening_reverence_pose.py"
 $report=Join-Path $Repo "build\phase10_11\opening_reverence_acknowledgement_pose_v1_report.json"
@@ -34,7 +35,7 @@ $previewDir=Join-Path $Repo "build\phase10_11\opening_reverence_acknowledgement_
 
 foreach ($required in @(
     $canonical,$constraints,$grammar,$retarget,$axis,$intents,
-    $staticContract,$visualContract,$reverenceContract,$lowerMotionContract,$script,$test
+    $staticContract,$visualContract,$reverenceContract,$lowerMotionContract,$armMotionContract,$script,$test
 )) {
     if (-not (Test-Path $required)) {
         throw "Phase 10.11.1 prerequisite missing: $required"
@@ -57,7 +58,7 @@ if (-not $UseExistingArtifacts) {
     & python $test
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --reverence-contract $reverenceContract --lower-motion-contract $lowerMotionContract --report $report --preview-dir $previewDir
+    & $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --canonical-profile $canonical --constraint-profile $constraints --retarget-profile $retarget --retarget-axis-contract $axis --grammar-profile $grammar --intent-spec $intents --static-contract $staticContract --visual-contract $visualContract --reverence-contract $reverenceContract --lower-motion-contract $lowerMotionContract --arm-motion-contract $armMotionContract --report $report --preview-dir $previewDir
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 } else {
     Write-Host "Reusing existing Phase 10.11.1 artifacts."
@@ -77,9 +78,10 @@ foreach ($gate in @(
     "accepted_bras_bas_reused",
     "independent_arm_authoring_absent",
     "independent_leg_authoring_absent",
-    "axial_overlay_only",
+    "axial_plus_bounded_shoulder_clearance_only",
     "lower_chain_exact",
-    "arm_chain_exact",
+    "arm_nonshoulder_chain_exact",
+    "shoulder_clearance_bounded",
     "full_foot_contact_pass",
     "hand_centerline_pass",
     "imported_action_cleared"
@@ -114,7 +116,8 @@ Write-Host "Previews:       $previewCount/3"
 Write-Host "Contact max:    $($data.diagnostics.full_foot_contact_max_abs_error)"
 Write-Host "Hand L/R:       $($data.diagnostics.hand_side_offsets.left) / $($data.diagnostics.hand_side_offsets.right)"
 Write-Host "Lower error:    $($data.diagnostics.lower_contact_chain_local_matrix_error)"
-Write-Host "Arm error:      $($data.diagnostics.arm_explicit_chain_local_matrix_error)"
+Write-Host "Arm nonshoulder:$($data.diagnostics.arm_nonshoulder_chain_local_matrix_error)"
+Write-Host "Shoulder corr:  $($data.diagnostics.maximum_shoulder_clearance_correction_deg) deg"
 Write-Host "Human review:   PENDING"
 Write-Host "Animation:      NOT AUTHORED"
 Write-Host "GLB export:     NOT PERFORMED"
