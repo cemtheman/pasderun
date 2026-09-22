@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3]
+[gd_scene load_steps=38 format=3]
 
 [ext_resource type="Material" path="res://assets/materials/palace_stage_platform.tres" id="1_palace"]
 
@@ -99,48 +99,6 @@ size = Vector3(33, 0.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_neutral_33"]
 size = Vector3(33, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="Mesh_phase11_density_21_722"]
-material = ExtResource("1_palace")
-size = Vector3(21.722, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="Shape_phase11_density_21_722"]
-size = Vector3(21.722, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="Mesh_phase11_density_9_978"]
-material = ExtResource("1_palace")
-size = Vector3(9.978, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="Shape_phase11_density_9_978"]
-size = Vector3(9.978, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="Mesh_phase11_density_8_83"]
-material = ExtResource("1_palace")
-size = Vector3(8.83, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="Shape_phase11_density_8_83"]
-size = Vector3(8.83, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="Mesh_phase11_density_3_87"]
-material = ExtResource("1_palace")
-size = Vector3(3.87, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="Shape_phase11_density_3_87"]
-size = Vector3(3.87, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="Mesh_phase11_density_11_906"]
-material = ExtResource("1_palace")
-size = Vector3(11.906, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="Shape_phase11_density_11_906"]
-size = Vector3(11.906, 0.5, 4)
-
-[sub_resource type="BoxMesh" id="Mesh_phase11_density_6_294"]
-material = ExtResource("1_palace")
-size = Vector3(6.294, 0.5, 4)
-
-[sub_resource type="BoxShape3D" id="Shape_phase11_density_6_294"]
-size = Vector3(6.294, 0.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_neutral_8"]
 material = ExtResource("1_palace")
@@ -320,26 +278,12 @@ position = Vector3(259.15, -2.8, 0)
 [node name="GapEvent19_F04_SAFE" type="Marker3D" parent="Level"]
 position = Vector3(419.15, -2.8, 0)
 
-[node name="GapEvent20_PHASE11_ACCENT_37_593" type="Marker3D" parent="Level"]
-position = Vector3(150.372, -2.8, 0)
-[node name="GapEvent21_PHASE11_ACCENT_50_620" type="Marker3D" parent="Level"]
-position = Vector3(202.48, -2.8, 0)
-[node name="GapEvent22_PHASE11_ACCENT_56_889" type="Marker3D" parent="Level"]
-position = Vector3(227.556, -2.55, 0)
-
 [node name="NeutralRunway01" type="StaticBody3D" parent="Level"]
-position = Vector3(138.861, -3.05, 0)
+position = Vector3(144.5, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway01"]
-mesh = SubResource("Mesh_phase11_density_21_722")
+mesh = SubResource("Mesh_neutral_33")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway01"]
-shape = SubResource("Shape_phase11_density_21_722")
-
-[node name="NeutralRunway01_B" type="StaticBody3D" parent="Level"]
-position = Vector3(156.011, -3.05, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/NeutralRunway01_B"]
-mesh = SubResource("Mesh_phase11_density_9_978")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/NeutralRunway01_B"]
-shape = SubResource("Shape_phase11_density_9_978")
+shape = SubResource("Shape_neutral_33")
 
 [node name="TechnicalPlatform01_ApproachRamp" type="StaticBody3D" parent="Level"]
 position = Vector3(168, -1.175, 0)
@@ -371,18 +315,11 @@ mesh = SubResource("Mesh_8_2")
 shape = SubResource("Shape_8_2")
 
 [node name="TechnicalPlatform03_Recovery" type="StaticBody3D" parent="Level"]
-position = Vector3(197.415, -3.05, 0)
+position = Vector3(200, -3.05, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform03_Recovery"]
-mesh = SubResource("Mesh_phase11_density_8_83")
+mesh = SubResource("Mesh_14")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform03_Recovery"]
-shape = SubResource("Shape_phase11_density_8_83")
-
-[node name="TechnicalPlatform03_Recovery_B" type="StaticBody3D" parent="Level"]
-position = Vector3(205.065, -3.05, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform03_Recovery_B"]
-mesh = SubResource("Mesh_phase11_density_3_87")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform03_Recovery_B"]
-shape = SubResource("Shape_phase11_density_3_87")
+shape = SubResource("Shape_14")
 
 [node name="NeutralRunway02" type="StaticBody3D" parent="Level"]
 position = Vector3(211, -3.05, 0)
@@ -392,18 +329,11 @@ mesh = SubResource("Mesh_neutral_8")
 shape = SubResource("Shape_neutral_8")
 
 [node name="TechnicalPlatform04_Interstitial" type="StaticBody3D" parent="Level"]
-position = Vector3(220.953, -2.8, 0)
+position = Vector3(224.75, -2.8, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform04_Interstitial"]
-mesh = SubResource("Mesh_phase11_density_11_906")
+mesh = SubResource("Mesh_19_5")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform04_Interstitial"]
-shape = SubResource("Shape_phase11_density_11_906")
-
-[node name="TechnicalPlatform04_Interstitial_B" type="StaticBody3D" parent="Level"]
-position = Vector3(231.353, -2.8, 0)
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/TechnicalPlatform04_Interstitial_B"]
-mesh = SubResource("Mesh_phase11_density_6_294")
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/TechnicalPlatform04_Interstitial_B"]
-shape = SubResource("Shape_phase11_density_6_294")
+shape = SubResource("Shape_19_5")
 
 [node name="TechnicalPlatform05_ApproachRamp" type="StaticBody3D" parent="Level"]
 position = Vector3(243, -1.175, 0)
