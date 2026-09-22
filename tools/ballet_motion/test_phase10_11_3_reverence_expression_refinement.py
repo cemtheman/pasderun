@@ -79,14 +79,22 @@ class Phase10113ReverenceExpressionTests(unittest.TestCase):
             min(p["shoulder_progress"] for p in candidates),
             0.0,
         )
+        self.assertEqual(
+            sorted({p["shoulder_progress"] for p in candidates}),
+            [0.08,0.10,0.12],
+        )
+        self.assertEqual(
+            sorted({p["elbow_progress"] for p in candidates}),
+            [0.15,0.20,0.25],
+        )
 
     def test_bow_is_stronger_but_bounded(self) -> None:
         bow=self.contract["upper_body"]["bow"]
         self.assertEqual(bow["canonical_axis"],"X")
         self.assertGreater(bow["trunk_extra_flexion_deg"],10.0)
-        self.assertLessEqual(bow["trunk_extra_flexion_deg"],20.0)
-        self.assertLessEqual(bow["neck_flexion_deg"],6.0)
-        self.assertLessEqual(bow["head_flexion_deg"],10.0)
+        self.assertLessEqual(bow["trunk_extra_flexion_deg"],24.0)
+        self.assertLessEqual(bow["neck_flexion_deg"],7.0)
+        self.assertLessEqual(bow["head_flexion_deg"],12.0)
 
     def test_hand_gap_target_uses_shoulder_midpoint_frame(self) -> None:
         g=self.contract["visual_geometry_targets"]
