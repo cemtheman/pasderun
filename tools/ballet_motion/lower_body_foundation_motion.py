@@ -77,12 +77,41 @@ def validate_contract(contract: dict) -> None:
     if not validation.get("sample_every_frame", False):
         raise ValueError("10.8.1 must sample every frame.")
 
-    allowed = set(validation["allowed_moving_canonical_bones"])
+    drivers = set(validation["semantic_driver_canonical_bones"])
     required = set(validation["required_motion_canonical_bones"])
-    if not required <= allowed:
-        raise ValueError("Required moving bones must be a subset of allowed moving bones.")
+    if not required <= drivers:
+        raise ValueError(
+            "Required moving bones must be a subset of semantic drivers."
+        )
     if "pelvis" not in required:
         raise ValueError("Pelvis must participate in fifth -> plie motion.")
+    for name in ("spine_lower", "spine_mid", "chest"):
+        if name not in required:
+            raise ValueError(
+                "Plié trunk-tilt drivers must remain required motion bones."
+            )
+    if validation.get("trunk_hierarchy_propagation_root") != "chest":
+        raise ValueError(
+            "Accepted trunk hierarchy propagation must remain rooted at chest."
+        )
+    authority = contract["authority"]
+    if not authority.get(
+        "independent_upper_body_authoring_forbidden",
+        False,
+    ):
+        raise ValueError("Independent upper-body authoring must stay forbidden.")
+    if (
+        authority.get("trunk_tilt_authority")
+        != "PHASE_10_6_TRUNK_TILT_SCALAR_ORIENTATION_ROUTE"
+    ):
+        raise ValueError("Plié trunk-tilt authority changed.")
+    if not authority.get(
+        "hierarchy_propagated_endpoint_motion_required",
+        False,
+    ):
+        raise ValueError(
+            "Accepted hierarchy-propagated endpoint motion must be retained."
+        )
 
 
 def frame_end(contract: dict) -> int:
@@ -146,7 +175,24 @@ def semantic_dof_proxy(
     end_pose = intent_spec["poses"][end_name]["joint_dofs"]
     p = minimum_jerk(normalized_t)
 
-    result = {"status": "PASS", "progress": p, "joints": {}}
+    start_trunk = float(
+        intent_spec["poses"][start_name].get("trunk_tilt_deg", 0.0)
+    )
+    end_trunk = float(
+        intent_spec["poses"][end_name].get("trunk_tilt_deg", 0.0)
+    )
+    trunk_tilt = interpolate_bounded_scalar(
+        start_trunk,
+        end_trunk,
+        p,
+    )
+
+    result = {
+        "status": "PASS",
+        "progress": p,
+        "trunk_tilt_deg": trunk_tilt,
+        "joints": {},
+    }
     for intent_key, joint_class in LOWER_DOF_TO_CONSTRAINT.items():
         start_dofs = start_pose[intent_key]
         end_dofs = end_pose[intent_key]
