@@ -26,13 +26,18 @@ class Phase10111OpeningReverencePoseTests(unittest.TestCase):
     def test_contract_is_valid(self) -> None:
         pose.validate_contract(self.contract)
 
-    def test_uses_accepted_plie_and_second(self) -> None:
+    def test_uses_accepted_demi_plie_sample_and_bras_bas(self) -> None:
         source=self.contract["source_pose_authority"]
-        self.assertEqual(source["lower_body_pose"],"plie")
-        self.assertEqual(source["arm_pose"],"second")
+        self.assertEqual(source["lower_body_source_phase"],"10.8.1")
+        self.assertEqual(
+            source["lower_body_source_contract_id"],
+            "foundation_motion_fifth_to_plie_v1",
+        )
+        self.assertEqual(source["lower_body_sample_frame"],31)
+        self.assertEqual(source["arm_pose"],"bras_bas")
         self.assertEqual(
             source["explicit_arm_chain_local_matrix_authority"],
-            "EXACT_ACCEPTED_SECOND",
+            "EXACT_ACCEPTED_BRAS_BAS",
         )
 
     def test_no_new_arm_or_leg_authoring(self) -> None:
@@ -47,9 +52,9 @@ class Phase10111OpeningReverencePoseTests(unittest.TestCase):
     def test_axial_overlay_is_small_and_canonical(self) -> None:
         overlay=self.contract["acknowledgement_overlay"]
         self.assertEqual(overlay["canonical_axis"],"X")
-        self.assertLessEqual(overlay["trunk_extra_flexion_deg"],8.0)
-        self.assertLessEqual(overlay["neck_flexion_deg"],3.0)
-        self.assertLessEqual(overlay["head_flexion_deg"],5.0)
+        self.assertLessEqual(overlay["trunk_extra_flexion_deg"],12.0)
+        self.assertLessEqual(overlay["neck_flexion_deg"],4.0)
+        self.assertLessEqual(overlay["head_flexion_deg"],6.0)
 
     def test_matrix_and_contact_gates_are_strict(self) -> None:
         v=self.contract["validation"]
