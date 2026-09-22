@@ -76,19 +76,26 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Head bow grew too large.")
 
     targets=contract["visual_geometry_targets"]
-    if float(targets["hand_gap_hand_chain_fraction_min"]) < 0.15:
+    if (
+        targets["metric_authority"]
+        != "SHOULDER_MIDPOINT_BODY_FRAME_LEFT_AXIS"
+    ):
+        raise ValueError("Reverence hand-geometry metric authority changed.")
+    if float(targets["hand_gap_shoulder_width_fraction_min"]) < 0.20:
         raise ValueError("Hand-gap minimum is too small.")
-    if float(targets["hand_gap_hand_chain_fraction_max"]) > 0.65:
+    if float(targets["hand_gap_shoulder_width_fraction_max"]) > 0.65:
         raise ValueError("Hand-gap maximum is too large.")
     if float(
-        targets["hand_side_offset_asymmetry_hand_chain_fraction_max"]
-    ) > 0.15:
-        raise ValueError("Hand-side asymmetry gate is too loose.")
-    ideal=float(targets["hand_gap_hand_chain_fraction_ideal"])
+        targets[
+            "hand_midpoint_asymmetry_shoulder_width_fraction_max"
+        ]
+    ) > 0.10:
+        raise ValueError("Hand midpoint asymmetry gate is too loose.")
+    ideal=float(targets["hand_gap_shoulder_width_fraction_ideal"])
     if not (
-        float(targets["hand_gap_hand_chain_fraction_min"])
+        float(targets["hand_gap_shoulder_width_fraction_min"])
         <= ideal
-        <= float(targets["hand_gap_hand_chain_fraction_max"])
+        <= float(targets["hand_gap_shoulder_width_fraction_max"])
     ):
         raise ValueError("Ideal hand gap is outside accepted range.")
 
