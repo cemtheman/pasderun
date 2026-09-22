@@ -26,6 +26,8 @@ BASELINE_END_X = BASELINE_END_SECONDS * RUN_SPEED
 MIN_INTERVAL_LENGTH = 0.0001
 BRIDGE_MIN_CONTINUITY = 0.70
 BRIDGE_MIN_SUSTAIN = 0.65
+PHASE11_DENSITY_GAP_LENGTH = 1.3
+PHASE11_DENSITY_GAP_TIMES = (43.862, 46.208, 56.889)
 
 
 def _round(value: float) -> float:
@@ -73,6 +75,65 @@ def _clip_extension_runways(
             "surface_y": _round(interval["surface_y"]),
         })
     return output
+
+
+def _apply_phase11_density_gaps(
+    intervals: list[dict[str, Any]],
+) -> tuple[list[dict[str, float]], list[dict[str, float]]]:
+    output = [copy.deepcopy(interval) for interval in intervals]
+    gaps: list[dict[str, float]] = []
+
+    for source_time in PHASE11_DENSITY_GAP_TIMES:
+        center_x = source_time * RUN_SPEED
+        half = PHASE11_DENSITY_GAP_LENGTH / 2.0
+        gap_start = center_x - half
+        gap_end = center_x + half
+
+        coverage = 0.0
+        next_output: list[dict[str, float]] = []
+        for interval in output:
+            left = float(interval["start_x"])
+            right = float(interval["end_x"])
+            surface_y = float(interval["surface_y"])
+            overlap_start = max(left, gap_start)
+            overlap_end = min(right, gap_end)
+
+            if overlap_end <= overlap_start:
+                next_output.append(copy.deepcopy(interval))
+                continue
+
+            coverage += overlap_end - overlap_start
+            if left < gap_start and gap_start - left >= MIN_INTERVAL_LENGTH:
+                next_output.append({
+                    "start_x": _round(left),
+                    "end_x": _round(gap_start),
+                    "surface_y": _round(surface_y),
+                })
+            if right > gap_end and right - gap_end >= MIN_INTERVAL_LENGTH:
+                next_output.append({
+                    "start_x": _round(gap_end),
+                    "end_x": _round(right),
+                    "surface_y": _round(surface_y),
+                })
+
+        if coverage < PHASE11_DENSITY_GAP_LENGTH - 1e-3:
+            raise ValueError(
+                f"Phase 11 density gap at t={source_time:.3f} lacks runway coverage"
+            )
+
+        output = sorted(
+            next_output,
+            key=lambda item: (float(item["start_x"]), float(item["end_x"])),
+        )
+        gaps.append({
+            "source_time": _round(source_time),
+            "center_x": _round(center_x),
+            "start_x": _round(gap_start),
+            "end_x": _round(gap_end),
+            "gap_length": PHASE11_DENSITY_GAP_LENGTH,
+        })
+
+    return output, gaps
 
 
 def _select_final_bridge_windows(
@@ -211,6 +272,21 @@ def build_full_piece_bridge_extension(
     output["surface_plan"]["ramps"] = copy.deepcopy(
         accepted_120_plan["surface_plan"].get("ramps", [])
     )
+
+    densified_runways, phase11_gaps = _apply_phase11_density_gaps(
+        output["surface_plan"]["runway_intervals"]
+    )
+    output["surface_plan"]["runway_intervals"] = densified_runways
+    output.setdefault("prototype_overlays", {})
+    output["prototype_overlays"]["phase11_gameplay_density_v1"] = {
+        "time_range": {"start": 30.0, "end": 60.0},
+        "source": "MUSIC_ACCENT_SMALL_JUMP_UPLIFT",
+        "new_required_actions": True,
+        "gap_count": len(phase11_gaps),
+        "gap_length": PHASE11_DENSITY_GAP_LENGTH,
+        "gaps": phase11_gaps,
+        "accepted_120_source_unchanged": True,
+    }
 
     bridge_windows = _select_final_bridge_windows(visual_score)
     bridge_start = float(bridge_windows[0]["start"])
