@@ -6,6 +6,7 @@ enum PreludeState {
 	WALK_IN,
 	BOW,
 	READY,
+	EXIT_TURN,
 	STARTED,
 }
 
@@ -25,6 +26,8 @@ enum PreludeState {
 var _started := false
 var _prelude_state := PreludeState.WALK_IN
 var _bow_elapsed := 0.0
+var _exit_turn_elapsed := 0.0
+var _exit_turn_duration := 0.38
 var _stage_visual: Node
 
 
@@ -93,6 +96,12 @@ func _process(delta: float) -> void:
 			_prelude_state = PreludeState.READY
 			_set_stage_visual(&"READY")
 			overlay.visible = true
+		return
+
+	if _prelude_state == PreludeState.EXIT_TURN:
+		_exit_turn_elapsed += delta
+		if _exit_turn_elapsed >= _exit_turn_duration:
+			_enable_gameplay_after_exit_turn()
 
 
 func _input(event: InputEvent) -> void:
@@ -104,7 +113,8 @@ func _input(event: InputEvent) -> void:
 		return
 
 	_started = true
-	_prelude_state = PreludeState.STARTED
+	_prelude_state = PreludeState.EXIT_TURN
+	_exit_turn_elapsed = 0.0
 	get_viewport().set_input_as_handled()
 
 	# Web audio must still be unlocked synchronously inside the user gesture.
@@ -112,26 +122,37 @@ func _input(event: InputEvent) -> void:
 	flow_tracker.process_mode = Node.PROCESS_MODE_INHERIT
 	tap_timing_debug.process_mode = Node.PROCESS_MODE_INHERIT
 	accent_runtime_trace.process_mode = Node.PROCESS_MODE_INHERIT
-	# Unlock Web audio synchronously inside the user gesture, but hold playback
-	# at 0 until gameplay is released on the deferred boundary below.
+	# Unlock Web audio synchronously inside the user gesture, but keep playback
+	# paused at 0 while the dancer turns from the audience toward +X travel.
 	audio_player.play(0.0)
 	audio_player.stream_paused = true
 	overlay.visible = false
 
-	# Keep stage-entrance input blocking alive until this event has completely
-	# left the tree, so the start gesture cannot also become gameplay input.
-	call_deferred("_enable_gameplay_after_start_input")
+	_resolve_stage_visual()
+	if (
+		_stage_visual != null
+		and _stage_visual.has_method("get_stage_exit_turn_duration")
+	):
+		_exit_turn_duration = maxf(
+			float(_stage_visual.call("get_stage_exit_turn_duration")),
+			0.0
+		)
+	_set_stage_visual(&"EXIT_TURN")
 
 
-func _enable_gameplay_after_start_input() -> void:
+func _enable_gameplay_after_exit_turn() -> void:
+	if _prelude_state != PreludeState.EXIT_TURN:
+		return
+
+	_prelude_state = PreludeState.STARTED
 	if dancer.has_method("end_stage_entrance"):
 		dancer.call("end_stage_entrance")
 	_resolve_stage_visual()
 	if _stage_visual != null and _stage_visual.has_method("clear_stage_presentation"):
 		_stage_visual.call("clear_stage_presentation")
 	# play() was used only to unlock Web audio inside the input gesture.
-	# Rewind once more at the actual gameplay-release boundary so any tiny
-	# browser-side preroll while paused cannot become a persistent start offset.
+	# Rewind at the actual post-turn gameplay boundary so the first run frame
+	# and music t=0 share the same release point.
 	audio_player.seek(0.0)
 	runtime_started.emit()
 	audio_player.stream_paused = false
