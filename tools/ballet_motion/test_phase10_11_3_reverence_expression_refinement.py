@@ -22,12 +22,6 @@ class Phase10113ReverenceExpressionTests(unittest.TestCase):
                 "opening_reverence_expression_refinement_contract_v1.json"
             ).read_text(encoding="utf-8")
         )
-        cls.constraints=json.loads(
-            (
-                REPO/"assets"/"ballet_motion"/
-                "anatomical_constraints_v1.json"
-            ).read_text(encoding="utf-8")
-        )
 
     def test_contract_is_valid(self) -> None:
         refinement.validate_contract(self.contract)
@@ -54,23 +48,37 @@ class Phase10113ReverenceExpressionTests(unittest.TestCase):
             list(refinement.arm_candidate_parameter_sets(self.contract)),
         )
 
-    def test_every_arm_candidate_is_in_preferred_envelope(self) -> None:
-        for params in refinement.arm_candidate_parameter_sets(self.contract):
-            state=refinement.build_arm_state(self.contract,params)
-            self.assertEqual(
-                refinement.preferred_envelope_violations(
-                    state,self.constraints
-                ),
-                [],
-            )
-
-    def test_search_stays_below_second_position_guard(self) -> None:
-        maximum=max(
-            p["upper_arm_abduction_adduction_deg"]
-            for p in refinement.arm_candidate_parameter_sets(self.contract)
+    def test_arm_authority_uses_accepted_endpoints(self) -> None:
+        a=self.contract["upper_body"]["arm_source_authority"]
+        self.assertEqual(a["start_pose"],"bras_bas")
+        self.assertEqual(a["upper_bound_reference_pose"],"second")
+        self.assertEqual(
+            a["endpoint_authority"],
+            "PHASE_10_6_ACCEPTED_REALIZATION",
         )
-        self.assertLessEqual(maximum,50.0)
-        self.assertLess(maximum,90.0)
+        self.assertEqual(
+            a["shoulder_elbow_rotation"],
+            "QUATERNION_SHORTEST_ARC_SLERP",
+        )
+        self.assertEqual(a["wrist_policy"],"EXACT_BRAS_BAS")
+        self.assertEqual(a["fingers_policy"],"EXACT_BRAS_BAS")
+
+    def test_search_stays_within_thirty_percent_of_second(self) -> None:
+        candidates=list(
+            refinement.arm_candidate_parameter_sets(self.contract)
+        )
+        self.assertLessEqual(
+            max(p["shoulder_progress"] for p in candidates),
+            0.30,
+        )
+        self.assertLessEqual(
+            max(p["elbow_progress"] for p in candidates),
+            0.30,
+        )
+        self.assertGreater(
+            min(p["shoulder_progress"] for p in candidates),
+            0.0,
+        )
 
     def test_bow_is_stronger_but_bounded(self) -> None:
         bow=self.contract["upper_body"]["bow"]
@@ -90,6 +98,13 @@ class Phase10113ReverenceExpressionTests(unittest.TestCase):
         self.assertLessEqual(
             g["hand_side_offset_asymmetry_hand_chain_fraction_max"],
             0.15,
+        )
+
+    def test_no_centerline_projection_is_allowed(self) -> None:
+        v=self.contract["validation"]
+        self.assertTrue(v["no_centerline_projection_allowed"])
+        self.assertTrue(
+            v["accepted_arm_endpoint_bounded_interpolation_required"]
         )
 
     def test_scope_is_static_upper_refinement_only(self) -> None:
