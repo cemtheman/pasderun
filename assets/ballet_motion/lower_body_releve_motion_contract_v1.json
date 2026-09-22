@@ -26,7 +26,8 @@
     "end_contact_mode": "SOLVE_FOREFOOT_CONTACT",
     "locked_bones": "EXACT_START_MATRIX_BASIS",
     "start_endpoint": "EXACT_PHASE_10_6_REALIZED_PLIE",
-    "end_endpoint": "EXACT_PHASE_10_6_REALIZED_RELEVE"
+    "end_endpoint": "EXACT_PHASE_10_6_REALIZED_RELEVE",
+    "rotation_source": "NORMALIZED_ENDPOINT_LOCAL_3X3_BASIS"
   },
   "authority": {
     "motion_authority": "SINGLE_HUMANOID_RIG",
@@ -48,7 +49,7 @@
     "locked_local_matrix_error_max": 1e-7,
     "moving_non_root_translation_error_max": 0.000001,
     "moving_scale_error_max": 0.000001,
-    "accepted_endpoint_decomposition_noise_max": 0.000005,
+    "accepted_endpoint_decomposition_noise_max": 0.00001,
     "minimum_consecutive_quaternion_dot": 0,
     "sample_every_frame": true,
     "start_full_foot_contact_required": true,
@@ -87,7 +88,8 @@
       "spine_mid",
       "chest"
     ],
-    "trunk_hierarchy_propagation_root": "chest"
+    "trunk_hierarchy_propagation_root": "chest",
+    "accepted_endpoint_decomposition_noise_authority": "PHASE_10_6_STATIC_LOCAL_ROTATION_MATRIX_ERROR_MAX"
   },
   "preview": {
     "views": [
