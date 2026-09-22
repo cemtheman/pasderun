@@ -80,7 +80,7 @@ foreach ($gate in @(
     "accepted_trunk_hierarchy_motion",
     "quaternion_shortest_arc",
     "normalized_endpoint_rotation_basis",
-    "accepted_endpoint_decomposition_noise_bounded",
+    "endpoint_decomposition_scale_diagnostic_only",
     "intermediate_scale_locked",
     "minimum_jerk_timing",
     "start_full_foot_contact",
