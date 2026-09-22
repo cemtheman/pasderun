@@ -4,14 +4,16 @@
   "contract_id": "opening_reverence_acknowledgement_pose_v1",
   "purpose": "STATIC_VISUAL_GATE_BEFORE_REVERENCE_ANIMATION",
   "source_pose_authority": {
-    "lower_body_pose": "plie",
-    "arm_pose": "second",
-    "lower_body_source": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "lower_body_source_phase": "10.8.1",
+    "lower_body_source_contract_id": "foundation_motion_fifth_to_plie_v1",
+    "lower_body_sample_frame": 31,
+    "lower_body_sample_semantics": "ACCEPTED_FIFTH_TO_PLIE_MID_DEMI_PLIE",
+    "arm_pose": "bras_bas",
     "arm_source": "PHASE_10_6_ACCEPTED_REALIZATION",
-    "explicit_arm_chain_local_matrix_authority": "EXACT_ACCEPTED_SECOND"
+    "explicit_arm_chain_local_matrix_authority": "EXACT_ACCEPTED_BRAS_BAS"
   },
   "acknowledgement_overlay": {
-    "trunk_extra_flexion_deg": 6,
+    "trunk_extra_flexion_deg": 10,
     "trunk_routes": [
       {
         "bone": "spine_lower",
@@ -26,8 +28,8 @@
         "weight": 0.33
       }
     ],
-    "neck_flexion_deg": 2,
-    "head_flexion_deg": 3,
+    "neck_flexion_deg": 3,
+    "head_flexion_deg": 5,
     "canonical_axis": "X",
     "independently_authored_arm_rotation_forbidden": true,
     "independently_authored_leg_rotation_forbidden": true
@@ -51,9 +53,9 @@
       "neck",
       "head"
     ],
-    "trunk_extra_flexion_deg_max": 8,
-    "neck_flexion_deg_max": 3,
-    "head_flexion_deg_max": 5
+    "trunk_extra_flexion_deg_max": 12,
+    "neck_flexion_deg_max": 4,
+    "head_flexion_deg_max": 6
   },
   "preview": {
     "views": [
@@ -66,10 +68,11 @@
     "automated_aesthetic_verdict_forbidden": true
   },
   "human_visual_questions": [
-    "Does the pose read as a formal ballet acknowledgement rather than an ordinary plie?",
-    "Do the arms read cleanly as accepted second position without reversed or broken axes?",
-    "Is the torso/head inclination clear but restrained?",
-    "Do the feet, knees, pelvis, and turnout remain coherent?",
+    "Does the pose now read immediately as a formal ballet reverence/acknowledgement?",
+    "Do the arms remain a clean accepted bras_bas rather than a wing-like second position?",
+    "Is the demi-plie restrained enough to support the bow rather than dominate it?",
+    "Is the torso/head inclination readable from front, three-quarter, and side?",
+    "Do the feet, knees, pelvis, turnout, and full-foot contact remain coherent?",
     "Does FRONT read as the audience-facing presentation?"
   ],
   "policy": {
