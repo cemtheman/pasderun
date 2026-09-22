@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 
 PHASE="10.11.3"
@@ -76,39 +76,43 @@ def matrix_max_error(a,b) -> float:
     )
 
 
-def make_solution(state: dict) -> dict:
-    return {
-        "pose":"reverence_low_oval",
-        "state":state,
-        "validation":{"status":"PASS"},
-        "evidence":{"preferred_joint_envelope":"PASS_BY_10_11_3"},
-    }
+def endpoint_interpolated_arm_pose(
+    start_pose: dict,
+    end_pose: dict,
+    roles: dict[str,str],
+    parameters: dict,
+) -> dict:
+    result={}
+    for rig_name,role in roles.items():
+        if role=="shoulder":
+            progress=float(parameters["shoulder_progress"])
+        elif role=="elbow":
+            progress=float(parameters["elbow_progress"])
+        else:
+            # Wrist and fingers remain exact accepted bras_bas.
+            progress=0.0
 
+        if progress <= 0.0:
+            result[rig_name]=start_pose[rig_name].copy()
+            continue
 
-def candidate_arm_pose(
-    armature,
-    canonical,
-    constraints,
-    axis_contract,
-    retarget_solver,
-    state,
-    arm_names: set[str],
-) -> tuple[dict,dict]:
-    static_core.clear_pose(armature)
-    retargeted=retarget_solver.retarget_pose_solution(
-        make_solution(state),
-        canonical,
-        constraints,
-        axis_contract,
-    )
-    static_core.apply_rotation_deltas(armature,retargeted)
-    return (
-        {
-            name:armature.pose.bones[name].matrix_basis.copy()
-            for name in arm_names
-        },
-        retargeted,
-    )
+        start_matrix=start_pose[rig_name]
+        end_matrix=end_pose[rig_name]
+        location,_start_decomp_q,scale=start_matrix.decompose()
+        start_q=start_matrix.to_3x3().normalized().to_quaternion()
+        end_q=end_matrix.to_3x3().normalized().to_quaternion()
+        start_q.normalize()
+        end_q.normalize()
+        if start_q.dot(end_q) < 0.0:
+            end_q.negate()
+        q=start_q.slerp(end_q,progress)
+        q.normalize()
+        result[rig_name]=Matrix.LocRotScale(
+            location,
+            q,
+            scale,
+        )
+    return result
 
 
 def apply_bow(
@@ -241,14 +245,8 @@ def candidate_score(
     # bras_bas (30° shoulder abduction, 55° elbow flexion).
     return (
         abs(float(hand["gap_hand_chain_fraction"])-ideal),
-        abs(
-            float(parameters["upper_arm_abduction_adduction_deg"])
-            - 30.0
-        ),
-        abs(
-            float(parameters["forearm_flexion_extension_deg"])
-            - 55.0
-        ),
+        float(parameters["shoulder_progress"]),
+        float(parameters["elbow_progress"]),
     )
 
 
@@ -472,26 +470,41 @@ def main() -> None:
         armature,canonical,static_contract
     )
     arm_names=set(arm_roles)
+    arm_authority=contract["upper_body"]["arm_source_authority"]
+
+    bras_bas_pose,_=arm_motion.realize_endpoint(
+        arm_authority["start_pose"],
+        armature,
+        canonical,
+        constraints,
+        retarget,
+        axis_contract,
+        static_contract,
+        visual_contract,
+        runtime,
+    )
+    second_pose,_=arm_motion.realize_endpoint(
+        arm_authority["upper_bound_reference_pose"],
+        armature,
+        canonical,
+        constraints,
+        retarget,
+        axis_contract,
+        static_contract,
+        visual_contract,
+        runtime,
+    )
 
     candidates=[]
     winners=[]
-    retarget_cache={}
     for parameters in refinement.arm_candidate_parameter_sets(
         contract
     ):
-        state=refinement.build_arm_state(contract,parameters)
-        arm_violations=refinement.preferred_envelope_violations(
-            state,constraints
-        )
-        require(
-            not arm_violations,
-            "Arm candidate left preferred envelope: "
-            + "; ".join(arm_violations),
-        )
-
-        arm_pose,arm_retarget=candidate_arm_pose(
-            armature,canonical,constraints,axis_contract,
-            retarget_solver,state,arm_names
+        arm_pose=endpoint_interpolated_arm_pose(
+            bras_bas_pose,
+            second_pose,
+            arm_roles,
+            parameters,
         )
         restore(armature,lower_pose)
         for name,matrix in arm_pose.items():
@@ -525,7 +538,6 @@ def main() -> None:
                 score,
                 parameters,
                 arm_pose,
-                arm_retarget,
                 hand,
                 elbow,
             ))
@@ -540,7 +552,6 @@ def main() -> None:
         selected_score,
         selected_parameters,
         selected_arm_pose,
-        selected_arm_retarget,
         selected_hand,
         selected_elbow,
     )=winners[0]
@@ -629,7 +640,15 @@ def main() -> None:
             "selected_score":list(map(float,selected_score)),
             "selected_hand_geometry":final_hand,
             "selected_elbow_geometry":final_elbow,
-            "selected_retarget_evidence":selected_arm_retarget["evidence"],
+            "arm_source_authority":arm_authority,
+            "interpolation_policy":{
+                "shoulder":"QUATERNION_SHORTEST_ARC_SLERP",
+                "elbow":"QUATERNION_SHORTEST_ARC_SLERP",
+                "wrist":"EXACT_BRAS_BAS",
+                "fingers":"EXACT_BRAS_BAS",
+                "translation":"LOCK_TO_BRAS_BAS",
+                "scale":"LOCK_TO_BRAS_BAS",
+            },
             "candidates":candidates,
             "bow":contract["upper_body"]["bow"],
             "centerline_projection_used":False,
@@ -645,7 +664,7 @@ def main() -> None:
         "automated_gate":{
             "frozen_10_11_2_parameters_exact":True,
             "frozen_lower_source_geometry_repassed":True,
-            "preferred_arm_joint_envelopes_pass":True,
+            "accepted_arm_endpoint_bounded_interpolation_pass":True,
             "low_oval_stays_below_second_guard":True,
             "hand_gap_pass":True,
             "hand_symmetry_pass":True,
