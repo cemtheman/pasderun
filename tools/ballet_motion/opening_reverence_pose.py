@@ -28,6 +28,16 @@ def validate_contract(contract: dict) -> None:
         != "EXACT_ACCEPTED_BRAS_BAS"
     ):
         raise ValueError("Accepted bras_bas arm authority changed.")
+    if (
+        source.get("arm_motion_contract_id")
+        != "foundation_motion_bras_bas_to_en_avant_v1"
+    ):
+        raise ValueError("Reverence arm-motion contract authority changed.")
+    if (
+        source.get("contextual_clearance_adaptation")
+        != "REUSE_ACCEPTED_MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION"
+    ):
+        raise ValueError("Reverence clearance adaptation authority changed.")
 
     overlay=contract["acknowledgement_overlay"]
     if overlay["canonical_axis"] != "X":
@@ -47,8 +57,14 @@ def validate_contract(contract: dict) -> None:
     validation=contract["validation"]
     if float(validation["lower_contact_chain_local_matrix_error_max"]) > 1e-6:
         raise ValueError("Lower-chain gate is too loose.")
-    if float(validation["arm_explicit_chain_local_matrix_error_max"]) > 1e-6:
-        raise ValueError("Arm-chain gate is too loose.")
+    if float(validation["arm_nonshoulder_chain_local_matrix_error_max"]) > 1e-6:
+        raise ValueError("Non-shoulder arm-chain gate is too loose.")
+    if float(validation["shoulder_clearance_correction_deg_max"]) > 3.0:
+        raise ValueError("Shoulder clearance correction exceeds 3 degrees.")
+    if float(validation["clearance_target_side_offset"]) < 0.0001:
+        raise ValueError("Reverence clearance target may not drop below 1e-4.")
+    if not validation.get("shoulder_only_contextual_adaptation_required",False):
+        raise ValueError("Contextual adaptation must remain shoulder-only.")
     if not validation.get("full_foot_contact_required",False):
         raise ValueError("Full-foot contact must remain required.")
     if not validation.get("hand_centerline_crossing_forbidden",False):
