@@ -48,7 +48,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.11.4 - REVERENCE FINAL UPPER REFINEMENT"
 Write-Host "Lower: frozen 10.11.2 selected crossed stance"
-Write-Host "Upper: 9 bounded bras_bas-to-en_avant endpoint-interpolation candidates"
+Write-Host "Upper: selected explicit forward_30 reverence authority"
 Write-Host "Bow: canonical-X trunk/head refinement"
 Write-Host "Centerline projection: FORBIDDEN"
 Write-Host "Animation/turn/run/music: NO"
@@ -195,8 +195,9 @@ if ($data.phase -ne "10.11.4") {
 foreach ($gate in @(
     "frozen_10_11_2_parameters_exact",
     "frozen_lower_source_geometry_repassed",
-    "accepted_arm_endpoint_bounded_interpolation_pass",
-    "low_oval_stays_within_en_avant_guard",
+    "selected_explicit_reverence_authority_pass",
+    "human_selected_forward_30_replayed",
+    "canonical_solver_retarget_pipeline_pass",
     "hand_gap_pass",
     "hand_symmetry_pass",
     "hand_centerline_pass",
@@ -238,7 +239,7 @@ foreach ($preview in $data.preview.files) {
 Write-Host ""
 Write-Host "PHASE 10.11.4 AUTOMATED PROOF PASS"
 Write-Host "Previews:        $previewCount/3"
-Write-Host "Arm candidates:  $($data.upper_refinement.passing_count)/$($data.upper_refinement.candidate_count) pass"
+Write-Host "Arm authority:   $($data.upper_refinement.selected_parameters.human_visual_selection)"
 Write-Host "Hand gap:        $($data.upper_refinement.selected_hand_geometry.gap_shoulder_width_fraction) shoulder-width"
 Write-Host "Hand asymmetry:  $($data.upper_refinement.selected_hand_geometry.midpoint_asymmetry_shoulder_width_fraction) shoulder-width"
 Write-Host "Selected arm:    $($data.upper_refinement.selected_parameters | ConvertTo-Json -Compress)"
