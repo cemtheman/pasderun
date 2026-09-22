@@ -22,6 +22,10 @@ enum CompletionPhase {
 }
 
 const COMPLETION_WALK_SPEED := 1.45
+# The MP3 container lasts 140.016 s, but the analyzed musical energy collapses
+# before that. Treat 137.75 s as the choreographic end cue and leave the quiet
+# encoded tail untouched for playback integrity.
+const COMPLETION_MUSICAL_END_TIME := 137.75
 const COMPLETION_DECEL_DURATION := 1.20
 const COMPLETION_APPROACH_DISTANCE := 0.35
 const COMPLETION_WALK_VISUAL_SWITCH := 0.65
@@ -100,10 +104,9 @@ func _physics_process(delta: float) -> void:
 	if _state != RunState.PLAYING:
 		return
 
-	# Begin the run->walk handoff during the final musical breath so the body is
-	# already at walking speed when the soundtrack actually ends. The exact
-	# stream end remains authoritative for silence; this only moves locomotion
-	# preparation earlier by the deceleration window.
+	# Begin the run->walk handoff from the analyzed musical end cue, not the MP3
+	# container duration. The encoded quiet tail may continue playing, but the
+	# dancer should already read the phrase as finished.
 	if _should_begin_completion_lead():
 		_begin_completion_ceremony()
 		return
@@ -167,12 +170,11 @@ func _should_begin_completion_lead() -> bool:
 	if not audio_player.playing:
 		return false
 
-	var duration := audio_player.stream.get_length()
-	if duration <= COMPLETION_DECEL_DURATION:
-		return false
-
-	var remaining := duration - audio_player.get_playback_position()
-	return remaining <= COMPLETION_DECEL_DURATION
+	var lead_start := maxf(
+		COMPLETION_MUSICAL_END_TIME - COMPLETION_DECEL_DURATION,
+		0.0
+	)
+	return audio_player.get_playback_position() >= lead_start
 
 
 func _update_checkpoint() -> void:
