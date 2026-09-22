@@ -661,7 +661,7 @@ def explicit_gap_semantic_arm_pose(
         "elbow_pole":copy.deepcopy(hybrid["elbow_pole"]),
         "joint_dofs":copy.deepcopy(hybrid["joint_dofs"]),
         "runtime_shoulder_sweep":copy.deepcopy(
-            runtime_solution["evidence"]["solved"]
+            runtime_solution["evidence"]["solved_shoulder_sweep_deg"]
         ),
         "runtime_final_mesh_spacing":copy.deepcopy(
             runtime_solution["final_mesh_spacing"]
@@ -1283,8 +1283,8 @@ def main() -> None:
             centroids=row["after_bow"]["hand_centroids"]
             elbow=row["after_bow"]["elbow_geometry"]
             evidence=row["explicit_gap_authority"]
-            left_sweep=evidence["runtime_shoulder_sweep"]["left"]["angle_deg"]
-            right_sweep=evidence["runtime_shoulder_sweep"]["right"]["angle_deg"]
+            left_sweep=float(evidence["runtime_shoulder_sweep"]["left"])
+            right_sweep=float(evidence["runtime_shoulder_sweep"]["right"])
             print(
                 "EXPLICIT_GAP_PROBE="
                 f"{row['name']}|status=REALIZED|"
