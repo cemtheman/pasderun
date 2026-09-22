@@ -75,7 +75,9 @@
       "spine_mid",
       "chest"
     ],
-    "trunk_hierarchy_propagation_root": "chest"
+    "trunk_hierarchy_propagation_root": "chest",
+    "accepted_endpoint_decomposition_noise_max": 0.000005,
+    "accepted_endpoint_decomposition_noise_policy": "accepted Phase 10.6 local-matrix decomposition may carry float-scale noise up to 5e-6; intermediate motion scale remains locked to start under moving_scale_error_max"
   },
   "preview": {
     "views": [
