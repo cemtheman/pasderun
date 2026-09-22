@@ -79,6 +79,7 @@ foreach ($gate in @(
     "phase10_6_endpoint_motion_authority",
     "accepted_trunk_hierarchy_motion",
     "quaternion_shortest_arc",
+    "normalized_endpoint_rotation_basis",
     "accepted_endpoint_decomposition_noise_bounded",
     "intermediate_scale_locked",
     "minimum_jerk_timing",
