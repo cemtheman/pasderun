@@ -84,7 +84,8 @@ foreach ($gate in @(
     "hand_centerline_pass",
     "lower_chain_preserved_after_upper_overlay",
     "no_permanent_constraints",
-    "imported_action_cleared"
+    "imported_action_cleared",
+    "report_json_serializable"
 )) {
     if (-not $data.automated_gate.$gate) {
         throw "Phase 10.11.2 automated gate failed: $gate"
@@ -122,6 +123,7 @@ Write-Host "Back:            $($data.geometry.normalized.gesture_back_foot_fract
 Write-Host "Gesture heel:    $($data.geometry.normalized.gesture_heel_lift_foot_fraction) foot"
 Write-Host "Gesture fore Z:  $($data.geometry.normalized.gesture_fore_height_foot_fraction) foot"
 Write-Host "Support error:   $($data.geometry.normalized.support_error_foot_fraction) foot"
+Write-Host "Report JSON:     VALID"
 Write-Host "Selected:        $($data.search.selected_parameters | ConvertTo-Json -Compress)"
 Write-Host "Human review:    PENDING"
 Write-Host "Animation:       NOT AUTHORED"
