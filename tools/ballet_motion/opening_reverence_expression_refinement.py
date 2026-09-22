@@ -5,13 +5,6 @@ from __future__ import annotations
 import itertools
 
 
-ARM_JOINT_CLASSES={
-    "upper_arm":"shoulder_ball",
-    "forearm":"elbow_twist",
-    "hand":"wrist_2dof",
-}
-
-
 def validate_contract(contract: dict) -> None:
     if contract.get("phase") != "10.11.3":
         raise ValueError("10.11.3 phase mismatch.")
@@ -37,17 +30,38 @@ def validate_contract(contract: dict) -> None:
     upper=contract["upper_body"]
     if upper["arm_source_semantics"] != "BRAS_BAS_DERIVED_LOW_OVAL":
         raise ValueError("10.11.3 arm semantics changed.")
+    authority=upper["arm_source_authority"]
+    if authority["start_pose"] != "bras_bas":
+        raise ValueError("10.11.3 arm start authority changed.")
+    if authority["upper_bound_reference_pose"] != "second":
+        raise ValueError("10.11.3 arm upper-bound authority changed.")
+    if authority["endpoint_authority"] != "PHASE_10_6_ACCEPTED_REALIZATION":
+        raise ValueError("Accepted arm endpoint authority changed.")
+    if authority["interpolation_space"] != "LOCAL_MATRIX_BASIS":
+        raise ValueError("Arm interpolation space changed.")
+    if authority["shoulder_elbow_rotation"] != "QUATERNION_SHORTEST_ARC_SLERP":
+        raise ValueError("Arm rotation interpolation changed.")
+    if authority["wrist_policy"] != "EXACT_BRAS_BAS":
+        raise ValueError("Wrist policy changed.")
+    if authority["fingers_policy"] != "EXACT_BRAS_BAS":
+        raise ValueError("Finger policy changed.")
+
     search=upper["search"]
-    if len(search["upper_arm_abduction_adduction_deg"]) != 3:
+    if len(search["shoulder_progress"]) != 3:
         raise ValueError("Shoulder search must remain three candidates.")
-    if len(search["forearm_flexion_extension_deg"]) != 3:
+    if len(search["elbow_progress"]) != 3:
         raise ValueError("Elbow search must remain three candidates.")
-    if max(search["upper_arm_abduction_adduction_deg"]) > float(
-        upper["second_position_guard"][
-            "maximum_upper_arm_abduction_adduction_deg"
-        ]
+    maximum=float(
+        upper["second_position_guard"]["maximum_progress_toward_second"]
+    )
+    if maximum > 0.30:
+        raise ValueError("Low-oval search approaches second position too far.")
+    for value in (
+        list(search["shoulder_progress"])
+        + list(search["elbow_progress"])
     ):
-        raise ValueError("Low-oval search approaches second position.")
+        if float(value) <= 0.0 or float(value) > maximum:
+            raise ValueError("Arm refinement progress left bounded arc.")
 
     bow=upper["bow"]
     if bow["canonical_axis"] != "X":
@@ -82,7 +96,7 @@ def validate_contract(contract: dict) -> None:
     if float(validation["frozen_lower_chain_local_matrix_error_max"]) > 1e-6:
         raise ValueError("Frozen lower-chain gate is too loose.")
     for key in (
-        "all_arm_joint_values_within_preferred_envelope",
+        "accepted_arm_endpoint_bounded_interpolation_required",
         "frozen_lower_geometry_must_repass",
         "hand_centerline_crossing_forbidden",
         "no_centerline_projection_allowed",
@@ -107,67 +121,11 @@ def validate_contract(contract: dict) -> None:
 def arm_candidate_parameter_sets(contract: dict):
     validate_contract(contract)
     search=contract["upper_body"]["search"]
-    for abduction,elbow in itertools.product(
-        search["upper_arm_abduction_adduction_deg"],
-        search["forearm_flexion_extension_deg"],
+    for shoulder,elbow in itertools.product(
+        search["shoulder_progress"],
+        search["elbow_progress"],
     ):
         yield {
-            "upper_arm_abduction_adduction_deg":float(abduction),
-            "forearm_flexion_extension_deg":float(elbow),
+            "shoulder_progress":float(shoulder),
+            "elbow_progress":float(elbow),
         }
-
-
-def build_arm_state(contract: dict, parameters: dict) -> dict:
-    validate_contract(contract)
-    fixed=contract["upper_body"]["fixed"]
-    dofs={}
-    for side in ("left","right"):
-        dofs[f"{side}_upper_arm"]={
-            "flexion_extension":float(
-                fixed["upper_arm_flexion_extension_deg"]
-            ),
-            "abduction_adduction":float(
-                parameters["upper_arm_abduction_adduction_deg"]
-            ),
-            "internal_external_rotation":float(
-                fixed["upper_arm_internal_external_rotation_deg"]
-            ),
-        }
-        dofs[f"{side}_forearm"]={
-            "flexion_extension":float(
-                parameters["forearm_flexion_extension_deg"]
-            ),
-            "pronation_supination":float(
-                fixed["forearm_pronation_supination_deg"]
-            ),
-        }
-        dofs[f"{side}_hand"]={
-            "flexion_extension":float(
-                fixed["hand_flexion_extension_deg"]
-            ),
-            "radial_ulnar_deviation":float(
-                fixed["hand_radial_ulnar_deviation_deg"]
-            ),
-        }
-    return {
-        "pose":"reverence_low_oval",
-        "joint_dofs":dofs,
-        "scalars":{},
-    }
-
-
-def preferred_envelope_violations(state: dict, constraints: dict) -> list[str]:
-    violations=[]
-    for canonical_name,dofs in state["joint_dofs"].items():
-        suffix=canonical_name.split("_",1)[1]
-        joint_class=ARM_JOINT_CLASSES[suffix]
-        limits=constraints["joint_limits"][joint_class]["dofs"]
-        for dof,value in dofs.items():
-            preferred=limits[dof]["preferred"]
-            numeric=float(value)
-            if numeric < float(preferred["min"]) or numeric > float(preferred["max"]):
-                violations.append(
-                    f"{canonical_name}.{dof}={numeric} outside "
-                    f"[{preferred['min']},{preferred['max']}]"
-                )
-    return violations
