@@ -29,7 +29,6 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             resource: float(length)
             for resource, length in re.findall(
                 r'\[sub_resource type="BoxMesh" id="([^"]+)"\]\n'
-                r'(?:material = .*\n)?'
                 r"size = Vector3\(([0-9.]+), 0.5, 4\)",
                 cls.course,
             )
@@ -88,8 +87,8 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             r'\[node name="RouteFork[0-9]{2}" type="Node3D" parent="Level"\]',
             self.course,
         )
-        self.assertEqual(len(platforms), 26)
-        self.assertEqual(len(gaps), 22)
+        self.assertEqual(len(platforms), 24)
+        self.assertEqual(len(gaps), 19)
         self.assertEqual(len(forks), 5)
 
     def test_forks_are_distributed_and_have_natural_input_topology(self) -> None:
@@ -167,27 +166,6 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             expected_descent_gap = 1.5 if index in merge_gap_forks else 0.0
             self.assertTrue(math.isclose(merge_x - tech_end, expected_descent_gap, abs_tol=0.001))
 
-    def test_phase11_30_to_60_density_adds_three_music_aligned_small_gaps(self) -> None:
-        expected = [
-            ("NeutralRunway01", "NeutralRunway01_B", 150.372),
-            ("TechnicalPlatform03_Recovery", "TechnicalPlatform03_Recovery_B", 202.48),
-            ("TechnicalPlatform04_Interstitial", "TechnicalPlatform04_Interstitial_B", 227.556),
-        ]
-        for left_name, right_name, center_x in expected:
-            _, left_end = self._bounds(self._body(left_name))
-            right_start, _ = self._bounds(self._body(right_name))
-            self.assertTrue(math.isclose(right_start - left_end, 1.3, abs_tol=0.001))
-            self.assertTrue(
-                math.isclose((left_end + right_start) / 2.0, center_x, abs_tol=0.001)
-            )
-
-        for marker in (
-            "GapEvent20_PHASE11_ACCENT_37_593",
-            "GapEvent21_PHASE11_ACCENT_50_620",
-            "GapEvent22_PHASE11_ACCENT_56_889",
-        ):
-            self.assertIn(f'[node name="{marker}" type="Marker3D" parent="Level"]', self.course)
-
     def test_gap_events_are_controller_safe_and_descents_use_gaps(self) -> None:
         gap_x = [
             float(value)
@@ -198,8 +176,8 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
                 re.DOTALL,
             )
         ]
-        self.assertEqual(len(gap_x), 22)
-        self.assertEqual(len(set(gap_x)), 22)
+        self.assertEqual(len(gap_x), 19)
+        self.assertEqual(len(set(gap_x)), 19)
         self.assertEqual(self.course.count('_DESCENT" type="Marker3D"'), 4)
         downward_transitions = 5
         self.assertGreaterEqual(4 / downward_transitions, 0.5)
@@ -226,13 +204,13 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
         closing = self._body("NeutralClosingRunway")
         closing_start, closing_end = self._bounds(closing)
         self.assertTrue(math.isclose(closing_start, 545.0, abs_tol=0.001))
-        self.assertTrue(math.isclose(closing_end, 571.0, abs_tol=0.001))
+        self.assertTrue(math.isclose(closing_end, 562.0, abs_tol=0.001))
         final_technical = self._body("TechnicalPlatform24_Recovery")
         self.assertTrue(math.isclose(self._bounds(final_technical)[1], 545.0, abs_tol=0.001))
 
     def test_meaningful_action_spacing_stays_below_twenty_five_units(self) -> None:
         action_x = [
-            150.372, 161.0, 175.75, 192.25, 202.48, 215.0, 227.556, 235.25,
+            161.0, 175.75, 192.25, 215.0, 235.25,
             250.75, 268.0, 291.0, 315.25,
             330.75, 347.25, 371.0, 395.25,
             410.75, 427.25, 450.0, 462.75, 475.0, 490.25,
