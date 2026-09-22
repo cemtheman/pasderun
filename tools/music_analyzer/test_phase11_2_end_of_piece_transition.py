@@ -29,8 +29,9 @@ class Phase112EndOfPieceTransitionTests(unittest.TestCase):
         self.assertLess(lead, fallback)
 
     def test_deceleration_resolves_to_walk_not_post_music_run(self) -> None:
-        self.assertIn("COMPLETION_DECEL_DURATION := 0.90", RECOVERY)
+        self.assertIn("COMPLETION_DECEL_DURATION := 1.20", RECOVERY)
         self.assertIn("COMPLETION_WALK_SPEED := 1.45", RECOVERY)
+        self.assertIn("COMPLETION_WALK_VISUAL_SWITCH := 0.65", RECOVERY)
         self.assertIn(
             '_set_completion_stage_visual(&"RUN")',
             RECOVERY,
@@ -41,10 +42,15 @@ class Phase112EndOfPieceTransitionTests(unittest.TestCase):
         )
 
         decel = RECOVERY.index("CompletionPhase.DECELERATE_TO_WALK:")
+        switch = RECOVERY.index(
+            "if t >= COMPLETION_WALK_VISUAL_SWITCH:",
+            decel,
+        )
         walk = RECOVERY.index("CompletionPhase.WALK_TO_MARK:", decel)
-        self.assertLess(decel, walk)
+        self.assertLess(decel, switch)
+        self.assertLess(switch, walk)
 
-    def test_short_walk_reaches_authored_music_end_mark_before_bow(self) -> None:
+    def test_post_music_walk_is_short_and_not_forced_to_old_music_end_x(self) -> None:
         match = re.search(
             r'\[node name="SliceCompletion".*?position = Vector3\(([^,]+),',
             RUNTIME,
@@ -54,10 +60,11 @@ class Phase112EndOfPieceTransitionTests(unittest.TestCase):
         completion_x = float(match.group(1))
         self.assertAlmostEqual(completion_x / 4.0, 140.016, places=4)
 
-        self.assertIn(
-            "completion_trigger.global_position.x\n\t\t+ COMPLETION_APPROACH_DISTANCE",
-            RECOVERY,
-        )
+        self.assertIn("COMPLETION_APPROACH_DISTANCE := 0.55", RECOVERY)
+        begin = RECOVERY.index("func _begin_completion_ceremony() -> void:")
+        update = RECOVERY.index("func _update_completion_ceremony", begin)
+        begin_block = RECOVERY[begin:update]
+        self.assertNotIn("completion_trigger.global_position.x", begin_block)
         self.assertIn(
             '_set_completion_stage_visual(&"FINAL_BOW")',
             RECOVERY,
