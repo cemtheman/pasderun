@@ -66,6 +66,10 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Hand-gap minimum is too small.")
     if float(targets["hand_gap_hand_chain_fraction_max"]) > 0.65:
         raise ValueError("Hand-gap maximum is too large.")
+    if float(
+        targets["hand_side_offset_asymmetry_hand_chain_fraction_max"]
+    ) > 0.15:
+        raise ValueError("Hand-side asymmetry gate is too loose.")
     ideal=float(targets["hand_gap_hand_chain_fraction_ideal"])
     if not (
         float(targets["hand_gap_hand_chain_fraction_min"])
