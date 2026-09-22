@@ -83,7 +83,15 @@ class Phase1082ReleveMotionTests(unittest.TestCase):
         v=self.contract["validation"]
         self.assertLessEqual(float(v["locked_local_matrix_error_max"]),1e-7)
         self.assertLessEqual(float(v["moving_scale_error_max"]),1e-6)
-        self.assertLessEqual(float(v["accepted_endpoint_decomposition_noise_max"]),5e-6)
+        self.assertLessEqual(float(v["accepted_endpoint_decomposition_noise_max"]),1e-5)
+        self.assertEqual(
+            v["accepted_endpoint_decomposition_noise_authority"],
+            "PHASE_10_6_STATIC_LOCAL_ROTATION_MATRIX_ERROR_MAX",
+        )
+        self.assertEqual(
+            self.contract["interpolation"]["rotation_source"],
+            "NORMALIZED_ENDPOINT_LOCAL_3X3_BASIS",
+        )
         self.assertLessEqual(float(v["root_horizontal_translation_max"]),1e-5)
 
     def test_releve_requires_meaningful_final_heel_lift(self) -> None:
