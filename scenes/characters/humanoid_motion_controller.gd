@@ -181,6 +181,10 @@ func get_visual_state() -> StringName:
 	return _current_state
 
 
+func get_stage_exit_turn_duration() -> float:
+	return STAGE_EXIT_TURN_DURATION
+
+
 func _resolve_visual_state(delta: float) -> StringName:
 	if _stage_presentation_state != &"":
 		return _stage_presentation_state
@@ -872,30 +876,24 @@ func _apply_balance_overlay() -> void:
 
 func _apply_opening_reverence() -> void:
 	_apply_idle_baseline()
-	var profile := _reverence_profile(OPENING_REVERENCE)
 
+	# Opening presentation authority:
+	# travel (+X) -> audience (+Z) once, then remain audience-facing through
+	# the complete reverence and READY hold. The return to travel direction
+	# belongs exclusively to the explicit EXIT_TURN after the start command.
 	var turn_in := smoothstep(
 		0.0,
 		1.0,
 		clampf(_state_elapsed / STAGE_BOW_TURN_IN, 0.0, 1.0)
 	)
-	var turn_out_start := float(profile["rise_end"])
-	var turn_out := smoothstep(
-		0.0,
-		1.0,
-		clampf(
-			(_state_elapsed - turn_out_start) / STAGE_BOW_TURN_OUT,
-			0.0,
-			1.0
-		)
-	)
-	_set_stage_orientation(turn_in * (1.0 - turn_out))
+	_set_stage_orientation(turn_in)
 	_apply_opening_reverence_phrase_v1(_state_elapsed)
 	_blend_stage_entry_pose(0.18)
 
+
 func _apply_stage_ready() -> void:
 	_apply_idle_baseline()
-	_set_stage_orientation(0.0)
+	_set_stage_orientation(1.0)
 	_blend_stage_entry_pose(0.16)
 
 
