@@ -12,15 +12,22 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("10.11.1 contract id mismatch.")
 
     source=contract["source_pose_authority"]
-    if source["lower_body_pose"] != "plie":
-        raise ValueError("Acknowledgement lower source must remain plié.")
-    if source["arm_pose"] != "second":
-        raise ValueError("Acknowledgement arm source must remain second.")
+    if source["lower_body_source_phase"] != "10.8.1":
+        raise ValueError("Acknowledgement lower source must remain Phase 10.8.1.")
+    if (
+        source["lower_body_source_contract_id"]
+        != "foundation_motion_fifth_to_plie_v1"
+    ):
+        raise ValueError("Acknowledgement lower motion contract changed.")
+    if int(source["lower_body_sample_frame"]) != 31:
+        raise ValueError("Acknowledgement demi-plié sample frame changed.")
+    if source["arm_pose"] != "bras_bas":
+        raise ValueError("Acknowledgement arm source must remain bras_bas.")
     if (
         source["explicit_arm_chain_local_matrix_authority"]
-        != "EXACT_ACCEPTED_SECOND"
+        != "EXACT_ACCEPTED_BRAS_BAS"
     ):
-        raise ValueError("Accepted second arm authority changed.")
+        raise ValueError("Accepted bras_bas arm authority changed.")
 
     overlay=contract["acknowledgement_overlay"]
     if overlay["canonical_axis"] != "X":
