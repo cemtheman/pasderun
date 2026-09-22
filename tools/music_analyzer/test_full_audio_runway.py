@@ -29,6 +29,7 @@ class ContinuousTechnicalCourseTests(unittest.TestCase):
             resource: float(length)
             for resource, length in re.findall(
                 r'\[sub_resource type="BoxMesh" id="([^"]+)"\]\n'
+                r'(?:material = .*\n)?'
                 r"size = Vector3\(([0-9.]+), 0.5, 4\)",
                 cls.course,
             )
