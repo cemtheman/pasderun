@@ -49,6 +49,17 @@ class Phase10111OpeningReverencePoseTests(unittest.TestCase):
             overlay["independently_authored_leg_rotation_forbidden"]
         )
 
+    def test_contextual_clearance_reuses_accepted_projection(self) -> None:
+        source=self.contract["source_pose_authority"]
+        self.assertEqual(
+            source["arm_motion_contract_id"],
+            "foundation_motion_bras_bas_to_en_avant_v1",
+        )
+        self.assertEqual(
+            source["contextual_clearance_adaptation"],
+            "REUSE_ACCEPTED_MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+        )
+
     def test_axial_overlay_is_small_and_canonical(self) -> None:
         overlay=self.contract["acknowledgement_overlay"]
         self.assertEqual(overlay["canonical_axis"],"X")
@@ -62,8 +73,11 @@ class Phase10111OpeningReverencePoseTests(unittest.TestCase):
             v["lower_contact_chain_local_matrix_error_max"],1e-6
         )
         self.assertLessEqual(
-            v["arm_explicit_chain_local_matrix_error_max"],1e-6
+            v["arm_nonshoulder_chain_local_matrix_error_max"],1e-6
         )
+        self.assertLessEqual(v["shoulder_clearance_correction_deg_max"],3.0)
+        self.assertGreaterEqual(v["clearance_target_side_offset"],0.0001)
+        self.assertTrue(v["shoulder_only_contextual_adaptation_required"])
         self.assertTrue(v["full_foot_contact_required"])
         self.assertTrue(v["hand_centerline_crossing_forbidden"])
 
