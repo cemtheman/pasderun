@@ -88,16 +88,24 @@ class Phase10113ReverenceExpressionTests(unittest.TestCase):
         self.assertLessEqual(bow["neck_flexion_deg"],6.0)
         self.assertLessEqual(bow["head_flexion_deg"],10.0)
 
-    def test_hand_gap_target_has_breathing_room(self) -> None:
+    def test_hand_gap_target_uses_shoulder_midpoint_frame(self) -> None:
         g=self.contract["visual_geometry_targets"]
-        self.assertGreaterEqual(g["hand_gap_hand_chain_fraction_min"],0.15)
+        self.assertEqual(
+            g["metric_authority"],
+            "SHOULDER_MIDPOINT_BODY_FRAME_LEFT_AXIS",
+        )
+        self.assertGreaterEqual(
+            g["hand_gap_shoulder_width_fraction_min"],0.20
+        )
         self.assertGreater(
-            g["hand_gap_hand_chain_fraction_ideal"],
-            g["hand_gap_hand_chain_fraction_min"],
+            g["hand_gap_shoulder_width_fraction_ideal"],
+            g["hand_gap_shoulder_width_fraction_min"],
         )
         self.assertLessEqual(
-            g["hand_side_offset_asymmetry_hand_chain_fraction_max"],
-            0.15,
+            g[
+                "hand_midpoint_asymmetry_shoulder_width_fraction_max"
+            ],
+            0.10,
         )
 
     def test_no_centerline_projection_is_allowed(self) -> None:
