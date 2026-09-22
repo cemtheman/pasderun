@@ -108,6 +108,44 @@ class Phase1081LowerBodyFoundationMotionTests(unittest.TestCase):
             1e-5,
         )
 
+    def test_plie_trunk_hierarchy_authority_is_explicit(self) -> None:
+        authority = self.contract["authority"]
+        validation = self.contract["validation"]
+        self.assertTrue(
+            authority["independent_upper_body_authoring_forbidden"]
+        )
+        self.assertTrue(
+            authority["hierarchy_propagated_endpoint_motion_required"]
+        )
+        self.assertEqual(
+            authority["trunk_tilt_authority"],
+            "PHASE_10_6_TRUNK_TILT_SCALAR_ORIENTATION_ROUTE",
+        )
+        self.assertEqual(
+            validation["trunk_hierarchy_propagation_root"],
+            "chest",
+        )
+        required = set(validation["required_motion_canonical_bones"])
+        for name in ("spine_lower", "spine_mid", "chest"):
+            self.assertIn(name, required)
+
+    def test_semantic_proxy_includes_bounded_trunk_tilt(self) -> None:
+        for index in range(101):
+            evidence = motion.semantic_dof_proxy(
+                index / 100.0,
+                self.contract,
+                self.intents,
+                self.constraints,
+            )
+            self.assertGreaterEqual(
+                evidence["trunk_tilt_deg"] + 1e-12,
+                0.0,
+            )
+            self.assertLessEqual(
+                evidence["trunk_tilt_deg"] - 1e-12,
+                3.0,
+            )
+
     def test_releve_scope_is_forbidden(self) -> None:
         authority = self.contract["authority"]
         self.assertTrue(authority["releve_heel_lift_forbidden"])
