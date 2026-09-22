@@ -88,6 +88,8 @@ foreach ($gate in @(
     "phase10_6_endpoint_motion_authority",
     "accepted_trunk_hierarchy_motion",
     "quaternion_shortest_arc",
+    "accepted_endpoint_decomposition_noise_bounded",
+    "intermediate_scale_locked",
     "minimum_jerk_timing",
     "full_foot_contact_every_frame",
     "pelvis_descent_monotone",
