@@ -81,17 +81,37 @@ def canonical_rig_map(canonical: dict) -> dict[str, str]:
     }
 
 
-def allowed_lower_rig_names(canonical: dict, contract: dict) -> dict[str, str]:
+def semantic_driver_rig_names(
+    canonical: dict,
+    contract: dict,
+) -> dict[str, str]:
     mapping = canonical_rig_map(canonical)
     result = {}
-    for canonical_name in contract["validation"]["allowed_moving_canonical_bones"]:
+    for canonical_name in contract["validation"][
+        "semantic_driver_canonical_bones"
+    ]:
         require(
             canonical_name in mapping,
-            f"Canonical lower-body bone missing: {canonical_name}.",
+            f"Canonical motion driver missing: {canonical_name}.",
         )
         result[canonical_name] = mapping[canonical_name]
     return result
 
+
+def is_descendant_of_any(
+    armature: bpy.types.Object,
+    rig_name: str,
+    ancestor_names: set[str],
+) -> bool:
+    bone = armature.pose.bones.get(rig_name)
+    if bone is None:
+        return False
+    parent = bone.parent
+    while parent is not None:
+        if parent.name in ancestor_names:
+            return True
+        parent = parent.parent
+    return False
 
 def realize_endpoint(
     pose_name: str,
@@ -117,6 +137,7 @@ def realize_endpoint(
 
 
 def endpoint_partition(
+    armature: bpy.types.Object,
     start_pose: dict[str, Matrix],
     end_pose: dict[str, Matrix],
     canonical: dict,
@@ -125,9 +146,12 @@ def endpoint_partition(
     threshold = float(
         contract["validation"]["endpoint_change_detection_error_min"]
     )
-    allowed = allowed_lower_rig_names(canonical, contract)
-    allowed_rig = set(allowed.values())
-    reverse = {rig: name for name, rig in canonical_rig_map(canonical).items()}
+    drivers = semantic_driver_rig_names(canonical, contract)
+    driver_rig = set(drivers.values())
+    reverse = {
+        rig: name
+        for name, rig in canonical_rig_map(canonical).items()
+    }
 
     raw_errors = {
         name: matrix_max_error(start_pose[name], end_pose[name])
@@ -138,10 +162,32 @@ def endpoint_partition(
         for name, error in raw_errors.items()
         if error > threshold
     }
-    unexpected = sorted(moving - allowed_rig)
+
+    trunk_root_canonical = contract["validation"][
+        "trunk_hierarchy_propagation_root"
+    ]
+    require(
+        trunk_root_canonical in drivers,
+        "Trunk hierarchy propagation root is not a semantic driver.",
+    )
+    trunk_root_rig = drivers[trunk_root_canonical]
+
+    hierarchy_followers = {
+        name
+        for name in moving - driver_rig
+        if is_descendant_of_any(
+            armature,
+            name,
+            {trunk_root_rig},
+        )
+    }
+    unexpected = sorted(
+        moving - driver_rig - hierarchy_followers
+    )
     require(
         not unexpected,
-        "fifth -> plie changed bones outside lower-body authority: "
+        "fifth -> plie changed bones outside accepted semantic "
+        "drivers or trunk hierarchy propagation: "
         + ", ".join(
             f"{name}({reverse.get(name, 'noncanonical')})"
             for name in unexpected
@@ -149,14 +195,17 @@ def endpoint_partition(
     )
 
     required = {
-        allowed[name]
-        for name in contract["validation"]["required_motion_canonical_bones"]
+        drivers[name]
+        for name in contract["validation"][
+            "required_motion_canonical_bones"
+        ]
     }
     missing_required = sorted(required - moving)
     require(
         not missing_required,
-        "Required lower-body motion bones did not change between accepted "
-        "endpoints: " + ", ".join(missing_required),
+        "Required fifth -> plie semantic drivers did not change "
+        "between accepted endpoints: "
+        + ", ".join(missing_required),
     )
 
     locked = set(start_pose) - moving
@@ -166,7 +215,11 @@ def endpoint_partition(
     )
     require(
         raw_locked_error
-        <= float(contract["validation"]["accepted_endpoint_locked_noise_max"]),
+        <= float(
+            contract["validation"][
+                "accepted_endpoint_locked_noise_max"
+            ]
+        ),
         "Accepted locked-bone endpoint noise exceeds ceiling: "
         f"{raw_locked_error}.",
     )
@@ -183,21 +236,39 @@ def endpoint_partition(
     )
     require(
         locked_after
-        <= float(contract["validation"]["locked_local_matrix_error_max"]),
+        <= float(
+            contract["validation"]["locked_local_matrix_error_max"]
+        ),
         f"Locked endpoint canonicalization failed: {locked_after}.",
     )
 
     return moving, locked, {
         "moving_rig_bones": sorted(moving),
-        "moving_canonical_bones": sorted(
-            reverse.get(name, "noncanonical")
-            for name in moving
+        "semantic_driver_rig_bones": sorted(
+            moving & driver_rig
         ),
-        "raw_locked_endpoint_local_matrix_error": raw_locked_error,
-        "canonicalized_locked_endpoint_local_matrix_error": locked_after,
+        "semantic_driver_canonical_bones": sorted(
+            reverse.get(name, "noncanonical")
+            for name in moving & driver_rig
+        ),
+        "hierarchy_follower_rig_bones": sorted(
+            hierarchy_followers
+        ),
+        "hierarchy_follower_canonical_bones": sorted(
+            reverse.get(name, "noncanonical")
+            for name in hierarchy_followers
+        ),
+        "trunk_hierarchy_propagation_root": (
+            trunk_root_canonical
+        ),
+        "raw_locked_endpoint_local_matrix_error": (
+            raw_locked_error
+        ),
+        "canonicalized_locked_endpoint_local_matrix_error": (
+            locked_after
+        ),
         "endpoint_change_detection_error_min": threshold,
     }
-
 
 def prepare_motion_cache(
     start_pose: dict[str, Matrix],
@@ -950,6 +1021,7 @@ def main() -> None:
     )
 
     moving, locked, partition = endpoint_partition(
+        armature,
         start_pose,
         end_pose,
         canonical,
@@ -1039,13 +1111,14 @@ def main() -> None:
             "accepted_static_endpoints_reused": True,
             "start_endpoint_exact": True,
             "end_endpoint_exact": True,
-            "lower_body_only_motion_authority": True,
+            "phase10_6_endpoint_motion_authority": True,
+            "accepted_trunk_hierarchy_motion": True,
             "quaternion_shortest_arc": True,
             "minimum_jerk_timing": True,
             "full_foot_contact_every_frame": True,
             "pelvis_descent_monotone": True,
             "root_horizontal_drift_blocked": True,
-            "locked_upper_body_stable": True,
+            "nonparticipating_bones_stable": True,
             "semantic_preferred_envelope_proxy": True,
             "quaternion_flip_free": True,
             "releve_scope_absent": True,
