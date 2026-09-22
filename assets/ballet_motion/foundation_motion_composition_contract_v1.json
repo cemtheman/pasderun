@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "phase": "10.9.1",
+  "contract_id": "foundation_arm_composition_bras_bas_en_avant_second_v1",
+  "sequence": [
+    {
+      "source_phase": "10.7.1",
+      "source_contract_id": "foundation_motion_bras_bas_to_en_avant_v1",
+      "start_pose": "bras_bas",
+      "end_pose": "en_avant",
+      "frame_start": 1,
+      "frame_end": 61
+    },
+    {
+      "source_phase": "10.7.2",
+      "source_contract_id": "foundation_motion_en_avant_to_second_v1",
+      "start_pose": "en_avant",
+      "end_pose": "second",
+      "frame_start": 61,
+      "frame_end": 121
+    }
+  ],
+  "timeline": {
+    "fps": 30,
+    "frame_start": 1,
+    "shared_boundary_frame": 61,
+    "frame_end": 121,
+    "boundary_pose": "en_avant",
+    "inserted_hold_frames": 0
+  },
+  "authority": {
+    "composition_only": true,
+    "source_primitive_math_reimplementation_forbidden": true,
+    "source_primitive_modules_required": [
+      "build_foundation_transition_v1",
+      "build_foundation_transition_en_avant_to_second_v1"
+    ],
+    "endpoint_pose_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "lower_body_motion_forbidden": true,
+    "glb_export_forbidden": true
+  },
+  "validation": {
+    "shared_boundary_local_matrix_error_max": 0.000001,
+    "boundary_output_local_matrix_error_max": 0.000001,
+    "lower_body_locked_local_matrix_error_max": 0.000001,
+    "minimum_consecutive_quaternion_dot": 0,
+    "sample_every_frame": true,
+    "boundary_frames": [
+      60,
+      61,
+      62
+    ],
+    "no_duplicate_boundary_key_authority": true,
+    "source_human_gates_required": [
+      "10.7.1",
+      "10.7.2"
+    ]
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_composition_chain_only": true,
+    "lower_body_composition_forbidden": true,
+    "reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_changes_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
