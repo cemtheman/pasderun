@@ -32,9 +32,11 @@
     "actual_rig_hierarchy_authority": true,
     "mannequin_motion_forbidden": true,
     "parallel_motion_authority_forbidden": true,
-    "upper_body_motion_forbidden": true,
     "releve_heel_lift_forbidden": true,
-    "toe_pivot_motion_forbidden": true
+    "toe_pivot_motion_forbidden": true,
+    "independent_upper_body_authoring_forbidden": true,
+    "trunk_tilt_authority": "PHASE_10_6_TRUNK_TILT_SCALAR_ORIENTATION_ROUTE",
+    "hierarchy_propagated_endpoint_motion_required": true
   },
   "validation": {
     "endpoint_local_matrix_error_max": 0.000001,
@@ -49,7 +51,17 @@
     "root_horizontal_translation_max": 0.000001,
     "root_descent_monotonic_epsilon": 0.00001,
     "semantic_preferred_envelope_required": true,
-    "allowed_moving_canonical_bones": [
+    "required_motion_canonical_bones": [
+      "pelvis",
+      "left_thigh",
+      "left_shin",
+      "right_thigh",
+      "right_shin",
+      "spine_lower",
+      "spine_mid",
+      "chest"
+    ],
+    "semantic_driver_canonical_bones": [
       "pelvis",
       "left_thigh",
       "left_shin",
@@ -58,15 +70,12 @@
       "right_thigh",
       "right_shin",
       "right_foot",
-      "right_toes"
+      "right_toes",
+      "spine_lower",
+      "spine_mid",
+      "chest"
     ],
-    "required_motion_canonical_bones": [
-      "pelvis",
-      "left_thigh",
-      "left_shin",
-      "right_thigh",
-      "right_shin"
-    ]
+    "trunk_hierarchy_propagation_root": "chest"
   },
   "preview": {
     "views": [
