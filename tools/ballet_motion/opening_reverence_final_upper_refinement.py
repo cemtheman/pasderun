@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import itertools
-
 
 def validate_contract(contract: dict) -> None:
     if contract.get("phase") != "10.11.4":
@@ -28,7 +26,7 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Frozen lower geometry must repass source gates.")
 
     upper=contract["upper_body"]
-    if upper["arm_source_semantics"] != "BRAS_BAS_TO_EN_AVANT_LOW_OVAL":
+    if upper["arm_source_semantics"] != "EXPLICIT_REVERENCE_LOW_FORWARD_OVAL":
         raise ValueError("10.11.4 arm semantics changed.")
     authority=upper["arm_source_authority"]
     if authority["start_pose"] != "bras_bas":
@@ -46,22 +44,31 @@ def validate_contract(contract: dict) -> None:
     if authority["fingers_policy"] != "EXACT_BRAS_BAS":
         raise ValueError("Finger policy changed.")
 
-    search=upper["search"]
-    if len(search["shoulder_progress"]) != 3:
-        raise ValueError("Shoulder search must remain three candidates.")
-    if len(search["elbow_progress"]) != 3:
-        raise ValueError("Elbow search must remain three candidates.")
-    maximum=float(
-        upper["en_avant_guard"]["maximum_progress_toward_en_avant"]
-    )
-    if maximum > 0.16:
-        raise ValueError("Low-oval search travels too far toward en_avant.")
-    for value in (
-        list(search["shoulder_progress"])
-        + list(search["elbow_progress"])
-    ):
-        if float(value) <= 0.0 or float(value) > maximum:
-            raise ValueError("Arm refinement progress left bounded arc.")
+    selected=upper["selected_reverence_authority"]
+    if selected["mode"] != "EXPLICIT_REVERENCE_GAP_WITH_SEMANTIC_CARRIAGE":
+        raise ValueError("Selected reverence authority mode changed.")
+    if selected["source_pose"] != "bras_bas":
+        raise ValueError("Selected reverence source pose changed.")
+    if selected["reference_pose"] != "en_avant":
+        raise ValueError("Selected reverence reference pose changed.")
+    if abs(float(selected["target_gap_shoulder_width_fraction"])-0.36) > 1e-9:
+        raise ValueError("Selected reverence hand gap changed.")
+    if abs(float(selected["carriage_progress"])-0.30) > 1e-9:
+        raise ValueError("Selected reverence carriage changed.")
+    if selected["elbow_pole_policy"] != "EXACT_BRAS_BAS":
+        raise ValueError("Selected reverence elbow-pole policy changed.")
+    if selected["joint_dofs_policy"] != "EXACT_BRAS_BAS":
+        raise ValueError("Selected reverence joint-DOF policy changed.")
+    if selected["gap_authority"] != "DEFORMED_HAND_MESH_PRIMARY_SHOULDER_SWEEP":
+        raise ValueError("Selected reverence gap authority changed.")
+    if not selected.get("canonical_solver_required",False):
+        raise ValueError("Selected reverence canonical solver requirement changed.")
+    if not selected.get("calibrated_retarget_required",False):
+        raise ValueError("Selected reverence retarget requirement changed.")
+    if selected.get("human_visual_selection") != "forward_30":
+        raise ValueError("Selected reverence human visual choice changed.")
+    if not authority.get("diagnostic_reference_only",False):
+        raise ValueError("Endpoint interpolation authority must remain diagnostic-only.")
 
     bow=upper["bow"]
     if bow["canonical_axis"] != "X":
@@ -103,7 +110,7 @@ def validate_contract(contract: dict) -> None:
     if float(validation["frozen_lower_chain_local_matrix_error_max"]) > 1e-6:
         raise ValueError("Frozen lower-chain gate is too loose.")
     for key in (
-        "accepted_arm_endpoint_bounded_interpolation_required",
+        "selected_explicit_reverence_authority_required",
         "frozen_lower_geometry_must_repass",
         "hand_centerline_crossing_forbidden",
         "no_centerline_projection_allowed",
@@ -124,15 +131,3 @@ def validate_contract(contract: dict) -> None:
         if not policy.get(key,False):
             raise ValueError(f"10.11.4 scope gate changed: {key}.")
 
-
-def arm_candidate_parameter_sets(contract: dict):
-    validate_contract(contract)
-    search=contract["upper_body"]["search"]
-    for shoulder,elbow in itertools.product(
-        search["shoulder_progress"],
-        search["elbow_progress"],
-    ):
-        yield {
-            "shoulder_progress":float(shoulder),
-            "elbow_progress":float(elbow),
-        }
