@@ -1006,6 +1006,200 @@ func _apply_opening_reverence_phrase_v1(elapsed: float) -> void:
 	)
 	_apply_opening_epaulement_phrase(profile, torso_ack, head_ack)
 
+	# Phase 10.11.4 accepted visual authority. The earlier phrase remains the
+	# motion path; this bounded overlay makes the middle/deep reverence pass
+	# through the human-approved forward_30 silhouette before resolving.
+	_apply_opening_forward_30_authority(u)
+
+
+func _apply_opening_forward_30_authority(u: float) -> void:
+	var enter := smoothstep(0.30, 0.58, u)
+	var leave := smoothstep(0.76, 0.96, u)
+	var alpha := enter * (1.0 - leave)
+	if alpha <= 0.001:
+		return
+
+	var audience_forward := Vector3(0.0, 0.0, 1.0)
+	var left_shoulder := _bone_index("left_upper_arm")
+	var right_shoulder := _bone_index("right_upper_arm")
+	if left_shoulder < 0 or right_shoulder < 0:
+		return
+
+	var left_shoulder_position := _bone_world_position(left_shoulder)
+	var right_shoulder_position := _bone_world_position(right_shoulder)
+	var shoulder_center := (
+		left_shoulder_position + right_shoulder_position
+	) * 0.5
+	var shoulder_width := maxf(
+		left_shoulder_position.distance_to(right_shoulder_position),
+		0.001
+	)
+
+	# Human-approved Phase 10.11.4 authority:
+	# gap=0.36 shoulder width -> each hand center sits 0.18 SW from midline.
+	# carriage=0.30 -> low oval is visibly in front, not lateral/second.
+	for left in [true, false]:
+		var shoulder := left_shoulder if left else right_shoulder
+		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
+		var hand := _bone_index("left_hand" if left else "right_hand")
+		var middle := _bone_index("left_middle" if left else "right_middle")
+		if elbow < 0 or hand < 0:
+			continue
+
+		var shoulder_position := _bone_world_position(shoulder)
+		var elbow_position := _bone_world_position(elbow)
+		var hand_position := _bone_world_position(hand)
+		var outward := shoulder_position - shoulder_center
+		outward -= Vector3.UP * outward.dot(Vector3.UP)
+		outward -= audience_forward * outward.dot(audience_forward)
+		if outward.length_squared() <= 0.000001:
+			outward = Vector3(-1.0 if left else 1.0, 0.0, 0.0)
+		outward = outward.normalized()
+
+		var upper_length := maxf(
+			shoulder_position.distance_to(elbow_position),
+			0.001
+		)
+		var forearm_length := maxf(
+			elbow_position.distance_to(hand_position),
+			0.001
+		)
+		var reach := upper_length + forearm_length
+
+		var elbow_target := (
+			shoulder_position
+			+ outward * upper_length * 0.44
+			- Vector3.UP * upper_length * 0.34
+			+ audience_forward * upper_length * 0.20
+		)
+		var hand_target := (
+			shoulder_center
+			+ outward * shoulder_width * 0.18
+			- Vector3.UP * reach * 0.43
+			+ audience_forward * reach * 0.30
+		)
+
+		_steer_segment_toward_world_point(
+			shoulder,
+			elbow,
+			elbow_target,
+			0.94 * alpha
+		)
+		_steer_segment_toward_world_point(
+			elbow,
+			hand,
+			hand_target,
+			0.96 * alpha
+		)
+
+		if middle >= 0:
+			var middle_position := _bone_world_position(middle)
+			var hand_axis_length := maxf(
+				hand_position.distance_to(middle_position),
+				0.001
+			)
+			var tangent := (hand_target - elbow_target).normalized()
+			_steer_segment_toward_world_point(
+				hand,
+				middle,
+				hand_position + tangent * hand_axis_length,
+				0.34 * alpha
+			)
+
+	# Frozen 10.11.2 lower-body reading: left carries weight; right gesture
+	# crosses behind and remains pointed. Keep the adjustment bounded to the
+	# accepted reverence window so READY can settle before EXIT_TURN.
+	var support_foot := _bone_index("left_foot")
+	var gesture_hip := _bone_index("right_upper_leg")
+	var gesture_knee := _bone_index("right_lower_leg")
+	var gesture_foot := _bone_index("right_foot")
+	var gesture_toe := _bone_index("right_toe")
+	if (
+		support_foot >= 0
+		and gesture_hip >= 0
+		and gesture_knee >= 0
+		and gesture_foot >= 0
+	):
+		var support_position := _bone_world_position(support_foot)
+		var gesture_hip_position := _bone_world_position(gesture_hip)
+		var gesture_foot_position := _bone_world_position(gesture_foot)
+		var left_side := (
+			left_shoulder_position - right_shoulder_position
+		).normalized()
+		var leg_length := maxf(_idle_leg_length(), 0.001)
+		var gesture_target := (
+			support_position
+			+ left_side * leg_length * 0.16
+			- audience_forward * leg_length * 0.12
+			+ Vector3.UP * leg_length * 0.035
+		)
+		var knee_target := gesture_hip_position.lerp(
+			gesture_target,
+			0.52
+		)
+		knee_target += -audience_forward * leg_length * 0.055
+
+		_steer_segment_toward_world_point(
+			gesture_hip,
+			gesture_knee,
+			knee_target,
+			0.74 * alpha
+		)
+		_steer_segment_toward_world_point(
+			gesture_knee,
+			gesture_foot,
+			gesture_target,
+			0.82 * alpha
+		)
+
+		if gesture_toe >= 0:
+			var toe_position := _bone_world_position(gesture_toe)
+			var toe_length := maxf(
+				gesture_foot_position.distance_to(toe_position),
+				0.001
+			)
+			var toe_target := (
+				gesture_target
+				- audience_forward * toe_length * 0.72
+				- Vector3.UP * toe_length * 0.56
+			)
+			_steer_segment_toward_world_point(
+				gesture_foot,
+				gesture_toe,
+				toe_target,
+				0.78 * alpha
+			)
+
+	# Make the accepted bow visibly readable in side/three-quarter views.
+	# This remains world-space anatomical steering, not local Euler guessing.
+	var pelvis := _bone_index("pelvis")
+	var chest := _bone_index("chest")
+	var head := _bone_index("head")
+	if pelvis >= 0 and chest >= 0:
+		var trunk_angle := deg_to_rad(18.0) * alpha
+		_steer_segment_world_direction(
+			pelvis,
+			chest,
+			Vector3(
+				0.0,
+				cos(trunk_angle),
+				sin(trunk_angle)
+			).normalized(),
+			0.88
+		)
+	if chest >= 0 and head >= 0:
+		var head_angle := deg_to_rad(10.0) * alpha
+		_steer_segment_world_direction(
+			chest,
+			head,
+			Vector3(
+				0.0,
+				cos(head_angle),
+				sin(head_angle)
+			).normalized(),
+			0.82
+		)
+
 
 func _apply_opening_pelvis_follow(
 	profile: Dictionary,
