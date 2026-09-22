@@ -4,6 +4,12 @@
 # Phase 10 Blender / animation working outputs
 build/phase10_4/*
 build/phase10_5/*
+build/phase10_6/*
+build/phase10_7/*
+build/phase10_8/*
+build/phase10_9/*
+build/phase10_10/*
+build/phase10_11/*
 
 # Python generated cache
 tools/blender/__pycache__/
