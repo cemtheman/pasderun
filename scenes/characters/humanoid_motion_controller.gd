@@ -192,8 +192,6 @@ func _resolve_visual_state(delta: float) -> StringName:
 	if _dancer.get("has_fallen") == true:
 		return _current_state if _current_state != &"" else STATE_NEUTRAL
 
-	# Contact has visual priority. A high drop may already have queued STUMBLE
-	# in gameplay, but LANDING must be shown first.
 	var grounded := _dancer.is_on_floor()
 	if not grounded:
 		if _was_on_floor:
@@ -210,18 +208,25 @@ func _resolve_visual_state(delta: float) -> StringName:
 		_airborne_time = 0.0
 		_was_on_floor = true
 
-	if _landing_time > 0.0:
-		_landing_time = maxf(_landing_time - delta, 0.0)
-		return STATE_LANDING
-
 	var locomotion := &"NORMAL"
 	if _dancer.has_method("get_locomotion_state"):
 		locomotion = StringName(_dancer.call("get_locomotion_state"))
 
+	# A real stumble is more important than the generic landing compression.
+	# Previously LANDING consumed 0.24 s of the 0.36 s stumble window, leaving
+	# too little time for the trip/catch pose to read. Keep normal jump landings,
+	# but cancel pending landing presentation as soon as gameplay reports a
+	# stumble/recovery chain.
 	if locomotion == STATE_STUMBLE:
+		_landing_time = 0.0
 		return STATE_STUMBLE
 	if locomotion == STATE_RECOVERY:
+		_landing_time = 0.0
 		return STATE_RECOVERY
+
+	if _landing_time > 0.0:
+		_landing_time = maxf(_landing_time - delta, 0.0)
+		return STATE_LANDING
 	if _dancer.get("in_low_transition") == true:
 		return STATE_LOW_TRANSITION
 	if _dancer.get("in_balance_zone") == true:
