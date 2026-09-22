@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "phase": "10.11.3",
+  "contract_id": "opening_reverence_expression_refinement_v1",
+  "purpose": "STATIC_UPPER_BODY_EXPRESSION_REFINEMENT_OVER_FROZEN_CROSSED_STANCE",
+  "lower_body_authority": {
+    "source_phase": "10.11.2",
+    "source_contract_id": "opening_reverence_crossed_stance_v1",
+    "frozen_selected_parameters": {
+      "gesture_hip_flexion_extension_deg": -10,
+      "gesture_hip_abduction_adduction_deg": -20,
+      "gesture_ankle_plantar_dorsiflexion_deg": 44
+    },
+    "support_side": "left",
+    "gesture_side": "right",
+    "geometry_must_repass_source_gates": true
+  },
+  "upper_body": {
+    "arm_source_semantics": "BRAS_BAS_DERIVED_LOW_OVAL",
+    "fixed": {
+      "upper_arm_flexion_extension_deg": 18,
+      "upper_arm_internal_external_rotation_deg": 10,
+      "forearm_pronation_supination_deg": 15,
+      "hand_flexion_extension_deg": 0,
+      "hand_radial_ulnar_deviation_deg": 0
+    },
+    "search": {
+      "upper_arm_abduction_adduction_deg": [
+        36,
+        42,
+        48
+      ],
+      "forearm_flexion_extension_deg": [
+        44,
+        50,
+        56
+      ]
+    },
+    "second_position_guard": {
+      "maximum_upper_arm_abduction_adduction_deg": 50,
+      "rationale": "Remain a low oval reverence arm rather than approach accepted second at 90 deg."
+    },
+    "bow": {
+      "trunk_extra_flexion_deg": 16,
+      "trunk_routes": [
+        {
+          "bone": "spine_lower",
+          "weight": 0.34
+        },
+        {
+          "bone": "spine_mid",
+          "weight": 0.33
+        },
+        {
+          "bone": "chest",
+          "weight": 0.33
+        }
+      ],
+      "neck_flexion_deg": 4,
+      "head_flexion_deg": 7,
+      "canonical_axis": "X"
+    }
+  },
+  "visual_geometry_targets": {
+    "hand_gap_hand_chain_fraction_min": 0.18,
+    "hand_gap_hand_chain_fraction_max": 0.55,
+    "hand_gap_hand_chain_fraction_ideal": 0.3,
+    "each_hand_side_offset_min": 0,
+    "elbows_must_remain_below_shoulder_line": true,
+    "arm_symmetry_local_matrix_error_max": 0.00001
+  },
+  "validation": {
+    "all_arm_joint_values_within_preferred_envelope": true,
+    "frozen_lower_chain_local_matrix_error_max": 0.000001,
+    "frozen_lower_geometry_must_repass": true,
+    "hand_centerline_crossing_forbidden": true,
+    "no_centerline_projection_allowed": true,
+    "no_permanent_constraints": true,
+    "imported_action_must_be_cleared": true,
+    "report_json_serializable_required": true
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "human_visual_questions": [
+    "Does the pose now read immediately as a classical stage reverence rather than a crossed standing pose?",
+    "Do the hands form a soft low oval with visible breathing room rather than meet at the centerline?",
+    "Are the elbows softly open without approaching second position?",
+    "Is the torso/head bow clearly readable but still elegant and restrained?",
+    "Is the frozen 10.11.2 crossed lower-body silhouette unchanged?",
+    "Does the overall silhouette move materially closer to the supplied reference?"
+  ],
+  "policy": {
+    "static_pose_only": true,
+    "lower_body_redesign_forbidden": true,
+    "animation_forbidden": true,
+    "world_turn_forbidden": true,
+    "run_handoff_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_changes_forbidden": true,
+    "glb_export_forbidden": true
+  }
+}
