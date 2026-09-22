@@ -16,7 +16,7 @@
     "geometry_must_repass_source_gates": true
   },
   "upper_body": {
-    "arm_source_semantics": "BRAS_BAS_TO_EN_AVANT_LOW_OVAL",
+    "arm_source_semantics": "EXPLICIT_REVERENCE_LOW_FORWARD_OVAL",
     "arm_source_authority": {
       "start_pose": "bras_bas",
       "upper_bound_reference_pose": "en_avant",
@@ -26,19 +26,8 @@
       "moving_translation": "LOCK_TO_BRAS_BAS",
       "moving_scale": "LOCK_TO_BRAS_BAS",
       "wrist_policy": "EXACT_BRAS_BAS",
-      "fingers_policy": "EXACT_BRAS_BAS"
-    },
-    "search": {
-      "shoulder_progress": [
-        0.08,
-        0.12,
-        0.16
-      ],
-      "elbow_progress": [
-        0.08,
-        0.12,
-        0.16
-      ]
+      "fingers_policy": "EXACT_BRAS_BAS",
+      "diagnostic_reference_only": true
     },
     "bow": {
       "trunk_extra_flexion_deg": 26,
@@ -60,9 +49,18 @@
       "head_flexion_deg": 10,
       "canonical_axis": "X"
     },
-    "en_avant_guard": {
-      "maximum_progress_toward_en_avant": 0.16,
-      "rationale": "Remain a low reverence oval; use only the first 16% of the accepted bras_bas-to-en_avant arc."
+    "selected_reverence_authority": {
+      "mode": "EXPLICIT_REVERENCE_GAP_WITH_SEMANTIC_CARRIAGE",
+      "source_pose": "bras_bas",
+      "reference_pose": "en_avant",
+      "target_gap_shoulder_width_fraction": 0.36,
+      "carriage_progress": 0.3,
+      "elbow_pole_policy": "EXACT_BRAS_BAS",
+      "joint_dofs_policy": "EXACT_BRAS_BAS",
+      "gap_authority": "DEFORMED_HAND_MESH_PRIMARY_SHOULDER_SWEEP",
+      "canonical_solver_required": true,
+      "calibrated_retarget_required": true,
+      "human_visual_selection": "forward_30"
     }
   },
   "visual_geometry_targets": {
@@ -82,7 +80,7 @@
     "no_permanent_constraints": true,
     "imported_action_must_be_cleared": true,
     "report_json_serializable_required": true,
-    "accepted_arm_endpoint_bounded_interpolation_required": true
+    "selected_explicit_reverence_authority_required": true
   },
   "preview": {
     "views": [
