@@ -44,7 +44,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.11.3 - REVERENCE EXPRESSION REFINEMENT"
 Write-Host "Lower: frozen 10.11.2 selected crossed stance"
-Write-Host "Upper: 9 bras-bas-derived low-oval candidates"
+Write-Host "Upper: 9 bounded bras_bas-to-second endpoint-interpolation candidates"
 Write-Host "Bow: canonical-X trunk/head refinement"
 Write-Host "Centerline projection: FORBIDDEN"
 Write-Host "Animation/turn/run/music: NO"
@@ -76,7 +76,7 @@ if ($data.phase -ne "10.11.3") {
 foreach ($gate in @(
     "frozen_10_11_2_parameters_exact",
     "frozen_lower_source_geometry_repassed",
-    "preferred_arm_joint_envelopes_pass",
+    "accepted_arm_endpoint_bounded_interpolation_pass",
     "low_oval_stays_below_second_guard",
     "hand_gap_pass",
     "hand_symmetry_pass",
