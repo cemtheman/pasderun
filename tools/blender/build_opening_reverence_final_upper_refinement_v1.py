@@ -532,6 +532,229 @@ def semantic_hybrid_diagnostic(
     }
 
 
+def shoulder_width_body_frame(
+    armature,
+    canonical,
+    axes,
+) -> float:
+    left_name=canonical["canonical_bones"]["left_upper_arm"]["rig_bone"]
+    right_name=canonical["canonical_bones"]["right_upper_arm"]["rig_bone"]
+    left=Vector(armature.pose.bones[left_name].head)
+    right=Vector(armature.pose.bones[right_name].head)
+    width=abs(float((left-right).dot(axes["left"])))
+    require(width > 1e-9,"Diagnostic shoulder width collapsed.")
+    return width
+
+
+def explicit_gap_semantic_arm_pose(
+    armature,
+    canonical,
+    constraints,
+    axis_contract,
+    grammar,
+    intents,
+    static_contract,
+    pose_solver,
+    retarget_solver,
+    runtime,
+    arm_roles,
+    shoulder_width: float,
+    target_gap_shoulder_fraction: float,
+    carriage_progress: float,
+) -> tuple[dict,dict]:
+    """Probe an explicit open-oval gap through the accepted solver path."""
+    diagnostic_intents=copy.deepcopy(intents)
+    source=intents["poses"]["bras_bas"]
+    reference=intents["poses"]["en_avant"]
+    hybrid=diagnostic_intents["poses"]["bras_bas"]
+
+    for name in ("wrist_direction","hand_direction"):
+        hybrid[name]=_lerp_mapping(
+            source[name],
+            reference[name],
+            carriage_progress,
+        )
+    # Keep the accepted bras_bas elbow-pole and authored joint DOFs exact.
+    hybrid["elbow_pole"]=copy.deepcopy(source["elbow_pole"])
+    hybrid["joint_dofs"]=copy.deepcopy(source["joint_dofs"])
+    hybrid["elbow_angle_deg"]=float(source["elbow_angle_deg"])
+    hybrid["centerline_hand_policy"]="HAND_MESH_NEAR_TOUCH_NOT_CROSS"
+
+    hand_chain=float(
+        static_core.body_metrics_for_hand(canonical)["hand_middle_chain"]
+    )
+    target_abs=(
+        float(shoulder_width)
+        * float(target_gap_shoulder_fraction)
+    )
+    # The canonical contract requires min < max.  Use a deliberately narrow,
+    # explicit diagnostic band centered on the requested shoulder-width gap;
+    # the runtime solver itself targets the midpoint.
+    half_band_abs=float(shoulder_width)*0.005
+    minimum_abs=max(1e-9,target_abs-half_band_abs)
+    maximum_abs=target_abs+half_band_abs
+    hybrid["hand_mesh_gap_chain_fraction"]={
+        "min":minimum_abs/hand_chain,
+        "max":maximum_abs/hand_chain,
+    }
+
+    solution=pose_solver.solve_pose(
+        "bras_bas",
+        diagnostic_intents,
+        grammar,
+        canonical,
+        constraints,
+    )
+    retargeted=retarget_solver.retarget_pose_solution(
+        solution,
+        canonical,
+        constraints,
+        axis_contract,
+    )
+
+    static_core.clear_pose(armature)
+    static_core.apply_rotation_deltas(armature,retargeted)
+    static_core.apply_ballet_hand_shape(
+        armature,
+        canonical,
+        static_contract,
+    )
+    bpy.context.view_layer.update()
+
+    runtime_solution=static_core.solve_runtime_hand_mesh_pose(
+        armature,
+        canonical,
+        constraints,
+        axis_contract,
+        grammar,
+        diagnostic_intents,
+        "bras_bas",
+        runtime["hand_samples"],
+        float(runtime["hand_sampling"]["inner_edge_quantile"]),
+        static_contract["hand_mesh_runtime_clearance_solver"],
+        pose_solver,
+        retarget_solver,
+    )
+    require(
+        runtime_solution["status"]=="PASS",
+        "Explicit-gap runtime shoulder sweep failed.",
+    )
+    bpy.context.view_layer.update()
+
+    pose={
+        name:armature.pose.bones[name].matrix_basis.copy()
+        for name in arm_roles
+    }
+    return pose,{
+        "target_gap_shoulder_width_fraction":float(
+            target_gap_shoulder_fraction
+        ),
+        "target_gap_absolute":target_abs,
+        "target_band_absolute":[minimum_abs,maximum_abs],
+        "hand_middle_chain":hand_chain,
+        "gap_chain_fraction":copy.deepcopy(
+            hybrid["hand_mesh_gap_chain_fraction"]
+        ),
+        "carriage_progress":float(carriage_progress),
+        "wrist_direction":copy.deepcopy(hybrid["wrist_direction"]),
+        "hand_direction":copy.deepcopy(hybrid["hand_direction"]),
+        "elbow_pole":copy.deepcopy(hybrid["elbow_pole"]),
+        "joint_dofs":copy.deepcopy(hybrid["joint_dofs"]),
+        "runtime_shoulder_sweep":copy.deepcopy(
+            runtime_solution["evidence"]["solved"]
+        ),
+        "runtime_final_mesh_spacing":copy.deepcopy(
+            runtime_solution["final_mesh_spacing"]
+        ),
+        "centerline_projection_used":False,
+    }
+
+
+def explicit_gap_semantic_diagnostic(
+    armature,
+    canonical,
+    constraints,
+    axis_contract,
+    grammar,
+    intents,
+    static_contract,
+    pose_solver,
+    retarget_solver,
+    runtime,
+    axes,
+    contract,
+    lower_pose,
+    arm_roles,
+) -> dict:
+    restore(armature,lower_pose)
+    shoulder_width=shoulder_width_body_frame(
+        armature,canonical,axes
+    )
+    specifications=[
+        ("gap_24_bras_carriage",0.24,0.00),
+        ("gap_36_bras_carriage",0.36,0.00),
+        ("gap_52_bras_carriage",0.52,0.00),
+        ("gap_36_forward_15",0.36,0.15),
+        ("gap_36_forward_30",0.36,0.30),
+        ("gap_36_forward_45",0.36,0.45),
+    ]
+
+    rows=[]
+    for name,target_gap,carriage_progress in specifications:
+        try:
+            arm_pose,evidence=explicit_gap_semantic_arm_pose(
+                armature,
+                canonical,
+                constraints,
+                axis_contract,
+                grammar,
+                intents,
+                static_contract,
+                pose_solver,
+                retarget_solver,
+                runtime,
+                arm_roles,
+                shoulder_width,
+                target_gap,
+                carriage_progress,
+            )
+            probe=diagnostic_arm_probe(
+                armature,
+                canonical,
+                runtime,
+                axes,
+                contract,
+                lower_pose,
+                arm_pose,
+            )
+            rows.append({
+                "name":name,
+                "status":"REALIZED",
+                "explicit_gap_authority":evidence,
+                **probe,
+            })
+        except Exception as exc:
+            rows.append({
+                "name":name,
+                "status":"REJECTED",
+                "target_gap_shoulder_width_fraction":float(target_gap),
+                "carriage_progress":float(carriage_progress),
+                "reason":f"{type(exc).__name__}: {exc}",
+            })
+
+    return {
+        "mode":"EXPLICIT_REVERENCE_GAP_DIAGNOSTIC_ONLY",
+        "shoulder_width":shoulder_width,
+        "probe_count":len(rows),
+        "probes":rows,
+        "optimizer_used":False,
+        "adaptive_search_used":False,
+        "centerline_projection_used":False,
+        "new_authority_selected":False,
+        "lower_body_mutation":False,
+    }
+
+
 def arm_authority_diagnostic(
     armature,
     canonical,
@@ -937,6 +1160,22 @@ def main() -> None:
             lower_pose,
             arm_roles,
         )
+        explicit_gap_diagnostic=explicit_gap_semantic_diagnostic(
+            armature,
+            canonical,
+            constraints,
+            axis_contract,
+            grammar,
+            intents,
+            static_contract,
+            pose_solver,
+            retarget_solver,
+            runtime,
+            axes,
+            contract,
+            lower_pose,
+            arm_roles,
+        )
         diagnostic_payload={
             "phase":PHASE,
             "contract_id":contract["contract_id"],
@@ -953,6 +1192,7 @@ def main() -> None:
             },
             "arm_diagnostic":diagnostic,
             "semantic_hybrid_diagnostic":semantic_diagnostic,
+            "explicit_gap_diagnostic":explicit_gap_diagnostic,
             "policy":{
                 "authority_selected":False,
                 "animation_authored":False,
@@ -1023,6 +1263,42 @@ def main() -> None:
                 f"right_front={centroids['right']['front']:.6f}|"
                 f"left_up={centroids['left']['up']:.6f}|"
                 f"right_up={centroids['right']['up']:.6f}"
+            )
+        print(
+            "EXPLICIT_GAP_PROBES="
+            f"{explicit_gap_diagnostic['probe_count']}"
+        )
+        for row in explicit_gap_diagnostic["probes"]:
+            if row["status"] != "REALIZED":
+                print(
+                    "EXPLICIT_GAP_PROBE="
+                    f"{row['name']}|status=REJECTED|"
+                    f"target_gap={row['target_gap_shoulder_width_fraction']:.2f}|"
+                    f"carriage={row['carriage_progress']:.2f}|"
+                    f"reason={row['reason']}"
+                )
+                continue
+            before=row["before_bow"]["hand_geometry"]
+            after=row["after_bow"]["hand_geometry"]
+            centroids=row["after_bow"]["hand_centroids"]
+            elbow=row["after_bow"]["elbow_geometry"]
+            evidence=row["explicit_gap_authority"]
+            left_sweep=evidence["runtime_shoulder_sweep"]["left"]["angle_deg"]
+            right_sweep=evidence["runtime_shoulder_sweep"]["right"]["angle_deg"]
+            print(
+                "EXPLICIT_GAP_PROBE="
+                f"{row['name']}|status=REALIZED|"
+                f"target_gap={evidence['target_gap_shoulder_width_fraction']:.2f}|"
+                f"carriage={evidence['carriage_progress']:.2f}|"
+                f"pre_gap={before['gap_shoulder_width_fraction']:.6f}|"
+                f"post_gap={after['gap_shoulder_width_fraction']:.6f}|"
+                f"left_front={centroids['left']['front']:.6f}|"
+                f"right_front={centroids['right']['front']:.6f}|"
+                f"left_up={centroids['left']['up']:.6f}|"
+                f"right_up={centroids['right']['up']:.6f}|"
+                f"left_sweep_deg={left_sweep:.6f}|"
+                f"right_sweep_deg={right_sweep:.6f}|"
+                f"elbows_below={elbow['both_elbows_below_shoulder_line']}"
             )
         print("AUTHORITY_SELECTED=NO")
         print("CENTERLINE_PROJECTION=NOT_USED")
