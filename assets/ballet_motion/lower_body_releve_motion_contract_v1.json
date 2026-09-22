@@ -49,7 +49,6 @@
     "locked_local_matrix_error_max": 1e-7,
     "moving_non_root_translation_error_max": 0.000001,
     "moving_scale_error_max": 0.000001,
-    "accepted_endpoint_decomposition_noise_max": 0.00001,
     "minimum_consecutive_quaternion_dot": 0,
     "sample_every_frame": true,
     "start_full_foot_contact_required": true,
@@ -89,7 +88,8 @@
       "chest"
     ],
     "trunk_hierarchy_propagation_root": "chest",
-    "accepted_endpoint_decomposition_noise_authority": "PHASE_10_6_STATIC_LOCAL_ROTATION_MATRIX_ERROR_MAX"
+    "accepted_endpoint_decomposition_scale_delta_diagnostic_only": true,
+    "accepted_endpoint_matrix_authority": "PHASE_10_6_ACCEPTED_REALIZED_LOCAL_MATRIX"
   },
   "preview": {
     "views": [
