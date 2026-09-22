@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
+from mathutils import Euler, Matrix, Quaternion, Vector
 
 
 PHASE="10.11.2"
@@ -51,6 +51,37 @@ def require(condition: bool,message: str) -> None:
 
 def load_json(path: str) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def json_ready(value):
+    """Convert known Blender/Python evidence types to strict JSON values."""
+    if value is None or isinstance(value,(bool,int,float,str)):
+        return value
+    if isinstance(value,Path):
+        return str(value)
+    if isinstance(value,Matrix):
+        return [
+            [float(cell) for cell in row]
+            for row in value
+        ]
+    if isinstance(value,(Vector,Quaternion,Euler)):
+        return [float(component) for component in value]
+    if isinstance(value,dict):
+        return {
+            str(key):json_ready(item)
+            for key,item in value.items()
+        }
+    if isinstance(value,(list,tuple)):
+        return [json_ready(item) for item in value]
+    if isinstance(value,set):
+        return [
+            json_ready(item)
+            for item in sorted(value,key=lambda item:str(item))
+        ]
+    raise TypeError(
+        "Unsupported report evidence type: "
+        f"{type(value).__module__}.{type(value).__name__}"
+    )
 
 
 def snapshot(armature: bpy.types.Object) -> dict:
@@ -759,6 +790,7 @@ def main() -> None:
             "lower_chain_preserved_after_upper_overlay":True,
             "no_permanent_constraints":True,
             "imported_action_cleared":True,
+            "report_json_serializable":True,
             "animation_authored":False,
             "glb_exported":False,
         },
@@ -771,8 +803,17 @@ def main() -> None:
     }
 
     report_path.parent.mkdir(parents=True,exist_ok=True)
+    serial_report=json_ready(report)
+    serialized=json.dumps(
+        serial_report,
+        indent=2,
+        allow_nan=False,
+    )
+    # Parse the exact bytes-to-be-written before touching the report path.
+    # This proves that Blender evidence conversion produced valid JSON.
+    json.loads(serialized)
     report_path.write_text(
-        json.dumps(report,indent=2),
+        serialized,
         encoding="utf-8",
     )
 
