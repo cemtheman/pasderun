@@ -1198,29 +1198,6 @@ def main() -> None:
     arm_names=set(arm_roles)
     arm_authority=contract["upper_body"]["arm_source_authority"]
 
-    bras_bas_pose,bras_bas_endpoint_evidence=arm_motion.realize_endpoint(
-        arm_authority["start_pose"],
-        armature,
-        canonical,
-        constraints,
-        retarget,
-        axis_contract,
-        static_contract,
-        visual_contract,
-        runtime,
-    )
-    en_avant_pose,en_avant_endpoint_evidence=arm_motion.realize_endpoint(
-        arm_authority["upper_bound_reference_pose"],
-        armature,
-        canonical,
-        constraints,
-        retarget,
-        axis_contract,
-        static_contract,
-        visual_contract,
-        runtime,
-    )
-
     require(
         not (args.diagnostic_only and args.visual_candidates_only),
         "--diagnostic-only and --visual-candidates-only are mutually exclusive.",
@@ -1311,6 +1288,28 @@ def main() -> None:
         require(
             bool(args.diagnostic_report),
             "--diagnostic-report is required with --diagnostic-only.",
+        )
+        bras_bas_pose,bras_bas_endpoint_evidence=arm_motion.realize_endpoint(
+            arm_authority["start_pose"],
+            armature,
+            canonical,
+            constraints,
+            retarget,
+            axis_contract,
+            static_contract,
+            visual_contract,
+            runtime,
+        )
+        en_avant_pose,en_avant_endpoint_evidence=arm_motion.realize_endpoint(
+            arm_authority["upper_bound_reference_pose"],
+            armature,
+            canonical,
+            constraints,
+            retarget,
+            axis_contract,
+            static_contract,
+            visual_contract,
+            runtime,
         )
         diagnostic=arm_authority_diagnostic(
             armature,
@@ -1486,66 +1485,48 @@ def main() -> None:
         print(f"DIAGNOSTIC_REPORT={diagnostic_path}")
         return
 
-    candidates=[]
-    winners=[]
-    for parameters in refinement.arm_candidate_parameter_sets(
-        contract
-    ):
-        arm_pose=endpoint_interpolated_arm_pose(
-            bras_bas_pose,
-            en_avant_pose,
-            arm_roles,
-            parameters,
-        )
-        restore(armature,lower_pose)
-        for name,matrix in arm_pose.items():
-            armature.pose.bones[name].matrix_basis=matrix.copy()
-        bpy.context.view_layer.update()
-
-        apply_bow(armature,canonical,contract)
-
-        hand=hand_geometry(
-            armature,canonical,runtime,axes
-        )
-        elbow=elbow_geometry(
-            armature,canonical,axes
-        )
-        passed,reasons=arm_candidate_pass(
-            hand,elbow,contract
-        )
-        row={
-            "parameters":parameters,
-            "hand_geometry":hand,
-            "elbow_geometry":elbow,
-            "pass":passed,
-            "rejection_reasons":reasons,
-        }
-        candidates.append(row)
-        if passed:
-            score=candidate_score(
-                parameters,hand,contract
-            )
-            winners.append((
-                score,
-                parameters,
-                arm_pose,
-                hand,
-                elbow,
-            ))
-
-    require(
-        bool(winners),
-        "No low-oval arm candidate satisfied hand-gap/elbow gates. "
-        "Diagnostics: "+json.dumps(candidates),
+    selected_authority=contract["upper_body"][
+        "selected_reverence_authority"
+    ]
+    restore(armature,lower_pose)
+    selected_shoulder_width=shoulder_width_body_frame(
+        armature,canonical,axes
     )
-    winners.sort(key=lambda item:item[0])
-    (
-        selected_score,
-        selected_parameters,
-        selected_arm_pose,
-        selected_hand,
-        selected_elbow,
-    )=winners[0]
+    selected_arm_pose,selected_authority_evidence=(
+        explicit_gap_semantic_arm_pose(
+            armature,
+            canonical,
+            constraints,
+            axis_contract,
+            grammar,
+            intents,
+            static_contract,
+            pose_solver,
+            retarget_solver,
+            runtime,
+            arm_roles,
+            selected_shoulder_width,
+            float(
+                selected_authority[
+                    "target_gap_shoulder_width_fraction"
+                ]
+            ),
+            float(selected_authority["carriage_progress"]),
+        )
+    )
+    selected_parameters={
+        "target_gap_shoulder_width_fraction":float(
+            selected_authority[
+                "target_gap_shoulder_width_fraction"
+            ]
+        ),
+        "carriage_progress":float(
+            selected_authority["carriage_progress"]
+        ),
+        "human_visual_selection":selected_authority[
+            "human_visual_selection"
+        ],
+    }
 
     # Rebuild selected final pose exactly.
     restore(armature,lower_pose)
@@ -1605,7 +1586,7 @@ def main() -> None:
     )
     require(
         final_arm_pass,
-        "Selected arm candidate did not replay: "
+        "Selected forward_30 authority did not replay: "
         + ", ".join(final_arm_reasons),
     )
 
@@ -1625,22 +1606,15 @@ def main() -> None:
             "final_geometry":final_lower_geometry,
         },
         "upper_refinement":{
-            "candidate_count":len(candidates),
-            "passing_count":len(winners),
+            "authority_mode":selected_authority["mode"],
             "selected_parameters":selected_parameters,
-            "selected_score":list(map(float,selected_score)),
             "selected_hand_geometry":final_hand,
             "selected_elbow_geometry":final_elbow,
-            "arm_source_authority":arm_authority,
-            "interpolation_policy":{
-                "shoulder":"QUATERNION_SHORTEST_ARC_SLERP",
-                "elbow":"QUATERNION_SHORTEST_ARC_SLERP",
-                "wrist":"EXACT_BRAS_BAS",
-                "fingers":"EXACT_BRAS_BAS",
-                "translation":"LOCK_TO_BRAS_BAS",
-                "scale":"LOCK_TO_BRAS_BAS",
-            },
-            "candidates":candidates,
+            "selected_authority_evidence":selected_authority_evidence,
+            "diagnostic_reference_endpoints":arm_authority,
+            "authority_selection_source":"HUMAN_VISUAL_FORWARD_30",
+            "optimizer_used":False,
+            "adaptive_search_used":False,
             "bow":contract["upper_body"]["bow"],
             "centerline_projection_used":False,
         },
@@ -1655,8 +1629,9 @@ def main() -> None:
         "automated_gate":{
             "frozen_10_11_2_parameters_exact":True,
             "frozen_lower_source_geometry_repassed":True,
-            "accepted_arm_endpoint_bounded_interpolation_pass":True,
-            "low_oval_stays_within_en_avant_guard":True,
+            "selected_explicit_reverence_authority_pass":True,
+            "human_selected_forward_30_replayed":True,
+            "canonical_solver_retarget_pipeline_pass":True,
             "hand_gap_pass":True,
             "hand_symmetry_pass":True,
             "hand_centerline_pass":True,
@@ -1693,10 +1668,7 @@ def main() -> None:
 
     print("PHASE10_11_4_REVERENCE_FINAL_UPPER_AUTOMATED_PROOF=PASS")
     print(f"PREVIEWS={';'.join(previews)}")
-    print(
-        "ARM_CANDIDATES="
-        f"{len(winners)}/{len(candidates)} pass"
-    )
+    print("ARM_AUTHORITY=forward_30")
     print(
         "HAND_GAP="
         f"{final_hand['gap_shoulder_width_fraction']:.6f} shoulder-width"
