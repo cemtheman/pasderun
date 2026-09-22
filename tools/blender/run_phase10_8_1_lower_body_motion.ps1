@@ -53,7 +53,7 @@ foreach ($required in @(
 
 Write-Host "PHASE 10.8.1 - FIFTH -> PLIE LOWER-BODY FOUNDATION MOTION"
 Write-Host "Endpoint authority: accepted Phase 10.6 realized poses"
-Write-Host "Motion: lower-body shortest-arc + synchronous minimum jerk"
+Write-Host "Motion: accepted fifth/plie endpoint differences + synchronous minimum jerk"
 Write-Host "Contact: per-frame deformed-mesh rear+fore full-foot root solve"
 Write-Host "Releve/toe pivot: NO"
 Write-Host "GLB export: NO"
@@ -85,13 +85,14 @@ foreach ($gate in @(
     "accepted_static_endpoints_reused",
     "start_endpoint_exact",
     "end_endpoint_exact",
-    "lower_body_only_motion_authority",
+    "phase10_6_endpoint_motion_authority",
+    "accepted_trunk_hierarchy_motion",
     "quaternion_shortest_arc",
     "minimum_jerk_timing",
     "full_foot_contact_every_frame",
     "pelvis_descent_monotone",
     "root_horizontal_drift_blocked",
-    "locked_upper_body_stable",
+    "nonparticipating_bones_stable",
     "semantic_preferred_envelope_proxy",
     "quaternion_flip_free",
     "releve_scope_absent"
