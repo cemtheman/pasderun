@@ -52,6 +52,92 @@ def load_json(path: str) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+def prepare_motion_cache(
+    start_pose: dict,
+    end_pose: dict,
+    moving: set[str],
+    root_name: str,
+    contract: dict,
+) -> dict:
+    translation_limit = float(
+        contract["validation"]["moving_non_root_translation_error_max"]
+    )
+    runtime_scale_limit = float(
+        contract["validation"]["moving_scale_error_max"]
+    )
+    endpoint_noise_limit = float(
+        contract["validation"][
+            "accepted_endpoint_decomposition_noise_max"
+        ]
+    )
+    cache = {}
+
+    for rig_name in sorted(moving):
+        start_loc, _, start_scale = start_pose[rig_name].decompose()
+        end_loc, _, end_scale = end_pose[rig_name].decompose()
+
+        # Accepted Phase 10.6 matrices are the endpoint authority. Tiny
+        # non-orthogonal float residue can appear as artificial scale when
+        # Matrix.decompose() separates rotation and scale. Motion rotation is
+        # therefore extracted from normalized local 3x3 bases.
+        start_q = (
+            start_pose[rig_name]
+            .to_3x3()
+            .normalized()
+            .to_quaternion()
+        )
+        end_q = (
+            end_pose[rig_name]
+            .to_3x3()
+            .normalized()
+            .to_quaternion()
+        )
+        start_q.normalize()
+        end_q.normalize()
+        if start_q.dot(end_q) < 0.0:
+            end_q.negate()
+
+        translation_error = (end_loc - start_loc).length
+        scale_noise = (end_scale - start_scale).length
+
+        if rig_name != root_name:
+            require(
+                translation_error <= translation_limit,
+                f"{rig_name}: non-root local translation changed "
+                f"{translation_error} > {translation_limit}.",
+            )
+        require(
+            scale_noise <= endpoint_noise_limit,
+            f"{rig_name}: accepted endpoint decomposition scale noise "
+            f"{scale_noise} > {endpoint_noise_limit}.",
+        )
+
+        cache[rig_name] = {
+            "location": start_loc.copy(),
+            "start_location": start_loc.copy(),
+            "end_location": end_loc.copy(),
+            "scale": start_scale.copy(),
+            "start_quaternion": start_q.copy(),
+            "end_quaternion": end_q.copy(),
+            "endpoint_angle_deg": math.degrees(
+                start_q.rotation_difference(end_q).angle
+            ),
+            "translation_error": float(translation_error),
+            "scale_error": float(scale_noise),
+            "endpoint_decomposition_noise_limit": float(
+                endpoint_noise_limit
+            ),
+            "runtime_scale_lock_limit": float(
+                runtime_scale_limit
+            ),
+            "rotation_source": (
+                "NORMALIZED_ENDPOINT_LOCAL_3X3_BASIS"
+            ),
+        }
+
+    return cache
+
+
 def contact_state(
     armature: bpy.types.Object,
     runtime: dict,
@@ -752,7 +838,7 @@ def main() -> None:
         root_name in moving,
         "Pelvis must participate in plié -> relevé motion.",
     )
-    motion_cache=base_motion.prepare_motion_cache(
+    motion_cache=prepare_motion_cache(
         start_pose,end_pose,moving,root_name,contract
     )
 
@@ -795,6 +881,7 @@ def main() -> None:
                 "accepted_endpoint_decomposition_scale_noise":float(
                     item["scale_error"]
                 ),
+                "rotation_source":item["rotation_source"],
             }
             for name,item in motion_cache.items()
         },
@@ -811,6 +898,7 @@ def main() -> None:
             "phase10_6_endpoint_motion_authority":True,
             "accepted_trunk_hierarchy_motion":True,
             "quaternion_shortest_arc":True,
+            "normalized_endpoint_rotation_basis":True,
             "accepted_endpoint_decomposition_noise_bounded":True,
             "intermediate_scale_locked":True,
             "minimum_jerk_timing":True,
