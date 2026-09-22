@@ -2,44 +2,44 @@
   "schema_version": "0.1",
   "source_movement_demands": "data/choreography/graceful_opening.movement_demands_v0_1.json",
   "compiled_time_range": {
-    "start": 0.0,
+    "start": 0,
     "end": 140.016
   },
   "playable_world_extent": {
-    "start_x": -4.0,
+    "start_x": -4,
     "end_x": 568.064
   },
   "timebase": {
     "canonical_unit": "seconds",
-    "run_speed_world_units_per_second": 4.0,
+    "run_speed_world_units_per_second": 4,
     "conversion": "event_x = source_time * run_speed_world_units_per_second"
   },
   "geometry_calibration_status": "prototype_controller_based",
   "controller_calibration": {
-    "jump_velocity": 6.0,
-    "gravity": 18.0,
+    "jump_velocity": 6,
+    "gravity": 18,
     "same_height_airtime_seconds": 0.6667,
     "same_height_horizontal_range": 2.6667,
-    "capsule_height": 2.0,
+    "capsule_height": 2,
     "capsule_radius": 0.5,
-    "fall_limit_y": -3.0,
+    "fall_limit_y": -3,
     "note": "Gap lengths retain margin below the controller's ideal same-height ballistic range; humanoid/root-motion calibration is deferred."
   },
   "gap_calibration": {
     "SMALL_GAP": {
       "length": 1.2,
-      "preparation": 6.0,
-      "landing": 4.0
+      "preparation": 6,
+      "landing": 4
     },
     "MEDIUM_GAP": {
       "length": 1.7,
-      "preparation": 8.0,
-      "landing": 6.0
+      "preparation": 8,
+      "landing": 6
     },
     "LARGE_GAP": {
       "length": 2.2,
-      "preparation": 10.0,
-      "landing": 8.0
+      "preparation": 10,
+      "landing": 8
     }
   },
   "geometry_vocabulary": [
@@ -60,22 +60,22 @@
       "source_class": "SUSTAINED_BALANCE",
       "source_confidence": 0.6483,
       "world": {
-        "event_x": 10.0,
-        "surface_y": 0.0
+        "event_x": 10,
+        "surface_y": 0
       },
       "geometry": {
         "type": "BALANCE_PASSAGE",
-        "start_x": 7.0,
-        "end_x": 13.0,
-        "length": 6.0,
+        "start_x": 7,
+        "end_x": 13,
+        "length": 6,
         "width": 0.8,
         "area_width": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -106,8 +106,8 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7989,
       "world": {
-        "event_x": 29.0,
-        "surface_y": 0.0
+        "event_x": 29,
+        "surface_y": 0
       },
       "geometry": {
         "type": "LARGE_GAP",
@@ -115,13 +115,13 @@
         "start_x": 27.9,
         "end_x": 30.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -172,25 +172,25 @@
       "source_class": "MEDIUM_JUMP",
       "source_confidence": 0.7617,
       "world": {
-        "event_x": 46.0,
-        "surface_y": 0.0
+        "event_x": 46,
+        "surface_y": 0
       },
       "geometry": {
         "type": "ROUTE_FORK",
-        "start_x": 38.0,
-        "end_x": 52.0
+        "start_x": 38,
+        "end_x": 52
       },
       "preparation": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "recovery": {
-        "runway_length": 6.0
+        "runway_length": 6
       },
       "branch": {
         "selection": "no jump drops to LOWER SAFE; jump reaches UPPER TECHNICAL",
         "split": {
-          "x": 38.0,
-          "shared_surface_y": 0.0,
+          "x": 38,
+          "shared_surface_y": 0,
           "no_jump_destination": "SAFE",
           "jump_destination": "TECHNICAL"
         },
@@ -199,69 +199,69 @@
             "elevation": -2.8,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
               {
                 "type": "LOWER_RUNWAY",
-                "start_x": 38.0,
-                "end_x": 52.0,
+                "start_x": 38,
+                "end_x": 52,
                 "surface_y": -2.8,
                 "collision": true
               }
             ],
             "descent": {
               "type": "GRAVITY_DROP",
-              "start_x": 38.0,
+              "start_x": 38,
               "landing_x": 40.2311,
               "drop_height": 2.8,
               "drop_seconds": 0.5578,
               "standing_root_y": -1.8,
-              "fall_limit_y": -3.0
+              "fall_limit_y": -3
             }
           },
           "technical": {
-            "elevation": 0.0,
+            "elevation": 0,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
               {
                 "type": "ENTRY_GAP",
-                "start_x": 38.0,
+                "start_x": 38,
                 "end_x": 40.3311,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "RUNWAY",
                 "start_x": 40.3311,
                 "end_x": 45.15,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "MEDIUM_GAP",
                 "start_x": 45.15,
                 "end_x": 46.85,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "RUNWAY",
                 "start_x": 46.85,
                 "end_x": 49.2689,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "DROP_MERGE",
                 "start_x": 49.2689,
-                "end_x": 52.0,
-                "from_y": 0.0,
+                "end_x": 52,
+                "from_y": 0,
                 "to_y": -2.8,
                 "collision": false
               }
@@ -269,7 +269,7 @@
           }
         },
         "clearance": {
-          "capsule_height": 2.0,
+          "capsule_height": 2,
           "capsule_radius": 0.5,
           "platform_thickness": 0.5,
           "safety_margin": 0.25,
@@ -280,7 +280,7 @@
         "merge": {
           "type": "TECHNICAL_DROP_TO_SAFE",
           "drop_start_x": 49.2689,
-          "x": 52.0,
+          "x": 52,
           "surface_y": -2.8,
           "shared_runway_continues": true
         }
@@ -329,7 +329,7 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.8361,
       "world": {
-        "event_x": 89.0,
+        "event_x": 89,
         "surface_y": -2.8
       },
       "geometry": {
@@ -338,13 +338,13 @@
         "start_x": 87.9,
         "end_x": 90.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -405,10 +405,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -464,10 +464,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -513,7 +513,7 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7761,
       "world": {
-        "event_x": 129.0,
+        "event_x": 129,
         "surface_y": -2.8
       },
       "geometry": {
@@ -522,13 +522,13 @@
         "start_x": 127.9,
         "end_x": 130.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -574,8 +574,8 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7964,
       "world": {
-        "event_x": 145.0,
-        "surface_y": 0.0
+        "event_x": 145,
+        "surface_y": 0
       },
       "geometry": {
         "type": "ROUTE_FORK",
@@ -592,7 +592,7 @@
         "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
         "split": {
           "x": 143.4,
-          "shared_surface_y": 0.0,
+          "shared_surface_y": 0,
           "no_jump_destination": "SAFE",
           "jump_destination": "TECHNICAL"
         },
@@ -601,7 +601,7 @@
             "elevation": -2.8,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -620,14 +620,14 @@
               "drop_height": 2.8,
               "drop_seconds": 0.5578,
               "standing_root_y": -1.8,
-              "fall_limit_y": -3.0
+              "fall_limit_y": -3
             }
           },
           "technical": {
-            "elevation": 0.0,
+            "elevation": 0,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -635,21 +635,21 @@
                 "type": "LARGE_GAP",
                 "start_x": 143.4,
                 "end_x": 145.6,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "RUNWAY",
                 "start_x": 145.6,
                 "end_x": 151.372,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "DROP_MERGE",
                 "start_x": 151.372,
                 "end_x": 154.1031,
-                "from_y": 0.0,
+                "from_y": 0,
                 "to_y": -2.8,
                 "collision": false
               }
@@ -657,7 +657,7 @@
           }
         },
         "clearance": {
-          "capsule_height": 2.0,
+          "capsule_height": 2,
           "capsule_radius": 0.5,
           "platform_thickness": 0.5,
           "safety_margin": 0.25,
@@ -728,10 +728,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -777,7 +777,7 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7644,
       "world": {
-        "event_x": 170.0,
+        "event_x": 170,
         "surface_y": -2.8
       },
       "geometry": {
@@ -786,13 +786,13 @@
         "start_x": 168.9,
         "end_x": 171.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -848,10 +848,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -902,10 +902,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -961,10 +961,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1006,29 +1006,29 @@
       ]
     },
     {
-      "source_time": 53.0,
+      "source_time": 53,
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.8627,
       "world": {
-        "event_x": 212.0,
-        "surface_y": 0.0
+        "event_x": 212,
+        "surface_y": 0
       },
       "geometry": {
         "type": "ROUTE_FORK",
         "start_x": 210.4,
-        "end_x": 220.0
+        "end_x": 220
       },
       "preparation": {
         "runway_length": 8.636
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": {
         "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
         "split": {
           "x": 210.4,
-          "shared_surface_y": 0.0,
+          "shared_surface_y": 0,
           "no_jump_destination": "SAFE",
           "jump_destination": "TECHNICAL"
         },
@@ -1037,14 +1037,14 @@
             "elevation": -2.8,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
               {
                 "type": "LOWER_RUNWAY",
                 "start_x": 210.4,
-                "end_x": 220.0,
+                "end_x": 220,
                 "surface_y": -2.8,
                 "collision": true
               }
@@ -1056,14 +1056,14 @@
               "drop_height": 2.8,
               "drop_seconds": 0.5578,
               "standing_root_y": -1.8,
-              "fall_limit_y": -3.0
+              "fall_limit_y": -3
             }
           },
           "technical": {
-            "elevation": 0.0,
+            "elevation": 0,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -1071,21 +1071,21 @@
                 "type": "LARGE_GAP",
                 "start_x": 210.4,
                 "end_x": 212.6,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "RUNWAY",
                 "start_x": 212.6,
                 "end_x": 217.2689,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "DROP_MERGE",
                 "start_x": 217.2689,
-                "end_x": 220.0,
-                "from_y": 0.0,
+                "end_x": 220,
+                "from_y": 0,
                 "to_y": -2.8,
                 "collision": false
               }
@@ -1093,7 +1093,7 @@
           }
         },
         "clearance": {
-          "capsule_height": 2.0,
+          "capsule_height": 2,
           "capsule_radius": 0.5,
           "platform_thickness": 0.5,
           "safety_margin": 0.25,
@@ -1104,7 +1104,7 @@
         "merge": {
           "type": "TECHNICAL_DROP_TO_SAFE",
           "drop_start_x": 217.2689,
-          "x": 220.0,
+          "x": 220,
           "surface_y": -2.8,
           "shared_runway_continues": true
         }
@@ -1169,10 +1169,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1237,13 +1237,13 @@
         "start_x": 241.816,
         "end_x": 243.016,
         "gap_length": 1.2,
-        "landing_length": 4.0
+        "landing_length": 4
       },
       "preparation": {
-        "runway_length": 6.0
+        "runway_length": 6
       },
       "recovery": {
-        "runway_length": 4.0
+        "runway_length": 4
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1289,25 +1289,25 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.8769,
       "world": {
-        "event_x": 274.0,
-        "surface_y": 0.0
+        "event_x": 274,
+        "surface_y": 0
       },
       "geometry": {
         "type": "ROUTE_FORK",
         "start_x": 272.4,
-        "end_x": 282.0
+        "end_x": 282
       },
       "preparation": {
         "runway_length": 11.188
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": {
         "selection": "climax jump reaches a stepped upper CREST; no jump remains on SAFE",
         "split": {
           "x": 272.4,
-          "shared_surface_y": 0.0,
+          "shared_surface_y": 0,
           "no_jump_destination": "SAFE",
           "jump_destination": "TECHNICAL"
         },
@@ -1316,14 +1316,14 @@
             "elevation": -2.8,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
               {
                 "type": "LOWER_RUNWAY",
                 "start_x": 272.4,
-                "end_x": 282.0,
+                "end_x": 282,
                 "surface_y": -2.8,
                 "collision": true
               }
@@ -1335,14 +1335,14 @@
               "drop_height": 2.8,
               "drop_seconds": 0.5578,
               "standing_root_y": -1.8,
-              "fall_limit_y": -3.0
+              "fall_limit_y": -3
             }
           },
           "technical": {
-            "elevation": 0.0,
+            "elevation": 0,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -1350,19 +1350,19 @@
                 "type": "LARGE_GAP",
                 "start_x": 272.4,
                 "end_x": 274.6,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "CREST_TERRACE_01",
                 "start_x": 274.6,
-                "end_x": 276.0,
-                "surface_y": 0.0,
+                "end_x": 276,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "CREST_TERRACE_02",
-                "start_x": 276.0,
+                "start_x": 276,
                 "end_x": 276.8172,
                 "surface_y": 0.28,
                 "collision": true
@@ -1385,14 +1385,14 @@
                 "type": "CREST_TERRACE_05",
                 "start_x": 278.4517,
                 "end_x": 279.2689,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "DROP_MERGE",
                 "start_x": 279.2689,
-                "end_x": 282.0,
-                "from_y": 0.0,
+                "end_x": 282,
+                "from_y": 0,
                 "to_y": -2.8,
                 "collision": false
               }
@@ -1402,7 +1402,7 @@
           }
         },
         "clearance": {
-          "capsule_height": 2.0,
+          "capsule_height": 2,
           "capsule_radius": 0.5,
           "platform_thickness": 0.5,
           "safety_margin": 0.25,
@@ -1413,7 +1413,7 @@
         "merge": {
           "type": "TECHNICAL_DROP_TO_SAFE",
           "drop_start_x": 279.2689,
-          "x": 282.0,
+          "x": 282,
           "surface_y": -2.8,
           "shared_runway_continues": true
         },
@@ -1476,13 +1476,13 @@
         "start_x": 295.872,
         "end_x": 297.072,
         "gap_length": 1.2,
-        "landing_length": 4.0
+        "landing_length": 4
       },
       "preparation": {
-        "runway_length": 6.0
+        "runway_length": 6
       },
       "recovery": {
-        "runway_length": 4.0
+        "runway_length": 4
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1533,25 +1533,25 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7641,
       "world": {
-        "event_x": 331.0,
-        "surface_y": 0.0
+        "event_x": 331,
+        "surface_y": 0
       },
       "geometry": {
         "type": "ROUTE_FORK",
         "start_x": 329.4,
-        "end_x": 339.0
+        "end_x": 339
       },
       "preparation": {
         "runway_length": 8.744
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": {
         "selection": "no jump drops to LOWER SAFE; one climax jump reaches UPPER TECHNICAL",
         "split": {
           "x": 329.4,
-          "shared_surface_y": 0.0,
+          "shared_surface_y": 0,
           "no_jump_destination": "SAFE",
           "jump_destination": "TECHNICAL"
         },
@@ -1560,14 +1560,14 @@
             "elevation": -2.8,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
               {
                 "type": "LOWER_RUNWAY",
                 "start_x": 329.4,
-                "end_x": 339.0,
+                "end_x": 339,
                 "surface_y": -2.8,
                 "collision": true
               }
@@ -1579,14 +1579,14 @@
               "drop_height": 2.8,
               "drop_seconds": 0.5578,
               "standing_root_y": -1.8,
-              "fall_limit_y": -3.0
+              "fall_limit_y": -3
             }
           },
           "technical": {
-            "elevation": 0.0,
+            "elevation": 0,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -1594,21 +1594,21 @@
                 "type": "LARGE_GAP",
                 "start_x": 329.4,
                 "end_x": 331.6,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "RUNWAY",
                 "start_x": 331.6,
                 "end_x": 336.2689,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "DROP_MERGE",
                 "start_x": 336.2689,
-                "end_x": 339.0,
-                "from_y": 0.0,
+                "end_x": 339,
+                "from_y": 0,
                 "to_y": -2.8,
                 "collision": false
               }
@@ -1616,7 +1616,7 @@
           }
         },
         "clearance": {
-          "capsule_height": 2.0,
+          "capsule_height": 2,
           "capsule_radius": 0.5,
           "platform_thickness": 0.5,
           "safety_margin": 0.25,
@@ -1627,7 +1627,7 @@
         "merge": {
           "type": "TECHNICAL_DROP_TO_SAFE",
           "drop_start_x": 336.2689,
-          "x": 339.0,
+          "x": 339,
           "surface_y": -2.8,
           "shared_runway_continues": true
         }
@@ -1686,13 +1686,13 @@
         "start_x": 348.812,
         "end_x": 350.012,
         "gap_length": 1.2,
-        "landing_length": 4.0
+        "landing_length": 4
       },
       "preparation": {
-        "runway_length": 6.0
+        "runway_length": 6
       },
       "recovery": {
-        "runway_length": 4.0
+        "runway_length": 4
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1747,13 +1747,13 @@
         "start_x": 363.676,
         "end_x": 364.876,
         "gap_length": 1.2,
-        "landing_length": 4.0
+        "landing_length": 4
       },
       "preparation": {
-        "runway_length": 6.0
+        "runway_length": 6
       },
       "recovery": {
-        "runway_length": 4.0
+        "runway_length": 4
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1799,7 +1799,7 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7989,
       "world": {
-        "event_x": 394.0,
+        "event_x": 394,
         "surface_y": -2.8
       },
       "geometry": {
@@ -1808,13 +1808,13 @@
         "start_x": 392.9,
         "end_x": 395.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -1865,8 +1865,8 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7895,
       "world": {
-        "event_x": 410.0,
-        "surface_y": 0.0
+        "event_x": 410,
+        "surface_y": 0
       },
       "geometry": {
         "type": "ROUTE_FORK",
@@ -1884,7 +1884,7 @@
         "selection": "climax jump enters TECHNICAL staircase; missed optional step jumps fail down to SAFE",
         "split": {
           "x": 408.4,
-          "shared_surface_y": 0.0,
+          "shared_surface_y": 0,
           "no_jump_destination": "SAFE",
           "jump_destination": "TECHNICAL"
         },
@@ -1893,7 +1893,7 @@
             "elevation": -2.8,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -1911,15 +1911,15 @@
               "landing_x": 410.6311,
               "drop_height": 2.8,
               "standing_root_y": -1.8,
-              "fall_limit_y": -3.0
+              "fall_limit_y": -3
             }
           },
           "technical": {
-            "elevation": 0.0,
+            "elevation": 0,
             "peak_elevation": 0.84,
             "collision_geometry": {
               "shape": "BOX",
-              "width": 4.0,
+              "width": 4,
               "thickness": 0.5
             },
             "segments": [
@@ -1927,21 +1927,21 @@
                 "type": "ENTRY_GAP",
                 "start_x": 408.4,
                 "end_x": 410.6,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false
               },
               {
                 "type": "STAIR_STEP_01",
                 "start_x": 410.6,
                 "end_x": 411.95,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": true
               },
               {
                 "type": "STEP_GAP_01",
                 "start_x": 411.95,
                 "end_x": 412.5,
-                "surface_y": 0.0,
+                "surface_y": 0,
                 "collision": false,
                 "optional_mastery_action": "JUMP",
                 "failure_destination": "SAFE"
@@ -2074,7 +2074,7 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7646,
       "world": {
-        "event_x": 435.0,
+        "event_x": 435,
         "surface_y": -2.8
       },
       "geometry": {
@@ -2083,13 +2083,13 @@
         "start_x": 433.9,
         "end_x": 436.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2135,7 +2135,7 @@
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7775,
       "world": {
-        "event_x": 461.0,
+        "event_x": 461,
         "surface_y": -2.8
       },
       "geometry": {
@@ -2144,13 +2144,13 @@
         "start_x": 459.9,
         "end_x": 462.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2206,10 +2206,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2265,10 +2265,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2314,7 +2314,7 @@
       "source_class": "ACCENT_ACTION",
       "source_confidence": 0.7991,
       "world": {
-        "event_x": 490.0,
+        "event_x": 490,
         "surface_y": -2.8
       },
       "geometry": {
@@ -2324,10 +2324,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2364,11 +2364,11 @@
       ]
     },
     {
-      "source_time": 128.0,
+      "source_time": 128,
       "source_class": "LARGE_TRAVELLING_LEAP",
       "source_confidence": 0.7733,
       "world": {
-        "event_x": 512.0,
+        "event_x": 512,
         "surface_y": -2.8
       },
       "geometry": {
@@ -2377,13 +2377,13 @@
         "start_x": 510.9,
         "end_x": 513.1,
         "gap_length": 2.2,
-        "landing_length": 8.0
+        "landing_length": 8
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 8.0
+        "runway_length": 8
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2429,7 +2429,7 @@
       "source_class": "ACCENT_ACTION",
       "source_confidence": 0.7952,
       "world": {
-        "event_x": 542.0,
+        "event_x": 542,
         "surface_y": -2.8
       },
       "geometry": {
@@ -2439,10 +2439,10 @@
         "length": 1.2
       },
       "preparation": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "recovery": {
-        "runway_length": 10.0
+        "runway_length": 10
       },
       "branch": null,
       "suppressed_inferences": [
@@ -2482,32 +2482,32 @@
   "surface_plan": {
     "runway_intervals": [
       {
-        "start_x": -4.0,
-        "end_x": 7.0,
-        "surface_y": 0.0
+        "start_x": -4,
+        "end_x": 7,
+        "surface_y": 0
       },
       {
-        "start_x": 13.0,
+        "start_x": 13,
         "end_x": 27.9,
-        "surface_y": 0.0
+        "surface_y": 0
       },
       {
         "start_x": 30.1,
-        "end_x": 38.0,
-        "surface_y": 0.0
+        "end_x": 38,
+        "surface_y": 0
       },
       {
-        "start_x": 52.0,
+        "start_x": 52,
         "end_x": 87.9,
         "surface_y": -2.8
       },
       {
         "start_x": 90.1,
-        "end_x": 120.0,
+        "end_x": 120,
         "surface_y": -2.8
       },
       {
-        "start_x": 120.0,
+        "start_x": 120,
         "end_x": 120.024,
         "surface_y": -2.8224
       },
@@ -2528,11 +2528,11 @@
       },
       {
         "start_x": 125.598,
-        "end_x": 126.0,
+        "end_x": 126,
         "surface_y": -2.9
       },
       {
-        "start_x": 126.0,
+        "start_x": 126,
         "end_x": 127.456,
         "surface_y": -2.8
       },
@@ -2598,11 +2598,11 @@
       },
       {
         "start_x": 166.469,
-        "end_x": 167.0,
+        "end_x": 167,
         "surface_y": -2.7181
       },
       {
-        "start_x": 167.0,
+        "start_x": 167,
         "end_x": 168.326,
         "surface_y": -2.8
       },
@@ -2628,11 +2628,11 @@
       },
       {
         "start_x": 173.898,
-        "end_x": 175.756,
+        "end_x": 174.798,
         "surface_y": -2.7782
       },
       {
-        "start_x": 175.756,
+        "start_x": 176.098,
         "end_x": 177.614,
         "surface_y": -2.8218
       },
@@ -2653,11 +2653,11 @@
       },
       {
         "start_x": 183.188,
-        "end_x": 185.046,
+        "end_x": 184.182,
         "surface_y": -2.7254
       },
       {
-        "start_x": 185.046,
+        "start_x": 185.482,
         "end_x": 186.904,
         "surface_y": -2.8373
       },
@@ -2702,7 +2702,7 @@
         "surface_y": -2.8372
       },
       {
-        "start_x": 220.0,
+        "start_x": 220,
         "end_x": 220.342,
         "surface_y": -2.856
       },
@@ -2723,11 +2723,11 @@
       },
       {
         "start_x": 225.914,
-        "end_x": 227.772,
+        "end_x": 226.906,
         "surface_y": -2.8529
       },
       {
-        "start_x": 227.772,
+        "start_x": 228.206,
         "end_x": 229.63,
         "surface_y": -2.8794
       },
@@ -2758,11 +2758,11 @@
       },
       {
         "start_x": 238.92,
-        "end_x": 240.0,
+        "end_x": 240,
         "surface_y": -2.7778
       },
       {
-        "start_x": 240.0,
+        "start_x": 240,
         "end_x": 240.777,
         "surface_y": -2.8
       },
@@ -2827,7 +2827,7 @@
         "surface_y": -2.8208
       },
       {
-        "start_x": 282.0,
+        "start_x": 282,
         "end_x": 283.504,
         "surface_y": -2.9112
       },
@@ -2942,7 +2942,7 @@
         "surface_y": -2.8215
       },
       {
-        "start_x": 339.0,
+        "start_x": 339,
         "end_x": 339.234,
         "surface_y": -2.7791
       },
@@ -3018,11 +3018,11 @@
       },
       {
         "start_x": 359.67,
-        "end_x": 360.0,
+        "end_x": 360,
         "surface_y": -2.7789
       },
       {
-        "start_x": 360.0,
+        "start_x": 360,
         "end_x": 361.276,
         "surface_y": -2.7789
       },
@@ -3118,11 +3118,11 @@
       },
       {
         "start_x": 389.393,
-        "end_x": 391.0,
+        "end_x": 391,
         "surface_y": -2.7189
       },
       {
-        "start_x": 391.0,
+        "start_x": 391,
         "end_x": 391.25,
         "surface_y": -2.8
       },
@@ -3133,11 +3133,11 @@
       },
       {
         "start_x": 431.9,
-        "end_x": 432.0,
+        "end_x": 432,
         "surface_y": -2.9042
       },
       {
-        "start_x": 432.0,
+        "start_x": 432,
         "end_x": 432.12,
         "surface_y": -2.8
       },
@@ -3208,11 +3208,11 @@
       },
       {
         "start_x": 456.27,
-        "end_x": 458.0,
+        "end_x": 458,
         "surface_y": -2.7171
       },
       {
-        "start_x": 458.0,
+        "start_x": 458,
         "end_x": 458.128,
         "surface_y": -2.8
       },
@@ -3273,11 +3273,11 @@
       },
       {
         "start_x": 478.562,
-        "end_x": 480.0,
+        "end_x": 480,
         "surface_y": -2.8374
       },
       {
-        "start_x": 480.0,
+        "start_x": 480,
         "end_x": 480.42,
         "surface_y": -2.8374
       },
@@ -3358,11 +3358,11 @@
       },
       {
         "start_x": 508.286,
-        "end_x": 509.0,
+        "end_x": 509,
         "surface_y": -2.7159
       },
       {
-        "start_x": 509.0,
+        "start_x": 509,
         "end_x": 510.144,
         "surface_y": -2.8
       },
@@ -3494,9 +3494,9 @@
     ],
     "balance_intervals": [
       {
-        "start_x": 7.0,
-        "end_x": 13.0,
-        "surface_y": 0.0
+        "start_x": 7,
+        "end_x": 13,
+        "surface_y": 0
       }
     ],
     "ramps": [
@@ -3505,35 +3505,35 @@
         "start_x": 134.888,
         "end_x": 143.4,
         "start_surface_y": -2.739,
-        "end_surface_y": 0.0
+        "end_surface_y": 0
       },
       {
         "type": "APPROACH_RAMP",
         "start_x": 201.764,
         "end_x": 210.4,
         "start_surface_y": -2.8372,
-        "end_surface_y": 0.0
+        "end_surface_y": 0
       },
       {
         "type": "APPROACH_RAMP",
         "start_x": 261.212,
         "end_x": 272.4,
         "start_surface_y": -2.8208,
-        "end_surface_y": 0.0
+        "end_surface_y": 0
       },
       {
         "type": "APPROACH_RAMP",
         "start_x": 320.656,
         "end_x": 329.4,
         "start_surface_y": -2.8215,
-        "end_surface_y": 0.0
+        "end_surface_y": 0
       },
       {
         "type": "APPROACH_RAMP",
         "start_x": 394.964,
         "end_x": 408.4,
         "start_surface_y": -2.8,
-        "end_surface_y": 0.0
+        "end_surface_y": 0
       }
     ]
   },
@@ -3546,8 +3546,8 @@
   ],
   "prototype_overlays": {
     "climax_fork_v0_1": {
-      "target_time": 53.0,
-      "climax_peak": 1.0,
+      "target_time": 53,
+      "climax_peak": 1,
       "intensity": 0.8736,
       "approach_window_start": 50.441,
       "approach_source_role": "BUILD",
@@ -3556,11 +3556,11 @@
         "start_x": 201.764,
         "end_x": 210.4,
         "start_surface_y": -2.8372,
-        "end_surface_y": 0.0
+        "end_surface_y": 0
       },
       "approach_slope_degrees": 18.187,
       "split_x": 210.4,
-      "merge_x": 220.0,
+      "merge_x": 220,
       "required_action": "JUMP",
       "new_required_actions": false
     },
@@ -3576,7 +3576,7 @@
           "start_x": 134.888,
           "end_x": 143.4,
           "start_surface_y": -2.739,
-          "end_surface_y": 0.0
+          "end_surface_y": 0
         },
         "approach_slope_degrees": 17.8372,
         "split_x": 143.4,
@@ -3585,8 +3585,8 @@
         "new_required_actions": false
       },
       {
-        "target_time": 53.0,
-        "climax_peak": 1.0,
+        "target_time": 53,
+        "climax_peak": 1,
         "intensity": 0.8736,
         "approach_window_start": 50.441,
         "approach_source_role": "BUILD",
@@ -3595,11 +3595,11 @@
           "start_x": 201.764,
           "end_x": 210.4,
           "start_surface_y": -2.8372,
-          "end_surface_y": 0.0
+          "end_surface_y": 0
         },
         "approach_slope_degrees": 18.187,
         "split_x": 210.4,
-        "merge_x": 220.0,
+        "merge_x": 220,
         "required_action": "JUMP",
         "new_required_actions": false
       }
@@ -3616,7 +3616,7 @@
           "start_x": 134.888,
           "end_x": 143.4,
           "start_surface_y": -2.739,
-          "end_surface_y": 0.0
+          "end_surface_y": 0
         },
         "approach_slope_degrees": 17.8372,
         "split_x": 143.4,
@@ -3625,8 +3625,8 @@
         "new_required_actions": false
       },
       {
-        "target_time": 53.0,
-        "climax_peak": 1.0,
+        "target_time": 53,
+        "climax_peak": 1,
         "intensity": 0.8736,
         "approach_window_start": 50.441,
         "approach_source_role": "BUILD",
@@ -3635,17 +3635,17 @@
           "start_x": 201.764,
           "end_x": 210.4,
           "start_surface_y": -2.8372,
-          "end_surface_y": 0.0
+          "end_surface_y": 0
         },
         "approach_slope_degrees": 18.187,
         "split_x": 210.4,
-        "merge_x": 220.0,
+        "merge_x": 220,
         "required_action": "JUMP",
         "new_required_actions": false
       },
       {
         "target_time": 68.5,
-        "climax_peak": 1.0,
+        "climax_peak": 1,
         "intensity": 0.8048,
         "approach_window_start": 65.303,
         "approach_source_role": "FLOW",
@@ -3654,11 +3654,11 @@
           "start_x": 261.212,
           "end_x": 272.4,
           "start_surface_y": -2.8208,
-          "end_surface_y": 0.0
+          "end_surface_y": 0
         },
         "approach_slope_degrees": 14.1509,
         "split_x": 272.4,
-        "merge_x": 282.0,
+        "merge_x": 282,
         "required_action": "JUMP",
         "new_required_actions": false
       },
@@ -3673,18 +3673,18 @@
           "start_x": 320.656,
           "end_x": 329.4,
           "start_surface_y": -2.8215,
-          "end_surface_y": 0.0
+          "end_surface_y": 0
         },
         "approach_slope_degrees": 17.8838,
         "split_x": 329.4,
-        "merge_x": 339.0,
+        "merge_x": 339,
         "required_action": "JUMP",
         "new_required_actions": false
       }
     ],
     "extension_60_90": {
-      "baseline_end_seconds": 60.0,
-      "baseline_end_x": 240.0,
+      "baseline_end_seconds": 60,
+      "baseline_end_x": 240,
       "baseline_immutable": true,
       "major_climax_threshold": 0.93,
       "fork_times": [
@@ -3710,8 +3710,8 @@
           "failure_policy": "FAIL_DOWN_TO_TECHNICAL_OR_SAFE"
         }
       },
-      "extension_start": 90.0,
-      "extension_end": 120.0,
+      "extension_start": 90,
+      "extension_end": 120,
       "selected": [
         {
           "target_time": 102.5,
@@ -3727,7 +3727,7 @@
             "start_x": 394.964,
             "end_x": 408.4,
             "start_surface_y": -2.8,
-            "end_surface_y": 0.0
+            "end_surface_y": 0
           },
           "approach_slope_degrees": 11.7717,
           "step_count": 4,
@@ -3747,11 +3747,11 @@
       "topology": "CREST",
       "profile": "STEPPED_CREST",
       "heights": [
-        0.0,
+        0,
         0.28,
         0.56,
         0.28,
-        0.0
+        0
       ],
       "entry_landing_length": 1.4,
       "new_required_actions": false,
@@ -3776,6 +3776,40 @@
         "collision_profile": "FLAT_LEGATO_SPAN",
         "new_required_actions": false
       }
-    ]
+    ],
+    "phase11_gameplay_density_v1": {
+      "time_range": {
+        "start": 30,
+        "end": 60
+      },
+      "source": "MUSIC_ACCENT_SMALL_JUMP_UPLIFT",
+      "new_required_actions": true,
+      "gap_count": 3,
+      "gap_length": 1.3,
+      "gaps": [
+        {
+          "source_time": 43.862,
+          "center_x": 175.448,
+          "start_x": 174.798,
+          "end_x": 176.098,
+          "gap_length": 1.3
+        },
+        {
+          "source_time": 46.208,
+          "center_x": 184.832,
+          "start_x": 184.182,
+          "end_x": 185.482,
+          "gap_length": 1.3
+        },
+        {
+          "source_time": 56.889,
+          "center_x": 227.556,
+          "start_x": 226.906,
+          "end_x": 228.206,
+          "gap_length": 1.3
+        }
+      ],
+      "accepted_120_source_unchanged": true
+    }
   }
 }
