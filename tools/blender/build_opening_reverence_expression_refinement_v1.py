@@ -148,26 +148,68 @@ def hand_geometry(
     armature,
     canonical,
     runtime,
-    hand_chain: float,
+    axes,
 ) -> dict:
     inner_q=float(runtime["hand_sampling"]["inner_edge_quantile"])
-    offsets={}
+    raw={}
     for side in ("left","right"):
-        measurement=static_core.hand_mesh_inner_edge(
+        raw[side]=static_core.hand_mesh_inner_edge(
             armature,
             canonical,
             runtime["hand_samples"][side],
             side,
             inner_q,
         )
-        offsets[side]=float(measurement["side_offset"])
-    gap=offsets["left"]+offsets["right"]
+
+    left_shoulder_name=canonical["canonical_bones"][
+        "left_upper_arm"
+    ]["rig_bone"]
+    right_shoulder_name=canonical["canonical_bones"][
+        "right_upper_arm"
+    ]["rig_bone"]
+    left_shoulder=Vector(
+        armature.pose.bones[left_shoulder_name].head
+    )
+    right_shoulder=Vector(
+        armature.pose.bones[right_shoulder_name].head
+    )
+    left_axis=axes["left"]
+    left_shoulder_coord=float(left_shoulder.dot(left_axis))
+    right_shoulder_coord=float(right_shoulder.dot(left_axis))
+    shoulder_mid=0.5*(left_shoulder_coord+right_shoulder_coord)
+    shoulder_width=abs(left_shoulder_coord-right_shoulder_coord)
+    require(
+        shoulder_width > 1e-9,
+        "Shoulder width collapsed during reverence hand measurement.",
+    )
+
+    left_inner=float(raw["left"]["inner_edge"])
+    right_inner=float(raw["right"]["inner_edge"])
+    midpoint_offsets={
+        "left":left_inner-shoulder_mid,
+        "right":shoulder_mid-right_inner,
+    }
+    gap=left_inner-right_inner
+    asymmetry=abs(
+        midpoint_offsets["left"]-midpoint_offsets["right"]
+    )
+
     return {
-        "side_offsets":offsets,
+        "metric_authority":"SHOULDER_MIDPOINT_BODY_FRAME_LEFT_AXIS",
+        "shoulder_left_coordinate":left_shoulder_coord,
+        "shoulder_right_coordinate":right_shoulder_coord,
+        "shoulder_midpoint_coordinate":shoulder_mid,
+        "shoulder_width":shoulder_width,
+        "inner_edges":{
+            "left":left_inner,
+            "right":right_inner,
+        },
+        "midpoint_side_offsets":midpoint_offsets,
         "gap":gap,
-        "gap_hand_chain_fraction":gap/hand_chain,
-        "side_offset_asymmetry_hand_chain_fraction":(
-            abs(offsets["left"]-offsets["right"])/hand_chain
+        "gap_shoulder_width_fraction":gap/shoulder_width,
+        "midpoint_asymmetry":asymmetry,
+        "midpoint_asymmetry_shoulder_width_fraction":(
+            asymmetry/shoulder_width
         ),
     }
 
@@ -209,23 +251,32 @@ def arm_candidate_pass(
 ) -> tuple[bool,list[str]]:
     target=contract["visual_geometry_targets"]
     reasons=[]
-    gap=float(hand["gap_hand_chain_fraction"])
-    if gap < float(target["hand_gap_hand_chain_fraction_min"]):
-        reasons.append("hand_gap_too_small")
-    if gap > float(target["hand_gap_hand_chain_fraction_max"]):
-        reasons.append("hand_gap_too_large")
-    for side,value in hand["side_offsets"].items():
-        if value < float(target["each_hand_side_offset_min"])-1e-9:
-            reasons.append(f"{side}_hand_crosses_centerline")
     if (
-        hand["side_offset_asymmetry_hand_chain_fraction"]
+        hand["metric_authority"]
+        != target["metric_authority"]
+    ):
+        reasons.append("hand_metric_authority")
+    gap=float(hand["gap_shoulder_width_fraction"])
+    if gap < float(
+        target["hand_gap_shoulder_width_fraction_min"]
+    ):
+        reasons.append("hand_gap_too_small")
+    if gap > float(
+        target["hand_gap_shoulder_width_fraction_max"]
+    ):
+        reasons.append("hand_gap_too_large")
+    for side,value in hand["midpoint_side_offsets"].items():
+        if value < float(target["each_hand_midline_offset_min"])-1e-9:
+            reasons.append(f"{side}_hand_crosses_shoulder_midline")
+    if (
+        hand["midpoint_asymmetry_shoulder_width_fraction"]
         > float(
             target[
-                "hand_side_offset_asymmetry_hand_chain_fraction_max"
+                "hand_midpoint_asymmetry_shoulder_width_fraction_max"
             ]
         )
     ):
-        reasons.append("hand_asymmetry")
+        reasons.append("hand_midpoint_asymmetry")
     if (
         target["elbows_must_remain_below_shoulder_line"]
         and not elbow["both_elbows_below_shoulder_line"]
@@ -240,11 +291,11 @@ def candidate_score(
     contract: dict,
 ) -> tuple:
     target=contract["visual_geometry_targets"]
-    ideal=float(target["hand_gap_hand_chain_fraction_ideal"])
+    ideal=float(target["hand_gap_shoulder_width_fraction_ideal"])
     # Geometry first; then prefer the smallest departure from accepted
     # bras_bas (30° shoulder abduction, 55° elbow flexion).
     return (
-        abs(float(hand["gap_hand_chain_fraction"])-ideal),
+        abs(float(hand["gap_shoulder_width_fraction"])-ideal),
         float(parameters["shoulder_progress"]),
         float(parameters["elbow_progress"]),
     )
@@ -389,12 +440,6 @@ def main() -> None:
     foot_length=float(
         static_core.body_metrics(canonical)["foot_chain_length"]
     )
-    hand_chain=float(
-        static_core.body_metrics_for_hand(canonical)[
-            "hand_middle_chain"
-        ]
-    )
-
     # Measure calibrated rest gesture forefoot centroid.
     static_core.clear_pose(armature)
     rest_centroids={
@@ -514,7 +559,7 @@ def main() -> None:
         apply_bow(armature,canonical,contract)
 
         hand=hand_geometry(
-            armature,canonical,runtime,hand_chain
+            armature,canonical,runtime,axes
         )
         elbow=elbow_geometry(
             armature,canonical,axes
@@ -604,7 +649,7 @@ def main() -> None:
     )
 
     final_hand=hand_geometry(
-        armature,canonical,runtime,hand_chain
+        armature,canonical,runtime,axes
     )
     final_elbow=elbow_geometry(
         armature,canonical,axes
@@ -708,11 +753,11 @@ def main() -> None:
     )
     print(
         "HAND_GAP="
-        f"{final_hand['gap_hand_chain_fraction']:.6f} hand-chain"
+        f"{final_hand['gap_shoulder_width_fraction']:.6f} shoulder-width"
     )
     print(
         "HAND_ASYMMETRY="
-        f"{final_hand['side_offset_asymmetry_hand_chain_fraction']:.6f} hand-chain"
+        f"{final_hand['midpoint_asymmetry_shoulder_width_fraction']:.6f} shoulder-width"
     )
     print(
         "SELECTED_ARM="
