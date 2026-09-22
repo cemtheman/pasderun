@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "phase": "10.8.2",
+  "contract_id": "foundation_motion_plie_to_releve_v1",
+  "transition": {
+    "start_pose": "plie",
+    "end_pose": "releve",
+    "duration_seconds": 2,
+    "fps": 30,
+    "frame_start": 1
+  },
+  "curve": {
+    "type": "MINIMUM_JERK",
+    "formula": "10t^3-15t^4+6t^5",
+    "overshoot_forbidden": true
+  },
+  "interpolation": {
+    "space": "LOCAL_MATRIX_BASIS",
+    "rotation": "QUATERNION_SHORTEST_ARC_SLERP",
+    "progress": "SYNCHRONOUS_MINIMUM_JERK",
+    "non_root_translation": "LOCK_TO_START",
+    "scale": "LOCK_TO_START",
+    "pelvis_translation": "PER_FRAME_DEFORMED_MESH_FOREFOOT_CONTACT_SOLVE",
+    "start_contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+    "intermediate_contact_mode": "SOLVE_FOREFOOT_CONTACT",
+    "end_contact_mode": "SOLVE_FOREFOOT_CONTACT",
+    "locked_bones": "EXACT_START_MATRIX_BASIS",
+    "start_endpoint": "EXACT_PHASE_10_6_REALIZED_PLIE",
+    "end_endpoint": "EXACT_PHASE_10_6_REALIZED_RELEVE"
+  },
+  "authority": {
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "endpoint_pose_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "contact_authority": "DEFORMED_FOOT_MESH_FOREFOOT_CONTACT_AFTER_START",
+    "releve_endpoint_plantar_toe_authority": "PHASE_10_6_ACCEPTED_RELEVE_REALIZATION",
+    "intermediate_plantar_toe_search_forbidden": true,
+    "actual_rig_hierarchy_authority": true,
+    "mannequin_motion_forbidden": true,
+    "parallel_motion_authority_forbidden": true,
+    "independent_upper_body_authoring_forbidden": true,
+    "trunk_tilt_authority": "PHASE_10_6_TRUNK_TILT_SCALAR_ORIENTATION_ROUTE",
+    "hierarchy_propagated_endpoint_motion_required": true
+  },
+  "validation": {
+    "endpoint_local_matrix_error_max": 0.000001,
+    "endpoint_change_detection_error_min": 0.000001,
+    "accepted_endpoint_locked_noise_max": 0.000001,
+    "locked_local_matrix_error_max": 1e-7,
+    "moving_non_root_translation_error_max": 0.000001,
+    "moving_scale_error_max": 0.000001,
+    "accepted_endpoint_decomposition_noise_max": 0.000005,
+    "minimum_consecutive_quaternion_dot": 0,
+    "sample_every_frame": true,
+    "start_full_foot_contact_required": true,
+    "intermediate_forefoot_contact_required": true,
+    "end_forefoot_contact_required": true,
+    "root_horizontal_translation_max": 0.000001,
+    "root_rise_monotonic_epsilon": 0.00001,
+    "heel_lift_monotonic_epsilon": 0.00001,
+    "semantic_preferred_envelope_required": true,
+    "minimum_final_heel_lift_foot_fraction": 0.05,
+    "required_motion_canonical_bones": [
+      "pelvis",
+      "left_thigh",
+      "left_shin",
+      "left_foot",
+      "left_toes",
+      "right_thigh",
+      "right_shin",
+      "right_foot",
+      "right_toes",
+      "spine_lower",
+      "spine_mid",
+      "chest"
+    ],
+    "semantic_driver_canonical_bones": [
+      "pelvis",
+      "left_thigh",
+      "left_shin",
+      "left_foot",
+      "left_toes",
+      "right_thigh",
+      "right_shin",
+      "right_foot",
+      "right_toes",
+      "spine_lower",
+      "spine_mid",
+      "chest"
+    ],
+    "trunk_hierarchy_propagation_root": "chest"
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_transition_only": true,
+    "glb_export_forbidden": true,
+    "opening_reverence_forbidden": true,
+    "final_reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_reaction_changes_forbidden": true,
+    "signature_move_forbidden": true,
+    "scoring_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
