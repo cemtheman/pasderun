@@ -66,12 +66,13 @@
     }
   },
   "visual_geometry_targets": {
-    "hand_gap_hand_chain_fraction_min": 0.18,
-    "hand_gap_hand_chain_fraction_max": 0.55,
-    "hand_gap_hand_chain_fraction_ideal": 0.3,
-    "each_hand_side_offset_min": 0,
+    "hand_gap_shoulder_width_fraction_min": 0.25,
+    "hand_gap_shoulder_width_fraction_max": 0.55,
+    "hand_gap_shoulder_width_fraction_ideal": 0.38,
+    "each_hand_midline_offset_min": 0,
+    "hand_midpoint_asymmetry_shoulder_width_fraction_max": 0.08,
     "elbows_must_remain_below_shoulder_line": true,
-    "hand_side_offset_asymmetry_hand_chain_fraction_max": 0.12
+    "metric_authority": "SHOULDER_MIDPOINT_BODY_FRAME_LEFT_AXIS"
   },
   "validation": {
     "frozen_lower_chain_local_matrix_error_max": 0.000001,
