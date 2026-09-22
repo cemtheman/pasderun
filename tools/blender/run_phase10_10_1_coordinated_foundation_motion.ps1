@@ -86,7 +86,10 @@ foreach ($gate in @(
     "arm_explicit_override_policy_applied",
     "root_contact_owned_by_lower_solver",
     "post_overlay_contact_pass",
-    "arm_boundary_pass",
+    "arm_source_boundary_identity_pass",
+    "coordinated_boundary_clearance_adaptation_pass",
+    "coordinated_boundary_nonshoulder_arm_identity_pass",
+    "coordinated_boundary_hand_centerline_pass",
     "lower_boundary_pass",
     "root_descent_monotone",
     "root_rise_monotone",
@@ -127,6 +130,8 @@ Write-Host "Frames:             $($data.diagnostics.sample_count)"
 Write-Host "Previews:           $previewCount/3"
 Write-Host "Authority overlap:  $(@($data.authority_partition.arm_lower_overlap_rig_bones).Count)"
 Write-Host "Semantic overlap:   $(@($data.authority_partition.arm_lower_semantic_overlap_rig_bones).Count)"
+Write-Host "Boundary shoulder:  $($data.diagnostics.arm_boundary_max_shoulder_correction_deg) deg"
+Write-Host "Boundary hand L/R:  $($data.diagnostics.arm_boundary_hand_side_offsets.left) / $($data.diagnostics.arm_boundary_hand_side_offsets.right)"
 Write-Host "Contact max:        $($data.diagnostics.maximum_post_overlay_contact_error)"
 Write-Host "Root descent:       $($data.diagnostics.root_descent)"
 Write-Host "Root rise:          $($data.diagnostics.root_rise)"
