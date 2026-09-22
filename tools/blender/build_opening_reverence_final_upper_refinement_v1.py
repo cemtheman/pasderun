@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import math
 import sys
@@ -349,6 +350,185 @@ def diagnostic_arm_probe(
                 - pre_hand["midpoint_side_offsets"]["right"]
             ),
         },
+    }
+
+
+def _lerp_mapping(start: dict,end: dict,progress: float) -> dict:
+    keys=set(start)|set(end)
+    require(
+        keys==set(start)==set(end),
+        "Semantic direction endpoints do not share the same keys.",
+    )
+    return {
+        key:(
+            float(start[key])
+            +(float(end[key])-float(start[key]))*float(progress)
+        )
+        for key in sorted(keys)
+    }
+
+
+def semantic_hybrid_arm_pose(
+    armature,
+    canonical,
+    constraints,
+    axis_contract,
+    grammar,
+    intents,
+    static_contract,
+    pose_solver,
+    retarget_solver,
+    arm_roles,
+    carriage_progress: float,
+    elbow_pole_progress: float,
+) -> tuple[dict,dict]:
+    """Realize a diagnostic hybrid through the accepted semantic pipeline."""
+    diagnostic_intents=copy.deepcopy(intents)
+    source=intents["poses"]["bras_bas"]
+    reference=intents["poses"]["en_avant"]
+    hybrid=diagnostic_intents["poses"]["bras_bas"]
+
+    # This diagnostic asks whether the desired open low oval exists in the
+    # accepted semantic direction space.  The foundation near-touch policy is
+    # intentionally disabled here; no projection or mesh repositioning occurs.
+    hybrid["centerline_hand_policy"]=None
+    hybrid.pop("hand_mesh_gap_chain_fraction",None)
+
+    for name in ("wrist_direction","hand_direction"):
+        hybrid[name]=_lerp_mapping(
+            source[name],
+            reference[name],
+            carriage_progress,
+        )
+    hybrid["elbow_pole"]=_lerp_mapping(
+        source["elbow_pole"],
+        reference["elbow_pole"],
+        elbow_pole_progress,
+    )
+
+    # Preserve the accepted bras_bas authored DOFs exactly.  The diagnostic
+    # changes semantic carriage directions only.
+    hybrid["joint_dofs"]=copy.deepcopy(source["joint_dofs"])
+    hybrid["elbow_angle_deg"]=float(source["elbow_angle_deg"])
+
+    solution=pose_solver.solve_pose(
+        "bras_bas",
+        diagnostic_intents,
+        grammar,
+        canonical,
+        constraints,
+    )
+    retargeted=retarget_solver.retarget_pose_solution(
+        solution,
+        canonical,
+        constraints,
+        axis_contract,
+    )
+
+    static_core.clear_pose(armature)
+    static_core.apply_rotation_deltas(armature,retargeted)
+    static_core.apply_ballet_hand_shape(
+        armature,
+        canonical,
+        static_contract,
+    )
+    bpy.context.view_layer.update()
+
+    pose={
+        name:armature.pose.bones[name].matrix_basis.copy()
+        for name in arm_roles
+    }
+    evidence={
+        "carriage_progress":float(carriage_progress),
+        "elbow_pole_progress":float(elbow_pole_progress),
+        "wrist_direction":copy.deepcopy(hybrid["wrist_direction"]),
+        "hand_direction":copy.deepcopy(hybrid["hand_direction"]),
+        "elbow_pole":copy.deepcopy(hybrid["elbow_pole"]),
+        "joint_dofs":copy.deepcopy(hybrid["joint_dofs"]),
+        "centerline_policy":"NONE_DIAGNOSTIC_ONLY",
+        "canonical_validation":copy.deepcopy(solution["validation"]),
+        "preferred_joint_envelope":solution["evidence"].get(
+            "preferred_joint_envelope"
+        ),
+    }
+    return pose,evidence
+
+
+def semantic_hybrid_diagnostic(
+    armature,
+    canonical,
+    constraints,
+    axis_contract,
+    grammar,
+    intents,
+    static_contract,
+    pose_solver,
+    retarget_solver,
+    runtime,
+    axes,
+    contract,
+    lower_pose,
+    arm_roles,
+) -> dict:
+    # Fixed probes only: no optimizer and no adaptive search.
+    specifications=[
+        ("semantic_open_bras_bas",0.00,0.00),
+        ("semantic_forward_15_bras_pole",0.15,0.00),
+        ("semantic_forward_30_bras_pole",0.30,0.00),
+        ("semantic_forward_45_bras_pole",0.45,0.00),
+        ("semantic_forward_30_blend_pole",0.30,0.30),
+        ("semantic_forward_30_en_avant_pole",0.30,1.00),
+    ]
+    rows=[]
+    for name,carriage_progress,elbow_pole_progress in specifications:
+        try:
+            arm_pose,evidence=semantic_hybrid_arm_pose(
+                armature,
+                canonical,
+                constraints,
+                axis_contract,
+                grammar,
+                intents,
+                static_contract,
+                pose_solver,
+                retarget_solver,
+                arm_roles,
+                carriage_progress,
+                elbow_pole_progress,
+            )
+            probe=diagnostic_arm_probe(
+                armature,
+                canonical,
+                runtime,
+                axes,
+                contract,
+                lower_pose,
+                arm_pose,
+            )
+            rows.append({
+                "name":name,
+                "status":"REALIZED",
+                "semantic_authority":evidence,
+                **probe,
+            })
+        except Exception as exc:
+            rows.append({
+                "name":name,
+                "status":"REJECTED",
+                "carriage_progress":float(carriage_progress),
+                "elbow_pole_progress":float(elbow_pole_progress),
+                "reason":f"{type(exc).__name__}: {exc}",
+            })
+
+    return {
+        "mode":"CANONICAL_SEMANTIC_HYBRID_DIAGNOSTIC_ONLY",
+        "probe_count":len(rows),
+        "probes":rows,
+        "optimizer_used":False,
+        "adaptive_search_used":False,
+        "centerline_projection_used":False,
+        "new_authority_selected":False,
+        "bras_bas_joint_dofs_preserved":True,
     }
 
 
@@ -741,6 +921,22 @@ def main() -> None:
             bras_bas_pose,
             en_avant_pose,
         )
+        semantic_diagnostic=semantic_hybrid_diagnostic(
+            armature,
+            canonical,
+            constraints,
+            axis_contract,
+            grammar,
+            intents,
+            static_contract,
+            pose_solver,
+            retarget_solver,
+            runtime,
+            axes,
+            contract,
+            lower_pose,
+            arm_roles,
+        )
         diagnostic_payload={
             "phase":PHASE,
             "contract_id":contract["contract_id"],
@@ -756,6 +952,7 @@ def main() -> None:
                 "en_avant":en_avant_endpoint_evidence,
             },
             "arm_diagnostic":diagnostic,
+            "semantic_hybrid_diagnostic":semantic_diagnostic,
             "policy":{
                 "authority_selected":False,
                 "animation_authored":False,
@@ -794,6 +991,34 @@ def main() -> None:
                 f"pre_gap={before['gap_shoulder_width_fraction']:.6f}|"
                 f"post_gap={after['gap_shoulder_width_fraction']:.6f}|"
                 f"bow_gap_delta={bow_delta:.9f}|"
+                f"left_front={centroids['left']['front']:.6f}|"
+                f"right_front={centroids['right']['front']:.6f}|"
+                f"left_up={centroids['left']['up']:.6f}|"
+                f"right_up={centroids['right']['up']:.6f}"
+            )
+        print(
+            "SEMANTIC_PROBES="
+            f"{semantic_diagnostic['probe_count']}"
+        )
+        for row in semantic_diagnostic["probes"]:
+            if row["status"] != "REALIZED":
+                print(
+                    "SEMANTIC_PROBE="
+                    f"{row['name']}|status=REJECTED|"
+                    f"reason={row['reason']}"
+                )
+                continue
+            before=row["before_bow"]["hand_geometry"]
+            after=row["after_bow"]["hand_geometry"]
+            centroids=row["after_bow"]["hand_centroids"]
+            evidence=row["semantic_authority"]
+            print(
+                "SEMANTIC_PROBE="
+                f"{row['name']}|status=REALIZED|"
+                f"carriage={evidence['carriage_progress']:.2f}|"
+                f"pole={evidence['elbow_pole_progress']:.2f}|"
+                f"pre_gap={before['gap_shoulder_width_fraction']:.6f}|"
+                f"post_gap={after['gap_shoulder_width_fraction']:.6f}|"
                 f"left_front={centroids['left']['front']:.6f}|"
                 f"right_front={centroids['right']['front']:.6f}|"
                 f"left_up={centroids['left']['up']:.6f}|"
