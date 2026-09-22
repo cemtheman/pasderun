@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "phase": "10.11.4",
+  "contract_id": "opening_reverence_final_upper_refinement_v1",
+  "purpose": "STATIC_FINAL_UPPER_BODY_REFINEMENT_OVER_FROZEN_CROSSED_STANCE",
+  "lower_body_authority": {
+    "source_phase": "10.11.2",
+    "source_contract_id": "opening_reverence_crossed_stance_v1",
+    "frozen_selected_parameters": {
+      "gesture_hip_flexion_extension_deg": -10,
+      "gesture_hip_abduction_adduction_deg": -20,
+      "gesture_ankle_plantar_dorsiflexion_deg": 44
+    },
+    "support_side": "left",
+    "gesture_side": "right",
+    "geometry_must_repass_source_gates": true
+  },
+  "upper_body": {
+    "arm_source_semantics": "BRAS_BAS_TO_EN_AVANT_LOW_OVAL",
+    "arm_source_authority": {
+      "start_pose": "bras_bas",
+      "upper_bound_reference_pose": "en_avant",
+      "endpoint_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+      "interpolation_space": "LOCAL_MATRIX_BASIS",
+      "shoulder_elbow_rotation": "QUATERNION_SHORTEST_ARC_SLERP",
+      "moving_translation": "LOCK_TO_BRAS_BAS",
+      "moving_scale": "LOCK_TO_BRAS_BAS",
+      "wrist_policy": "EXACT_BRAS_BAS",
+      "fingers_policy": "EXACT_BRAS_BAS"
+    },
+    "search": {
+      "shoulder_progress": [
+        0.08,
+        0.12,
+        0.16
+      ],
+      "elbow_progress": [
+        0.08,
+        0.12,
+        0.16
+      ]
+    },
+    "bow": {
+      "trunk_extra_flexion_deg": 26,
+      "trunk_routes": [
+        {
+          "bone": "spine_lower",
+          "weight": 0.34
+        },
+        {
+          "bone": "spine_mid",
+          "weight": 0.33
+        },
+        {
+          "bone": "chest",
+          "weight": 0.33
+        }
+      ],
+      "neck_flexion_deg": 6,
+      "head_flexion_deg": 10,
+      "canonical_axis": "X"
+    },
+    "en_avant_guard": {
+      "maximum_progress_toward_en_avant": 0.16,
+      "rationale": "Remain a low reverence oval; use only the first 16% of the accepted bras_bas-to-en_avant arc."
+    }
+  },
+  "visual_geometry_targets": {
+    "hand_gap_shoulder_width_fraction_min": 0.24,
+    "hand_gap_shoulder_width_fraction_max": 0.52,
+    "hand_gap_shoulder_width_fraction_ideal": 0.36,
+    "each_hand_midline_offset_min": 0,
+    "hand_midpoint_asymmetry_shoulder_width_fraction_max": 0.08,
+    "elbows_must_remain_below_shoulder_line": true,
+    "metric_authority": "SHOULDER_MIDPOINT_BODY_FRAME_LEFT_AXIS"
+  },
+  "validation": {
+    "frozen_lower_chain_local_matrix_error_max": 0.000001,
+    "frozen_lower_geometry_must_repass": true,
+    "hand_centerline_crossing_forbidden": true,
+    "no_centerline_projection_allowed": true,
+    "no_permanent_constraints": true,
+    "imported_action_must_be_cleared": true,
+    "report_json_serializable_required": true,
+    "accepted_arm_endpoint_bounded_interpolation_required": true
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "human_visual_questions": [
+    "Does the pose now read immediately as a classical stage reverence close to the supplied reference?",
+    "Do the arms form a soft forward low oval rather than open laterally toward second position?",
+    "Do the hands remain separated with visible breathing room in front of the body?",
+    "Is the torso/head bow clearly readable in side and three-quarter views?",
+    "Is the frozen 10.11.2 crossed lower-body silhouette unchanged?",
+    "Does the whole silhouette feel like one coherent reverence rather than separately posed limbs?"
+  ],
+  "policy": {
+    "static_pose_only": true,
+    "lower_body_redesign_forbidden": true,
+    "animation_forbidden": true,
+    "world_turn_forbidden": true,
+    "run_handoff_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_changes_forbidden": true,
+    "glb_export_forbidden": true
+  }
+}
