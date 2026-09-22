@@ -38,55 +38,37 @@ class Phase10114ReverenceFinalUpperTests(unittest.TestCase):
             },
         )
 
-    def test_arm_search_is_nine_candidates(self) -> None:
-        candidates=list(
-            refinement.arm_candidate_parameter_sets(self.contract)
-        )
-        self.assertEqual(len(candidates),9)
+    def test_selected_reverence_authority_is_forward_30(self) -> None:
+        selected=self.contract["upper_body"]["selected_reverence_authority"]
         self.assertEqual(
-            candidates,
-            list(refinement.arm_candidate_parameter_sets(self.contract)),
+            selected["mode"],
+            "EXPLICIT_REVERENCE_GAP_WITH_SEMANTIC_CARRIAGE",
+        )
+        self.assertEqual(selected["source_pose"],"bras_bas")
+        self.assertEqual(selected["reference_pose"],"en_avant")
+        self.assertEqual(
+            selected["target_gap_shoulder_width_fraction"],0.36
+        )
+        self.assertEqual(selected["carriage_progress"],0.30)
+        self.assertEqual(
+            selected["elbow_pole_policy"],"EXACT_BRAS_BAS"
+        )
+        self.assertEqual(
+            selected["joint_dofs_policy"],"EXACT_BRAS_BAS"
+        )
+        self.assertEqual(
+            selected["gap_authority"],
+            "DEFORMED_HAND_MESH_PRIMARY_SHOULDER_SWEEP",
+        )
+        self.assertEqual(
+            selected["human_visual_selection"],"forward_30"
         )
 
-    def test_arm_authority_uses_accepted_endpoints(self) -> None:
+    def test_endpoint_interpolation_is_diagnostic_reference_only(self) -> None:
         a=self.contract["upper_body"]["arm_source_authority"]
+        self.assertTrue(a["diagnostic_reference_only"])
         self.assertEqual(a["start_pose"],"bras_bas")
         self.assertEqual(a["upper_bound_reference_pose"],"en_avant")
-        self.assertEqual(
-            a["endpoint_authority"],
-            "PHASE_10_6_ACCEPTED_REALIZATION",
-        )
-        self.assertEqual(
-            a["shoulder_elbow_rotation"],
-            "QUATERNION_SHORTEST_ARC_SLERP",
-        )
-        self.assertEqual(a["wrist_policy"],"EXACT_BRAS_BAS")
-        self.assertEqual(a["fingers_policy"],"EXACT_BRAS_BAS")
-
-    def test_search_stays_within_sixteen_percent_of_en_avant(self) -> None:
-        candidates=list(
-            refinement.arm_candidate_parameter_sets(self.contract)
-        )
-        self.assertLessEqual(
-            max(p["shoulder_progress"] for p in candidates),
-            0.16,
-        )
-        self.assertLessEqual(
-            max(p["elbow_progress"] for p in candidates),
-            0.16,
-        )
-        self.assertGreater(
-            min(p["shoulder_progress"] for p in candidates),
-            0.0,
-        )
-        self.assertEqual(
-            sorted({p["shoulder_progress"] for p in candidates}),
-            [0.08,0.12,0.16],
-        )
-        self.assertEqual(
-            sorted({p["elbow_progress"] for p in candidates}),
-            [0.08,0.12,0.16],
-        )
 
     def test_bow_is_stronger_but_bounded(self) -> None:
         bow=self.contract["upper_body"]["bow"]
@@ -120,7 +102,7 @@ class Phase10114ReverenceFinalUpperTests(unittest.TestCase):
         v=self.contract["validation"]
         self.assertTrue(v["no_centerline_projection_allowed"])
         self.assertTrue(
-            v["accepted_arm_endpoint_bounded_interpolation_required"]
+            v["selected_explicit_reverence_authority_required"]
         )
 
     def test_scope_is_static_upper_refinement_only(self) -> None:
