@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "phase": "10.10.1",
+  "contract_id": "coordinated_foundation_motion_v1",
+  "timeline": {
+    "fps": 30,
+    "frame_start": 1,
+    "shared_boundary_frame": 61,
+    "frame_end": 121,
+    "inserted_hold_frames": 0
+  },
+  "arm_chain": {
+    "source_composition_phase": "10.9.1",
+    "poses": [
+      "bras_bas",
+      "en_avant",
+      "second"
+    ],
+    "boundary_pose": "en_avant"
+  },
+  "lower_chain": {
+    "source_composition_phase": "10.9.2",
+    "poses": [
+      "fifth",
+      "plie",
+      "releve"
+    ],
+    "boundary_pose": "plie",
+    "contact_modes": {
+      "frames_1_61": "SOLVE_FULL_FOOT_CONTACT",
+      "frames_62_121": "SOLVE_FOREFOOT_CONTACT"
+    }
+  },
+  "authority": {
+    "motion_authority": "SINGLE_HUMANOID_RIG",
+    "composition_only": true,
+    "source_primitive_math_reimplementation_forbidden": true,
+    "lower_semantic_driver_priority": "LOWER_BODY",
+    "arm_explicit_chain_priority": "ARM",
+    "overlap_policy": "ARM_EXPLICIT_MAY_OVERRIDE_LOWER_HIERARCHY_FOLLOWERS_ONLY",
+    "lower_semantic_driver_overlap_with_arm_forbidden": true,
+    "lower_hierarchy_followers_preserved_except_explicit_arm_chain": true,
+    "root_contact_authority": "LOWER_BODY_CONTACT_SOLVER",
+    "mannequin_motion_forbidden": true,
+    "parallel_motion_authority_forbidden": true,
+    "glb_export_forbidden": true
+  },
+  "validation": {
+    "arm_lower_semantic_overlap_count_max": 0,
+    "shared_arm_boundary_local_matrix_error_max": 0.000001,
+    "shared_lower_boundary_local_matrix_error_max": 0.000001,
+    "root_horizontal_translation_max": 0.000001,
+    "root_descent_monotonic_epsilon": 0.00001,
+    "root_rise_monotonic_epsilon": 0.00001,
+    "heel_lift_monotonic_epsilon": 0.00001,
+    "minimum_consecutive_quaternion_dot": 0,
+    "sample_every_frame": true,
+    "boundary_frames": [
+      60,
+      61,
+      62
+    ],
+    "no_duplicate_boundary_key_authority": true,
+    "post_overlay_contact_required": true
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "container": "MPEG4",
+    "codec": "H264",
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "policy": {
+    "one_coordinated_chain_only": true,
+    "reverence_forbidden": true,
+    "run_integration_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_changes_forbidden": true,
+    "signature_move_forbidden": true,
+    "scoring_forbidden": true,
+    "full_choreography_forbidden": true
+  }
+}
