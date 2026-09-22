@@ -19,16 +19,12 @@ enum CompletionPhase {
 	DECELERATE_TO_WALK,
 	WALK_TO_MARK,
 	FINAL_BOW,
-	EXIT_TURN,
-	EXIT_WALK,
 }
 
 const COMPLETION_WALK_SPEED := 1.45
 const COMPLETION_DECEL_DURATION := 0.90
 const COMPLETION_APPROACH_DISTANCE := 1.60
 const COMPLETION_FINAL_BOW_DURATION := 2.85
-const COMPLETION_EXIT_TURN_DURATION := 0.38
-const COMPLETION_EXIT_WALK_DISTANCE := 7.00
 
 const CHECKPOINTS := [
 	{"id": "START", "x": 0.0},
@@ -68,7 +64,6 @@ var _checkpoint_music_time := 0.0
 var _completion_phase := CompletionPhase.NONE
 var _completion_phase_elapsed := 0.0
 var _completion_bow_x := 0.0
-var _completion_exit_x := 0.0
 var _completion_decel_start_x := 0.0
 var _completion_decel_start_speed := RUN_SPEED
 var _ballerina_visual: Node
@@ -103,8 +98,17 @@ func _physics_process(delta: float) -> void:
 		return
 	if _state != RunState.PLAYING:
 		return
-	# Music is the authoritative end of the choreographic phrase. The spatial
-	# trigger remains only as a safety fallback if the stream has already ended.
+
+	# Begin the run->walk handoff during the final musical breath so the body is
+	# already at walking speed when the soundtrack actually ends. The exact
+	# stream end remains authoritative for silence; this only moves locomotion
+	# preparation earlier by the deceleration window.
+	if _should_begin_completion_lead():
+		_begin_completion_ceremony()
+		return
+
+	# Spatial completion remains a safety fallback if the stream has already
+	# ended without the lead transition being armed.
 	if (
 		dancer.global_position.x >= completion_trigger.global_position.x
 		and not audio_player.playing
@@ -154,6 +158,20 @@ func _on_music_finished() -> void:
 	if not _run_started or _state != RunState.PLAYING:
 		return
 	_begin_completion_ceremony()
+
+
+func _should_begin_completion_lead() -> bool:
+	if audio_player == null or audio_player.stream == null:
+		return false
+	if not audio_player.playing:
+		return false
+
+	var duration := audio_player.stream.get_length()
+	if duration <= COMPLETION_DECEL_DURATION:
+		return false
+
+	var remaining := duration - audio_player.get_playback_position()
+	return remaining <= COMPLETION_DECEL_DURATION
 
 
 func _update_checkpoint() -> void:
@@ -241,9 +259,10 @@ func _begin_completion_ceremony() -> void:
 		absf(dancer.velocity.x),
 		COMPLETION_WALK_SPEED
 	)
-	# Music end starts the run->walk transition immediately, but the actual
+	# The run->walk transition begins during the final musical breath. The actual
 	# révérence still belongs at the authored closing-stage mark near the wing.
-	# If music ends unusually late, preserve at least a short walk before bowing.
+	# If the lead transition arms unusually late, preserve at least a short walk
+	# before bowing.
 	var minimum_bow_x := (
 		_completion_decel_start_x
 		+ COMPLETION_DECEL_DURATION
@@ -256,7 +275,6 @@ func _begin_completion_ceremony() -> void:
 		+ COMPLETION_APPROACH_DISTANCE
 	)
 	_completion_bow_x = maxf(minimum_bow_x, authored_bow_x)
-	_completion_exit_x = _completion_bow_x + COMPLETION_EXIT_WALK_DISTANCE
 
 	fork_camera_controller.call("restore_normal_state")
 	# Keep following the dancer through the music-end deceleration and walk.
@@ -327,27 +345,8 @@ func _update_completion_ceremony(delta: float) -> void:
 		CompletionPhase.FINAL_BOW:
 			if _completion_phase_elapsed < COMPLETION_FINAL_BOW_DURATION:
 				return
-			_completion_phase = CompletionPhase.EXIT_TURN
-			_completion_phase_elapsed = 0.0
-			_set_completion_stage_visual(&"EXIT_TURN")
-
-		CompletionPhase.EXIT_TURN:
-			if _completion_phase_elapsed < COMPLETION_EXIT_TURN_DURATION:
-				return
-			_completion_phase = CompletionPhase.EXIT_WALK
-			_completion_phase_elapsed = 0.0
-			_set_completion_stage_visual(&"WALK")
-			if dancer.has_method("set_stage_ending_speed"):
-				dancer.call(
-					"set_stage_ending_speed",
-					COMPLETION_WALK_SPEED
-				)
-
-		CompletionPhase.EXIT_WALK:
-			if dancer.global_position.x < _completion_exit_x:
-				return
-			if dancer.has_method("set_stage_ending_speed"):
-				dancer.call("set_stage_ending_speed", 0.0)
+			# Hold the settled audience-facing reverence as the terminal stage
+			# image. Do not turn away or resume locomotion after the bow.
 			_finish_level_complete_state()
 
 
