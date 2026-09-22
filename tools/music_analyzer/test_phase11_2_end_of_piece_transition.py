@@ -14,12 +14,16 @@ RUNTIME = (
 
 
 class Phase112EndOfPieceTransitionTests(unittest.TestCase):
-    def test_run_to_walk_handoff_begins_before_stream_end(self) -> None:
+    def test_run_to_walk_handoff_uses_musical_end_not_mp3_container_end(self) -> None:
         self.assertIn("func _should_begin_completion_lead() -> bool:", RECOVERY)
-        self.assertIn("audio_player.stream.get_length()", RECOVERY)
+        self.assertIn("COMPLETION_MUSICAL_END_TIME := 137.75", RECOVERY)
         self.assertIn("audio_player.get_playback_position()", RECOVERY)
         self.assertIn(
-            "return remaining <= COMPLETION_DECEL_DURATION",
+            "COMPLETION_MUSICAL_END_TIME - COMPLETION_DECEL_DURATION",
+            RECOVERY,
+        )
+        self.assertNotIn(
+            "var duration := audio_player.stream.get_length()",
             RECOVERY,
         )
 
@@ -29,6 +33,7 @@ class Phase112EndOfPieceTransitionTests(unittest.TestCase):
         self.assertLess(lead, fallback)
 
     def test_deceleration_resolves_to_walk_not_post_music_run(self) -> None:
+        self.assertIn("COMPLETION_MUSICAL_END_TIME := 137.75", RECOVERY)
         self.assertIn("COMPLETION_DECEL_DURATION := 1.20", RECOVERY)
         self.assertIn("COMPLETION_WALK_SPEED := 1.45", RECOVERY)
         self.assertIn("COMPLETION_WALK_VISUAL_SWITCH := 0.65", RECOVERY)
