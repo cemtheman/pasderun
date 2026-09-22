@@ -56,6 +56,33 @@ class Phase10101CoordinatedMotionTests(unittest.TestCase):
             "LOWER_BODY_CONTACT_SOLVER",
         )
 
+    def test_shared_boundary_clearance_adaptation_is_bounded(self) -> None:
+        a=self.contract["authority"]
+        v=self.contract["validation"]
+        self.assertEqual(
+            a["coordinated_boundary_clearance_adaptation"],
+            "REUSE_ACCEPTED_MINIMAL_DEFORMED_MESH_SHOULDER_PROJECTION",
+        )
+        self.assertTrue(
+            a["source_endpoint_projection_rule_preserved_outside_shared_boundary"]
+        )
+        self.assertEqual(
+            v["coordinated_boundary_projection_only_frame"],
+            61,
+        )
+        self.assertLessEqual(
+            v[
+                "coordinated_boundary_clearance_projection_max_shoulder_correction_deg"
+            ],
+            3.0,
+        )
+        self.assertLessEqual(
+            v[
+                "coordinated_boundary_nonshoulder_arm_local_matrix_error_max"
+            ],
+            1e-6,
+        )
+
     def test_semantic_overlap_ceiling_is_zero(self) -> None:
         self.assertEqual(
             self.contract["validation"][
