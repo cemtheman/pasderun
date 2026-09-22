@@ -21,6 +21,7 @@ for path in (HERE,BALLET_TOOLS):
 import apply_static_foundation_poses_v1 as static_core  # noqa: E402
 import render_foundation_pose_visual_gate_v1 as visual_gate  # noqa: E402
 import build_foundation_transition_v1 as arm_motion  # noqa: E402
+import build_lower_body_fifth_to_plie_v1 as lower_motion  # noqa: E402
 import opening_reverence_pose as reverence  # noqa: E402
 
 
@@ -36,6 +37,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--static-contract",required=True)
     p.add_argument("--visual-contract",required=True)
     p.add_argument("--reverence-contract",required=True)
+    p.add_argument("--lower-motion-contract",required=True)
     p.add_argument("--report",required=True)
     p.add_argument("--preview-dir",required=True)
     return p.parse_args(sys.argv[sys.argv.index("--")+1:])
@@ -112,7 +114,7 @@ def contact_proof(
     )
     require(
         proof["max_abs_error"] <= runtime["contact_tolerance"],
-        "Reverence acknowledgement lost accepted plié full-foot contact: "
+        "Reverence acknowledgement lost sampled demi-plié full-foot contact: "
         f"{proof['max_abs_error']} > {runtime['contact_tolerance']}.",
     )
     return {
@@ -178,11 +180,18 @@ def main() -> None:
     static_contract=load_json(args.static_contract)
     visual_contract=load_json(args.visual_contract)
     contract=load_json(args.reverence_contract)
+    lower_contract=load_json(args.lower_motion_contract)
 
     report_path=Path(args.report).resolve()
     preview_dir=Path(args.preview_dir).resolve()
 
     reverence.validate_contract(contract)
+    lower_motion.motion.validate_contract(lower_contract)
+    require(
+        lower_contract["contract_id"]
+        == contract["source_pose_authority"]["lower_body_source_contract_id"],
+        "Reverence lower-body source contract mismatch.",
+    )
     require(canonical["phase"]=="10.6.2","Requires accepted 10.6.2.")
     require(retarget["phase"]=="10.6.6","Requires accepted 10.6.6.")
     require(static_contract["phase"]=="10.6.7","Requires accepted 10.6.7.")
@@ -225,7 +234,7 @@ def main() -> None:
     runtime["pose_solver"]=pose_solver
     runtime["retarget_solver"]=retarget_solver
 
-    # Realize and capture the exact accepted arm source first.
+    # Realize and capture the exact accepted bras-bas arm source first.
     visual_gate.realize_pose(
         contract["source_pose_authority"]["arm_pose"],
         armature,
@@ -236,7 +245,7 @@ def main() -> None:
         static_contract,
         runtime,
     )
-    second_pose=snapshot(armature)
+    bras_bas_pose=snapshot(armature)
 
     arm_roles,_=arm_motion.actual_upper_chain(
         armature,
@@ -245,9 +254,11 @@ def main() -> None:
     )
     arm_names=set(arm_roles)
 
-    # Restore the exact accepted lower source, including its contact root solve.
-    visual_gate.realize_pose(
-        contract["source_pose_authority"]["lower_body_pose"],
+    # Sample the already accepted fifth -> plié motion at its midpoint rather
+    # than inventing a new leg pose. This gives a restrained demi-plié with
+    # the same full-foot contact authority used in Phase 10.8.1.
+    fifth_pose,_=lower_motion.realize_endpoint(
+        "fifth",
         armature,
         canonical,
         constraints,
@@ -256,11 +267,51 @@ def main() -> None:
         static_contract,
         runtime,
     )
-    plie_pose=snapshot(armature)
+    plie_endpoint,_=lower_motion.realize_endpoint(
+        "plie",
+        armature,
+        canonical,
+        constraints,
+        retarget,
+        axis_contract,
+        static_contract,
+        runtime,
+    )
+    moving,_,partition=lower_motion.endpoint_partition(
+        armature,
+        fifth_pose,
+        plie_endpoint,
+        canonical,
+        lower_contract,
+    )
+    root_name=canonical["canonical_bones"]["pelvis"]["rig_bone"]
+    motion_cache=lower_motion.prepare_motion_cache(
+        fifth_pose,
+        plie_endpoint,
+        moving,
+        root_name,
+        lower_contract,
+    )
+    sample_frame=int(
+        contract["source_pose_authority"]["lower_body_sample_frame"]
+    )
+    lower_sample_evidence=lower_motion.set_frame_pose(
+        armature,
+        fifth_pose,
+        plie_endpoint,
+        moving,
+        motion_cache,
+        canonical,
+        runtime,
+        static_contract,
+        sample_frame,
+        lower_contract,
+    )
+    demi_plie_pose=snapshot(armature)
 
-    # Overlay only explicit accepted second-position arm-chain local matrices.
+    # Overlay only explicit accepted bras-bas arm-chain local matrices.
     for name in arm_names:
-        armature.pose.bones[name].matrix_basis=second_pose[name].copy()
+        armature.pose.bones[name].matrix_basis=bras_bas_pose[name].copy()
     bpy.context.view_layer.update()
 
     arm_overlay_pose=snapshot(armature)
@@ -300,7 +351,7 @@ def main() -> None:
         )
     }
     lower_error=max(
-        matrix_max_error(final_pose[name],plie_pose[name])
+        matrix_max_error(final_pose[name],demi_plie_pose[name])
         for name in lower_names
     )
     require(
@@ -310,11 +361,11 @@ def main() -> None:
                 "lower_contact_chain_local_matrix_error_max"
             ]
         ),
-        f"Accepted plié lower chain changed: {lower_error}.",
+        f"Accepted sampled demi-plié lower chain changed: {lower_error}.",
     )
 
     arm_error=max(
-        matrix_max_error(final_pose[name],second_pose[name])
+        matrix_max_error(final_pose[name],bras_bas_pose[name])
         for name in arm_names
     )
     require(
@@ -324,7 +375,7 @@ def main() -> None:
                 "arm_explicit_chain_local_matrix_error_max"
             ]
         ),
-        f"Accepted second arm local matrices changed: {arm_error}.",
+        f"Accepted bras-bas arm local matrices changed: {arm_error}.",
     )
 
     allowed_canonical=set(
@@ -381,11 +432,15 @@ def main() -> None:
         "phase":PHASE,
         "contract_id":contract["contract_id"],
         "source_authority":{
-            "lower_pose":"plie",
-            "arm_pose":"second",
+            "lower_motion_phase":"10.8.1",
+            "lower_motion_contract_id":lower_contract["contract_id"],
+            "lower_sample_frame":sample_frame,
+            "lower_sample_progress":float(lower_sample_evidence["progress"]),
+            "arm_pose":"bras_bas",
             "imported_action_cleared":True,
         },
         "acknowledgement_overlay":overlay,
+        "lower_motion_partition":partition,
         "diagnostics":{
             "lower_contact_chain_local_matrix_error":lower_error,
             "arm_explicit_chain_local_matrix_error":arm_error,
@@ -399,8 +454,8 @@ def main() -> None:
         },
         "preview":{**preview_evidence,"files":previews},
         "automated_gate":{
-            "accepted_plie_reused":True,
-            "accepted_second_reused":True,
+            "accepted_fifth_to_plie_motion_reused":True,
+            "accepted_bras_bas_reused":True,
             "independent_arm_authoring_absent":True,
             "independent_leg_authoring_absent":True,
             "axial_overlay_only":True,
