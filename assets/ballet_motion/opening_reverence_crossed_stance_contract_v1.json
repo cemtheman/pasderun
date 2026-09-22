@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "phase": "10.11.2",
+  "contract_id": "opening_reverence_crossed_stance_v1",
+  "purpose": "STATIC_CROSSED_REVERENCE_STANCE_VISUAL_GATE",
+  "side_assignment": {
+    "support_side": "left",
+    "gesture_side": "right",
+    "mirror_deferred": true
+  },
+  "lower_body": {
+    "source_authority": "NEW_CANONICAL_ASYMMETRIC_REVERENCE_STATE",
+    "support": {
+      "thigh": {
+        "flexion_extension": 3,
+        "abduction_adduction": 0,
+        "internal_external_rotation": 42
+      },
+      "shin": {
+        "flexion_extension": 7
+      },
+      "foot": {
+        "plantar_dorsiflexion": 0,
+        "inversion_eversion": 0
+      },
+      "toes": {
+        "toe_flexion_extension": 0
+      },
+      "knee_external_rotation_deg": 3
+    },
+    "gesture_fixed": {
+      "internal_external_rotation": 40,
+      "knee_flexion_extension": 8,
+      "knee_external_rotation_deg": 3,
+      "inversion_eversion": 0,
+      "toe_flexion_extension": 15
+    },
+    "gesture_search": {
+      "hip_flexion_extension_deg": [
+        -10,
+        -15,
+        -20
+      ],
+      "hip_abduction_adduction_deg": [
+        -20,
+        -27.5,
+        -35
+      ],
+      "ankle_plantar_dorsiflexion_deg": [
+        28,
+        36,
+        44
+      ]
+    },
+    "pelvis_support_shift_hip_width_fraction": 0.1,
+    "support_contact": "FULL_FOOT",
+    "gesture_contact": "FOREFOOT_OR_TOE_TOUCH"
+  },
+  "upper_body": {
+    "arm_pose": "bras_bas",
+    "arm_authority": "PHASE_10_6_ACCEPTED_REALIZATION",
+    "trunk_extra_flexion_deg": 10,
+    "trunk_routes": [
+      {
+        "bone": "spine_lower",
+        "weight": 0.34
+      },
+      {
+        "bone": "spine_mid",
+        "weight": 0.33
+      },
+      {
+        "bone": "chest",
+        "weight": 0.33
+      }
+    ],
+    "neck_flexion_deg": 3,
+    "head_flexion_deg": 5,
+    "canonical_axis": "X"
+  },
+  "geometry_targets": {
+    "gesture_cross_min_foot_fraction": 0.08,
+    "gesture_back_min_foot_fraction": 0.12,
+    "gesture_fore_height_abs_max_foot_fraction": 0.12,
+    "gesture_heel_lift_min_foot_fraction": 0.05,
+    "support_full_foot_error_max_foot_fraction": 0.03,
+    "gesture_mesh_penetration_max_foot_fraction": 0.02
+  },
+  "validation": {
+    "all_joint_values_within_preferred_envelope": true,
+    "support_full_foot_contact_required": true,
+    "gesture_forefoot_near_floor_required": true,
+    "gesture_heel_lift_required": true,
+    "gesture_cross_and_back_required": true,
+    "lower_body_asymmetry_required": true,
+    "arm_nonshoulder_local_matrix_error_max": 0.000001,
+    "hand_centerline_crossing_forbidden": true,
+    "minimum_hand_side_offset": 0,
+    "no_permanent_constraints": true,
+    "imported_action_must_be_cleared": true
+  },
+  "preview": {
+    "views": [
+      "FRONT",
+      "THREE_QUARTER",
+      "SIDE"
+    ],
+    "resolution": 480,
+    "human_visual_acceptance_required": true,
+    "automated_aesthetic_verdict_forbidden": true
+  },
+  "human_visual_questions": [
+    "Does one leg clearly carry the weight while the other crosses/extends behind as a gesture leg?",
+    "Does the gesture foot read as pointed/tendu-like rather than as a second support foot?",
+    "Does the overall silhouette resemble the supplied classical reverence reference?",
+    "Does the bow remain restrained and elegant rather than becoming a squat?",
+    "Do turnout, knee lines, and foot alignment remain credible?",
+    "Does FRONT read as the audience-facing presentation?"
+  ],
+  "policy": {
+    "static_pose_only": true,
+    "animation_forbidden": true,
+    "world_turn_forbidden": true,
+    "run_handoff_forbidden": true,
+    "music_sync_forbidden": true,
+    "gameplay_changes_forbidden": true,
+    "glb_export_forbidden": true
+  }
+}
