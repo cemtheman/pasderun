@@ -30,14 +30,14 @@
     },
     "search": {
       "shoulder_progress": [
+        0.08,
         0.1,
-        0.2,
-        0.3
+        0.12
       ],
       "elbow_progress": [
-        0.1,
+        0.15,
         0.2,
-        0.3
+        0.25
       ]
     },
     "second_position_guard": {
@@ -45,7 +45,7 @@
       "rationale": "Remain a low oval reverence arm; never travel beyond 30% of the accepted bras_bas-to-second local rotation arc."
     },
     "bow": {
-      "trunk_extra_flexion_deg": 16,
+      "trunk_extra_flexion_deg": 22,
       "trunk_routes": [
         {
           "bone": "spine_lower",
@@ -60,15 +60,15 @@
           "weight": 0.33
         }
       ],
-      "neck_flexion_deg": 4,
-      "head_flexion_deg": 7,
+      "neck_flexion_deg": 5,
+      "head_flexion_deg": 9,
       "canonical_axis": "X"
     }
   },
   "visual_geometry_targets": {
-    "hand_gap_shoulder_width_fraction_min": 0.25,
-    "hand_gap_shoulder_width_fraction_max": 0.55,
-    "hand_gap_shoulder_width_fraction_ideal": 0.38,
+    "hand_gap_shoulder_width_fraction_min": 0.32,
+    "hand_gap_shoulder_width_fraction_max": 0.58,
+    "hand_gap_shoulder_width_fraction_ideal": 0.45,
     "each_hand_midline_offset_min": 0,
     "hand_midpoint_asymmetry_shoulder_width_fraction_max": 0.08,
     "elbows_must_remain_below_shoulder_line": true,
