@@ -22,8 +22,9 @@ enum CompletionPhase {
 }
 
 const COMPLETION_WALK_SPEED := 1.45
-const COMPLETION_DECEL_DURATION := 0.90
-const COMPLETION_APPROACH_DISTANCE := 1.60
+const COMPLETION_DECEL_DURATION := 1.20
+const COMPLETION_APPROACH_DISTANCE := 0.55
+const COMPLETION_WALK_VISUAL_SWITCH := 0.65
 const COMPLETION_FINAL_BOW_DURATION := 2.85
 
 const CHECKPOINTS := [
@@ -259,22 +260,17 @@ func _begin_completion_ceremony() -> void:
 		absf(dancer.velocity.x),
 		COMPLETION_WALK_SPEED
 	)
-	# The run->walk transition begins during the final musical breath. The actual
-	# révérence still belongs at the authored closing-stage mark near the wing.
-	# If the lead transition arms unusually late, preserve at least a short walk
-	# before bowing.
-	var minimum_bow_x := (
+	# Let the dancer finish the musical deceleration naturally, then take only a
+	# short walk into the bow. Do not force her back to the old X=music-end mark;
+	# that would turn the speed lost during deceleration into an artificial long
+	# post-music walk.
+	_completion_bow_x = (
 		_completion_decel_start_x
 		+ COMPLETION_DECEL_DURATION
 		* 0.5
 		* (_completion_decel_start_speed + COMPLETION_WALK_SPEED)
 		+ COMPLETION_APPROACH_DISTANCE
 	)
-	var authored_bow_x := (
-		completion_trigger.global_position.x
-		+ COMPLETION_APPROACH_DISTANCE
-	)
-	_completion_bow_x = maxf(minimum_bow_x, authored_bow_x)
 
 	fork_camera_controller.call("restore_normal_state")
 	# Keep following the dancer through the music-end deceleration and walk.
@@ -294,8 +290,8 @@ func _begin_completion_ceremony() -> void:
 			_completion_decel_start_speed
 		)
 
-	# Preserve running gait while speed eases down. WALK begins only once body
-	# speed reaches the walk envelope.
+	# Start in RUN, but switch the visual gait before the soundtrack ends so no
+	# running animation survives into the silent closing walk.
 	_set_completion_stage_visual(&"RUN")
 
 
@@ -317,6 +313,8 @@ func _update_completion_ceremony(delta: float) -> void:
 			)
 			if dancer.has_method("set_stage_ending_speed"):
 				dancer.call("set_stage_ending_speed", speed)
+			if t >= COMPLETION_WALK_VISUAL_SWITCH:
+				_set_completion_stage_visual(&"WALK")
 			if t < 1.0:
 				return
 
