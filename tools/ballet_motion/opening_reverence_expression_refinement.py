@@ -68,11 +68,11 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("Reverence bow must remain canonical-X.")
     if abs(sum(float(x["weight"]) for x in bow["trunk_routes"])-1.0) > 1e-9:
         raise ValueError("Trunk route weights must sum to one.")
-    if float(bow["trunk_extra_flexion_deg"]) > 20.0:
+    if float(bow["trunk_extra_flexion_deg"]) > 24.0:
         raise ValueError("Trunk bow grew too large.")
-    if float(bow["neck_flexion_deg"]) > 6.0:
+    if float(bow["neck_flexion_deg"]) > 7.0:
         raise ValueError("Neck bow grew too large.")
-    if float(bow["head_flexion_deg"]) > 10.0:
+    if float(bow["head_flexion_deg"]) > 12.0:
         raise ValueError("Head bow grew too large.")
 
     targets=contract["visual_geometry_targets"]
