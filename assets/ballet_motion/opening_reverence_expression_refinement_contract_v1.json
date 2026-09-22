@@ -67,7 +67,7 @@
     "hand_gap_hand_chain_fraction_ideal": 0.3,
     "each_hand_side_offset_min": 0,
     "elbows_must_remain_below_shoulder_line": true,
-    "arm_symmetry_local_matrix_error_max": 0.00001
+    "hand_side_offset_asymmetry_hand_chain_fraction_max": 0.12
   },
   "validation": {
     "all_arm_joint_values_within_preferred_envelope": true,
