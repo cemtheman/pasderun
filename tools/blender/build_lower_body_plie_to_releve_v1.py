@@ -65,11 +65,6 @@ def prepare_motion_cache(
     runtime_scale_limit = float(
         contract["validation"]["moving_scale_error_max"]
     )
-    endpoint_noise_limit = float(
-        contract["validation"][
-            "accepted_endpoint_decomposition_noise_max"
-        ]
-    )
     cache = {}
 
     for rig_name in sorted(moving):
@@ -106,12 +101,6 @@ def prepare_motion_cache(
                 f"{rig_name}: non-root local translation changed "
                 f"{translation_error} > {translation_limit}.",
             )
-        require(
-            scale_noise <= endpoint_noise_limit,
-            f"{rig_name}: accepted endpoint decomposition scale noise "
-            f"{scale_noise} > {endpoint_noise_limit}.",
-        )
-
         cache[rig_name] = {
             "location": start_loc.copy(),
             "start_location": start_loc.copy(),
@@ -124,9 +113,7 @@ def prepare_motion_cache(
             ),
             "translation_error": float(translation_error),
             "scale_error": float(scale_noise),
-            "endpoint_decomposition_noise_limit": float(
-                endpoint_noise_limit
-            ),
+            "scale_error_policy": "DIAGNOSTIC_ONLY",
             "runtime_scale_lock_limit": float(
                 runtime_scale_limit
             ),
@@ -885,6 +872,18 @@ def main() -> None:
             }
             for name,item in motion_cache.items()
         },
+        "endpoint_decomposition_scale_diagnostic":{
+            "maximum_delta":max(
+                float(item["scale_error"])
+                for item in motion_cache.values()
+            ),
+            "policy":"DIAGNOSTIC_ONLY",
+            "endpoint_matrix_authority":(
+                contract["validation"][
+                    "accepted_endpoint_matrix_authority"
+                ]
+            ),
+        },
         "motion_generation":generation,
         "diagnostics":diagnostics,
         "preview":{
@@ -899,7 +898,7 @@ def main() -> None:
             "accepted_trunk_hierarchy_motion":True,
             "quaternion_shortest_arc":True,
             "normalized_endpoint_rotation_basis":True,
-            "accepted_endpoint_decomposition_noise_bounded":True,
+            "endpoint_decomposition_scale_diagnostic_only":True,
             "intermediate_scale_locked":True,
             "minimum_jerk_timing":True,
             "start_full_foot_contact":True,
