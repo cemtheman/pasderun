@@ -17,8 +17,11 @@ if (-not $Godot -or -not (Test-Path $Godot)) {
 }
 
 Write-Host "PHASE 11 - 30-60s GAMEPLAY DENSITY"
-Write-Host "Three music-aligned 1.3-unit small gaps at X=150.372, 202.48, 227.556"
+Write-Host "Three full-piece 1.3-unit gaps at X=175.448, 184.832, 227.556"
 Write-Host ""
+
+& python (Join-Path $Repo "tools\music_analyzer\test_phase11_30_60_gameplay_density.py")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 & python (Join-Path $Repo "tools\music_analyzer\test_full_audio_runway.py")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -33,6 +36,6 @@ Write-Host ""
 Write-Host "PHASE 11 30-60s GAMEPLAY DENSITY SOURCE PROOF PASS"
 Write-Host "New gaps:        3"
 Write-Host "Gap length:      1.3"
-Write-Host "Fork topology:   UNCHANGED"
-Write-Host "Rollback 0-120:  UNCHANGED"
+Write-Host "Fork/ramp clash: NONE"
+Write-Host "Accepted 0-120:  UNCHANGED"
 Write-Host "Runtime visual:  HUMAN CHECK NEXT"
