@@ -92,102 +92,94 @@ def direction(
 
 POSES = {
     "RUN": {
-        "hips_drop_leg": 0.015,
-        "spine_deg": 6.0,
+        "hips_drop_leg": 0.010,
+        "spine_deg": 5.0,
         "chest_deg": 2.0,
-        "head_deg": -2.0,
+        "head_deg": 0.0,
         "arms": {
-            # Left arm leads naturally; elbow remains visibly bent.
+            # Compact runner arms: hands stay below the chest, not near face.
             "L": {
-                "elbow": {"side": 0.05, "up": -0.16, "forward": 0.30},
-                "wrist": {"side": 0.03, "up": -0.03, "forward": 0.49},
-                "finish": {"side": 0.02, "up": -0.01, "forward": 0.55},
+                "elbow": {"side": 0.05, "up": -0.24, "forward": 0.27},
+                "wrist": {"side": 0.03, "up": -0.34, "forward": 0.10},
             },
-            # Right arm trails behind with a compact runner elbow.
             "R": {
-                "elbow": {"side": -0.05, "up": -0.18, "forward": -0.27},
-                "wrist": {"side": -0.03, "up": 0.02, "forward": -0.45},
-                "finish": {"side": -0.02, "up": 0.03, "forward": -0.51},
+                "elbow": {"side": -0.05, "up": -0.25, "forward": -0.25},
+                "wrist": {"side": -0.03, "up": -0.37, "forward": -0.07},
             },
         },
         "legs": {
-            # Right leg is the leading leg that will catch the toe.
             "R": {
-                "knee": {"side": -0.02, "up": -0.43, "forward": 0.34},
-                "ankle": {"side": -0.01, "up": -0.84, "forward": 0.56},
-                "finish": {"side": -0.01, "up": -0.86, "forward": 0.67},
+                "knee": {"side": -0.02, "up": -0.45, "forward": 0.26},
+                "ankle": {"side": -0.01, "up": -0.83, "forward": 0.42},
+                "finish": {"side": -0.01, "up": -0.85, "forward": 0.53},
             },
-            # Left leg trails with the heel lifted rather than kicking straight back.
             "L": {
-                "knee": {"side": 0.02, "up": -0.39, "forward": -0.25},
-                "ankle": {"side": 0.01, "up": -0.66, "forward": -0.36},
-                "finish": {"side": 0.01, "up": -0.68, "forward": -0.24},
+                "knee": {"side": 0.02, "up": -0.43, "forward": -0.16},
+                "ankle": {"side": 0.01, "up": -0.69, "forward": -0.24},
+                "finish": {"side": 0.01, "up": -0.70, "forward": -0.12},
             },
         },
     },
     "TOE CATCH": {
-        "hips_drop_leg": 0.045,
+        "hips_drop_leg": 0.040,
         "spine_deg": 12.0,
         "chest_deg": 4.0,
-        "head_deg": -4.0,
+        "head_deg": -1.0,
         "arms": {
-            # Reflex begins, but neither arm snaps into a straight Superman line.
+            # Reflex starts asymmetrically; hands remain around lower chest.
             "L": {
-                "elbow": {"side": 0.06, "up": -0.12, "forward": 0.31},
-                "wrist": {"side": 0.04, "up": -0.01, "forward": 0.46},
-                "finish": {"side": 0.03, "up": 0.00, "forward": 0.52},
+                "elbow": {"side": 0.06, "up": -0.22, "forward": 0.30},
+                "wrist": {"side": 0.04, "up": -0.29, "forward": 0.18},
             },
             "R": {
-                "elbow": {"side": -0.06, "up": -0.20, "forward": 0.06},
-                "wrist": {"side": -0.04, "up": -0.04, "forward": 0.24},
-                "finish": {"side": -0.03, "up": -0.02, "forward": 0.31},
+                "elbow": {"side": -0.06, "up": -0.27, "forward": -0.05},
+                "wrist": {"side": -0.04, "up": -0.34, "forward": 0.12},
             },
         },
         "legs": {
-            # The right toe is visibly arrested low and ahead while the body continues.
+            # Right toe is arrested ahead and close to the floor.
             "R": {
-                "knee": {"side": -0.02, "up": -0.46, "forward": 0.39},
-                "ankle": {"side": -0.01, "up": -0.86, "forward": 0.60},
-                "finish": {"side": -0.01, "up": -0.91, "forward": 0.67},
+                "knee": {"side": -0.02, "up": -0.49, "forward": 0.31},
+                "ankle": {"side": -0.01, "up": -0.87, "forward": 0.46},
+                "finish": {"side": -0.01, "up": -0.92, "forward": 0.53},
             },
-            # Rear leg is still behind, but already folding to come through.
+            # Rear leg folds and begins to come through.
             "L": {
-                "knee": {"side": 0.02, "up": -0.43, "forward": -0.18},
-                "ankle": {"side": 0.01, "up": -0.68, "forward": -0.25},
-                "finish": {"side": 0.01, "up": -0.70, "forward": -0.13},
+                "knee": {"side": 0.02, "up": -0.47, "forward": -0.10},
+                "ankle": {"side": 0.01, "up": -0.70, "forward": -0.16},
+                "finish": {"side": 0.01, "up": -0.71, "forward": -0.04},
             },
         },
     },
     "MOMENTUM FORWARD": {
-        "hips_drop_leg": 0.080,
-        "spine_deg": 24.0,
-        "chest_deg": 7.0,
-        "head_deg": -7.0,
+        "hips_drop_leg": 0.075,
+        "spine_deg": 25.0,
+        "chest_deg": 6.0,
+        "head_deg": -1.0,
         "arms": {
-            # Both hands react forward, but elbows stay bent and asymmetric.
+            # Protective reflex forward, but elbows remain bent and hands stay
+            # below shoulder height instead of forming a face-covering pose.
             "L": {
-                "elbow": {"side": 0.08, "up": -0.05, "forward": 0.32},
-                "wrist": {"side": 0.05, "up": 0.05, "forward": 0.48},
-                "finish": {"side": 0.04, "up": 0.06, "forward": 0.54},
+                "elbow": {"side": 0.08, "up": -0.18, "forward": 0.31},
+                "wrist": {"side": 0.05, "up": -0.20, "forward": 0.43},
             },
             "R": {
-                "elbow": {"side": -0.08, "up": -0.12, "forward": 0.25},
-                "wrist": {"side": -0.05, "up": 0.00, "forward": 0.41},
-                "finish": {"side": -0.04, "up": 0.02, "forward": 0.47},
+                "elbow": {"side": -0.08, "up": -0.22, "forward": 0.24},
+                "wrist": {"side": -0.05, "up": -0.25, "forward": 0.36},
             },
         },
         "legs": {
-            # Caught right leg collapses under the pitching body instead of flying back.
+            # Caught leg buckles under the pitching body.
             "R": {
-                "knee": {"side": -0.02, "up": -0.55, "forward": 0.31},
-                "ankle": {"side": -0.01, "up": -0.89, "forward": 0.53},
-                "finish": {"side": -0.01, "up": -0.91, "forward": 0.63},
+                "knee": {"side": -0.02, "up": -0.57, "forward": 0.24},
+                "ankle": {"side": -0.01, "up": -0.89, "forward": 0.38},
+                "finish": {"side": -0.01, "up": -0.91, "forward": 0.49},
             },
-            # Left leg starts its emergency catch-step swing forward.
+            # Left leg begins the emergency catch step, without crossing wildly.
             "L": {
-                "knee": {"side": 0.02, "up": -0.42, "forward": 0.08},
-                "ankle": {"side": 0.01, "up": -0.65, "forward": -0.10},
-                "finish": {"side": 0.01, "up": -0.67, "forward": 0.02},
+                "knee": {"side": 0.02, "up": -0.47, "forward": 0.06},
+                "ankle": {"side": 0.01, "up": -0.70, "forward": -0.03},
+                "finish": {"side": 0.01, "up": -0.71, "forward": 0.09},
             },
         },
     },
@@ -213,12 +205,13 @@ def apply_landmark_chain(
     axes: dict[str, Vector],
     bones: tuple[str, str, str],
     specs: dict,
-    labels: tuple[str, str, str],
+    labels: tuple[str, str],
     scale: float,
     reference_normal: Vector,
+    preserve_third_rest: bool,
 ) -> None:
     first, second, third = bones
-    first_label, second_label, finish_label = labels
+    first_label, second_label = labels
 
     root = core.pose_head(armature, first).copy()
     first_target = authored_point(
@@ -226,9 +219,6 @@ def apply_landmark_chain(
     )
     second_target = authored_point(
         root, axes, scale, specs[second_label]
-    )
-    finish_target = authored_point(
-        root, axes, scale, specs[finish_label]
     )
 
     upper_direction = first_target - root
@@ -255,13 +245,18 @@ def apply_landmark_chain(
         plane,
         reference_normal,
     )
-    core.set_roll_stable_bone_frame(
-        armature,
-        third,
-        finish_target,
-        plane,
-        reference_normal,
-    )
+
+    if not preserve_third_rest:
+        finish_target = authored_point(
+            root, axes, scale, specs["finish"]
+        )
+        core.set_roll_stable_bone_frame(
+            armature,
+            third,
+            finish_target,
+            plane,
+            reference_normal,
+        )
 
 
 
@@ -326,9 +321,10 @@ def apply_pose(
                 f"Hand_{suffix}",
             ),
             pose["arms"][suffix],
-            ("elbow", "wrist", "finish"),
+            ("elbow", "wrist"),
             arm_reach,
             axes["side"] * sign,
+            True,
         )
 
     for suffix, sign in (("L", 1.0), ("R", -1.0)):
@@ -354,9 +350,10 @@ def apply_pose(
                 f"Foot_{suffix}",
             ),
             pose["legs"][suffix],
-            ("knee", "ankle", "finish"),
+            ("knee", "ankle"),
             leg_reach,
             axes["side"] * sign,
+            False,
         )
 
 
