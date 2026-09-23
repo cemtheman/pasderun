@@ -103,7 +103,7 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         self.assertIn("@ source_to_target.transposed()", BUILDER)
         self.assertIn("declared_target_frame(seed)", BUILDER)
 
-    def test_preview_camera_uses_world_space_and_visible_workbench_colors(self) -> None:
+    def test_preview_camera_uses_world_space_and_lit_render(self) -> None:
         self.assertIn(
             'world_basis = armature.matrix_world.to_3x3()',
             BUILDER,
@@ -113,11 +113,37 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
             BUILDER,
         )
         self.assertIn(
-            'scene.display.shading.color_type = "OBJECT"',
+            '"BLENDER_EEVEE_NEXT"',
             BUILDER,
         )
         self.assertIn(
-            'scene.display.shading.background_color = (0.92, 0.92, 0.92)',
+            'assign_preview_material(preview_material)',
+            BUILDER,
+        )
+        self.assertIn(
+            'add_area_light(',
+            BUILDER,
+        )
+
+    def test_preview_has_non_black_proof_gate(self) -> None:
+        self.assertIn(
+            'proof_path = preview_path.with_name(',
+            BUILDER,
+        )
+        self.assertIn(
+            'bpy.ops.render.render(write_still=True)',
+            BUILDER,
+        )
+        self.assertIn(
+            'luminance = rendered_image_luminance(scene)',
+            BUILDER,
+        )
+        self.assertIn(
+            'Preview proof render is effectively black',
+            BUILDER,
+        )
+        self.assertIn(
+            'luminance["maximum"] > 0.12 and luminance["average"] > 0.03',
             BUILDER,
         )
 
