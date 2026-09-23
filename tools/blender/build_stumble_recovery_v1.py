@@ -242,6 +242,14 @@ def sample_source(
             name: armature.pose.bones[name].matrix.copy()
             for name in source_bones
         }
+        pose_heads = {
+            name: armature.pose.bones[name].head.copy()
+            for name in source_bones
+        }
+        pose_tails = {
+            name: armature.pose.bones[name].tail.copy()
+            for name in source_bones
+        }
         pelvis_position = pose_matrices["pelvis"].translation.copy()
         if pelvis_start is None:
             pelvis_start = pelvis_position.copy()
@@ -250,6 +258,8 @@ def sample_source(
             {
                 "source_frame": frame_number,
                 "pose_matrices": pose_matrices,
+                "pose_heads": pose_heads,
+                "pose_tails": pose_tails,
                 "pelvis_delta": pelvis_position - pelvis_start,
             }
         )
@@ -327,6 +337,210 @@ def set_pose_matrix(
     bpy.context.view_layer.update()
 
 
+def choose_roll_axis(
+    armature: bpy.types.Object,
+    bone_name: str,
+    reference_normal: Vector,
+) -> tuple[str, float]:
+    basis = armature.data.bones[bone_name].matrix_local.to_3x3()
+    candidates = {
+        "X": basis.col[0].normalized(),
+        "Z": basis.col[2].normalized(),
+    }
+    axis_name = max(
+        candidates,
+        key=lambda name: abs(candidates[name].dot(reference_normal)),
+    )
+    alignment = candidates[axis_name].dot(reference_normal)
+    return axis_name, 1.0 if alignment >= 0.0 else -1.0
+
+
+def set_roll_stable_direction(
+    armature: bpy.types.Object,
+    bone_name: str,
+    direction: Vector,
+    plane_normal: Vector,
+    reference_normal: Vector,
+) -> None:
+    pb = armature.pose.bones[bone_name]
+    if direction.length <= 1e-8:
+        return
+    y_axis = direction.normalized()
+
+    normal = plane_normal - y_axis * plane_normal.dot(y_axis)
+    if normal.length <= 1e-8:
+        normal = reference_normal - y_axis * reference_normal.dot(y_axis)
+    require(
+        normal.length > 1e-8,
+        f"Cannot construct roll-stable frame for {bone_name}.",
+    )
+    normal.normalize()
+    if normal.dot(reference_normal) < 0.0:
+        normal = -normal
+
+    roll_axis, roll_sign = choose_roll_axis(
+        armature,
+        bone_name,
+        reference_normal,
+    )
+    transverse = normal * roll_sign
+
+    if roll_axis == "Z":
+        z_axis = transverse
+        x_axis = y_axis.cross(z_axis).normalized()
+        z_axis = x_axis.cross(y_axis).normalized()
+    else:
+        x_axis = transverse
+        z_axis = x_axis.cross(y_axis).normalized()
+        x_axis = y_axis.cross(z_axis).normalized()
+
+    basis = Matrix((x_axis, y_axis, z_axis)).transposed()
+    matrix = basis.to_4x4()
+    matrix.translation = pb.head.copy()
+    pb.matrix = matrix
+    bpy.context.view_layer.update()
+
+
+def mapped_source_direction(
+    sample: dict,
+    source_name: str,
+    source_to_target: Matrix,
+) -> Vector:
+    direction = (
+        sample["pose_tails"][source_name]
+        - sample["pose_heads"][source_name]
+    )
+    require(direction.length > 1e-8, f"Source bone {source_name} is degenerate.")
+    return (source_to_target @ direction).normalized()
+
+
+def apply_landmark_retarget_frame(
+    armature: bpy.types.Object,
+    sample: dict,
+    source_to_target: Matrix,
+    target_frame: dict[str, Vector],
+    hips_translation: Vector,
+) -> dict[str, float]:
+    # Root translation remains gameplay-compatible; rotation is reconstructed
+    # from segment directions rather than copied from incompatible bone rolls.
+    armature.pose.bones["Hips"].location = Vector((0.0, 0.0, 0.0))
+    bpy.context.view_layer.update()
+
+    target_front = target_frame["front"]
+    target_left = target_frame["left"]
+
+    # Torso chain. The source rig has one spine segment; distribute that
+    # authored direction over the target's three torso segments.
+    pelvis_dir = mapped_source_direction(sample, "pelvis", source_to_target)
+    spine_dir = mapped_source_direction(sample, "spine", source_to_target)
+    neck_dir = mapped_source_direction(sample, "neck", source_to_target)
+    head_dir = mapped_source_direction(sample, "head", source_to_target)
+
+    set_roll_stable_direction(
+        armature, "Hips", pelvis_dir, target_front, target_front
+    )
+    for bone_name in ("Spine", "Spine 1", "Chest"):
+        set_roll_stable_direction(
+            armature, bone_name, spine_dir, target_front, target_front
+        )
+    set_roll_stable_direction(
+        armature, "Neck", neck_dir, target_front, target_front
+    )
+    set_roll_stable_direction(
+        armature, "Head", head_dir, target_front, target_front
+    )
+
+    # Arms preserve the authored bend plane and target rig roll.
+    for suffix, source_suffix, side_sign in (
+        ("L", ".L", 1.0),
+        ("R", ".R", -1.0),
+    ):
+        upper = mapped_source_direction(
+            sample, f"upper_arm{source_suffix}", source_to_target
+        )
+        lower = mapped_source_direction(
+            sample, f"forearm{source_suffix}", source_to_target
+        )
+        hand = mapped_source_direction(
+            sample, f"hand{source_suffix}", source_to_target
+        )
+        plane = upper.cross(lower)
+        if plane.length <= 1e-8:
+            plane = target_front * side_sign
+        else:
+            plane.normalize()
+
+        reference = target_front * side_sign
+        set_roll_stable_direction(
+            armature, f"Upper_Arm_{suffix}", upper, plane, reference
+        )
+        set_roll_stable_direction(
+            armature, f"Lower_Arm_{suffix}", lower, plane, reference
+        )
+        set_roll_stable_direction(
+            armature, f"Hand_{suffix}", hand, plane, reference
+        )
+
+    # Legs preserve the source sagittal bend plane while using target lengths.
+    for suffix, source_suffix, side_sign in (
+        ("L", ".L", 1.0),
+        ("R", ".R", -1.0),
+    ):
+        thigh = mapped_source_direction(
+            sample, f"thigh{source_suffix}", source_to_target
+        )
+        shin = mapped_source_direction(
+            sample, f"shin{source_suffix}", source_to_target
+        )
+        foot = mapped_source_direction(
+            sample, f"foot{source_suffix}", source_to_target
+        )
+        plane = thigh.cross(shin)
+        if plane.length <= 1e-8:
+            plane = target_left * side_sign
+        else:
+            plane.normalize()
+
+        reference = target_left * side_sign
+        set_roll_stable_direction(
+            armature, f"Upper_Leg_{suffix}", thigh, plane, reference
+        )
+        set_roll_stable_direction(
+            armature, f"Lower_Leg_{suffix}", shin, plane, reference
+        )
+        set_roll_stable_direction(
+            armature, f"Foot_{suffix}", foot, plane, reference
+        )
+
+    # Hips translation is assigned after orientation so the pose root keeps
+    # the authored vertical/lateral COM response without forward root motion.
+    hips = armature.pose.bones["Hips"]
+    current = hips.matrix.copy()
+    current.translation = hips_translation
+    hips.matrix = current
+    bpy.context.view_layer.update()
+
+    # Directional proof: after solving, every mapped segment should face the
+    # same hemisphere as its authored source counterpart.
+    checks = {
+        "left_thigh": ("Upper_Leg_L", "thigh.L"),
+        "right_thigh": ("Upper_Leg_R", "thigh.R"),
+        "left_shin": ("Lower_Leg_L", "shin.L"),
+        "right_shin": ("Lower_Leg_R", "shin.R"),
+        "left_upper_arm": ("Upper_Arm_L", "upper_arm.L"),
+        "right_upper_arm": ("Upper_Arm_R", "upper_arm.R"),
+    }
+    evidence: dict[str, float] = {}
+    for label, (target_name, source_name) in checks.items():
+        pb = armature.pose.bones[target_name]
+        actual = pb.tail - pb.head
+        expected = mapped_source_direction(
+            sample, source_name, source_to_target
+        )
+        evidence[label] = float(actual.normalized().dot(expected))
+    return evidence
+
+
 def retarget_to_low_poly(
     repo: Path,
     contract: dict,
@@ -368,10 +582,6 @@ def retarget_to_low_poly(
     )
     require(not missing_targets, f"Target retarget bones missing: {missing_targets}")
 
-    target_rest_rotations = {
-        name: armature.data.bones[name].matrix_local.to_3x3().normalized().copy()
-        for name in required_targets
-    }
     target_rest_hips = armature.data.bones["Hips"].matrix_local.translation.copy()
 
     # Imported native actions are kept in bpy.data for inspection, but this
@@ -381,16 +591,6 @@ def retarget_to_low_poly(
     armature.animation_data.action = action
 
     spine_weights = contract["retarget"]["spine_distribution"]
-    assignments: list[tuple[str, str, float]] = []
-    for source_name, targets in mapping.items():
-        for target_name in targets:
-            weight = (
-                float(spine_weights[target_name])
-                if source_name == "spine"
-                else 1.0
-            )
-            assignments.append((source_name, target_name, weight))
-    assignments.sort(key=lambda item: target_depth(armature, item[1]))
 
     scene = bpy.context.scene
     scene.frame_start = 1
@@ -402,6 +602,7 @@ def retarget_to_low_poly(
     source_up = source["frame"]["up"]
     source_left = source["frame"]["left"]
     source_front = source["frame"]["front"]
+    frame1_direction_evidence: dict[str, float] = {}
 
     for out_index, sample in enumerate(source["samples"], start=1):
         scene.frame_set(out_index)
@@ -425,33 +626,15 @@ def retarget_to_low_poly(
         ) * leg_ratio
         hips_translation = target_rest_hips + mapped_root
 
-        for source_name, target_name, weight in assignments:
-            source_pose_rotation = (
-                sample["pose_matrices"][source_name]
-                .to_3x3()
-                .normalized()
-            )
-            source_rest_rotation = source["rest_rotations"][source_name]
-            source_delta = (
-                source_pose_rotation @ source_rest_rotation.transposed()
-            )
-            target_delta = (
-                source_to_target
-                @ source_delta
-                @ source_to_target.transposed()
-            )
-            target_delta = fraction_rotation(target_delta, weight)
-            desired_rotation = (
-                target_delta @ target_rest_rotations[target_name]
-            )
-
-            translation = hips_translation if target_name == "Hips" else None
-            set_pose_matrix(
-                armature,
-                target_name,
-                desired_rotation,
-                translation,
-            )
+        direction_evidence = apply_landmark_retarget_frame(
+            armature,
+            sample,
+            source_to_target,
+            target_frame,
+            hips_translation,
+        )
+        if out_index == 1:
+            frame1_direction_evidence = direction_evidence
 
         for target_name in required_targets:
             pose_bone = armature.pose.bones[target_name]
@@ -506,6 +689,11 @@ def retarget_to_low_poly(
             "lateral_root_translation_preserved": True,
             "mapping": mapping,
             "spine_distribution": spine_weights,
+            "rotation_transfer": "pose_landmark_direction_roll_stable",
+            "frame1_direction_alignment": {
+                key: round(value, 8)
+                for key, value in frame1_direction_evidence.items()
+            },
         },
     }
     return armature, action, report
