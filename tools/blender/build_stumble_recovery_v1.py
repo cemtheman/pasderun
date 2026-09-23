@@ -563,6 +563,7 @@ def configure_preview(
     scene.render.resolution_x = 960
     scene.render.resolution_y = 720
     scene.render.resolution_percentage = 100
+    scene.render.film_transparent = False
 
     engine = choose_preview_engine(scene)
     video_api = configure_video_output(scene)
@@ -571,39 +572,84 @@ def configure_preview(
     scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
     scene.render.filepath = str(preview_path)
 
+    # Workbench preview must remain visible even if imported material viewport
+    # colors are black or undefined. This is a motion gate, not a material gate.
+    if hasattr(scene, "display"):
+        scene.display.shading.light = "STUDIO"
+        scene.display.shading.color_type = "OBJECT"
+        scene.display.shading.background_type = "VIEWPORT"
+        scene.display.shading.background_color = (0.92, 0.92, 0.92)
+        scene.display.shading.show_shadows = True
+        scene.display.shading.show_cavity = True
+
+    for obj in scene.objects:
+        if obj.type == "MESH":
+            obj.color = (0.58, 0.62, 0.72, 1.0)
+
+    # Bone matrices are armature-local. Convert the preview framing into world
+    # space before positioning the camera; otherwise a transformed imported rig
+    # can render completely outside the view.
+    world_basis = armature.matrix_world.to_3x3()
+    side_world = unit(world_basis @ target_frame["left"], "preview side")
+    up_world = unit(world_basis @ target_frame["up"], "preview up")
+
     scene.frame_set(scene.frame_start)
     bpy.context.view_layer.update()
 
-    hips = armature.pose.bones["Hips"].matrix.translation
-    head = armature.pose.bones["Head"].matrix.translation
-    center = (hips + head) * 0.5
-    height = max((head - hips).length * 2.25, 1.5)
+    def bone_world(name: str) -> Vector:
+        return armature.matrix_world @ armature.pose.bones[name].matrix.translation
+
+    # Measure the whole animated skeleton, not only the first pose, so the
+    # orthographic frame contains the stumble and recovery extrema.
+    tracked = [
+        "Hips", "Head",
+        "Hand_L", "Hand_R",
+        "Foot_L", "Foot_R",
+        "Lower_Leg_L", "Lower_Leg_R",
+    ]
+    points: list[Vector] = []
+    for frame_number in range(scene.frame_start, scene.frame_end + 1):
+        scene.frame_set(frame_number)
+        bpy.context.view_layer.update()
+        points.extend(bone_world(name) for name in tracked)
+
+    require(points, "Preview framing has no tracked world-space points.")
+
+    center = sum(points, Vector((0.0, 0.0, 0.0))) / len(points)
+    up_values = [point.dot(up_world) for point in points]
+    vertical_extent = max(up_values) - min(up_values)
+    radius = max(
+        max((point - center).length for point in points),
+        1.0,
+    )
 
     camera_data = bpy.data.cameras.new("Phase11_3_PreviewCamera")
     camera_data.type = "ORTHO"
-    camera_data.ortho_scale = height * 1.35
+    camera_data.ortho_scale = max(vertical_extent * 1.35, radius * 1.55, 2.0)
+    camera_data.clip_start = 0.01
+    camera_data.clip_end = max(radius * 10.0, 100.0)
+
     camera = bpy.data.objects.new("Phase11_3_PreviewCamera", camera_data)
     scene.collection.objects.link(camera)
-    camera.location = center + target_frame["left"] * (height * 2.0)
+    camera.location = center + side_world * max(radius * 3.0, 4.0)
     look_at(camera, center)
     scene.camera = camera
 
-    foot_z = min(
-        float(armature.pose.bones["Foot_L"].matrix.translation.z),
-        float(armature.pose.bones["Foot_R"].matrix.translation.z),
+    # Restore the first frame after measurement.
+    scene.frame_set(scene.frame_start)
+    bpy.context.view_layer.update()
+
+    foot_world_z = min(
+        bone_world("Foot_L").z,
+        bone_world("Foot_R").z,
     )
     bpy.ops.mesh.primitive_plane_add(
-        size=8.0,
-        location=(0.0, 0.0, foot_z - 0.03),
+        size=max(radius * 6.0, 8.0),
+        location=(center.x, center.y, foot_world_z - 0.03),
     )
     floor = bpy.context.active_object
     floor.name = "Phase11_3_PreviewFloor"
-
-    if hasattr(scene, "display"):
-        scene.display.shading.light = "STUDIO"
-        scene.display.shading.color_type = "MATERIAL"
-        scene.display.shading.show_shadows = True
-        scene.display.shading.show_cavity = True
+    floor.color = (0.72, 0.72, 0.72, 1.0)
 
     return engine, video_api
 
