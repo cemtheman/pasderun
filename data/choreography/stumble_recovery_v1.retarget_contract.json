@@ -92,8 +92,8 @@
   },
   "preview": {
     "camera": "target_anatomical_side",
-    "renderer": "BLENDER_WORKBENCH",
+    "renderer": "BLENDER_EEVEE_NEXT_OR_EEVEE",
     "fps_policy": "source_scene",
-    "background": "transparent_or_neutral"
+    "background": "lit_neutral_with_transparent_character_proof"
   }
 }
