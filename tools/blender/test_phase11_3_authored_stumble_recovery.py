@@ -103,6 +103,24 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         self.assertIn("@ source_to_target.transposed()", BUILDER)
         self.assertIn("declared_target_frame(seed)", BUILDER)
 
+    def test_preview_camera_uses_world_space_and_visible_workbench_colors(self) -> None:
+        self.assertIn(
+            'world_basis = armature.matrix_world.to_3x3()',
+            BUILDER,
+        )
+        self.assertIn(
+            'return armature.matrix_world @ armature.pose.bones[name].matrix.translation',
+            BUILDER,
+        )
+        self.assertIn(
+            'scene.display.shading.color_type = "OBJECT"',
+            BUILDER,
+        )
+        self.assertIn(
+            'scene.display.shading.background_color = (0.92, 0.92, 0.92)',
+            BUILDER,
+        )
+
     def test_preview_is_human_gate_before_runtime_integration(self) -> None:
         self.assertEqual(CONTRACT["preview"]["renderer"], "BLENDER_WORKBENCH")
         self.assertIn("stumble_recovery_v1_preview.mp4", RUNNER)
