@@ -20,7 +20,7 @@ if (-not $Blender -or -not (Test-Path $Blender)) {
 }
 
 if (-not $SourceBlend) {
-    $SourceBlend = "C:\Users\chodo\Documents\Codex\2026-09-22\x20-ko-arken-t-kezleyip-toparlanan\outputs\tokezleme_toparlanma.blend"
+    $SourceBlend = "C:\Users\chodo\Documents\Codex\2026-09-22\x20-ko-arken-t-kezleyip-toparlanan\outputs\tokezleme\_toparlanma.blend"
 }
 
 if (-not (Test-Path $SourceBlend)) {
