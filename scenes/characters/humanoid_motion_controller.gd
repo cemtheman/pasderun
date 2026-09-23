@@ -42,6 +42,9 @@ const RECOVERY_DURATION := 0.72
 const OPENING_REVERENCE := &"OPENING_REVERENCE"
 const FINAL_REVERENCE := &"FINAL_REVERENCE"
 const STUMBLE_TORSO_PITCH := deg_to_rad(32.0)
+const RECOVERY_CATCH_FORWARD_START := 0.40
+const RECOVERY_CATCH_FORWARD_ACCEPT := 0.26
+const RECOVERY_TRAIL_BACK := 0.30
 const STAGE_BOW_DURATION := 2.25
 const STAGE_BOW_TURN_IN := 0.32
 const STAGE_BOW_TURN_OUT := 0.30
@@ -699,9 +702,29 @@ func _apply_stumble_overlay() -> void:
 		0.88 * leg_strength
 	)
 
-	# Arms react after the foot catch, and deliberately do not mirror one another.
-	# They remain curved balance tools rather than turning into a flailing T-pose.
-	var arm_strength := 0.86 * smoothstep(0.16, 0.78, t)
+	# Keep the free leg low and trailing instead of letting the underlying RUN
+	# clip throw it horizontally behind the body during the trip. This is the
+	# reference "forward pitch" phase: one foot is caught, the other is still
+	# underneath/behind the runner and available for the recovery step.
+	var free_left := not _trip_uses_left_foot
+	var free_side := _travel_pair_side_sign(free_left)
+	var free_strength := 0.72 * smoothstep(0.10, 0.66, t)
+	_steer_segment_world_direction(
+		_bone_index("left_upper_leg" if free_left else "right_upper_leg"),
+		_bone_index("left_lower_leg" if free_left else "right_lower_leg"),
+		Vector3(-0.30, -0.952, free_side * 0.035).normalized(),
+		free_strength
+	)
+	_steer_segment_world_direction(
+		_bone_index("left_lower_leg" if free_left else "right_lower_leg"),
+		_bone_index("left_foot" if free_left else "right_foot"),
+		Vector3(-0.18, -0.983, free_side * 0.02).normalized(),
+		0.82 * free_strength
+	)
+
+	# Both arms reach predominantly forward to arrest the fall. Side separation
+	# remains asymmetric, but it must not overpower the forward rescue gesture.
+	var arm_strength := 0.88 * smoothstep(0.14, 0.72, t)
 	for left in [true, false]:
 		var same_side_as_catch: bool = left == _trip_uses_left_foot
 		var side := _travel_pair_side_sign(left)
@@ -709,14 +732,14 @@ func _apply_stumble_overlay() -> void:
 		var elbow := _bone_index("left_lower_arm" if left else "right_lower_arm")
 		var hand := _bone_index("left_hand" if left else "right_hand")
 		var upper_direction := Vector3(
-			-0.10 if same_side_as_catch else 0.36,
-			-0.28 if same_side_as_catch else -0.08,
-			side * (0.95 if same_side_as_catch else 0.91)
+			0.58 if same_side_as_catch else 0.70,
+			-0.18 if same_side_as_catch else -0.08,
+			side * (0.30 if same_side_as_catch else 0.24)
 		).normalized()
 		var fore_direction := Vector3(
-			0.12 if same_side_as_catch else -0.04,
-			-0.62 if same_side_as_catch else -0.44,
-			-side * (0.66 if same_side_as_catch else 0.78)
+			0.64 if same_side_as_catch else 0.70,
+			-0.30 if same_side_as_catch else -0.22,
+			-side * (0.14 if same_side_as_catch else 0.10)
 		).normalized()
 		_steer_segment_world_direction(
 			shoulder,
@@ -735,29 +758,33 @@ func _apply_stumble_overlay() -> void:
 
 func _apply_recovery_overlay() -> void:
 	var t := clampf(_state_elapsed / RECOVERY_DURATION, 0.0, 1.0)
-	var release := smoothstep(0.0, 1.0, t)
-	var torso_strength := 0.88 * (1.0 - smoothstep(0.54, 0.98, t))
+
+	# Phase 3 of the reference: the torso remains pitched through the first half
+	# of the rescue step, then rises only after support has been accepted.
+	var torso_release := smoothstep(0.42, 0.94, t)
+	var torso_strength := 0.92 * (1.0 - smoothstep(0.62, 0.98, t))
 	_steer_segment_world_direction(
 		_bone_index("pelvis"),
 		_bone_index("chest"),
-		Vector3(0.48, 0.877, 0.0).lerp(
+		Vector3(0.46, 0.888, 0.0).lerp(
 			Vector3(0.04, 0.999, 0.0),
-			release
+			torso_release
 		).normalized(),
 		torso_strength
 	)
 	_steer_segment_world_direction(
 		_bone_index("chest"),
 		_bone_index("head"),
-		Vector3(-0.14, 0.990, 0.0).lerp(
+		Vector3(-0.16, 0.987, 0.0).lerp(
 			Vector3(0.0, 1.0, 0.0),
-			smoothstep(0.24, 0.96, t)
+			smoothstep(0.46, 0.96, t)
 		).normalized(),
-		0.78 * torso_strength
+		0.80 * torso_strength
 	)
 
-	# The opposite/free leg solves the fall with one clearly advanced catch step.
-	# Native RUN remains live underneath: no pause, seek or phase teleport.
+	# The opposite/free leg makes one short, flexed catch step. The previous
+	# 0.64-leg-length target read as a straight kick; the reference step is much
+	# shorter and accepts weight with a visibly bent knee.
 	var catch_left := not _trip_uses_left_foot
 	var side := _travel_pair_side_sign(catch_left)
 	var catch_hip := _bone_index(
@@ -769,42 +796,52 @@ func _apply_recovery_overlay() -> void:
 	var catch_foot := _bone_index(
 		"left_foot" if catch_left else "right_foot"
 	)
-	var other_foot := _bone_index(
+	var trail_hip := _bone_index(
+		"right_upper_leg" if catch_left else "left_upper_leg"
+	)
+	var trail_knee := _bone_index(
+		"right_lower_leg" if catch_left else "left_lower_leg"
+	)
+	var trail_foot := _bone_index(
 		"right_foot" if catch_left else "left_foot"
 	)
 	var pelvis := _bone_index("pelvis")
 	var leg_length := _idle_leg_length()
 	var catch_advance := (
-		smoothstep(0.0, 0.20, t)
-		* (1.0 - smoothstep(0.72, 0.94, t))
+		smoothstep(0.0, 0.24, t)
+		* (1.0 - smoothstep(0.70, 0.92, t))
 	)
 	var support_accept := (
-		smoothstep(0.26, 0.50, t)
-		* (1.0 - smoothstep(0.84, 1.0, t))
+		smoothstep(0.24, 0.54, t)
+		* (1.0 - smoothstep(0.78, 0.98, t))
 	)
 	var catch_strength := clampf(
-		1.00 * catch_advance + 0.82 * support_accept,
+		0.92 * catch_advance + 0.78 * support_accept,
 		0.0,
-		1.0
+		0.94
 	)
-	var accept_alpha := smoothstep(0.34, 0.66, t)
+	var accept_alpha := smoothstep(0.30, 0.62, t)
 
 	var pelvis_position := _bone_world_position(pelvis)
 	var catch_hip_position := _bone_world_position(catch_hip)
 	var catch_foot_position := _bone_world_position(catch_foot)
-	var other_foot_position := _bone_world_position(other_foot)
-	var floor_y := minf(catch_foot_position.y, other_foot_position.y)
-	var catch_forward := lerpf(0.64, 0.30, accept_alpha) * leg_length
+	var trail_foot_position := _bone_world_position(trail_foot)
+	var floor_y := minf(catch_foot_position.y, trail_foot_position.y)
+	var catch_forward := lerpf(
+		RECOVERY_CATCH_FORWARD_START,
+		RECOVERY_CATCH_FORWARD_ACCEPT,
+		accept_alpha
+	) * leg_length
 	var catch_foot_target := Vector3(
 		pelvis_position.x + catch_forward,
-		floor_y,
-		pelvis_position.z + side * 0.045 * leg_length
+		floor_y + 0.015 * leg_length,
+		pelvis_position.z + side * 0.035 * leg_length
 	)
-	var catch_knee_target := catch_hip_position.lerp(catch_foot_target, 0.52)
+	var catch_knee_target := catch_hip_position.lerp(catch_foot_target, 0.50)
 	catch_knee_target += Vector3(
-		0.08 * leg_length,
-		0.14 * leg_length,
-		side * 0.015 * leg_length
+		0.03 * leg_length,
+		0.18 * leg_length,
+		side * 0.012 * leg_length
 	)
 
 	_steer_segment_toward_world_point(
@@ -820,19 +857,52 @@ func _apply_recovery_overlay() -> void:
 		catch_strength
 	)
 
+	# Keep the original trip leg as a low trailing leg through weight acceptance.
+	# This preserves authority continuity across STUMBLE -> RECOVERY and prevents
+	# the native run clip from snapping that leg into a horizontal kick.
+	var trail_strength := (
+		0.82
+		* smoothstep(0.0, 0.16, t)
+		* (1.0 - smoothstep(0.54, 0.86, t))
+	)
+	var trail_hip_position := _bone_world_position(trail_hip)
+	var trail_foot_target := Vector3(
+		pelvis_position.x - RECOVERY_TRAIL_BACK * leg_length,
+		floor_y + 0.02 * leg_length,
+		pelvis_position.z - side * 0.025 * leg_length
+	)
+	var trail_knee_target := trail_hip_position.lerp(trail_foot_target, 0.54)
+	trail_knee_target += Vector3(
+		-0.02 * leg_length,
+		0.12 * leg_length,
+		-side * 0.01 * leg_length
+	)
+	_steer_segment_toward_world_point(
+		trail_hip,
+		trail_knee,
+		trail_knee_target,
+		trail_strength
+	)
+	_steer_segment_toward_world_point(
+		trail_knee,
+		trail_foot,
+		trail_foot_target,
+		trail_strength
+	)
+
 	# Balance-correction arms resolve after support acceptance rather than
 	# vanishing on the first recovery frame.
-	var arm_recovery_strength := 0.66 * (1.0 - smoothstep(0.42, 0.98, t))
+	var arm_recovery_strength := 0.74 * (1.0 - smoothstep(0.50, 0.96, t))
 	for left in [true, false]:
-		var same_side_as_catch: bool = left == _trip_uses_left_foot
+		var same_side_as_trip: bool = left == _trip_uses_left_foot
 		var arm_side := _travel_pair_side_sign(left)
 		_steer_segment_world_direction(
 			_bone_index("left_upper_arm" if left else "right_upper_arm"),
 			_bone_index("left_lower_arm" if left else "right_lower_arm"),
 			Vector3(
-				-0.04 if same_side_as_catch else 0.24,
-				-0.38 if same_side_as_catch else -0.18,
-				arm_side * 0.92
+				0.48 if same_side_as_trip else 0.58,
+				-0.22 if same_side_as_trip else -0.12,
+				arm_side * (0.34 if same_side_as_trip else 0.28)
 			).normalized(),
 			arm_recovery_strength
 		)
