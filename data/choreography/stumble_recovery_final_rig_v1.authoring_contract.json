@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "phase": "11.3",
+  "profile_id": "stumble_recovery_final_rig_v1",
+  "source_reference": {
+    "expected_armature": "Runner_RIG",
+    "expected_action": "Runner_RIGAction",
+    "expected_frame_count": 49,
+    "labels": [
+      "RUN",
+      "TOE CATCH",
+      "MOMENTUM FORWARD",
+      "PEAK STUMBLE",
+      "LEFT CATCH STEP",
+      "RECOVERY",
+      "RIGHT SUPPORT",
+      "RUN RESUMES",
+      "STABLE RUN"
+    ],
+    "role": "visual_reference_only"
+  },
+  "target": {
+    "glb": "assets/characters/low_poly_girl/low_poly_girl .glb",
+    "expected_armature": "Rig",
+    "action": "stumble_recovery_v1",
+    "authority": "final_game_rig"
+  },
+  "authoring_policy": {
+    "automated_source_to_target_retarget": false,
+    "source_reference_may_drive_target_bones": false,
+    "source_reference_may_create_target_constraints": false,
+    "key_pose_count": 9,
+    "breakdowns_added_after_key_pose_gate": true,
+    "forward_root_translation": "gameplay_owned",
+    "target_animation_authored_directly_on_final_rig": true
+  }
+}
