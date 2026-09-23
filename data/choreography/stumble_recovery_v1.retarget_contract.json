@@ -7,8 +7,11 @@
     "expected_action": "Runner_RIGAction",
     "expected_frame_count": 49,
     "labels": [
+      "RUN",
       "TOE CATCH",
+      "MOMENTUM FORWARD",
       "PEAK STUMBLE",
+      "LEFT CATCH STEP",
       "RECOVERY",
       "RIGHT SUPPORT",
       "RUN RESUMES",
