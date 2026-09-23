@@ -121,19 +121,19 @@ POSES = {
         },
     },
     "TOE CATCH": {
-        "hips_drop_leg": 0.040,
-        "spine_deg": 12.0,
+        "hips_drop_leg": 0.045,
+        "spine_deg": 13.0,
         "chest_deg": 4.0,
-        "head_deg": -1.0,
+        "head_deg": 0.0,
         "arms": {
             # Reflex starts asymmetrically; hands remain around lower chest.
             "L": {
-                "elbow": {"side": 0.06, "up": -0.22, "forward": 0.30},
-                "wrist": {"side": 0.04, "up": -0.29, "forward": 0.18},
+                "elbow": {"side": 0.07, "up": -0.30, "forward": 0.26},
+                "wrist": {"side": 0.05, "up": -0.40, "forward": 0.17},
             },
             "R": {
-                "elbow": {"side": -0.06, "up": -0.27, "forward": -0.05},
-                "wrist": {"side": -0.04, "up": -0.34, "forward": 0.12},
+                "elbow": {"side": -0.07, "up": -0.34, "forward": -0.08},
+                "wrist": {"side": -0.05, "up": -0.43, "forward": 0.08},
             },
         },
         "legs": {
@@ -152,20 +152,20 @@ POSES = {
         },
     },
     "MOMENTUM FORWARD": {
-        "hips_drop_leg": 0.075,
-        "spine_deg": 25.0,
-        "chest_deg": 6.0,
-        "head_deg": -1.0,
+        "hips_drop_leg": 0.085,
+        "spine_deg": 27.0,
+        "chest_deg": 7.0,
+        "head_deg": 0.0,
         "arms": {
             # Protective reflex forward, but elbows remain bent and hands stay
             # below shoulder height instead of forming a face-covering pose.
             "L": {
-                "elbow": {"side": 0.08, "up": -0.18, "forward": 0.31},
-                "wrist": {"side": 0.05, "up": -0.20, "forward": 0.43},
+                "elbow": {"side": 0.09, "up": -0.31, "forward": 0.30},
+                "wrist": {"side": 0.06, "up": -0.39, "forward": 0.38},
             },
             "R": {
-                "elbow": {"side": -0.08, "up": -0.22, "forward": 0.24},
-                "wrist": {"side": -0.05, "up": -0.25, "forward": 0.36},
+                "elbow": {"side": -0.09, "up": -0.37, "forward": 0.20},
+                "wrist": {"side": -0.06, "up": -0.45, "forward": 0.29},
             },
         },
         "legs": {
@@ -448,13 +448,6 @@ def configure_preview(
         if obj.get("phase11_3_role") == "source_visual_reference":
             obj.hide_render = True
 
-    scene.frame_set(frame_start)
-    bpy.context.view_layer.update()
-    hips = core.pose_head(armature, "Hips")
-    head = core.pose_head(armature, "Head")
-    center_local = (hips + head) * 0.5
-    center_world = armature.matrix_world @ center_local
-
     side_world = (
         armature.matrix_world.to_3x3() @ axes["side"]
     ).normalized()
@@ -462,15 +455,34 @@ def configure_preview(
         armature.matrix_world.to_3x3() @ axes["up"]
     ).normalized()
 
-    body_height = max((head - hips).length * 2.35, 1.5)
+    # Frame the whole authored body across the three gated poses. Toe catch
+    # readability is part of the human gate, so feet must never be cropped.
+    tracked_bones = ("Head", "Hand_L", "Hand_R", "Foot_L", "Foot_R")
+    points: list[Vector] = []
+    for frame_number in range(frame_start, frame_end + 1):
+        scene.frame_set(frame_number)
+        bpy.context.view_layer.update()
+        for bone_name in tracked_bones:
+            pb = armature.pose.bones[bone_name]
+            points.append(armature.matrix_world @ pb.head)
+            points.append(armature.matrix_world @ pb.tail)
+
+    require(points, "Preview framing has no body points.")
+    center_world = sum(points, Vector((0.0, 0.0, 0.0))) / len(points)
+    vertical_values = [point.dot(up_world) for point in points]
+    body_height = max(max(vertical_values) - min(vertical_values), 1.5)
+
     camera_data = bpy.data.cameras.new("Phase11_3_KeyposesA_Camera")
     camera_data.type = "ORTHO"
-    camera_data.ortho_scale = body_height
+    camera_data.ortho_scale = body_height * 1.18
     camera = bpy.data.objects.new("Phase11_3_KeyposesA_Camera", camera_data)
     scene.collection.objects.link(camera)
-    camera.location = center_world + side_world * body_height * 2.2
+    camera.location = center_world + side_world * body_height * 2.4
     look_at(camera, center_world)
     scene.camera = camera
+
+    scene.frame_set(frame_start)
+    bpy.context.view_layer.update()
 
     for name, offset, energy in (
         (
