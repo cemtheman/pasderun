@@ -143,7 +143,15 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
             BUILDER,
         )
         self.assertIn(
-            'luminance = rendered_image_luminance(scene)',
+            'luminance = rendered_image_luminance(proof_path)',
+            BUILDER,
+        )
+        self.assertIn(
+            'bpy.data.images.load(',
+            BUILDER,
+        )
+        self.assertIn(
+            'Saved proof image contains no pixels',
             BUILDER,
         )
         self.assertIn(
