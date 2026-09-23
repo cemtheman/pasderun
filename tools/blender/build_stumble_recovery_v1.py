@@ -192,6 +192,30 @@ def sample_source(
         f"found {frame_count} ({frame_start}..{frame_end}).",
     )
 
+    timeline_markers = {
+        marker.name: int(marker.frame)
+        for marker in bpy.context.scene.timeline_markers
+    }
+    expected_labels = list(source_cfg.get("labels", []))
+    missing_labels = [
+        label for label in expected_labels
+        if label not in timeline_markers
+    ]
+    require(
+        not missing_labels,
+        f"Source authored phase markers missing: {missing_labels}",
+    )
+    marker_frames = [timeline_markers[label] for label in expected_labels]
+    require(
+        marker_frames == sorted(marker_frames),
+        f"Source authored phase markers are not chronological: "
+        f"{dict(zip(expected_labels, marker_frames, strict=True))}",
+    )
+    require(
+        all(frame_start <= frame <= frame_end for frame in marker_frames),
+        "One or more authored phase markers fall outside the action range.",
+    )
+
     source_bones = sorted(contract["retarget"]["source_to_target"].keys())
     missing = sorted(
         bone for bone in source_bones if bone not in armature.pose.bones
@@ -243,6 +267,10 @@ def sample_source(
         "frame_end": frame_end,
         "frame_count": frame_count,
         "fps": source_fps,
+        "timeline_markers": {
+            label: timeline_markers[label]
+            for label in expected_labels
+        },
         "frame": frame,
         "frame_basis": frame_basis,
         "frame_evidence": frame_evidence,
@@ -457,6 +485,7 @@ def retarget_to_low_poly(
             "frame_end": source["frame_end"],
             "frame_count": source["frame_count"],
             "fps": round(source["fps"], 6),
+            "timeline_markers": source["timeline_markers"],
             "leg_length": round(source["leg_length"], 8),
             "frame_evidence": source["frame_evidence"],
         },
@@ -642,6 +671,13 @@ def main() -> None:
         f"COUNT={source['frame_count']}"
     )
     print(f"FPS={source['fps']:.6f}")
+    print(
+        "MARKERS="
+        + " | ".join(
+            f"{label}@{frame}"
+            for label, frame in source["timeline_markers"].items()
+        )
+    )
     print(f"TARGET_ACTION={action.name}")
     print(f"OUTPUT_BLEND={output_blend}")
     print(f"PREVIEW={preview_path}")
