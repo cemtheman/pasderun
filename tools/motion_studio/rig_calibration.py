@@ -9,19 +9,14 @@ import argparse
 import hashlib
 import json
 import math
-import re
 from pathlib import Path
 
 from validate import ContractError, validate
+from schema_validation import require, shape
 
 
 SCHEMA = json.loads(Path(__file__).with_name("rig_calibration_v0_1.schema.json").read_text(encoding="utf-8"))
 UNRESOLVED = ["joint_limits", "bend_planes", "contact_geometry", "landmark_offsets", "center_of_mass"]
-
-
-def require(condition: bool, where: str, message: str) -> None:
-    if not condition:
-        raise ContractError(f"{where}: {message}")
 
 
 def sha256_file(path: Path) -> str:
@@ -37,44 +32,6 @@ def repo_path(repo: Path, name: str) -> Path:
     require(path.is_relative_to(repo.resolve()), "path", "must stay inside repository")
     require(path.is_file(), "path", f"missing {name}")
     return path
-
-
-def shape(value: object, rule: dict, where: str) -> None:
-    """Evaluate the JSON Schema keywords used in this contract without dependencies."""
-    if "$ref" in rule:
-        require(rule["$ref"].startswith("#/$defs/"), where, "unsupported reference")
-        return shape(value, SCHEMA["$defs"][rule["$ref"].split("/")[-1]], where)
-    if "const" in rule:
-        require(type(value) is type(rule["const"]) and value == rule["const"], where, "wrong constant")
-    if "enum" in rule:
-        require(value in rule["enum"], where, "unknown value")
-    kind = rule.get("type")
-    if kind == "object":
-        require(isinstance(value, dict), where, "expected object")
-        require(all(key in value for key in rule.get("required", [])), where, "missing field")
-        require(len(value) >= rule.get("minProperties", 0), where, "too few properties")
-        for key, item in value.items():
-            child = rule.get("properties", {}).get(key, rule.get("additionalProperties", True))
-            require(child is not False, f"{where}.{key}", "unknown field")
-            if isinstance(child, dict):
-                shape(item, child, f"{where}.{key}")
-    elif kind == "array":
-        require(isinstance(value, list), where, "expected array")
-        require(rule.get("minItems", 0) <= len(value) <= rule.get("maxItems", math.inf), where, "invalid array length")
-        if rule.get("uniqueItems"):
-            require(len({json.dumps(x, sort_keys=True) for x in value}) == len(value), where, "duplicate item")
-        for index, item in enumerate(value):
-            shape(item, rule["items"], f"{where}[{index}]")
-    elif kind == "string":
-        require(isinstance(value, str) and len(value) >= rule.get("minLength", 0), where, "invalid string")
-        if "pattern" in rule:
-            require(re.fullmatch(rule["pattern"], value) is not None, where, "invalid format")
-    elif kind == "number":
-        require(type(value) in (int, float) and math.isfinite(value), where, "expected finite number")
-        if "exclusiveMinimum" in rule:
-            require(value > rule["exclusiveMinimum"], where, "below exclusive minimum")
-    elif isinstance(kind, list):
-        require(kind == ["string", "null"] and (value is None or isinstance(value, str)), where, "invalid nullable string")
 
 
 def dot(a: list[float], b: list[float]) -> float:
@@ -99,7 +56,7 @@ def frame_valid(frame: dict) -> None:
 
 def validate_calibration(data: dict, rig: dict, seed: dict, repo: Path) -> dict:
     """Reject stale, inconsistent or partial measurements; return validated data."""
-    shape(data, SCHEMA, "calibration")
+    shape(data, SCHEMA, "calibration", SCHEMA["$defs"])
     validate("rig_profile", rig)
     require(seed.get("schema_version") == 1, "seed", "unsupported seed version")
     require(data["rig_profile_id"] == rig["profile_id"], "rig", "profile ID mismatch")

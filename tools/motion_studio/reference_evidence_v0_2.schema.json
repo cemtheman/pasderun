@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/reference-evidence-v0-2.schema.json",
+  "title": "Motion Studio v0.2 reference evidence",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "motion_id", "human_model_id", "sources", "observations"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "evidence_id": {"type": "string", "minLength": 1},
+    "motion_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "human_model_id": {"const": "canonical_human_v0"},
+    "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+    "observations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/observation"}}
+  },
+  "$defs": {
+    "landmark": {"enum": ["pelvis", "spine", "chest", "neck", "head", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hand", "right_hand", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle", "left_heel", "right_heel", "left_toe", "right_toe"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "source": {"type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "reference"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["video", "image", "prompt", "blend_action"]},
+        "reference": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "timebase": {"type": "object", "additionalProperties": false,
+          "required": ["fps_numerator", "fps_denominator", "first_frame", "frame_count"],
+          "properties": {
+            "fps_numerator": {"type": "integer", "minimum": 1},
+            "fps_denominator": {"type": "integer", "minimum": 1},
+            "first_frame": {"type": "integer", "minimum": 0},
+            "frame_count": {"type": "integer", "minimum": 1}
+          }
+        },
+        "view": {"type": "object", "additionalProperties": false,
+          "required": ["camera_side", "mirrored"],
+          "properties": {
+            "camera_side": {"enum": ["front", "back", "left", "right", "three_quarter", "unknown"]},
+            "mirrored": {"enum": ["yes", "no", "unknown"]}
+          }
+        }
+      }
+    },
+    "observation": {"type": "object", "additionalProperties": false,
+      "required": ["id", "source_id", "sample", "landmarks_2d", "landmarks_3d", "contact_hypotheses", "annotations"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "source_id": {"type": "string", "minLength": 1},
+        "sample": {"type": "object", "additionalProperties": false,
+          "properties": {"frame": {"type": "integer", "minimum": 0}, "static": {"const": true}}
+        },
+        "landmarks_2d": {"type": "array", "items": {"$ref": "#/$defs/point2d"}},
+        "landmarks_3d": {"type": "array", "items": {"$ref": "#/$defs/point3d"}},
+        "contact_hypotheses": {"type": "array", "items": {"$ref": "#/$defs/contact"}},
+        "annotations": {"type": "array", "items": {"$ref": "#/$defs/annotation"}}
+      }
+    },
+    "point2d": {"type": "object", "additionalProperties": false,
+      "required": ["landmark", "visibility", "confidence"],
+      "properties": {
+        "landmark": {"$ref": "#/$defs/landmark"},
+        "uv": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+        "visibility": {"enum": ["visible", "occluded", "inferred"]},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      }
+    },
+    "point3d": {"type": "object", "additionalProperties": false,
+      "required": ["landmark", "xyz", "space", "unit", "confidence"],
+      "properties": {
+        "landmark": {"$ref": "#/$defs/landmark"},
+        "xyz": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+        "space": {"const": "source_armature_local"}, "unit": {"const": "source_unit"},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      }
+    },
+    "contact": {"type": "object", "additionalProperties": false,
+      "required": ["landmark", "state", "surface", "confidence", "basis"],
+      "properties": {
+        "landmark": {"$ref": "#/$defs/landmark"},
+        "state": {"enum": ["touching", "airborne", "unknown"]},
+        "surface": {"type": "string", "minLength": 1},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "basis": {"enum": ["visible", "annotated", "inferred"]}
+      }
+    },
+    "annotation": {"type": "object", "additionalProperties": false,
+      "required": ["kind", "text", "confidence", "basis"],
+      "properties": {
+        "kind": {"enum": ["phase", "motion", "gaze", "weight_transfer", "style", "other"]},
+        "text": {"type": "string", "minLength": 1},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "basis": {"enum": ["stated", "observed", "inferred", "teacher"]}
+      }
+    }
+  }
+}

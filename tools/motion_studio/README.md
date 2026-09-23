@@ -21,3 +21,11 @@ python tools/motion_studio/rig_calibration.py --repo . --phase10-calibration bui
 ```
 
 The output is local measured evidence and is not committed by this checkpoint. If the Phase 10 calibration file is absent, the existing `tools/blender/run_ballet_rig_calibration_v1.ps1` produces it in Blender. The Python bridge cannot turn an absent or stale calibration into a PASS. Its `unresolved` list explicitly reserves joint limits, bend planes, contact geometry, landmark offsets, and center of mass for later work. The new tests use synthetic rest geometry to exercise validation paths; they do **not** establish that Blender has been run on the real GLB in this session.
+
+## v0.2 — reference observations
+
+`reference_evidence_v0_2.schema.json` and `reference_evidence.py` define evidence for video, still images, prompts and Blend actions. Sources have stable IDs and a reference; media require a **declared** SHA-256, while prompts can refer to text. The validator checks digest syntax but does not load or hash external media. Video and Blend actions use a rational FPS timebase and explicit source frame numbers. Still images and prompts use a static sample. Frames remain in **source time**, without an assumed relationship to MotionSpec frames.
+
+Image and video landmarks use normalized `(u, v)` with `u` increasing right and `v` increasing down in the source image. The source records camera side and whether mirroring is known. Unknown mirroring must not be silently resolved into anatomical left/right. Occluded landmarks have no 2D coordinate. The contract permits 3D coordinates only as **source armature local** observations from a Blend action; these values are not canonical body coordinates or final Rig joint rotations. Prompt evidence is textual. A contact is a confidence-scored hypothesis, not a solved load-bearing support interval. Every annotation identifies whether it was stated, observed, inferred, or supplied by a teacher.
+
+To check a JSON evidence file: `python tools/motion_studio/reference_evidence.py PATH`. The committed prompt example can be checked this way. No image analysis, video processing, landmark detector, MotionSpec conversion, or teacher review is claimed by this checkpoint. A future interpreter may build a MotionSpec from these observations, preserving uncertain and conflicting evidence for human review.
