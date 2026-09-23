@@ -264,6 +264,30 @@ def sample_source(
             }
         )
 
+    # Establish the authored ground plane from the lowest foot point across
+    # the whole source action. Per-frame clearance then distinguishes planted
+    # support from genuine airborne motion without inheriting root drift.
+    source_up = frame["up"]
+    source_foot_heights: list[float] = []
+    for sample in samples:
+        frame_heights = []
+        for foot_name in ("foot.L", "foot.R"):
+            frame_heights.append(
+                float(sample["pose_heads"][foot_name].dot(source_up))
+            )
+            frame_heights.append(
+                float(sample["pose_tails"][foot_name].dot(source_up))
+            )
+        sample["source_lowest_foot_height"] = min(frame_heights)
+        source_foot_heights.extend(frame_heights)
+
+    source_ground_height = min(source_foot_heights)
+    for sample in samples:
+        sample["source_foot_clearance"] = max(
+            0.0,
+            float(sample["source_lowest_foot_height"]) - source_ground_height,
+        )
+
     source_leg_length = average_leg_length(
         armature,
         ("thigh.L", "thigh.R"),
@@ -286,6 +310,7 @@ def sample_source(
         "frame_evidence": frame_evidence,
         "rest_rotations": rest_rotations,
         "samples": samples,
+        "source_ground_height": source_ground_height,
         "leg_length": source_leg_length,
     }
 
@@ -420,6 +445,8 @@ def apply_landmark_retarget_frame(
     source_to_target: Matrix,
     target_frame: dict[str, Vector],
     hips_translation: Vector,
+    target_ground_height: float,
+    leg_ratio: float,
 ) -> dict[str, float]:
     # Root translation remains gameplay-compatible; rotation is reconstructed
     # from segment directions rather than copied from incompatible bone rolls.
@@ -520,6 +547,27 @@ def apply_landmark_retarget_frame(
     hips.matrix = current
     bpy.context.view_layer.update()
 
+    # Solve root height from authored foot clearance instead of copying the
+    # source pelvis vertical translation. This keeps planted support on one
+    # stable target ground plane while preserving genuine airborne intervals.
+    target_up = target_frame["up"]
+    target_foot_heights = []
+    for foot_name in ("Foot_L", "Foot_R"):
+        pb = armature.pose.bones[foot_name]
+        target_foot_heights.append(float(pb.head.dot(target_up)))
+        target_foot_heights.append(float(pb.tail.dot(target_up)))
+    current_lowest = min(target_foot_heights)
+    desired_clearance = (
+        float(sample["source_foot_clearance"]) * leg_ratio
+    )
+    desired_lowest = target_ground_height + desired_clearance
+    height_correction = desired_lowest - current_lowest
+
+    current = hips.matrix.copy()
+    current.translation += target_up * height_correction
+    hips.matrix = current
+    bpy.context.view_layer.update()
+
     # Directional proof: after solving, every mapped segment should face the
     # same hemisphere as its authored source counterpart.
     checks = {
@@ -583,6 +631,14 @@ def retarget_to_low_poly(
     require(not missing_targets, f"Target retarget bones missing: {missing_targets}")
 
     target_rest_hips = armature.data.bones["Hips"].matrix_local.translation.copy()
+    target_ground_height = min(
+        float(point.dot(target_frame["up"]))
+        for bone_name in ("Foot_L", "Foot_R")
+        for point in (
+            armature.data.bones[bone_name].head_local,
+            armature.data.bones[bone_name].tail_local,
+        )
+    )
 
     # Imported native actions are kept in bpy.data for inspection, but this
     # armature is assigned only the authored stumble/recovery action.
@@ -616,8 +672,10 @@ def retarget_to_low_poly(
                 root_delta.dot(source_front),
             )
         )
-        # Gameplay remains the forward-motion authority. Preserve authored
-        # vertical/lateral COM response but remove forward root translation.
+        # Gameplay remains the forward-motion authority. Preserve lateral
+        # authored root motion only; vertical height is solved from foot contact
+        # below, so source root drift cannot accumulate into target floating.
+        body_root.y = 0.0
         body_root.z = 0.0
         mapped_root = (
             target_frame["left"] * body_root.x
@@ -632,6 +690,8 @@ def retarget_to_low_poly(
             source_to_target,
             target_frame,
             hips_translation,
+            target_ground_height,
+            leg_ratio,
         )
         if out_index == 1:
             frame1_direction_evidence = direction_evidence
@@ -676,6 +736,10 @@ def retarget_to_low_poly(
             "fps": round(source["fps"], 6),
             "timeline_markers": source["timeline_markers"],
             "leg_length": round(source["leg_length"], 8),
+            "source_ground_height": round(
+                float(source["source_ground_height"]),
+                8,
+            ),
             "frame_evidence": source["frame_evidence"],
         },
         "target": {
@@ -683,6 +747,7 @@ def retarget_to_low_poly(
             "glb": target_cfg["glb"],
             "leg_length": round(target_leg_length, 8),
             "leg_scale_ratio": round(leg_ratio, 8),
+            "target_ground_height": round(target_ground_height, 8),
             "declared_frame": {
                 key: [round(float(v), 8) for v in value]
                 for key, value in target_frame.items()
@@ -691,7 +756,8 @@ def retarget_to_low_poly(
         "retarget": {
             "frame_count": source["frame_count"],
             "forward_root_translation_removed": True,
-            "vertical_root_translation_preserved": True,
+            "vertical_root_translation_preserved": False,
+            "vertical_root_contact_solved": True,
             "lateral_root_translation_preserved": True,
             "mapping": mapping,
             "spine_distribution": spine_weights,
