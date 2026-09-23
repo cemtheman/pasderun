@@ -93,15 +93,26 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         self.assertIn("body_root.z = 0.0", BUILDER)
         self.assertIn("forward root translation", BUILDER.lower())
 
-    def test_retarget_uses_rest_delta_and_declared_target_frame(self) -> None:
+    def test_retarget_uses_landmark_directions_and_declared_target_frame(self) -> None:
+        self.assertEqual(
+            CONTRACT["retarget"]["rotation_transfer"],
+            "pose_landmark_direction_roll_stable",
+        )
+        self.assertIn("pose_heads", BUILDER)
+        self.assertIn("pose_tails", BUILDER)
+        self.assertIn("def mapped_source_direction(", BUILDER)
+        self.assertIn("def set_roll_stable_direction(", BUILDER)
+        self.assertIn("def apply_landmark_retarget_frame(", BUILDER)
+        self.assertIn("declared_target_frame(seed)", BUILDER)
+        self.assertNotIn("@ source_delta", BUILDER)
+
+    def test_frame1_direction_gate_is_reported(self) -> None:
+        self.assertIn("frame1_direction_evidence", BUILDER)
+        self.assertIn('"frame1_direction_alignment"', BUILDER)
         self.assertIn(
-            "source_pose_rotation @ source_rest_rotation.transposed()",
+            '"rotation_transfer": "pose_landmark_direction_roll_stable"',
             BUILDER,
         )
-        self.assertIn("source_to_target", BUILDER)
-        self.assertIn("@ source_delta", BUILDER)
-        self.assertIn("@ source_to_target.transposed()", BUILDER)
-        self.assertIn("declared_target_frame(seed)", BUILDER)
 
     def test_preview_camera_uses_world_space_and_lit_render(self) -> None:
         self.assertIn(
