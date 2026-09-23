@@ -84,7 +84,7 @@
     "root_motion_policy": {
       "forward_translation": "remove",
       "lateral_translation": "preserve_scaled",
-      "vertical_translation": "preserve_scaled",
+      "vertical_translation": "contact_solved_from_authored_foot_clearance",
       "scale_basis": "leg_length_ratio"
     },
     "sampling": "every_integer_frame",
