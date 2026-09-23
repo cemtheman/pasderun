@@ -521,9 +521,9 @@ def choose_preview_engine(scene: bpy.types.Scene) -> str:
     engine_property = scene.render.bl_rna.properties["engine"]
     available = {item.identifier for item in engine_property.enum_items}
     for candidate in (
-        "BLENDER_WORKBENCH",
-        "BLENDER_EEVEE",
         "BLENDER_EEVEE_NEXT",
+        "BLENDER_EEVEE",
+        "BLENDER_WORKBENCH",
     ):
         if candidate in available:
             scene.render.engine = candidate
@@ -554,11 +554,84 @@ def configure_video_output(scene: bpy.types.Scene) -> str:
     )
 
 
+def make_preview_material(
+    name: str,
+    base_color: tuple[float, float, float, float],
+) -> bpy.types.Material:
+    material = bpy.data.materials.new(name)
+    material.use_nodes = True
+    nodes = material.node_tree.nodes
+    bsdf = nodes.get("Principled BSDF")
+    if bsdf is None:
+        raise RuntimeError("Preview Principled BSDF node missing.")
+    bsdf.inputs["Base Color"].default_value = base_color
+    bsdf.inputs["Roughness"].default_value = 0.58
+    if "Metallic" in bsdf.inputs:
+        bsdf.inputs["Metallic"].default_value = 0.0
+    return material
+
+
+def assign_preview_material(
+    material: bpy.types.Material,
+) -> None:
+    for obj in bpy.context.scene.objects:
+        if obj.type != "MESH":
+            continue
+        obj.data.materials.clear()
+        obj.data.materials.append(material)
+
+
+def add_area_light(
+    name: str,
+    location: Vector,
+    energy: float,
+    size: float,
+    target: Vector,
+) -> bpy.types.Object:
+    data = bpy.data.lights.new(name=name, type="AREA")
+    data.energy = energy
+    data.shape = "DISK"
+    data.size = size
+    light = bpy.data.objects.new(name, data)
+    bpy.context.scene.collection.objects.link(light)
+    light.location = location
+    look_at(light, target)
+    return light
+
+
+def rendered_image_luminance(scene: bpy.types.Scene) -> dict:
+    image = bpy.data.images.get("Render Result")
+    require(image is not None, "Render Result image missing after proof render.")
+    pixels = list(image.pixels)
+    require(len(pixels) >= 4, "Render Result contains no pixels.")
+
+    total = 0.0
+    maximum = 0.0
+    count = 0
+    # Sample every 64th pixel; proof is only a black-frame guard.
+    step = 4 * 64
+    for index in range(0, len(pixels) - 3, step):
+        r = float(pixels[index])
+        g = float(pixels[index + 1])
+        b = float(pixels[index + 2])
+        luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        total += luminance
+        maximum = max(maximum, luminance)
+        count += 1
+
+    average = total / max(count, 1)
+    return {
+        "average": average,
+        "maximum": maximum,
+        "sample_count": count,
+    }
+
+
 def configure_preview(
     armature: bpy.types.Object,
     target_frame: dict[str, Vector],
     preview_path: Path,
-) -> tuple[str, str]:
+) -> tuple[str, str, Path]:
     scene = bpy.context.scene
     scene.render.resolution_x = 960
     scene.render.resolution_y = 720
@@ -570,28 +643,27 @@ def configure_preview(
     scene.render.ffmpeg.format = "MPEG4"
     scene.render.ffmpeg.codec = "H264"
     scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
-    scene.render.filepath = str(preview_path)
 
-    # Workbench preview must remain visible even if imported material viewport
-    # colors are black or undefined. This is a motion gate, not a material gate.
-    if hasattr(scene, "display"):
-        scene.display.shading.light = "STUDIO"
-        scene.display.shading.color_type = "OBJECT"
-        scene.display.shading.background_type = "VIEWPORT"
-        scene.display.shading.background_color = (0.92, 0.92, 0.92)
-        scene.display.shading.show_shadows = True
-        scene.display.shading.show_cavity = True
+    # Explicit render world: do not depend on Workbench viewport state or
+    # imported material viewport colors.
+    if scene.world is None:
+        scene.world = bpy.data.worlds.new("Phase11_3_PreviewWorld")
+    scene.world.use_nodes = True
+    background = scene.world.node_tree.nodes.get("Background")
+    require(background is not None, "Preview world Background node missing.")
+    background.inputs["Color"].default_value = (0.92, 0.93, 0.95, 1.0)
+    background.inputs["Strength"].default_value = 0.8
 
-    for obj in scene.objects:
-        if obj.type == "MESH":
-            obj.color = (0.58, 0.62, 0.72, 1.0)
+    preview_material = make_preview_material(
+        "Phase11_3_CharacterPreview",
+        (0.34, 0.44, 0.68, 1.0),
+    )
+    assign_preview_material(preview_material)
 
-    # Bone matrices are armature-local. Convert the preview framing into world
-    # space before positioning the camera; otherwise a transformed imported rig
-    # can render completely outside the view.
     world_basis = armature.matrix_world.to_3x3()
     side_world = unit(world_basis @ target_frame["left"], "preview side")
     up_world = unit(world_basis @ target_frame["up"], "preview up")
+    front_world = unit(world_basis @ target_frame["front"], "preview front")
 
     scene.frame_set(scene.frame_start)
     bpy.context.view_layer.update()
@@ -599,8 +671,6 @@ def configure_preview(
     def bone_world(name: str) -> Vector:
         return armature.matrix_world @ armature.pose.bones[name].matrix.translation
 
-    # Measure the whole animated skeleton, not only the first pose, so the
-    # orthographic frame contains the stumble and recovery extrema.
     tracked = [
         "Hips", "Head",
         "Hand_L", "Hand_R",
@@ -617,41 +687,87 @@ def configure_preview(
 
     center = sum(points, Vector((0.0, 0.0, 0.0))) / len(points)
     up_values = [point.dot(up_world) for point in points]
+    side_values = [point.dot(front_world) for point in points]
     vertical_extent = max(up_values) - min(up_values)
-    radius = max(
-        max((point - center).length for point in points),
-        1.0,
-    )
+    horizontal_extent = max(side_values) - min(side_values)
+    radius = max(max((point - center).length for point in points), 1.0)
 
     camera_data = bpy.data.cameras.new("Phase11_3_PreviewCamera")
     camera_data.type = "ORTHO"
-    camera_data.ortho_scale = max(vertical_extent * 1.35, radius * 1.55, 2.0)
+    camera_data.ortho_scale = max(
+        vertical_extent * 1.45,
+        horizontal_extent * 1.15,
+        radius * 1.65,
+        2.0,
+    )
     camera_data.clip_start = 0.01
-    camera_data.clip_end = max(radius * 10.0, 100.0)
+    camera_data.clip_end = max(radius * 12.0, 100.0)
 
     camera = bpy.data.objects.new("Phase11_3_PreviewCamera", camera_data)
     scene.collection.objects.link(camera)
-    camera.location = center + side_world * max(radius * 3.0, 4.0)
+    camera.location = center + side_world * max(radius * 4.0, 5.0)
     look_at(camera, center)
     scene.camera = camera
 
-    # Restore the first frame after measurement.
     scene.frame_set(scene.frame_start)
     bpy.context.view_layer.update()
 
-    foot_world_z = min(
-        bone_world("Foot_L").z,
-        bone_world("Foot_R").z,
-    )
+    foot_world_z = min(bone_world("Foot_L").z, bone_world("Foot_R").z)
     bpy.ops.mesh.primitive_plane_add(
-        size=max(radius * 6.0, 8.0),
-        location=(center.x, center.y, foot_world_z - 0.03),
+        size=max(radius * 7.0, 8.0),
+        location=(center.x, center.y, foot_world_z - 0.035),
     )
     floor = bpy.context.active_object
     floor.name = "Phase11_3_PreviewFloor"
-    floor.color = (0.72, 0.72, 0.72, 1.0)
+    floor_material = make_preview_material(
+        "Phase11_3_FloorPreview",
+        (0.72, 0.74, 0.78, 1.0),
+    )
+    floor.data.materials.append(floor_material)
 
-    return engine, video_api
+    add_area_light(
+        "Phase11_3_Key",
+        center + side_world * (radius * 2.2) + up_world * (radius * 2.4)
+        + front_world * (radius * 1.2),
+        1100.0,
+        max(radius * 2.0, 3.0),
+        center,
+    )
+    add_area_light(
+        "Phase11_3_Fill",
+        center - side_world * (radius * 1.3) + up_world * (radius * 1.2)
+        - front_world * (radius * 1.5),
+        650.0,
+        max(radius * 2.5, 4.0),
+        center,
+    )
+
+    proof_path = preview_path.with_name(
+        preview_path.stem + "_proof.png"
+    )
+    scene.render.filepath = str(proof_path)
+    scene.render.image_settings.file_format = "PNG"
+    scene.frame_set(scene.frame_start)
+    bpy.ops.render.render(write_still=True)
+
+    luminance = rendered_image_luminance(scene)
+    require(
+        luminance["maximum"] > 0.12 and luminance["average"] > 0.03,
+        "Preview proof render is effectively black: "
+        f"{luminance}",
+    )
+
+    # Restore video output only after the proof render is visibly non-black.
+    configure_video_output(scene)
+    scene.render.ffmpeg.format = "MPEG4"
+    scene.render.ffmpeg.codec = "H264"
+    scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
+    scene.render.filepath = str(preview_path)
+
+    scene["phase11_3_preview_proof_average_luminance"] = luminance["average"]
+    scene["phase11_3_preview_proof_max_luminance"] = luminance["maximum"]
+
+    return engine, video_api, proof_path
 
 
 def main() -> None:
@@ -683,7 +799,7 @@ def main() -> None:
     preview_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.parent.mkdir(parents=True, exist_ok=True)
 
-    engine, video_api = configure_preview(
+    engine, video_api, proof_path = configure_preview(
         armature,
         target_frame,
         preview_path,
@@ -696,6 +812,19 @@ def main() -> None:
         "engine": engine,
         "video_output_api": video_api,
         "path": str(preview_path),
+        "proof_path": str(proof_path),
+        "proof_average_luminance": round(
+            float(bpy.context.scene[
+                "phase11_3_preview_proof_average_luminance"
+            ]),
+            8,
+        ),
+        "proof_max_luminance": round(
+            float(bpy.context.scene[
+                "phase11_3_preview_proof_max_luminance"
+            ]),
+            8,
+        ),
         "rendered": not args.skip_render,
     }
 
