@@ -89,9 +89,34 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         policy = CONTRACT["retarget"]["root_motion_policy"]
         self.assertEqual(policy["forward_translation"], "remove")
         self.assertEqual(policy["lateral_translation"], "preserve_scaled")
-        self.assertEqual(policy["vertical_translation"], "preserve_scaled")
+        self.assertEqual(
+            policy["vertical_translation"],
+            "contact_solved_from_authored_foot_clearance",
+        )
+        self.assertIn("body_root.y = 0.0", BUILDER)
         self.assertIn("body_root.z = 0.0", BUILDER)
-        self.assertIn("forward root translation", BUILDER.lower())
+        self.assertIn("forward-motion authority", BUILDER)
+        self.assertIn("source_foot_clearance", BUILDER)
+        self.assertIn("target_ground_height", BUILDER)
+        self.assertIn("vertical_root_contact_solved", BUILDER)
+
+    def test_root_height_is_contact_solved(self) -> None:
+        self.assertIn(
+            'sample["source_foot_clearance"]',
+            BUILDER,
+        )
+        self.assertIn(
+            'desired_lowest = target_ground_height + desired_clearance',
+            BUILDER,
+        )
+        self.assertIn(
+            'height_correction = desired_lowest - current_lowest',
+            BUILDER,
+        )
+        self.assertIn(
+            'current.translation += target_up * height_correction',
+            BUILDER,
+        )
 
     def test_retarget_uses_landmark_directions_and_declared_target_frame(self) -> None:
         self.assertEqual(
