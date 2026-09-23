@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/rig-calibration-v0-1.schema.json",
+  "title": "Motion Studio v0.1 measured final-rig calibration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "rig_profile_id", "source", "seed", "coordinate_space", "anatomical_frame", "canonical_bones", "semantic_segments", "calibration_evidence", "unresolved"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "rig_profile_id": {"type": "string", "minLength": 1},
+    "source": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "armature"], "properties": {
+      "path": {"type": "string", "minLength": 1},
+      "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+      "armature": {"type": "string", "minLength": 1}
+    }},
+    "seed": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {
+      "path": {"type": "string", "minLength": 1},
+      "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    }},
+    "coordinate_space": {"const": "BLENDER_ARMATURE_LOCAL"},
+    "anatomical_frame": {"type": "object", "additionalProperties": false, "required": ["up", "left", "front"], "properties": {
+      "up": {"$ref": "#/$defs/vec3"}, "left": {"$ref": "#/$defs/vec3"}, "front": {"$ref": "#/$defs/vec3"}
+    }},
+    "canonical_bones": {"type": "object", "minProperties": 24, "additionalProperties": {"$ref": "#/$defs/bone"}},
+    "semantic_segments": {"type": "object", "minProperties": 4, "additionalProperties": {"$ref": "#/$defs/segment"}},
+    "calibration_evidence": {"type": "object", "additionalProperties": false, "required": ["phase", "rest_pose", "frame_validation_passed"], "properties": {
+      "phase": {"const": "10.6.1"}, "rest_pose": {"const": true}, "frame_validation_passed": {"const": true}
+    }},
+    "unresolved": {"type": "array", "uniqueItems": true, "items": {"enum": ["joint_limits", "bend_planes", "contact_geometry", "landmark_offsets", "center_of_mass"]}}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "matrix4": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}},
+    "bone": {"type": "object", "additionalProperties": false, "required": ["rig_bone", "parent", "length", "head_local", "tail_local", "matrix_local", "rest_axes"], "properties": {
+      "rig_bone": {"type": "string", "minLength": 1},
+      "parent": {"type": ["string", "null"]},
+      "length": {"type": "number", "exclusiveMinimum": 0},
+      "head_local": {"$ref": "#/$defs/vec3"}, "tail_local": {"$ref": "#/$defs/vec3"},
+      "matrix_local": {"$ref": "#/$defs/matrix4"},
+      "rest_axes": {"type": "object", "additionalProperties": false, "required": ["x", "y_length", "z"], "properties": {
+        "x": {"$ref": "#/$defs/vec3"}, "y_length": {"$ref": "#/$defs/vec3"}, "z": {"$ref": "#/$defs/vec3"}
+      }}
+    }},
+    "segment": {"type": "object", "additionalProperties": false, "required": ["start_bone", "end_bone", "direction_local"], "properties": {
+      "start_bone": {"type": "string", "minLength": 1}, "end_bone": {"type": "string", "minLength": 1},
+      "direction_local": {"$ref": "#/$defs/vec3"}
+    }}
+  }
+}
