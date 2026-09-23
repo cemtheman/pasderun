@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "phase": "11.3",
+  "profile_id": "stumble_recovery_v1",
+  "source": {
+    "expected_armature": "Runner_RIG",
+    "expected_action": "Runner_RIGAction",
+    "expected_frame_count": 49,
+    "labels": [
+      "TOE CATCH",
+      "PEAK STUMBLE",
+      "RECOVERY",
+      "RIGHT SUPPORT",
+      "RUN RESUMES",
+      "STABLE RUN"
+    ]
+  },
+  "target": {
+    "glb": "assets/characters/low_poly_girl/low_poly_girl .glb",
+    "expected_armature": "Rig",
+    "calibration_seed": "assets/characters/low_poly_girl/ballet_rig_calibration_seed_v1.json"
+  },
+  "retarget": {
+    "source_to_target": {
+      "pelvis": [
+        "Hips"
+      ],
+      "spine": [
+        "Spine",
+        "Spine 1",
+        "Chest"
+      ],
+      "neck": [
+        "Neck"
+      ],
+      "head": [
+        "Head"
+      ],
+      "thigh.L": [
+        "Upper_Leg_L"
+      ],
+      "shin.L": [
+        "Lower_Leg_L"
+      ],
+      "foot.L": [
+        "Foot_L"
+      ],
+      "thigh.R": [
+        "Upper_Leg_R"
+      ],
+      "shin.R": [
+        "Lower_Leg_R"
+      ],
+      "foot.R": [
+        "Foot_R"
+      ],
+      "upper_arm.L": [
+        "Upper_Arm_L"
+      ],
+      "forearm.L": [
+        "Lower_Arm_L"
+      ],
+      "hand.L": [
+        "Hand_L"
+      ],
+      "upper_arm.R": [
+        "Upper_Arm_R"
+      ],
+      "forearm.R": [
+        "Lower_Arm_R"
+      ],
+      "hand.R": [
+        "Hand_R"
+      ]
+    },
+    "spine_distribution": {
+      "Spine": 0.34,
+      "Spine 1": 0.67,
+      "Chest": 1
+    },
+    "root_motion_policy": {
+      "forward_translation": "remove",
+      "lateral_translation": "preserve_scaled",
+      "vertical_translation": "preserve_scaled",
+      "scale_basis": "leg_length_ratio"
+    },
+    "sampling": "every_integer_frame",
+    "rotation_transfer": "armature_space_rest_delta_via_anatomical_frame"
+  },
+  "preview": {
+    "camera": "target_anatomical_side",
+    "renderer": "BLENDER_WORKBENCH",
+    "fps_policy": "source_scene",
+    "background": "transparent_or_neutral"
+  }
+}
