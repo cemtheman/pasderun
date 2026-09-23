@@ -131,6 +131,14 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
             BUILDER,
         )
         self.assertIn(
+            'configure_image_output(scene)',
+            BUILDER,
+        )
+        self.assertIn(
+            'image_settings.media_type = "IMAGE"',
+            BUILDER,
+        )
+        self.assertIn(
             'bpy.ops.render.render(write_still=True)',
             BUILDER,
         )
@@ -156,8 +164,14 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         )
 
     def test_preview_is_human_gate_before_runtime_integration(self) -> None:
-        self.assertEqual(CONTRACT["preview"]["renderer"], "BLENDER_WORKBENCH")
+        self.assertEqual(
+            CONTRACT["preview"]["renderer"],
+            "BLENDER_EEVEE_NEXT_OR_EEVEE",
+        )
         self.assertIn("stumble_recovery_v1_preview.mp4", RUNNER)
+        self.assertIn("--python-exit-code 1", RUNNER)
+        self.assertIn("Remove-Item -Force", RUNNER)
+        self.assertIn("Preview proof image missing", RUNNER)
         self.assertNotIn("humanoid_motion_controller.gd", BUILDER)
         self.assertNotIn("run_recovery_manager.gd", BUILDER)
         self.assertNotIn("build/web", RUNNER.lower())
