@@ -54,18 +54,30 @@ $report = Join-Path $outDir "stumble_recovery_v1_report.json"
 
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
+$proof = Join-Path $outDir "stumble_recovery_v1_preview_proof.png"
+@($outputBlend, $preview, $report, $proof) | ForEach-Object {
+    if (Test-Path $_) {
+        Remove-Item -Force $_
+    }
+}
+
 Write-Host "PHASE 11.3 - AUTHORED STUMBLE / RECOVERY RETARGET"
 Write-Host "Source:  $SourceBlend"
 Write-Host "Target:  low_poly_girl"
 Write-Host "Preview: $preview"
 Write-Host ""
 
-& $Blender --background --python $script -- --repo $Repo --source-blend $SourceBlend --contract $contract --output-blend $outputBlend --preview $preview --report $report
+& $Blender --background --python-exit-code 1 --python $script -- --repo $Repo --source-blend $SourceBlend --contract $contract --output-blend $outputBlend --preview $preview --report $report
 
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if ($LASTEXITCODE -ne 0) {
+    throw "Blender retarget failed with exit code $LASTEXITCODE."
+}
 
 if (-not (Test-Path $outputBlend)) {
     throw "Retargeted Blender output missing: $outputBlend"
+}
+if (-not (Test-Path $proof)) {
+    throw "Preview proof image missing: $proof"
 }
 if (-not (Test-Path $preview)) {
     throw "Preview video missing: $preview"
