@@ -24,7 +24,25 @@ if (-not $SourceBlend) {
 }
 
 if (-not (Test-Path $SourceBlend)) {
-    throw "Source authored stumble blend not found: $SourceBlend"
+    $searchRoot = "C:\Users\chodo\Documents\Codex\2026-09-22"
+    if (Test-Path $searchRoot) {
+        $candidate = Get-ChildItem -Path $searchRoot -Recurse -File -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.Name -eq "_toparlanma.blend" -or
+                $_.Name -like "*toparlanma.blend"
+            } |
+            Sort-Object FullName |
+            Select-Object -First 1
+
+        if ($candidate) {
+            $SourceBlend = $candidate.FullName
+            Write-Host "Resolved authored source: $SourceBlend"
+        }
+    }
+}
+
+if (-not (Test-Path $SourceBlend)) {
+    throw "Source authored stumble blend not found. Pass -SourceBlend explicitly if it lives outside C:\Users\chodo\Documents\Codex\2026-09-22."
 }
 
 $script = Join-Path $Repo "tools\blender\build_stumble_recovery_v1.py"
