@@ -607,22 +607,28 @@ def rendered_image_luminance(scene: bpy.types.Scene) -> dict:
 
     total = 0.0
     maximum = 0.0
+    alpha_hits = 0
     count = 0
-    # Sample every 64th pixel; proof is only a black-frame guard.
+    # Sample every 64th pixel; proof is only a visibility/framing guard.
     step = 4 * 64
     for index in range(0, len(pixels) - 3, step):
         r = float(pixels[index])
         g = float(pixels[index + 1])
         b = float(pixels[index + 2])
+        a = float(pixels[index + 3])
         luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
         total += luminance
         maximum = max(maximum, luminance)
+        if a > 0.05:
+            alpha_hits += 1
         count += 1
 
     average = total / max(count, 1)
+    alpha_coverage = alpha_hits / max(count, 1)
     return {
         "average": average,
         "maximum": maximum,
+        "alpha_coverage": alpha_coverage,
         "sample_count": count,
     }
 
@@ -745,6 +751,10 @@ def configure_preview(
     proof_path = preview_path.with_name(
         preview_path.stem + "_proof.png"
     )
+    # Proof must establish that the animated character itself is in frame.
+    # A bright world background or floor must not be enough to pass.
+    floor.hide_render = True
+    scene.render.film_transparent = True
     scene.render.filepath = str(proof_path)
     scene.render.image_settings.file_format = "PNG"
     scene.frame_set(scene.frame_start)
@@ -752,12 +762,15 @@ def configure_preview(
 
     luminance = rendered_image_luminance(scene)
     require(
-        luminance["maximum"] > 0.12 and luminance["average"] > 0.03,
-        "Preview proof render is effectively black: "
+        luminance["alpha_coverage"] > 0.002
+        and luminance["maximum"] > 0.08,
+        "Preview proof does not contain a visible character: "
         f"{luminance}",
     )
 
-    # Restore video output only after the proof render is visibly non-black.
+    # Restore normal video presentation only after the character proof passes.
+    floor.hide_render = False
+    scene.render.film_transparent = False
     configure_video_output(scene)
     scene.render.ffmpeg.format = "MPEG4"
     scene.render.ffmpeg.codec = "H264"
@@ -766,6 +779,7 @@ def configure_preview(
 
     scene["phase11_3_preview_proof_average_luminance"] = luminance["average"]
     scene["phase11_3_preview_proof_max_luminance"] = luminance["maximum"]
+    scene["phase11_3_preview_proof_alpha_coverage"] = luminance["alpha_coverage"]
 
     return engine, video_api, proof_path
 
@@ -822,6 +836,12 @@ def main() -> None:
         "proof_max_luminance": round(
             float(bpy.context.scene[
                 "phase11_3_preview_proof_max_luminance"
+            ]),
+            8,
+        ),
+        "proof_alpha_coverage": round(
+            float(bpy.context.scene[
+                "phase11_3_preview_proof_alpha_coverage"
             ]),
             8,
         ),
