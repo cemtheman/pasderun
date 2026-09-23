@@ -554,6 +554,28 @@ def configure_video_output(scene: bpy.types.Scene) -> str:
     )
 
 
+def configure_image_output(scene: bpy.types.Scene) -> str:
+    image_settings = scene.render.image_settings
+    media_property = image_settings.bl_rna.properties.get("media_type")
+    if media_property is not None:
+        media_values = {item.identifier for item in media_property.enum_items}
+        if "IMAGE" in media_values:
+            image_settings.media_type = "IMAGE"
+
+    format_property = image_settings.bl_rna.properties.get("file_format")
+    if format_property is not None:
+        format_values = {item.identifier for item in format_property.enum_items}
+        if "PNG" in format_values:
+            image_settings.file_format = "PNG"
+            return "FILE_FORMAT_PNG"
+
+    raise RuntimeError(
+        "Blender image output does not expose PNG in the current media mode."
+    )
+
+
+
+
 def make_preview_material(
     name: str,
     base_color: tuple[float, float, float, float],
@@ -645,10 +667,7 @@ def configure_preview(
     scene.render.film_transparent = False
 
     engine = choose_preview_engine(scene)
-    video_api = configure_video_output(scene)
-    scene.render.ffmpeg.format = "MPEG4"
-    scene.render.ffmpeg.codec = "H264"
-    scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
+    video_api = ""
 
     # Explicit render world: do not depend on Workbench viewport state or
     # imported material viewport colors.
@@ -756,7 +775,7 @@ def configure_preview(
     floor.hide_render = True
     scene.render.film_transparent = True
     scene.render.filepath = str(proof_path)
-    scene.render.image_settings.file_format = "PNG"
+    configure_image_output(scene)
     scene.frame_set(scene.frame_start)
     bpy.ops.render.render(write_still=True)
 
@@ -771,7 +790,7 @@ def configure_preview(
     # Restore normal video presentation only after the character proof passes.
     floor.hide_render = False
     scene.render.film_transparent = False
-    configure_video_output(scene)
+    video_api = configure_video_output(scene)
     scene.render.ffmpeg.format = "MPEG4"
     scene.render.ffmpeg.codec = "H264"
     scene.render.ffmpeg.constant_rate_factor = "MEDIUM"
