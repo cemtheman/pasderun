@@ -635,6 +635,12 @@ def retarget_to_low_poly(
         )
         if out_index == 1:
             frame1_direction_evidence = direction_evidence
+            minimum_alignment = min(frame1_direction_evidence.values())
+            require(
+                minimum_alignment >= 0.985,
+                "Frame 1 landmark retarget direction gate failed: "
+                f"{frame1_direction_evidence}",
+            )
 
         for target_name in required_targets:
             pose_bone = armature.pose.bones[target_name]
