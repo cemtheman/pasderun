@@ -14,3 +14,6 @@ build/phase10_11/*
 # Python generated cache
 tools/blender/__pycache__/
 *.pyc
+
+# Phase 11.3 final-rig direct authoring outputs
+build/phase11_3_final_rig/*
