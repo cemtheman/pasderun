@@ -88,7 +88,7 @@
       "scale_basis": "leg_length_ratio"
     },
     "sampling": "every_integer_frame",
-    "rotation_transfer": "armature_space_rest_delta_via_anatomical_frame"
+    "rotation_transfer": "pose_landmark_direction_roll_stable"
   },
   "preview": {
     "camera": "target_anatomical_side",
