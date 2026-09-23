@@ -109,6 +109,11 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
     def test_frame1_direction_gate_is_reported(self) -> None:
         self.assertIn("frame1_direction_evidence", BUILDER)
         self.assertIn('"frame1_direction_alignment"', BUILDER)
+        self.assertIn("minimum_alignment >= 0.985", BUILDER)
+        self.assertIn(
+            "Frame 1 landmark retarget direction gate failed",
+            BUILDER,
+        )
         self.assertIn(
             '"rotation_transfer": "pose_landmark_direction_roll_stable"',
             BUILDER,
