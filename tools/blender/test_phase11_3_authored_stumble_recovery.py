@@ -139,11 +139,19 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
             BUILDER,
         )
         self.assertIn(
-            'Preview proof render is effectively black',
+            'Preview proof does not contain a visible character',
             BUILDER,
         )
         self.assertIn(
-            'luminance["maximum"] > 0.12 and luminance["average"] > 0.03',
+            'luminance["alpha_coverage"] > 0.002',
+            BUILDER,
+        )
+        self.assertIn(
+            'scene.render.film_transparent = True',
+            BUILDER,
+        )
+        self.assertIn(
+            'floor.hide_render = True',
             BUILDER,
         )
 
