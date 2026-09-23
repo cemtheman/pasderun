@@ -130,7 +130,8 @@ def main() -> None:
             obj.show_in_front = True
         elif obj.type == "ARMATURE":
             obj.show_in_front = True
-            obj.display_type = "BBONE"
+            obj.display_type = "WIRE"
+            obj.data.display_type = "BBONE"
 
     target_cfg = contract["target"]
     target_path = repo / target_cfg["glb"]
