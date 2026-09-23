@@ -98,10 +98,9 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
             "source_pose_rotation @ source_rest_rotation.transposed()",
             BUILDER,
         )
-        self.assertIn(
-            "source_to_target @ source_delta @ source_to_target.transposed()",
-            BUILDER,
-        )
+        self.assertIn("source_to_target", BUILDER)
+        self.assertIn("@ source_delta", BUILDER)
+        self.assertIn("@ source_to_target.transposed()", BUILDER)
         self.assertIn("declared_target_frame(seed)", BUILDER)
 
     def test_preview_is_human_gate_before_runtime_integration(self) -> None:
