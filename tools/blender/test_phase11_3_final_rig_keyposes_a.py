@@ -65,6 +65,20 @@ class Phase113FinalRigKeyposesATests(unittest.TestCase):
         self.assertIn('core.joint_length(', BUILDER)
         self.assertIn('core.set_roll_stable_bone_frame(', BUILDER)
 
+    def test_preview_frames_full_body_for_toe_catch_readability(self) -> None:
+        self.assertIn(
+            'tracked_bones = ("Head", "Hand_L", "Hand_R", "Foot_L", "Foot_R")',
+            BUILDER,
+        )
+        self.assertIn(
+            'camera_data.ortho_scale = body_height * 1.18',
+            BUILDER,
+        )
+        self.assertIn(
+            "feet must never be cropped",
+            BUILDER,
+        )
+
     def test_preview_stops_at_momentum_gate(self) -> None:
         self.assertIn(
             'marker_frames["MOMENTUM FORWARD"]',
