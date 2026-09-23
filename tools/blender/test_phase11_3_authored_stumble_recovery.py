@@ -131,6 +131,24 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         self.assertIn("declared_target_frame(seed)", BUILDER)
         self.assertNotIn("@ source_delta", BUILDER)
 
+    def test_landmark_locations_are_baked_and_contact_replayed(self) -> None:
+        self.assertIn(
+            'pose_bone.keyframe_insert(\n                data_path="location"',
+            BUILDER,
+        )
+        self.assertIn(
+            "Baked foot-contact playback gate failed",
+            BUILDER,
+        )
+        self.assertIn(
+            "Baked stable-run root drift gate failed",
+            BUILDER,
+        )
+        self.assertIn(
+            '"baked_contact_playback"',
+            BUILDER,
+        )
+
     def test_frame1_direction_gate_is_reported(self) -> None:
         self.assertIn("frame1_direction_evidence", BUILDER)
         self.assertIn('"frame1_direction_alignment"', BUILDER)
