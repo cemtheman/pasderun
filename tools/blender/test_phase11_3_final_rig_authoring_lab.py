@@ -50,6 +50,20 @@ class Phase113FinalRigAuthoringLabTests(unittest.TestCase):
             9,
         )
 
+    def test_source_armature_uses_blender_52_valid_display_properties(self) -> None:
+        self.assertIn(
+            'obj.display_type = "WIRE"',
+            BUILDER,
+        )
+        self.assertIn(
+            'obj.data.display_type = "BBONE"',
+            BUILDER,
+        )
+        self.assertNotIn(
+            'obj.display_type = "BBONE"',
+            BUILDER,
+        )
+
     def test_builder_creates_no_retarget_mapping(self) -> None:
         self.assertNotIn("source_to_target", BUILDER)
         self.assertNotIn("COPY_ROTATION", BUILDER)
