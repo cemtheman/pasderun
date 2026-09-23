@@ -26,6 +26,25 @@ class Phase113AuthoredStumbleRecoveryTests(unittest.TestCase):
         self.assertEqual(CONTRACT["source"]["expected_action"], "Runner_RIGAction")
         self.assertEqual(CONTRACT["source"]["expected_frame_count"], 49)
         self.assertIn("49", RUNNER)
+        self.assertIn("outputs\\tokezleme\\_toparlanma.blend", RUNNER)
+
+    def test_source_phase_markers_are_locked(self) -> None:
+        self.assertEqual(
+            CONTRACT["source"]["labels"],
+            [
+                "RUN",
+                "TOE CATCH",
+                "MOMENTUM FORWARD",
+                "PEAK STUMBLE",
+                "LEFT CATCH STEP",
+                "RECOVERY",
+                "RIGHT SUPPORT",
+                "RUN RESUMES",
+                "STABLE RUN",
+            ],
+        )
+        self.assertIn("timeline_markers", BUILDER)
+        self.assertIn("Source authored phase markers missing", BUILDER)
 
     def test_target_is_existing_low_poly_girl_rig(self) -> None:
         self.assertEqual(
