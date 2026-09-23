@@ -621,38 +621,52 @@ def add_area_light(
     return light
 
 
-def rendered_image_luminance(scene: bpy.types.Scene) -> dict:
-    image = bpy.data.images.get("Render Result")
-    require(image is not None, "Render Result image missing after proof render.")
-    pixels = list(image.pixels)
-    require(len(pixels) >= 4, "Render Result contains no pixels.")
+def rendered_image_luminance(image_path: Path) -> dict:
+    require(image_path.exists(), f"Proof image missing: {image_path}")
 
-    total = 0.0
-    maximum = 0.0
-    alpha_hits = 0
-    count = 0
-    # Sample every 64th pixel; proof is only a visibility/framing guard.
-    step = 4 * 64
-    for index in range(0, len(pixels) - 3, step):
-        r = float(pixels[index])
-        g = float(pixels[index + 1])
-        b = float(pixels[index + 2])
-        a = float(pixels[index + 3])
-        luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-        total += luminance
-        maximum = max(maximum, luminance)
-        if a > 0.05:
-            alpha_hits += 1
-        count += 1
+    # Blender 5.2 headless can successfully write the proof PNG while leaving
+    # Render Result.pixels empty. Reload the actual saved artifact and validate
+    # those pixels instead of depending on the transient render buffer.
+    image = bpy.data.images.load(
+        filepath=str(image_path),
+        check_existing=False,
+    )
+    try:
+        image.update()
+        pixels = list(image.pixels)
+        require(
+            len(pixels) >= 4,
+            f"Saved proof image contains no pixels: {image_path}",
+        )
 
-    average = total / max(count, 1)
-    alpha_coverage = alpha_hits / max(count, 1)
-    return {
-        "average": average,
-        "maximum": maximum,
-        "alpha_coverage": alpha_coverage,
-        "sample_count": count,
-    }
+        total = 0.0
+        maximum = 0.0
+        alpha_hits = 0
+        count = 0
+        # Sample every 64th pixel; proof is only a visibility/framing guard.
+        step = 4 * 64
+        for index in range(0, len(pixels) - 3, step):
+            r = float(pixels[index])
+            g = float(pixels[index + 1])
+            b = float(pixels[index + 2])
+            a = float(pixels[index + 3])
+            luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+            total += luminance
+            maximum = max(maximum, luminance)
+            if a > 0.05:
+                alpha_hits += 1
+            count += 1
+
+        average = total / max(count, 1)
+        alpha_coverage = alpha_hits / max(count, 1)
+        return {
+            "average": average,
+            "maximum": maximum,
+            "alpha_coverage": alpha_coverage,
+            "sample_count": count,
+        }
+    finally:
+        bpy.data.images.remove(image)
 
 
 def configure_preview(
@@ -779,7 +793,7 @@ def configure_preview(
     scene.frame_set(scene.frame_start)
     bpy.ops.render.render(write_still=True)
 
-    luminance = rendered_image_luminance(scene)
+    luminance = rendered_image_luminance(proof_path)
     require(
         luminance["alpha_coverage"] > 0.002
         and luminance["maximum"] > 0.08,
