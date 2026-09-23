@@ -33,6 +33,15 @@ class Phase113FinalRigKeyposesATests(unittest.TestCase):
         self.assertNotIn('COPY_ROTATION', BUILDER)
         self.assertNotIn('COPY_TRANSFORMS', BUILDER)
 
+    def test_keyposes_use_joint_landmarks_not_straight_segment_vectors(self) -> None:
+        self.assertIn("def authored_point(", BUILDER)
+        self.assertIn("def apply_landmark_chain(", BUILDER)
+        self.assertIn('("elbow", "wrist", "finish")', BUILDER)
+        self.assertIn('("knee", "ankle", "finish")', BUILDER)
+        self.assertNotIn("def apply_segment_chain(", BUILDER)
+        self.assertIn('"TOE CATCH": {', BUILDER)
+        self.assertIn('"MOMENTUM FORWARD": {', BUILDER)
+
     def test_pose_uses_final_rig_calibration_and_lengths(self) -> None:
         self.assertIn(
             'ballet_rig_calibration_seed_v1.json',
