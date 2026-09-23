@@ -36,11 +36,26 @@ class Phase113FinalRigKeyposesATests(unittest.TestCase):
     def test_keyposes_use_joint_landmarks_not_straight_segment_vectors(self) -> None:
         self.assertIn("def authored_point(", BUILDER)
         self.assertIn("def apply_landmark_chain(", BUILDER)
-        self.assertIn('("elbow", "wrist", "finish")', BUILDER)
-        self.assertIn('("knee", "ankle", "finish")', BUILDER)
+        self.assertIn('("elbow", "wrist")', BUILDER)
+        self.assertIn('("knee", "ankle")', BUILDER)
+        self.assertIn("preserve_third_rest", BUILDER)
         self.assertNotIn("def apply_segment_chain(", BUILDER)
         self.assertIn('"TOE CATCH": {', BUILDER)
         self.assertIn('"MOMENTUM FORWARD": {', BUILDER)
+
+    def test_hands_remain_neutral_while_legs_keep_authored_feet(self) -> None:
+        self.assertIn(
+            'axes["side"] * sign,\n            True,',
+            BUILDER,
+        )
+        self.assertIn(
+            'axes["side"] * sign,\n            False,',
+            BUILDER,
+        )
+        self.assertIn(
+            "if not preserve_third_rest:",
+            BUILDER,
+        )
 
     def test_pose_uses_final_rig_calibration_and_lengths(self) -> None:
         self.assertIn(
