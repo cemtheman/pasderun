@@ -710,12 +710,67 @@ def retarget_to_low_poly(
                 frame=out_index,
                 group=target_name,
             )
-            if target_name == "Hips":
-                pose_bone.keyframe_insert(
-                    data_path="location",
-                    frame=out_index,
-                    group=target_name,
-                )
+            # set_roll_stable_direction assigns pose matrices. Blender may
+            # realize part of that authored pose as a local bone translation,
+            # especially after parent bones have already been solved. Bake
+            # location for every retargeted bone so playback exactly preserves
+            # the solved authored frame instead of silently dropping it.
+            pose_bone.keyframe_insert(
+                data_path="location",
+                frame=out_index,
+                group=target_name,
+            )
+
+    # Replay the baked action and prove that the authored foot-clearance
+    # solve survived keyframing. This catches matrix-vs-keyframe mismatches
+    # before a human has to inspect another drifting preview.
+    playback_contact_errors: list[float] = []
+    playback_clearances: list[float] = []
+    for out_index, sample in enumerate(source["samples"], start=1):
+        scene.frame_set(out_index)
+        bpy.context.view_layer.update()
+
+        target_foot_heights = []
+        for foot_name in ("Foot_L", "Foot_R"):
+            pb = armature.pose.bones[foot_name]
+            target_foot_heights.append(
+                float(pb.head.dot(target_frame["up"]))
+            )
+            target_foot_heights.append(
+                float(pb.tail.dot(target_frame["up"]))
+            )
+
+        actual_clearance = max(
+            0.0,
+            min(target_foot_heights) - target_ground_height,
+        )
+        expected_clearance = (
+            float(sample["source_foot_clearance"]) * leg_ratio
+        )
+        playback_clearances.append(actual_clearance)
+        playback_contact_errors.append(
+            abs(actual_clearance - expected_clearance)
+        )
+
+    max_contact_error = max(playback_contact_errors, default=0.0)
+    contact_tolerance = max(target_leg_length * 0.01, 0.002)
+    require(
+        max_contact_error <= contact_tolerance,
+        "Baked foot-contact playback gate failed: "
+        f"max_error={max_contact_error:.8f} "
+        f"tolerance={contact_tolerance:.8f}",
+    )
+
+    first_last_clearance_delta = abs(
+        playback_clearances[-1] - playback_clearances[0]
+    )
+    first_last_tolerance = max(target_leg_length * 0.02, 0.004)
+    require(
+        first_last_clearance_delta <= first_last_tolerance,
+        "Baked stable-run root drift gate failed: "
+        f"first_last_clearance_delta={first_last_clearance_delta:.8f} "
+        f"tolerance={first_last_tolerance:.8f}",
+    )
 
     # Every source frame is sampled, so LINEAR interpolation preserves the
     # authored frame sequence without Bezier overshoot.
@@ -765,6 +820,19 @@ def retarget_to_low_poly(
             "frame1_direction_alignment": {
                 key: round(value, 8)
                 for key, value in frame1_direction_evidence.items()
+            },
+            "baked_contact_playback": {
+                "max_clearance_error": round(max_contact_error, 8),
+                "contact_tolerance": round(contact_tolerance, 8),
+                "first_last_clearance_delta": round(
+                    first_last_clearance_delta,
+                    8,
+                ),
+                "first_last_tolerance": round(
+                    first_last_tolerance,
+                    8,
+                ),
+                "passed": True,
             },
         },
     }
