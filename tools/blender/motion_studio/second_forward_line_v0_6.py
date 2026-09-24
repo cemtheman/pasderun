@@ -1,4 +1,4 @@
-"""Render a descending, forward-moving second-position line for review."""
+"""Render a descending second-position line with inward elbow flexion."""
 
 from __future__ import annotations
 
@@ -70,23 +70,25 @@ def main():
                 lines[side]["new_wrist_anterior_to_elbow"] > 0,
                 f"{side}: descending, forward-moving second-position line not achieved")
     output.mkdir(parents=True, exist_ok=True)
-    previews = render_views(armature, calibration, output, prefix="second_forward")
-    blend = output / "second_forward_line_v0_6.blend"
+    previews = render_views(armature, calibration, output, prefix="second_inward")
+    blend = output / "second_inward_line_v0_6.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend))
     report_path = output / "report.json"
     report_path.write_text(json.dumps({
-        "status": "SECOND_FORWARD_LINE_CANDIDATE_VISUAL_REVIEW_REQUIRED",
+        "status": "SECOND_INWARD_LINE_CANDIDATE_VISUAL_REVIEW_REQUIRED",
         "source_profile_sha256": reference["source_profile_sha256"],
         "source_glb_sha256": reference["source_glb_sha256"],
         "arm_lines": lines, "search_diagnostics": search,
         "hand_mesh_projection": projection,
         "residuals": residuals, "hand_tip_residuals": hands,
         "previews": previews, "blend": str(blend),
-        "limits": "Static second-position candidate only; the 20-degree side-turn and "
-                  "10-degree elbow-bend limits select a visual probe, not ballet technique. "
-                  "No temporal solve, measured joint-limit gate or ballet-teacher approval."
+        "limits": "Static second-position candidate only. Inward flexion tests the signed "
+                  "bend relative to the upper arm and a declared body cue; a calibrated upper-arm-local "
+                  "hinge axis and measured physiological limits remain unresolved. The 20-degree "
+                  "side-turn and 10-degree elbow-bend limits select a visual probe, not ballet technique. "
+                  "No temporal solve or ballet-teacher approval."
     }, indent=2) + "\n", encoding="utf-8")
-    print("MOTION_STUDIO_SECOND_FORWARD=CANDIDATE_VISUAL_REVIEW_REQUIRED")
+    print("MOTION_STUDIO_SECOND_INWARD=CANDIDATE_VISUAL_REVIEW_REQUIRED")
     print(f"REPORT={report_path}")
     print(f"FRONT={previews['front']}")
     print(f"SIDE={previews['side']}")

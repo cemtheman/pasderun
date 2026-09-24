@@ -157,3 +157,13 @@ The real `second_descending_side.png` exposed an additional defect: fixing the w
 ```
 
 Review `second_forward_front.png`, `second_forward_side.png` and `report.json` before accepting any shape change. No source assets, keyframes or runtime motions are changed.
+
+The real second-forward preview improved the side line, but its measured upper-arm-relative flexion still pointed **outward**. `elbow_flexion.py` introduces a reusable signed flexion guard: subtract the portion of the forearm along the current upper arm, then require the remaining bend component to point toward the declared anatomical inward cue. It rotates with the upper arm instead of banning a fixed world-space up/down direction. A singular straight arm and an outward bend are rejected. The en avant outward-elbow probe is checked against the same guard. Earlier generated reports remain historical evidence; no accepted reference is rewritten.
+
+The second-position search now considers only inward-flexing candidates, retains its length and front/side constraints, and writes separate review outputs. On the Windows checkout, run the updated `second_forward_line_v0_6.py` into a new directory:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\second_forward_line_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --output .\build\motion_studio\second_inward_line_v0_6
+```
+
+Review `second_inward_front.png`, `second_inward_side.png` and `report.json`. This signed body cue establishes the **side of the bend**, not a measured anatomical hinge axis or range. The v0.1 calibration explicitly marks joint limits and bend planes unresolved. Rig-local hinge enforcement needs an independently measured local axis and shoulder/upper-arm orientation; this candidate must not be labeled anatomy approved.

@@ -54,6 +54,7 @@ class SecondElbowLineTests(unittest.TestCase):
             self.assertLess(new["elbow"][2], new["wrist"][2])
             self.assertLess(diagnostics[side]["side_turn_deg"], 20)
             self.assertLess(diagnostics[side]["elbow_interior_deg"], 170)
+            self.assertGreater(diagnostics[side]["inward_flexion"]["signed_inward_alignment"], 0)
             for a, b in (("shoulder", "elbow"), ("elbow", "wrist"), ("wrist", "hand")):
                 self.assertAlmostEqual(math.dist(old[a], old[b]), math.dist(new[a], new[b]))
             self.assertEqual(new["wrist"][1], old["wrist"][1])

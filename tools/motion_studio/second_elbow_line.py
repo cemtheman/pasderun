@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 
+from elbow_flexion import inward_flexion
 from schema_validation import require
 from static_pose import add, dot, mul, sub
 
@@ -116,10 +117,16 @@ def solve_second_forward_line(solution: dict, frame: dict) -> tuple[dict, dict]:
                     turn = _side_turn_deg(shoulder, elbow, wrist, frame)
                     if turn > 20:
                         continue
+                    candidate_arm = {"shoulder": shoulder, "elbow": elbow, "wrist": wrist}
+                    inward = mul(outward, -1)
+                    try:
+                        flexion = inward_flexion(candidate_arm, inward, side)
+                    except ValueError:
+                        continue
                     feasible.append((math.sqrt(dot(shift, shift)), turn, inward_steps,
-                                     forward_steps, elbow, wrist, shift, full_bend))
+                                     forward_steps, elbow, wrist, shift, full_bend, flexion))
         require(feasible, side, "no reachable forward-moving gentle elbow line")
-        _, turn, inward_steps, forward_steps, elbow, wrist, shift, full_bend = min(
+        _, turn, inward_steps, forward_steps, elbow, wrist, shift, full_bend, flexion = min(
             feasible, key=lambda c: (c[0], c[1]))
         arms[side] = {**arm, "elbow": elbow, "wrist": wrist,
                       "hand": add(arm["hand"], shift)}
@@ -128,5 +135,6 @@ def solve_second_forward_line(solution: dict, frame: dict) -> tuple[dict, dict]:
                              "wrist_shift_armature_units": [round(x, 8) for x in shift],
                              "side_turn_deg": round(turn, 6),
                              "elbow_interior_deg": round(full_bend, 6),
+                             "inward_flexion": flexion,
                              "upper_length": round(upper, 8), "lower_length": round(lower, 8)}
     return {"pose_id": "second", "arms": arms}, diagnostics

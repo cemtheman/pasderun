@@ -15,6 +15,7 @@ sys.path.insert(0, str(MOTION_TOOLS))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from accepted_arm_reference import extract_accepted_arm_reference  # noqa: E402
 from accepted_arm_visual import joint_targets  # noqa: E402
+from elbow_flexion import inward_flexion  # noqa: E402
 from hand_clearance_candidate import shifted_solution  # noqa: E402
 from hand_clearance_candidate_v0_6 import pose_and_measure  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
@@ -85,6 +86,10 @@ def main():
               for side in ("left", "right")}
     require(all(angles[s]["outward_pole_deg"] < angles[s]["reference_pole_deg"]
                 for s in ("left", "right")), "Side-view elbow kink was not reduced")
+    flexion = {side: inward_flexion(candidate["arms"][side],
+                                    [component * (-1 if side == "left" else 1)
+                                     for component in frame["left"]], side)
+               for side in ("left", "right")}
 
     output.mkdir(parents=True, exist_ok=True)
     previews = render_views(armature, calibration, output, prefix="en_avant_outward")
@@ -97,6 +102,7 @@ def main():
         "source_glb_sha256": reference["source_glb_sha256"],
         "outward_shift_per_wrist_armature_units": round(shift, 8),
         "iterations": iteration, "side_view_elbow_kink_deg": angles,
+        "inward_flexion": flexion,
         "hand_mesh_projection": projection, "residuals": residuals,
         "hand_tip_residuals": hand_residuals, "previews": previews, "blend": str(blend_path),
         "limits": "Static en avant comparison only; the sideways bend changes elbow geometry, "
