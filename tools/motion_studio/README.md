@@ -83,3 +83,15 @@ The Python tests cover synthetic endpoints, monotone wrist motion, pole continui
 `port_de_bras_qa.py` checks relationships visible in that reference on *supplied* solved shoulder, elbow and wrist joint centers: preparatory wrists inside elbows, outward wrist progression, shoulder–elbow–wrist descending lines at middle/end and anterior wrists at the end. This check has no guessed bone Euler angles or numeric ballet-angle thresholds. Shoulder depression, hand shape, scapular control and teacher approval are explicitly `not_run`; an all-passing geometry result remains `not_run` overall rather than motion approval. The earlier arm-lift probe fails the preparatory check as expected. Validate evidence with `python tools/motion_studio/reference_evidence.py tools/motion_studio/examples/port_de_bras_reference_v0_6.json` and run unit tests with `python -m unittest discover -s tools/motion_studio -p 'test_*.py'`.
 
 This checkpoint does not solve the new ballet sequence. A future pose solver must work from observed landmark relationships and final-Rig calibration, followed by Blender previews and human/teacher review. The generated illustration alone does not provide defensible 3D elbow positions, hand articulation or actual timing.
+
+## v0.6.1 — accepted Phase 10 landmark reference bridge
+
+The trusted Phase 10.6.5 canonical foundation output contains `bras_bas`, `en_avant`, and `second` landmark poses. `accepted_arm_reference.py` reads an **existing generated profile as evidence**. It verifies its Phase 10 geometry gates and source GLB digest, extracts only shoulder/elbow/wrist/hand body-relative landmarks, and scales coordinates by this Rig's measured standing height. The resulting `accepted_arm_reference_v0_6.schema.json` contract preserves the digest of the exact input profile. It never imports or runs any old source-rig retargeting or animation-authoring code. These three static poses remain distinct from the new user's generated visual reference and do not confer motion approval.
+
+An optional review compares `bras_bas → en_avant → second` with the v0.6 qualitative arm checks. Failure is reported as failure; all passing geometric relations still leave teacher approval `not_run`. If the already-generated `build/phase10_6/low_poly_girl_canonical_pose_solver_v1.json` exists locally, the read-only bridge may be run from the repository root:
+
+```powershell
+python .\tools\motion_studio\accepted_arm_reference.py --source .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --output .\build\motion_studio\accepted_arm_reference_v0_6.json --review-output .\build\motion_studio\accepted_arm_review_v0_6.json
+```
+
+If the source profile is absent, the bridge cannot claim a real-data result. The bridge is tested on synthetic profiles; a real output and visual interpretation still require local evidence. No Blender run, GLB export, runtime integration or changes to accepted Phase 10 assets occur in this checkpoint.
