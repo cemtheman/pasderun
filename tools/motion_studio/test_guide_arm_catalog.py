@@ -32,6 +32,8 @@ class GuideArmCatalogTests(unittest.TestCase):
             crown = self.poses["fifth"]["arms"][side]
             second = self.poses["second"]["arms"][side]
             self.assertGreater(crown["wrist"][1], crown["shoulder"][1])
+            reach = math.dist(crown["shoulder"], crown["elbow"]) + math.dist(crown["elbow"], crown["wrist"])
+            self.assertGreater(crown["wrist"][1], .64 + .12 * reach)
             for a, b in (("shoulder", "elbow"), ("elbow", "wrist"), ("wrist", "hand")):
                 self.assertAlmostEqual(math.dist(crown[a], crown[b]),
                                        math.dist(second[a], second[b]), places=6)

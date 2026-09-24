@@ -11,12 +11,15 @@ from static_pose import add, dot, length, mul, solve_two_link, sub, unit
 
 
 def crown_position(second: dict, anatomical_frame: dict, head_top_height: float,
-                   lateral_fraction: float = .12) -> dict:
+                   lateral_fraction: float = .36,
+                   overhead_fraction: float = .22) -> dict:
     """Construct a bounded overhead oval. Height is a rig-bone proxy, not skin evidence."""
     require(second["pose_id"] == "second", "crown", "requires reviewed second source")
     require(math.isfinite(head_top_height), "crown", "invalid calibrated head height")
-    require(math.isfinite(lateral_fraction) and .08 <= lateral_fraction <= .3,
+    require(math.isfinite(lateral_fraction) and .08 <= lateral_fraction <= .6,
             "crown", "invalid overhead wrist separation")
+    require(math.isfinite(overhead_fraction) and .12 <= overhead_fraction <= .4,
+            "crown", "invalid overhead clearance")
     result = {}
     for side in ("left", "right"):
         arm = second["arms"][side]
@@ -26,11 +29,11 @@ def crown_position(second: dict, anatomical_frame: dict, head_top_height: float,
         up, front, left = (anatomical_frame[k] for k in ("up", "front", "left"))
         outward = left if side == "left" else mul(left, -1)
         lateral = max(hand_length * 1.6, reach * lateral_fraction)
-        height = min(head_top_height + .04 * reach, dot(shoulder, up) + .72 * reach)
+        height = head_top_height + overhead_fraction * reach
         require(height > dot(shoulder, up) + .32 * reach, side,
                 "head proxy cannot reach an overhead wrist")
-        # Body-center wrist offset gives an overhead oval; keep the crown in
-        # front of the face rather than hiding it behind the head mesh.
+        # Keep the wrists above the head bone's tail proxy. The prior .04
+        # offset rendered the hands directly across the model's eyes.
         wrist = add(mul(outward, lateral), add(mul(up, height),
                     mul(front, dot(shoulder, front) + reach * .25)))
         solved = solve_two_link(shoulder, arm["elbow"], arm["wrist"],

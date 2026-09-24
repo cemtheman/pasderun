@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.7.1",
+  "source_bundle": "catalog_v0_7.zip",
+  "source_bundle_sha256": "669a07e50965ff9f5cfe94bc3d8fd095528ec4e5c5e8a1ec063d86f67971a4",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "arm_report_sha256": "1ebba570918cff49ed52cf699debd552b08ae3482569d20c98204d033c66922f",
+  "arm_report_status": "CATALOG_FRONT_HAND_OVERLAP",
+  "arm_counts": {"poses": 8, "directed_clips": 14, "pair_routes": 56},
+  "arm_failures": {
+    "fifth_crown_static_projected_gap": -0.04236233,
+    "first_to_fifth_crown_minimum_gap": -0.07300121,
+    "fifth_crown_to_first_minimum_gap": -0.07300162,
+    "visual": "Fifth-crown hands visibly cover the face; the forward transition midpoint folds both hands together at chest height. Failed geometry screen."
+  },
+  "foot_report_sha256": "46e9857d7796d0ebf288c69886b7d718f8028914c816e4358d8135a079fadce6",
+  "foot_report_status": "CANDIDATE_GEOMETRY_RENDERED",
+  "foot_counts": {"poses": 8, "directed_clips": 14, "pair_routes": 56},
+  "foot_findings": {
+    "maximum_sampled_joint_residual": 0.00000151,
+    "minimum_tracked_sole_delta_from_rest": -0.0063457,
+    "poses_visually_inspected": ["first", "second", "fifth_left_front"],
+    "edge_midpoint_visually_inspected": ["first_to_fifth_left_front"],
+    "limits": "Front/side renders show distinct stance changes but cannot establish toe turnout, two-foot floor contact, foot sliding, balance or self-collision. No top-down or full-resolution sole contact view."
+  },
+  "source_assets": "Both reports and selected front/side PNGs were taken from the user's ZIP. No prior accepted assets were changed."
+}

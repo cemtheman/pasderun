@@ -47,7 +47,8 @@ def load_input(args):
     return repo, calibration, rig, reference, reports
 
 
-def build_catalog(calibration, reference, reports, crown_lateral_fraction=.12):
+def build_catalog(calibration, reference, reports,
+                  crown_lateral_fraction=.36, crown_overhead_fraction=.22):
     frame = calibration["anatomical_frame"]
     low = shifted_solution(joint_targets(reference, calibration, "bras_bas"), frame,
                            reports[0]["poses"]["bras_bas"]["outward_shift_per_wrist_armature_units"])
@@ -61,7 +62,8 @@ def build_catalog(calibration, reference, reports, crown_lateral_fraction=.12):
                 for side in ("left", "right")), "Second reference cannot be reproduced")
     head_top = dot(calibration["canonical_bones"]["head"]["tail_local"], frame["up"])
     fifth = crown_position(second, frame, head_top,
-                           lateral_fraction=crown_lateral_fraction)
+                           lateral_fraction=crown_lateral_fraction,
+                           overhead_fraction=crown_overhead_fraction)
     poses = {
         "bras_bas": low, "first": first, "second": second, "fifth_crown": fifth,
         "third_left_first": combine_arm_positions("third_left_first", first, second),
@@ -83,6 +85,20 @@ def build_catalog(calibration, reference, reports, crown_lateral_fraction=.12):
                        ("third_right_first", "fourth_right_crown")):
         edges[(start, end)] = sample_arm_transition(poses[start], poses[end], frame)
     return poses, edges, head_top
+
+
+def screen_crown_path(armature, calibration, poses, edges):
+    """Measure the skinned hands for crown and all first→crown samples."""
+    gaps = []
+    for sample in [poses["fifth_crown"], *edges[("first", "fifth_crown")]]:
+        for bone in armature.pose.bones:
+            bone.matrix_basis = Matrix.Identity(4)
+        bpy.context.view_layer.update()
+        apply_solution(armature, sample)
+        align_hand_tips(armature, sample)
+        gaps.append(measured_hand_mesh_projection(
+            armature, calibration)["projected_gap_armature_units"])
+    return min(gaps), gaps.index(min(gaps))
 
 
 def keyed_action(armature, name, samples, calibration, output, render=False):
@@ -148,18 +164,30 @@ def main():
     armature.animation_data_clear()
     armature.animation_data_create()
     crown_trials = []
-    for fraction in (.12, .15, .18, .22, .26):
-        poses, edges, head_top = build_catalog(calibration, reference, reports, fraction)
-        bpy.context.scene.frame_set(1)
-        for bone in armature.pose.bones:
-            bone.matrix_basis = Matrix.Identity(4)
-        bpy.context.view_layer.update()
-        apply_solution(armature, poses["fifth_crown"])
-        align_hand_tips(armature, poses["fifth_crown"])
-        gap = measured_hand_mesh_projection(armature, calibration)["projected_gap_armature_units"]
-        crown_trials.append({"lateral_arm_reach_fraction": fraction, "frontal_gap": gap})
-        if gap >= 0:
+    selected = None
+    for overhead in (.22, .28, .34):
+        for fraction in (.32, .36, .40, .44, .48, .52, .56):
+            try:
+                poses, edges, head_top = build_catalog(
+                    calibration, reference, reports, fraction, overhead)
+                gap, worst = screen_crown_path(armature, calibration, poses, edges)
+            except (ValueError, RuntimeError) as exc:
+                crown_trials.append({"overhead_arm_reach_fraction": overhead,
+                                     "lateral_arm_reach_fraction": fraction,
+                                     "rejected": str(exc)})
+                continue
+            crown_trials.append({"overhead_arm_reach_fraction": overhead,
+                                 "lateral_arm_reach_fraction": fraction,
+                                 "minimum_crown_path_gap": gap,
+                                 "worst_sample_zero_is_static": worst})
+            if selected is None or gap > selected[0]:
+                selected = gap, poses, edges, head_top, fraction, overhead
+            if gap >= .002:
+                break
+        if selected is not None and selected[0] >= .002:
             break
+    require(selected is not None, "No reachable fifth-crown pose and path found")
+    _, poses, edges, head_top, chosen_lateral, chosen_overhead = selected
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     bpy.context.scene.frame_start, bpy.context.scene.frame_end = 1, 25
@@ -189,6 +217,8 @@ def main():
         "source_glb_sha256": reference["source_glb_sha256"],
         "guide_pdf_sha256": "2d6321bf92dd97014fb86555bc30426772e9a34e0527e7bf397339fa3648793d",
         "head_bone_tail_height": head_top,
+        "crown_selected_lateral_arm_reach_fraction": chosen_lateral,
+        "crown_selected_overhead_arm_reach_fraction": chosen_overhead,
         "crown_wrist_separation_trials": crown_trials,
         "poses": pose_report, "clips": clip_report, "pair_routes": routes,
         "front_overlap_names": failures, "blend": str(blend),
