@@ -36,6 +36,18 @@ class FirstPositionCandidateTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "wrong source poses"):
             guide_first_position(source("en_avant"), source("bras_bas"), FRAME)
 
+    def test_calibrated_torso_proxy_replaces_only_wrist_height(self):
+        low = shifted_solution(source("bras_bas"), FRAME, .12825477 / 1.44988)
+        high = shifted_solution(source("en_avant"), FRAME,
+                                .09751075 / 1.44988, "body_outward")
+        proxy = .178
+        first = guide_first_position(low, high, FRAME, navel_region_height=proxy)
+        for side in ("left", "right"):
+            self.assertAlmostEqual(first["arms"][side]["wrist"][1], proxy)
+            self.assertGreater(first["arms"][side]["wrist"][1], low["arms"][side]["wrist"][1])
+        with self.assertRaisesRegex(ContractError, "outside bounded"):
+            guide_first_position(low, high, FRAME, navel_region_height=1.0)
+
 
 if __name__ == "__main__":
     unittest.main()

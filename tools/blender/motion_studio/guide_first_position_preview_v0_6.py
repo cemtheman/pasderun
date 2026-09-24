@@ -51,7 +51,10 @@ def main():
                            clearance["poses"]["bras_bas"]["outward_shift_per_wrist_armature_units"])
     high = shifted_solution(joint_targets(reference, calibration, "en_avant"), anatomical_frame,
                             en_avant["outward_shift_per_wrist_armature_units"], "body_outward")
-    candidate = guide_first_position(low, high, anatomical_frame)
+    spine_mid_height = dot(calibration["canonical_bones"]["spine_mid"]["head_local"],
+                           anatomical_frame["up"])
+    candidate = guide_first_position(low, high, anatomical_frame,
+                                      navel_region_height=spine_mid_height)
 
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(repo / rig["source_glb"]))
@@ -86,11 +89,12 @@ def main():
         "status": status, "source_profile_sha256": reference["source_profile_sha256"],
         "source_glb_sha256": reference["source_glb_sha256"],
         "guide_pdf_sha256": "2d6321bf92dd97014fb86555bc30426772e9a34e0527e7bf397339fa3648793d",
+        "height_method": "Wrist at calibrated spine_mid bone head elevation; torso proxy, not a navel measurement",
         "height_bounds_armature_units": heights,
         "calibrated_rig_bone_head_heights_armature_units": anchors,
         "hand_mesh_projection": projection, "residuals": residuals,
         "hand_tip_residuals": hand_residuals, "previews": previews, "blend": str(blend),
-        "limits": "The wrist midpoint between measured low and high candidates is a navel-region "
+        "limits": "The calibrated spine_mid bone head sets a bounded navel-region height "
                   "hypothesis, NOT a measured navel landmark. Front/side form needs review. "
                   "This static arm-only probe does not author the 49-frame path or alter feet."
     }, indent=2) + "\n", encoding="utf-8")

@@ -10,12 +10,13 @@ from static_pose import add, dot, mul, solve_two_link, sub
 
 
 def guide_first_position(preparatory: dict, en_avant_reference: dict,
-                         anatomical_frame: dict) -> dict:
+                         anatomical_frame: dict,
+                         navel_region_height: float | None = None) -> dict:
     """Place the first-position wrist between known low and high wrist levels.
 
-    The mid-height is a testable navel-region hypothesis, NOT a measured
-    navel landmark. The reviewed preparatory pose and original Phase 10 data
-    provide the two bounds. The wrist's lateral separation remains unchanged.
+    If supplied, a rig torso landmark bounds the navel-region hypothesis;
+    otherwise the old midpoint is used for comparison. Neither is a measured
+    navel landmark. The wrist's lateral separation remains unchanged.
     """
     require(preparatory["pose_id"] == "bras_bas" and
             en_avant_reference["pose_id"] == "en_avant", "first", "wrong source poses")
@@ -34,11 +35,13 @@ def guide_first_position(preparatory: dict, en_avant_reference: dict,
                 side, "source arm lengths differ")
         low_up, high_up = dot(low["wrist"], up), dot(high["wrist"], up)
         require(high_up > low_up + 1e-6, side, "first position has no vertical bounds")
-        # Midpoint of the two observed wrist levels. Front moves halfway from
-        # preparatory to the existing high Phase 10 target; lateral stays at
-        # the already cleared en avant wrist location.
+        height = (low_up + high_up) / 2 if navel_region_height is None else navel_region_height
+        require(math.isfinite(height) and low_up < height < high_up,
+                side, "torso height outside bounded first-position region")
+        # Front moves halfway from preparatory to the existing high Phase 10
+        # target; lateral stays at the already cleared en avant wrist location.
         wrist = add(high["wrist"], add(
-            mul(up, (low_up - high_up) / 2),
+            mul(up, height - high_up),
             mul(front, (dot(low["wrist"], front) - dot(high["wrist"], front)) / 2)))
         outward = left_axis if side == "left" else mul(left_axis, -1)
         solved = solve_two_link(high["shoulder"], high["elbow"], high["wrist"],

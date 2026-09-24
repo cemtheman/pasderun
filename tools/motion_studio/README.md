@@ -195,3 +195,5 @@ Render it from the Windows checkout, using the existing clearance and en avant r
 ```
 
 Evaluate `guide_first_front.png`, `guide_first_side.png`, and `report.json` as a static waypoint before rebuilding the motion path. The accepted second-position candidate remains intact; foot placement, navel landmark calibration, contact and choreography timing remain separate work.
+
+The first midpoint render achieved a positive frontal hand gap (+0.02011681 armature units) and accurate rig endpoints, but its wrist height 1.18330568 remained closer to the calibrated chest bone head (1.23559117) than to the `spine_mid` bone head (1.10468304). The visual review found the hands slightly high for the guide's navel-level first position. A second static variant uses the calibrated `spine_mid` head **height only** as a bounded torso proxy, while preserving the midpoint front offset, wrist separation and geometric arm solve. `spine_mid` is not claimed to be the skin's navel landmark. Run the same script and inputs above with a separate output directory `build/motion_studio/guide_first_spine_mid_v0_6`; compare the two pairs of front/side PNGs before adopting either as a waypoint.
