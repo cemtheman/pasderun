@@ -95,3 +95,15 @@ python .\tools\motion_studio\accepted_arm_reference.py --source .\build\phase10_
 ```
 
 If the source profile is absent, the bridge cannot claim a real-data result. The bridge is tested on synthetic profiles; a real output and visual interpretation still require local evidence. No Blender run, GLB export, runtime integration or changes to accepted Phase 10 assets occur in this checkpoint.
+
+### Read-only final-Rig visual check
+
+`accepted_arm_visual.py` converts the three existing body-relative poses back to local joint targets with the measured final-Rig frame and standing height. It rejects a stale GLB digest, missing joints or arm segment lengths inconsistent with calibration. The Blender preview also regenerates the accepted reference from the **exact Phase 10 source bytes** and requires it to match the supplied JSON. It resets the final Rig to rest between poses, applies the existing geometric arm joint alignment, checks elbow and wrist residuals and renders front/side views. The saved Blend has only the final static pose; no keyframes or export are generated. Neither the accepted Phase 10 source nor the character GLB is changed.
+
+Run on the Windows checkout after creating `accepted_arm_reference_v0_6.json` and retaining the two Phase 10 inputs:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\accepted_arm_visual_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --output .\build\motion_studio\accepted_arm_visual_v0_6
+```
+
+The six PNGs show whether accepted joint-center geometry produces a readable silhouette on this mesh. A numerical geometry PASS does not override the earlier `second` elbow-line QA failure or count as ballet acceptance. Human review of both views and any rig/mesh limitations is necessary before choosing a corrective target; no new limb angles are inferred by this visual check.
