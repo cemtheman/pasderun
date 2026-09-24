@@ -44,6 +44,16 @@ class PortDeBrasQATests(unittest.TestCase):
         self.assertIn("left_middle_elbow_line", failed)
         self.assertIn("right_second_position_anterior", failed)
 
+    def test_en_avant_may_draw_wrist_inward_before_second_opens(self):
+        # Phase 10 read-only reference: 0.01328 -> 0.00503 -> 0.42547.
+        poses = copy.deepcopy(self.poses)
+        poses["start"]["arms"]["left"]["wrist"][0] = 0.0132836851
+        poses["middle"]["arms"]["left"]["wrist"][0] = 0.0050267937
+        poses["end"]["arms"]["left"]["wrist"][0] = 0.4254685164
+        check = next(c for c in evaluate_port_de_bras(poses, self.frame)["checks"]
+                     if c["name"] == "left_wrist_opens_outward")
+        self.assertEqual(check["status"], "pass")
+
     def test_existing_arm_probe_fails_preparatory_reference(self):
         # Previously keyed arm lift is a geometry probe, never a port de bras.
         spec = json.loads((HERE / "examples/arm_transition_geometry_probe_v0_5.json").read_text())

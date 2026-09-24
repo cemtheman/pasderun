@@ -30,7 +30,9 @@ def evaluate_port_de_bras(poses, anatomical_frame):
         record(f"{side}_preparatory_wrist_inside_elbow", start_wrist < start_elbow,
                f"lateral elbow={start_elbow:.6f} wrist={start_wrist:.6f}")
         outward = [sign*coord(arm, "wrist", left) for arm in arms]
-        record(f"{side}_wrist_opens_outward", outward[0] < outward[1] < outward[2],
+        # The en_avant waypoint can bring hands slightly toward center before
+        # they open to second; require the final opening, not monotonic travel.
+        record(f"{side}_wrist_opens_outward", outward[2] > outward[1] and outward[2] > outward[0],
                f"lateral wrist start/middle/end={outward}")
         for stage, arm in (("middle", middle), ("end", end)):
             shoulder_up = coord(arm, "shoulder", up)
