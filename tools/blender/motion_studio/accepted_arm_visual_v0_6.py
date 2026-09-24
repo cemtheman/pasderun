@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 import bpy
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 MOTION_TOOLS = Path(__file__).resolve().parents[2] / "motion_studio"
 sys.path.insert(0, str(MOTION_TOOLS))
@@ -20,6 +20,29 @@ from accepted_arm_reference import extract_accepted_arm_reference  # noqa: E402
 from accepted_arm_visual import joint_targets  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
 from static_pose_preview_v0_3 import apply_solution, render_views, require  # noqa: E402
+
+
+def align_hand_tips(armature, solution):
+    """Aim each measured hand bone tail at its accepted hand landmark."""
+    residuals = {}
+    for side, arm in solution["arms"].items():
+        bone = armature.pose.bones[arm["bone_names"][2]]
+        bpy.context.view_layer.update()
+        head = bone.head.copy()
+        target = Vector(arm["hand"])
+        require((head - Vector(arm["wrist"])).length <= arm["arm_reach"] * 0.005,
+                f"{side}: hand head differs from solved wrist")
+        current = bone.tail - head
+        desired = target - head
+        require(current.length > 1e-8 and desired.length > 1e-8, f"{side}: degenerate hand direction")
+        rotation = current.rotation_difference(desired).to_matrix().to_4x4()
+        bone.matrix = Matrix.Translation(head) @ rotation @ Matrix.Translation(-head) @ bone.matrix.copy()
+        bpy.context.view_layer.update()
+        error = (bone.tail - target).length
+        tolerance = arm["arm_reach"] * 0.005
+        require(error <= tolerance, f"{side}: hand endpoint residual {error:.6f} exceeds tolerance")
+        residuals[side] = round(error, 8)
+    return residuals
 
 
 def main():
@@ -58,8 +81,10 @@ def main():
             bone.matrix_basis = Matrix.Identity(4)
         bpy.context.view_layer.update()
         residuals = apply_solution(armature, solutions[pose])
+        hand_residuals = align_hand_tips(armature, solutions[pose])
         previews = render_views(armature, calibration, output, prefix=pose)
-        report_poses[pose] = {"residuals": residuals, "previews": previews}
+        report_poses[pose] = {"residuals": residuals, "hand_tip_residuals": hand_residuals,
+                              "previews": previews}
 
     blend_path = output / "accepted_arm_visual_v0_6.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
@@ -69,7 +94,7 @@ def main():
         "source_profile_sha256": reference["source_profile_sha256"],
         "source_glb_sha256": reference["source_glb_sha256"],
         "poses": report_poses, "blend": str(blend_path),
-        "limits": "Static arm joint centers only. Hand articulation, ballet quality, teacher review, "
+        "limits": "Static arm joint centers and hand bone tip direction only. Fingers, ballet quality, teacher review, "
                   "contact, balance and motion timing are untested. The saved Blend shows only second position."
     }
     report_path = output / "report.json"

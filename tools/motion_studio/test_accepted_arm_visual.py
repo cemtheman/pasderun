@@ -35,7 +35,8 @@ class AcceptedArmVisualTests(unittest.TestCase):
                                             ("hand", "Hand", .6)):
                     self.calibration["canonical_bones"][f"{side}_{joint}"] = {
                         "rig_bone": f"{name}_{side[0].upper()}",
-                        "head_local": [3 + sign * offset, 4, 1.5]}
+                        "head_local": [3 + sign * offset, 4, 1.5],
+                        "length": .04 if joint == "hand" else .2}
             poses[pose] = joints
         self.reference = {"schema_version": "0.6.1", "reference_id": "phase10_6_foundation_arm_landmarks",
                           "source_profile_sha256": "b" * 64, "source_glb_sha256": "a" * 64,
@@ -58,6 +59,12 @@ class AcceptedArmVisualTests(unittest.TestCase):
         old["poses"]["second"]["left_elbow"] = [.22, .5, 0]
         with self.assertRaisesRegex(ContractError, "length"):
             joint_targets(old, self.calibration, "second")
+
+    def test_rejects_hand_target_incompatible_with_measured_hand(self):
+        bad = copy.deepcopy(self.reference)
+        bad["poses"]["second"]["left_hand"] = [.36, .5, 0]
+        with self.assertRaisesRegex(ContractError, "wrist-hand length"):
+            joint_targets(bad, self.calibration, "second")
 
 
 if __name__ == "__main__":

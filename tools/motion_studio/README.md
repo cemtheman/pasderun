@@ -107,3 +107,5 @@ Run on the Windows checkout after creating `accepted_arm_reference_v0_6.json` an
 ```
 
 The six PNGs show whether accepted joint-center geometry produces a readable silhouette on this mesh. A numerical geometry PASS does not override the earlier `second` elbow-line QA failure or count as ballet acceptance. Human review of both views and any rig/mesh limitations is necessary before choosing a corrective target; no new limb angles are inferred by this visual check.
+
+The first real Blender visual pass placed elbow and wrist joint centers within tolerance but left the hands uncontrolled, visibly crossing in preparatory and en avant and drooping in second. The source profile defines a hand endpoint one measured hand-bone length beyond each wrist. The preview now additionally rejects mismatched hand lengths and aims the actual final-Rig hand bone tail at that accepted endpoint, with a reported residual. This is a bounded correction of the preview; it does not repair the high elbow in second or grant choreography approval.

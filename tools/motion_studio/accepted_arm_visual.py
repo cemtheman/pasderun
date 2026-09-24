@@ -48,5 +48,11 @@ def joint_targets(reference: dict, calibration: dict, pose_name: str) -> dict:
             actual = math.dist(points[a], points[b])
             require(abs(actual - length) <= reach * 0.005, side,
                     f"{a}-{b} length {actual:.6f} differs from calibrated Rig {length:.6f}")
+        hand_length = math.dist(points["wrist"], points["hand"])
+        calibrated_hand_length = bones[f"{side}_hand"]["length"]
+        require(math.isfinite(calibrated_hand_length) and calibrated_hand_length > 0, side,
+                "invalid calibrated hand length")
+        require(abs(hand_length - calibrated_hand_length) <= reach * 0.005, side,
+                f"wrist-hand length {hand_length:.6f} differs from calibrated Rig {calibrated_hand_length:.6f}")
         arms[side] = {**points, "bone_names": names, "arm_reach": reach}
     return {"pose_id": pose_name, "arms": arms}
