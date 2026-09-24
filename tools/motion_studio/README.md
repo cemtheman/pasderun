@@ -135,3 +135,15 @@ Run after creating `build/motion_studio/hand_clearance_candidate_v0_6/report.jso
 ```
 
 Review the resulting **two** front and side renders. The script aborts if it cannot reproduce the earlier hand clearance, if that clearance is lost, or if the projected side-view bend does not decrease. A smaller numerical bend still requires human review of the visible mesh and arm line.
+
+### Second-position descending elbow candidate
+
+The accepted Phase 10 second-position wrist and hand landmarks remain fixed, but its elbow rises above the shoulder in the front render. `second_elbow_line.py` uses the two measured arm lengths to put the elbow halfway between shoulder and wrist height on the reachable elbow circle. It chooses the intersection nearest the accepted elbow, without changing the existing arm lengths or the other two poses. This is an independently reviewable static candidate; it does not alter the accepted source profile.
+
+With the existing calibration and accepted reference in the Windows checkout, run:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\second_elbow_line_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --output .\build\motion_studio\second_elbow_line_v0_6
+```
+
+Inspect `second_descending_front.png`, `second_descending_side.png`, and `report.json`. The Blender preview checks source digests, solved joint residuals, descending elbow height, anterior elbow position, hand endpoints and the evaluated frontal hand-mesh gap. It does not validate the appearance of the resulting arm contour, three-dimensional collision, transitions or ballet technique. The saved Blend has only this static final-Rig pose, with no keyframes or GLB export.
