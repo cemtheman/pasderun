@@ -1,0 +1,26 @@
+{
+  "bundle": "bodycatalogue08.zip",
+  "bundle_sha256": "4ef1939a0b39658bea659903713d36af47c88415178e54f3d751dea80a4c53ac",
+  "report_sha256": "0db69179f0e75298b4530cddf6b183fb2a953f85f4d72f26af61d36c6c3e899d",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "generating_code_commit": "3c8d31ec676e70437321aef83379c8518913c288",
+  "reported_status": "COMBINED_CANDIDATE_RENDERED",
+  "counts": {"poses": 9, "directional_clips": 16, "pair_routes": 72},
+  "reported_checks": {
+    "hand_overlap_names": {},
+    "sole_penetration_names": {},
+    "minimum_front_hand_gap": 0.00230336,
+    "minimum_tracked_sole_delta_from_rest": -0.006345684640109539,
+    "maximum_joint_playback_residual": 0.0000015079662690140643
+  },
+  "inspected_images": [
+    "pose_first_front.png", "pose_first_side.png",
+    "pose_second_front.png", "pose_second_side.png",
+    "pose_fourth_left_front.png", "pose_fourth_left_side.png",
+    "pose_fifth_left_front.png", "pose_fifth_left_side.png",
+    "first_to_fourth_left_front.png", "first_to_fourth_left_side.png",
+    "first_to_fifth_left_front.png", "first_to_fifth_left_side.png"
+  ],
+  "visual_assessment": "Combined pose and midpoint placement are visible; crossed legs in fifth and intermediate fourth posture render without a gross front/side break. Crown hands clear the eyes in these views. These are geometric candidates, not a ballet technique acceptance.",
+  "limits": "ZIP contains report.json and 34 PNGs, no .blend; report only names the Windows local .blend path. Top view of feet, actual floor contact/sliding, turnout, balance, full-mesh/hair collisions, timing, teacher review, and Godot export are not verified."
+}
