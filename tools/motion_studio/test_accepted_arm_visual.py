@@ -30,10 +30,12 @@ class AcceptedArmVisualTests(unittest.TestCase):
                                      ("wrist", [sign * .3, .5, 0]),
                                      ("hand", [sign * .32, .5, 0])):
                     joints[f"{side}_{joint}"] = point
-                for joint, name in (("shoulder", "Upper_Arm"), ("elbow", "Lower_Arm"),
-                                    ("wrist", "Hand")):
+                for joint, name, offset in (("upper_arm", "Upper_Arm", .2),
+                                            ("forearm", "Lower_Arm", .4),
+                                            ("hand", "Hand", .6)):
                     self.calibration["canonical_bones"][f"{side}_{joint}"] = {
-                        "rig_bone": f"{name}_{side[0].upper()}", "length": .2}
+                        "rig_bone": f"{name}_{side[0].upper()}",
+                        "head_local": [3 + sign * offset, 4, 1.5]}
             poses[pose] = joints
         self.reference = {"schema_version": "0.6.1", "reference_id": "phase10_6_foundation_arm_landmarks",
                           "source_profile_sha256": "b" * 64, "source_glb_sha256": "a" * 64,

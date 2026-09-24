@@ -33,13 +33,18 @@ def joint_targets(reference: dict, calibration: dict, pose_name: str) -> dict:
 
     arms = {}
     for side in ("left", "right"):
-        names = [bones[f"{side}_{joint}"]["rig_bone"] for joint in ("shoulder", "elbow", "wrist")]
+        rig_joints = {"shoulder": bones[f"{side}_upper_arm"],
+                      "elbow": bones[f"{side}_forearm"],
+                      "wrist": bones[f"{side}_hand"]}
+        names = [rig_joints[joint]["rig_bone"] for joint in ("shoulder", "elbow", "wrist")]
         points = {joint: to_local(pose[f"{side}_{joint}"])
                   for joint in ("shoulder", "elbow", "wrist", "hand")}
-        reach = sum(bones[f"{side}_{joint}"]["length"] for joint in ("shoulder", "elbow"))
+        segment_pairs = (("shoulder", "elbow"), ("elbow", "wrist"))
+        rest_lengths = [math.dist(rig_joints[a]["head_local"], rig_joints[b]["head_local"])
+                        for a, b in segment_pairs]
+        reach = sum(rest_lengths)
         require(math.isfinite(reach) and reach > 0, side, "invalid arm reach")
-        for (a, b), length in zip((("shoulder", "elbow"), ("elbow", "wrist")),
-                                  (bones[f"{side}_shoulder"]["length"], bones[f"{side}_elbow"]["length"])):
+        for (a, b), length in zip(segment_pairs, rest_lengths):
             actual = math.dist(points[a], points[b])
             require(abs(actual - length) <= reach * 0.005, side,
                     f"{a}-{b} length {actual:.6f} differs from calibrated Rig {length:.6f}")
