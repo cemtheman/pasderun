@@ -225,3 +225,15 @@ Run on the final-Rig Windows checkout, with the prior local reports available:
 ```
 
 Open `guide_arm_catalog_v0_7.blend` to inspect its `MS07_` Actions; inspect `report.json` for overlapping hand silhouettes, and the fifth/crown and mixed front/side PNGs for head, hair and torso intersections. **The guide's five foot positions are a distinct lower-body problem**: the present arm catalog leaves feet in the source rest stance. Moving them and claiming planted turnout would require measured sole pivots, hip-driven rotation, knee direction and two-foot contact clearance, none of which are established by the arm screens.
+
+### Guide foot catalog candidate v0.7
+
+`guide_foot_catalog.py` measures the rest mesh sole outlines and proposes first and second foot positions, plus left- and right-leading third, fourth and fifth. It keeps hip-to-knee and knee-to-ankle lengths, and solves a bounded common pelvis drop when needed. The 24-degree outward toe direction is a **candidate parameter**, not a claimed anatomical limit or a demonstrated ballet turnout. Seven first-to-position paths lower the pelvis, move the feet and raise it again; the sample grid does not prescribe tempo.
+
+The Blender batch creates eight static `MS07_FOOT_` Actions, fourteen reversible path Actions and a route for every ordered pair of positions. It checks actual evaluated joint centers at every keyed frame, measures deformation of the tracked rest sole outline, and renders front and side previews for every pose and forward path. Run alongside the arm catalog in the final-Rig Windows checkout:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\guide_foot_catalog_batch_v0_7.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --output .\build\motion_studio\guide_foot_catalog_v0_7
+```
+
+Inspect `build/motion_studio/guide_foot_catalog_v0_7/report.json`, the PNGs and the `.blend`. A report of sole penetration is retained rather than silently declaring a position planted. Source GLB and previously accepted motion assets are untouched. The arm and foot catalogs are separate candidate tracks: synchronizing arms with footwork, foot slide and full mesh collision still require a subsequent pass. Ballet teacher evaluation can happen after generation.
