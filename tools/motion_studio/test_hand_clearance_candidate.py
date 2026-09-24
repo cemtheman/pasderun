@@ -36,6 +36,19 @@ class HandClearanceCandidateTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "only inward"):
             shifted_solution(spec, {"left": [1, 0, 0]}, 0)
 
+    def test_outward_pole_moves_bend_laterally_without_moving_wrist(self):
+        arm = {"shoulder": [.2, 0, 0], "elbow": [.4, -.1, .1],
+               "wrist": [.1, -.3, 0], "hand": [.05, -.32, 0], "arm_reach": .6}
+        source = {"pose_id": "en_avant", "arms": {"left": arm}}
+        original_pole = shifted_solution(source, {"left": [1, 0, 0]}, .04)
+        outward_pole = shifted_solution(source, {"left": [1, 0, 0]}, .04, "body_outward")
+        self.assertEqual(outward_pole["arms"]["left"]["wrist"], original_pole["arms"]["left"]["wrist"])
+        self.assertGreater(outward_pole["arms"]["left"]["elbow"][0],
+                           original_pole["arms"]["left"]["elbow"][0])
+        for a, b in (("shoulder", "elbow"), ("elbow", "wrist")):
+            self.assertAlmostEqual(math.dist(outward_pole["arms"]["left"][a], outward_pole["arms"]["left"][b]),
+                                   math.dist(arm[a], arm[b]))
+
 
 if __name__ == "__main__":
     unittest.main()

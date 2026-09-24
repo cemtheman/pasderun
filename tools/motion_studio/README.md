@@ -125,3 +125,13 @@ From the Windows checkout after running the read-only mesh diagnostic, run:
 ```
 
 Inspect its four front/side previews even if the numerical projection gap becomes positive. A positive frontal gap does not establish clean ballet port de bras, hand or torso contact safety, or motion transition quality. The second-position elbow defect remains outside this hand-clearance experiment.
+
+The real Blender hand-clearance candidate reached +0.00230336 (`bras_bas`) and +0.00482005 (`en_avant`) armature units of frontal hand separation. Human review found the preparation improved and identified one remaining **downward elbow kink in the en avant side view**. `en_avant_outward_elbow_v0_6.py` reuses the same measured wrist clearance and changes only en avant's geometric elbow bend pole to declared body-outward, a direction already specified in the supplied ballet description. It recalculates each arm from the measured link lengths, compares projected side-view bend before/after, and checks final-mesh hand clearance again. This is an unapproved pose candidate, not a change to the accepted Phase 10 reference or reverence.
+
+Run after creating `build/motion_studio/hand_clearance_candidate_v0_6/report.json`:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\en_avant_outward_elbow_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --clearance-report .\build\motion_studio\hand_clearance_candidate_v0_6\report.json --output .\build\motion_studio\en_avant_outward_elbow_v0_6
+```
+
+Review the resulting **two** front and side renders. The script aborts if it cannot reproduce the earlier hand clearance, if that clearance is lost, or if the projected side-view bend does not decrease. A smaller numerical bend still requires human review of the visible mesh and arm line.
