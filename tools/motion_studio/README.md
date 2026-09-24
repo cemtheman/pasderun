@@ -147,3 +147,13 @@ With the existing calibration and accepted reference in the Windows checkout, ru
 ```
 
 Inspect `second_descending_front.png`, `second_descending_side.png`, and `report.json`. The Blender preview checks source digests, solved joint residuals, descending elbow height, anterior elbow position, hand endpoints and the evaluated frontal hand-mesh gap. It does not validate the appearance of the resulting arm contour, three-dimensional collision, transitions or ballet technique. The saved Blend has only this static final-Rig pose, with no keyframes or GLB export.
+
+The real `second_descending_side.png` exposed an additional defect: fixing the wrist at the accepted Phase 10 location while lowering the elbow forces the forearm back toward the torso. Its measured elbow was 0.09514467 armature units anterior to the shoulder, but the wrist lay behind the elbow. The descending preview is retained only as evidence of this failed candidate.
+
+`second_forward_line_v0_6.py` searches reachable wrist positions slightly forward and, if necessary, slightly inward. It reconstructs the mid-height elbow from the **original measured upper-arm and forearm lengths**, carries the accepted wrist-to-hand vector along with the wrist, and requires both shoulder-to-elbow and elbow-to-wrist to progress forward in the side view. Bounded side-view turn and three-dimensional elbow bend are provisional shape constraints, not ballet standards. It renders only the second pose, leaving the preparatory and en avant candidates untouched:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\second_forward_line_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --output .\build\motion_studio\second_forward_line_v0_6
+```
+
+Review `second_forward_front.png`, `second_forward_side.png` and `report.json` before accepting any shape change. No source assets, keyframes or runtime motions are changed.
