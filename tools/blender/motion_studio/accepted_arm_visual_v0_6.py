@@ -15,6 +15,7 @@ from mathutils import Matrix
 
 MOTION_TOOLS = Path(__file__).resolve().parents[2] / "motion_studio"
 sys.path.insert(0, str(MOTION_TOOLS))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from accepted_arm_reference import extract_accepted_arm_reference  # noqa: E402
 from accepted_arm_visual import joint_targets  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
