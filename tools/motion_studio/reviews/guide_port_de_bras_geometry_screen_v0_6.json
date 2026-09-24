@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.6.0-review",
+  "scope": "Assistant visual screen of the user-rendered arm-only 49-sample guide path; no human ballet approval",
+  "reviewed_commit": "c8c669519790a3af7c9425ce9eb2021ccdd8e6ee",
+  "source_profile_sha256": "47cb76f9122b3853bf1a0346e57d8552da7d00d26f74a9099585d1ff7c1ecbe1",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "guide_pdf_sha256": "2d6321bf92dd97014fb86555bc30426772e9a34e0527e7bf397339fa3648793d",
+  "report_sha256": "1a0a335cab93587b75db80d5f34e982dffd5a885f534234d02c3a610a76ec549",
+  "visual_evidence": {
+    "frame_31_front_sha256": "0556f9054dfef69d26e55a225b58a7340b1f1552d9efe7bf77192c7f2c8bc71e",
+    "frame_31_side_sha256": "51cde28ad872d005ee16949d7ba0ff2eaf50033e2c6d79c0db4f7c82b56a5ad5",
+    "frame_34_front_sha256": "39d2c4f7440b2b6774adc3e0c1e5307c91a6903f006acb995ff34d0b6c0f6bb9",
+    "frame_34_side_sha256": "f500f7a03cc7910b0311b82b41b8d3bbbf81c7f0d9a9f43835e9dc88e0fb0bab",
+    "frame_37_front_sha256": "bd64f3837176d7d7f3bd82b9f36c68211bc771e093966564c93a2e2b22393baa",
+    "frame_37_side_sha256": "1f95a1930eadcc55516ace7f0be9b0e866cefe0aa3e98bee4815c6b3b2ede5ef",
+    "frame_40_front_sha256": "45b0c9e3580a9c2cca137cd2f0728c4adf0823025e73b5729cdb27d5a2d7e7cb",
+    "frame_40_side_sha256": "9f753c900aefa34ae07aa6d54e804f02035a136fb7ea8e0521f67811872bc650",
+    "frame_43_front_sha256": "adf088d4283a555f70983c3514ac24d0b11540b59dbf5e156b5db41df225091d",
+    "frame_43_side_sha256": "ebb68555fd8399b2469ebe6eed888c0df74701d5e63ae8de0ef6bd496c523191"
+  },
+  "measurements": {
+    "sample_count": 49,
+    "minimum_frontal_hand_gap_armature_units": 0.00230378,
+    "minimum_gap_frame": 1,
+    "largest_opening_forearm_drop_over_arm_reach": 0.01763701,
+    "opening_drop_frame_range": [34, 40],
+    "minimum_signed_inward_alignment": 0.45818537,
+    "maximum_playback_joint_residual_armature_units": 0.00000062
+  },
+  "screen": "PASS_ARM_PATH_GEOMETRY_FOR_NEXT_STAGE",
+  "observations": "Front and side stills at 31, 34, 37, 40 and 43 no longer show the previous downward forearm break. The measured frontal hand silhouettes remain separated in all 49 samples. Endpoint first and second forms preserve the prior candidate poses.",
+  "limits": [
+    "This is an assistant visual screen of stills and measured playback, not an explicit user or ballet-teacher approval of choreography.",
+    "Two-dimensional frontal hand separation does not prove three-dimensional collision clearance against hands, arms, torso, costume or hair.",
+    "The 49-frame sampling grid and preview FPS do not establish authored music timing or motion dynamics.",
+    "The upper-arm-local elbow hinge axis and physiological range have not been calibrated.",
+    "Foot positions, contact, center of mass, Godot runtime export and gameplay integration have not been evaluated."
+  ]
+}
