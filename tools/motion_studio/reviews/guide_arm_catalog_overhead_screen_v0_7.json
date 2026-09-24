@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.7.1",
+  "source_bundle": "armcatalogue.zip",
+  "source_bundle_sha256": "16d6d3646ff4db51411039df99557aa0e794fd3c2dcccae4d3dcd5b2574e92c0",
+  "report_sha256": "b6a7f0526d6638b9f4b461cf4bb6680ace6aab59c62f788bac8e760077486c93",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "status": "CATALOG_GEOMETRY_RENDERED",
+  "counts": {"poses": 8, "directed_clips": 14, "pair_routes": 56},
+  "selected_crown": {
+    "lateral_arm_reach_fraction": 0.44,
+    "overhead_arm_reach_fraction": 0.22,
+    "static_hand_projected_gap": 0.1487838,
+    "first_to_crown_minimum_gap": 0.01227945,
+    "first_to_crown_worst_sample": 10,
+    "crown_to_first_minimum_gap": 0.01227969,
+    "crown_to_first_worst_sample": 16
+  },
+  "whole_catalog_minimum_hand_projected_gap": 0.00230336,
+  "whole_catalog_maximum_joint_residual": 0.00000058,
+  "front_overlap_names": [],
+  "visual_review": {
+    "images": [
+      "pose_fifth_crown_front.png", "pose_fifth_crown_side.png",
+      "first_to_fifth_crown_front.png", "first_to_fifth_crown_side.png",
+      "pose_fourth_left_crown_front.png", "pose_fourth_left_crown_side.png"
+    ],
+    "finding": "Hands no longer cover the eyes; the rendered first-to-crown midpoint has separated hands. The crown hands sit to the sides of the hair near its top. This is a measured arm-only geometry screen, not anatomical or teacher approval. Three-dimensional hand-to-head/hair clearance is not measured."
+  }
+}
