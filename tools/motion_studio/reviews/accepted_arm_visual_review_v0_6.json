@@ -1,0 +1,31 @@
+{
+  "review_version": "0.6.2",
+  "review_kind": "assistant_visual_observation",
+  "status": "needs_revision",
+  "motion_approval": "not_granted",
+  "probe_commit": "0c961d106682dee6d3b933eef7131315bdd75102",
+  "reference_id": "phase10_6_foundation_arm_landmarks",
+  "source_profile_sha256": "47cb76f9122b3853bf1a0346e57d8552da7d00d26f74a9099585d1ff7c1ecbe1",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "local_report_sha256": "b01f8a1afd127112a4fe6ac307358c5ce3ee36cacb9ef65ff1ba6e0d7da96727",
+  "render_sha256": {
+    "bras_bas_front": "3c6d82a946d3c7ff5fbf832236a65c137e200d32897ae0634d74b1d3f766504b",
+    "bras_bas_side": "c4550d2f472973c2f777c12d32eb48f99d3ee22108d924076c466feddbdd292e",
+    "en_avant_front": "078e6008e887c4712932297ad89c449884a0af5b74d65c72c2b9deba32418d06",
+    "en_avant_side": "109923bbae71b480b71c3a0a865734cb6d001a0d23ddc5edbd17957ea4a036ee",
+    "second_front": "915ab7e70a74d99df4784171ee1bca709bf1e8478158b866ae8f5805cad01a07",
+    "second_side": "ea4e9220f6eb4133c9d935574f5e55006e80324f93de40bbd1f4e4ad235fdbee"
+  },
+  "geometry_observation": "Each elbow, wrist, and hand-bone-tip residual is below 0.0000005 armature units; calibrated tolerance is 0.00254047. This verifies only declared joint targets.",
+  "visual_observations": [
+    "Bras bas: hands and fingers visibly overlap across the centerline; this does not read as a clean oval preparatory line.",
+    "En avant: hands visibly overlap in front of the torso despite accurate joint endpoint placement.",
+    "Second: measured elbow joint centers are above shoulders, producing a raised angular elbow line; the hand-tip solve improves the previously drooping hand direction but does not correct the elbow line."
+  ],
+  "follow_up_constraints": [
+    "Measure final-mesh hand clearance in both preparatory and en avant, rather than relying on centerline landmark spacing alone.",
+    "Specify and solve a second-position shoulder-to-elbow-to-wrist line with elbows below shoulders while keeping measured segment lengths and anterior arm placement.",
+    "Render new front and side previews and require human visual review before considering a ballet motion asset."
+  ],
+  "limitations": "These are assistant observations of uploaded static renders, not ballet-teacher approval or a tested animation. Source Phase 10 assets are unchanged."
+}
