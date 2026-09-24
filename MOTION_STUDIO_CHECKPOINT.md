@@ -37,6 +37,8 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 | `692af2a2f92004cd8b6fae7783a9a68fb59a98c7` | Gerçek taç kol yeniden çalışmasının ölçüm kaydı | Parent `891fbd...`; `CATALOG_GEOMETRY_RENDERED`, bütün katalogda frontal el çakışması yok. |
 | `56f08087f3e372714be29104a2107696bfa8c82e` | Baş üstü kol ölçümünün günlük kaydı | Parent `692af2...`; yeni kol ekranı kanıtları işlendi. |
 | `3c8d31ec676e70437321aef83379c8518913c288` | Eşzamanlı tam beden aday betiği | Parent `56f080...`; 9 poz ve 16 yönlü geçiş kodu; 67 yerel test geçti; gerçek Blender koşusu bekliyor. |
+| `121c4b64fb87bac4da345e2da7a7278d30b2b50f` | Tam beden betiği oturum günlüğü | Parent `3c8d31...`; bu günlük için önceki dal HEAD'i. |
+| `bc8c24f2f865c426569c0c329a8ca6dae3fbfb14` | Tam beden gerçek çıktı geometri incelemesi | Parent `121c4b...`; 9 poz, 16 klip, 72 rota; ölçümler `tools/motion_studio/reviews/guide_full_body_catalog_screen_v0_8.json` içinde. |
 
 ## 2026-09-24 — Poz katalogları ve gerçek sonuç
 
@@ -87,6 +89,14 @@ Kol ve ayak katalogları Windows'ta çalıştırıldı; betikleri yeniden çalı
 2. `tools/blender/motion_studio/guide_full_body_catalog_batch_v0_8.py` eklendi. Aynı final Rig'de Bra Bas + birinci ayaklar, birinci, ikinci, sağ/sol üçüncü, sağ/sol dördüncü ve sağ/sol beşinci olmak üzere 9 birleşik poz; birinciden diğer 8 pozun iki yönünde 16 birleşik geçiş; 72 yönlü poz çifti rotası hedeflenir. Dördüncü kol geçişi üçüncü üzerinden 49 örnekle eşlenir, diğerleri 25 örnek kullanır. Rapor bütün örneklerde iki bacağın ve iki kolun eklem artıklarını, skinned el izdüşümünü ve izlenen taban yüksekliğini ölçer.
 3. Yerel `python -m unittest discover -s tools/motion_studio -p 'test_*.py'`: 67 PASS; betik `py_compile` PASS. **Gerçek Blender çalıştırması, görsel QA veya oyun içi export yapılmadı.** Ayak temas/kayma ve tam mesh baş/saç çarpışması halen belirsiz.
 4. `56f08087f3e372714be29104a2107696bfa8c82e` → `3c8d31ec676e70437321aef83379c8518913c288` commit'i yayınlandı; bu günlük kaydı ayrıca bir commit olarak eklenir. Tam Windows komutu `tools/motion_studio/README.md` içindeki “Coupled body candidate v0.8” bölümündedir.
+
+## 2026-09-24/25 — Gerçek tam beden katalog çıktısının incelemesi
+
+1. Başlangıç dal HEAD'i `121c4b64fb87bac4da345e2da7a7278d30b2b50f`; kullanıcı Windows Blender çıktısı `bodycatalogue08.zip` gönderdi. Paket SHA-256 `4ef1939a0b39658bea659903713d36af47c88415178e54f3d751dea80a4c53ac`, paket içindeki `report.json` SHA-256 `0db69179f0e75298b4530cddf6b183fb2a953f85f4d72f26af61d36c6c3e899d`. Raporun kaynak GLB SHA-256 değeri `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`; kod commit'i `3c8d31ec676e70437321aef83379c8518913c288`. Yerel scratch Git checkout değildir; bu yüzden yerel `git status` / `git rev-parse HEAD` yerine GitHub dal HEAD'i ve blob SHA'ları doğrulandı. Kullanıcının Windows checkout HEAD'i raporda kaydedilmemiştir.
+2. Gerçek final Rig raporu `COMBINED_CANDIDATE_RENDERED`: 9 birleşik poz, 16 yönlü klip, 72 çift rotası. `hand_overlap_names` ve `sole_penetration_names` boş. Bütün raporda en küçük frontal skinned-el aralığı `+0.00230336`, izlenen taban minimum rest farkı `−0.006345684640109539` armature birimi, en büyük playback eklem artığı `0.0000015079662690140643`. Bunlar raporun tanımlı eşiklerinin sonuçlarıdır; fiziksel yer temasını veya üç boyutlu tüm mesh çarpışmasını ölçmez.
+3. Birinci, ikinci, dördüncü-sol, beşinci-sol pozlarının ön/yan; birinci→dördüncü-sol ve birinci→beşinci-sol geçişlerinin orta ön/yan PNG'leri incelendi. Beşincide çapraz bacaklar ve ellerin yüzün üstünde olduğu taç, dördüncüde asimetrik kol yerleşimi ve ara karelerde eşzamanlı hareket görünüyor. Bu görüntülerde kaba kopma görülmedi. Baleye uygun turnout, ayakların gerçek basması ve kaymaması, denge, saç/baş teması, süreler ve oyun motorundaki sonuç doğrulanmadı; adaylar teknik kabul değildir.
+4. ZIP'de 34 PNG ve `report.json` var, `.blend` yok. Rapor Blender projesinin yalnızca Windows yerel yolunu bildiriyor. Bu nedenle kaydedilen Action'ları Blender içinden veya Godot export sonucunu bağımsız incelemedik. İnceleme JSON'u `tools/motion_studio/reviews/guide_full_body_catalog_screen_v0_8.json` Git blob SHA `d4c69cea95147fecd56d23ef20527d890645db92`; parent `121c4b64fb87bac4da345e2da7a7278d30b2b50f` → inceleme commit'i `bc8c24f2f865c426569c0c329a8ca6dae3fbfb14`, aynı deneysel dal. Bu günlük için sonraki commit ve Library yedeği ayrıca doğrulanmalıdır.
+5. Sonraki tek teknik kapı: Ayakların üstten görünüşü ve zaman boyunca iki ayak teması/kaymasını gerçek Rig üzerinde ölçen tanılama üret; ardından `.blend` / Godot export doğrulamasına geç. Hoca incelemesi kullanıcı kararı gereği ertelenebilir.
 
 ## Her yeni oturumda eklenecek kayıt şablonu
 
