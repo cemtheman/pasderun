@@ -57,3 +57,9 @@ The Blender diagnostic `tools/blender/motion_studio/rest_foot_contact_v0_4.py` i
 ```
 
 Static tests exercise the contract and synthetic support geometry. The real Blender extraction, the shape of the sole outlines and ground suitability require the local Blender run and human review. No animation, COM estimation, Godot integration or production export is part of v0.4.
+
+## v0.5 — authored timeline sampling
+
+`temporal_v0_5.schema.json` defines a request tied to the SHA-256 digest of exact MotionSpec bytes, a motion ID and ordered frame indices. `temporal.py` validates the existing MotionSpec and samples its declared phase, active contacts, load-bearing support, markers and explicit landmark targets at each requested frame. Half-open intervals preserve exact handoff boundaries; a support gap stays empty. The 49-frame stumble example checks the boundary behavior as semantic test evidence, not as a verified reconstruction of its Blender reference.
+
+The sampler does **not** interpolate missing landmarks, infer physical foot contact, generate poses, keyframes or animation, or claim temporal smoothness. Continuous trajectory construction and transition compatibility require separate geometric evidence and review. Run the focused and existing tests with `python -m unittest discover -s tools/motion_studio -p 'test_*.py'`. This checkpoint is static Python only and requires no Blender run.
