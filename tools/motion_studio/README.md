@@ -43,3 +43,17 @@ From a Windows checkout on the v0.3 branch with `build/motion_studio/low_poly_gi
 ```
 
 The output reports geometry only; the front and side renders need human inspection. Contact, balance, joint limits, ballet technique, transitions and aesthetics are outside this checkpoint. The static tests use synthetic geometry. Until the actual Blender command and visual gate pass, the v0.3 solver remains a prototype.
+
+## v0.4 — rest-foot contact and support diagnostic
+
+`contact_support_v0_4.schema.json` records explicitly sourced, armature-local foot sole points, active contacts, the calibrated body frame, the ground plane and an allowed shared height spread. `contact_support.py` checks each active patch and computes its projected convex hull, the combined support polygon and the vertical root shift required to align its lowest point with the ground. It rejects collinear patches, mismatched calibration and contact sets whose heights cannot share that plane. It does not move the root horizontally or infer contacts from choreography.
+
+An optional center of mass measurement produces a signed support-edge margin. Without that evidence the result is `UNKNOWN_NO_COM`; a declared human estimate yields `INDICATIVE_ESTIMATE`, never a measured balance verdict. A support polygon alone cannot establish balance or dynamic stability.
+
+The Blender diagnostic `tools/blender/motion_studio/rest_foot_contact_v0_4.py` imports only the final GLB and extracts candidate rest-pose sole outlines from vertices weighted to its Foot/Toes bones. It writes `foot_patches.json`, `report.json` and `support_top.svg`. The mesh band is candidate contact geometry for visual review, not a validated pressure footprint or a ballet pose. Run from the repository root on Windows after generating the v0.1 calibration:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\rest_foot_contact_v0_4.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --output .\build\motion_studio\contact_support_v0_4
+```
+
+Static tests exercise the contract and synthetic support geometry. The real Blender extraction, the shape of the sole outlines and ground suitability require the local Blender run and human review. No animation, COM estimation, Godot integration or production export is part of v0.4.
