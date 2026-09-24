@@ -41,6 +41,7 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 | `bc8c24f2f865c426569c0c329a8ca6dae3fbfb14` | Tam beden gerçek çıktı geometri incelemesi | Parent `121c4b...`; 9 poz, 16 klip, 72 rota; ölçümler `tools/motion_studio/reviews/guide_full_body_catalog_screen_v0_8.json` içinde. |
 | `591b9b7d82fcc9ef6f27ff0c647497816f767ef2` | Tam beden görüntü incelemesi günlük kaydı | Parent `bc8c24...`; önceki oturumun dal HEAD'i. |
 | `8a28f42c27a84a1b1d4dc5e5ef07329d6cb8b1ff` | Ayrışan ayak adayı ve üstten ayakkabı görüntüleri | Parent `591b9b...`; 45° varyantı ve üstten PNG kodu, 69 yerel test PASS; gerçek Blender sonucu bekliyor. |
+| `3cb567a24880505aa8074f386fb28dbe0a43ee22` | Ayak benzerliği düzeltme oturumunun günlüğü | Parent `8a28f42...`; Mac'e geçiş öncesi doğrulanmış dal HEAD'i. |
 
 ## 2026-09-24 — Poz katalogları ve gerçek sonuç
 
@@ -106,6 +107,24 @@ Kol ve ayak katalogları Windows'ta çalıştırıldı; betikleri yeniden çalı
 2. `guide_foot_catalog.py` için opsiyonel `turnout_degrees` eklendi; varsayılan 24° önceki v0.8 geometri davranışını korur. Tam beden Blender betiğinde `--turnout-degrees 45` ile ayrı v0.9 görsel adayı, `MS09_` Action'ları, `guide_full_body_catalog_v0_9.blend`, her statik poz / ileri geçiş orta karesi için `*_feet_top.png` ve raporda hedef topuk/tarak izdüşümü üretilir. 45° anatomik güvenlik veya bale tekniği kabulü değildir; ayakkabı meshinin gerçek yönü üstten yeni render görülene dek doğrulanamaz. Eski ayak raporu yeni 45° geometrinin ekranı sayılmaz.
 3. Test düzeneğinde 45° adayın sekiz ayak hedefi ve birinciden yedi geçişi hesaplandı; ikinci pozun topuk açıklığı birincinin iki katından büyük, sol dördüncü / beşinci topuk öne taşınmış. 69 Python testi ve Blender betiği `py_compile` PASS. **Yeni final Rig Blender koşusu, gerçek ayak üstten PNG'leri, ayak mesh teması / sürtünmesi ve yeni durum raporu henüz yok.**
 4. Kod/README/test commit'i: `591b9b7d82fcc9ef6f27ff0c647497816f767ef2` → `8a28f42c27a84a1b1d4dc5e5ef07329d6cb8b1ff`, deneysel dal. Tam Windows PowerShell komutu `tools/motion_studio/README.md` içindeki “Distinct foot silhouettes and shoe top views v0.9” bölümüne eklendi. Sonraki ilk işlem Windows'ta dalı `--ff-only` eşitleyip komutu çalıştırmak; `report.json` ile `*_feet_top.png` görüntülerini önceki v0.8 ile karşılaştırmak. Bu günlük commit'i ve Library eşlemesi aşağıdaki kalıcı kaydın ayrıca doğrulanmasını gerektirir.
+
+## 2026-09-25 — Mola ve Mac'e geçiş checkpoint'i
+
+1. Kullanıcı çalışmaya ara verdi; sonraki oturum İstanbul'daki Mac bilgisayarda başlayacak. **İlk iş yerel repoyu klonlamak ve doğru deneysel dala geçmek; Blender koşusu veya Godot export'u bu mola oturumunda yapılmayacak.** Başlangıç GitHub dal HEAD'i `3cb567a24880505aa8074f386fb28dbe0a43ee22`; önceki kod commit'i `8a28f42c27a84a1b1d4dc5e5ef07329d6cb8b1ff` ve günlük commit'i `3cb567a...`. Bu oturum kaynak kodunu değiştirmedi; yalnızca Mac devir kaydını günceller. Final yeni günlük commit SHA'sı sonraki oturumda `git rev-parse HEAD` ile alınır ve yeni kayda eklenir.
+2. Repo çalışma dalında kaynak GLB `assets/characters/low_poly_girl/low_poly_girl .glb` (dosya adındaki boşluğa dikkat et), kalibrasyon tohumu, Motion Studio betikleri, testler, README, inceleme JSON'ları, kök `AGENTS.md` ve bu günlük izleniyor. Kaynak GLB'nin beklenen SHA-256'sı `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`. GitHub tree üzerinden GLB ve anılan kaynakların dalda mevcut olduğu doğrulandı. `build/motion_studio` altındaki kalibrasyon, ara raporlar, görseller ve `.blend` Git'te bulunmayabilir; Windows'taki üretilmiş dosyaların Mac'te var olduğunu varsayma. Önceki gerçek raporların kanıtı ve ZIP SHA'ları yukarıdaki bölümlerdedir.
+3. Mac Terminal'de **henüz repo yoksa** başlangıç komutları (istenen dizinde çalıştır):
+
+```bash
+git clone --branch motion-studio-v0-6-accepted-arm-visual-probe https://github.com/cemtheman/pasderun.git pas-de-run
+cd pas-de-run
+git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+git status --short --branch
+shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
+```
+
+4. Mac'te ilk inceleme: `cat AGENTS.md`, ardından `cat MOTION_STUDIO_CHECKPOINT.md` ve `tools/motion_studio/README.md` içindeki v0.9 bölümü. `git status --short --branch` temiz olmalı; GLB SHA-256 yukarıdaki değerle eşleşmeli. Eski Windows PowerShell komutlarını Mac Terminal'e doğrudan yapıştırma. Blender uygulama yolu ve mevcut `build/` kalibrasyon/rapor önkoşulları Mac üzerinde belirlendikten sonra platforma uygun yeni komut hazırlanır. Kullanıcının belirttiği v0.8 ayak pozlarının birbirine benzemesi **çözülmüş kabul edilmez**; 45° v0.9 yalnızca çalıştırılmayı ve üstten ayakkabı görsel incelemesini bekleyen adaydır. `main` ve güvenilir üretim tabanı `080d42cb076a0efcc4902bbef7d9e42aae5550e3` etkilenmez.
+5. Önceki aşamada 69 yerel Python testi ve derleme kontrolü PASS; yeni Blender veya Mac testi bu molada yapılmadı. Bu devir kaydı için kaynak parent `3cb567a24880505aa8074f386fb28dbe0a43ee22`; günlük commit'i GitHub dalından ayrıca doğrulanmalı. Günlük Library yedeği repo metni ile aynı SHA-256'ya getirilmelidir.
 
 ## Her yeni oturumda eklenecek kayıt şablonu
 
