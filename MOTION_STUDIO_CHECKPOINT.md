@@ -30,6 +30,7 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 | `dd650e8e539397c711414d8b5cdd10edaa2c3b8e` | Kol katalog kodu | 8 poz, 14 yönlü klip, 56 yönlü çift rotası. |
 | `05a1cd9dca63492f785ba8401e7931f2181c7e3e` | Ayak katalog adayı ve Blender betiği | 8 poz, 14 yönlü klip taslağı; yerel testler geçti. Final Rig sonucu o commit'te doğrulanmamıştı. |
 | `550a3fb7a7fc8cf11860736b518c66593e5e9620` | Ayak kalibrasyon anahtarı düzeltmesi | `upper_leg/lower_leg` hatalı anahtarları `thigh/shin` yapıldı; 66 yerel Python testi geçti. Düzeltme sonrası Blender çalıştırma raporu henüz görülmedi. |
+| `85e7de2f1854830d1f4f873d5392177f07c54173` | İlk kalıcı Motion Studio günlüğü ve kök `AGENTS.md` | Bu günlüğün oluşturulması; başlangıç parent'ı `550a3fb...`. Sonradan yapılan bu kayıt ayrıca yeni bir commit'te yayımlanır. |
 
 ## 2026-09-24 — Poz katalogları ve gerçek sonuç
 
@@ -37,6 +38,7 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 2. Kullanıcının final Rig üzerinde ürettiği `build/motion_studio/guide_arm_catalog_v0_7/report.json` (Library dosyası: `report(20260924-185506).json`) **`CATALOG_FRONT_HAND_OVERLAP`** durumunda. `fifth_crown` statik frontal el aralığı `−0.04236233`; beş denenen taç genişliği `.12, .15, .18, .22, .26` boyunca hâlâ negatif. `first_to_fifth_crown` en kötü `−0.07300121` (örnek 14); ters yön `−0.07300162` (örnek 12). Rapordaki `front_overlap_names`: `fifth_crown`, `first_to_fifth_crown`, `fifth_crown_to_first`. Diğer kol pozları ve klipleri oluşturulmuş olsa da bu üçü temiz/bitmiş sayılmaz. El görüntüsündeki çakışmayı çözmek için poz hedefi ve geçiş yolunu yeniden ele al; gerçek render ve bütün kareler üzerinden yeniden ölç.
 3. Beş ayak pozisyonunun sağ/sol ön varyantlarından oluşan sekiz aday, birinciden diğerlerine çift yönlü 14 hareket olarak kodlandı. Önce gerçek Blender çalışması `KeyError: 'left_upper_leg'` ile durdu; bu `550a3fb...` commit'iyle düzeltildi. **Düzeltme sonrası gerçek Blender raporu ve ayak görselleri elimizde yok.** Ayak basma/kayma, diz çizgisi, beden dengesi ve zeminin altına geçme başarıyla doğrulanmış değildir.
 4. Kol ve ayak Action'ları ayrı kataloglarda; gövde, kollar ve ayakların eşzamanlı koreografisi henüz üretilmedi. 25 örnek / 24 fps bir tanılama ızgarasıdır; rehber veya video üzerinden ölçülmüş hareket süresi değildir. Godot için export henüz yok. Bale hocası değerlendirmesi bilerek sonraya bırakıldı.
+5. Kullanıcının kalıcı oturum günlüğü talebi üzerine bu dosya ve yeni oturum ajan yönergesi `AGENTS.md`, `550a3fb...` parent'ından `85e7de2f1854830d1f4f873d5392177f07c54173` commit'iyle dala eklendi. Günlüğün Library yedeği `/MOTION_STUDIO_CHECKPOINT.md` olarak oluşturuldu. Aynı oturumda bu checkpoint satırı eklenip ikinci commit ile güncellenir. İlk kaydın yerel SHA-256'sı `243361c4e579794432ef62168671a522ea2827bcc0fab5c180ff9d5e3ae90a37` idi; yeni içerikte tekrar hesaplanmalıdır.
 
 ## Sıradaki somut adımlar
 
