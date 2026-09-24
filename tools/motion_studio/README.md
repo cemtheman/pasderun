@@ -63,3 +63,15 @@ Static tests exercise the contract and synthetic support geometry. The real Blen
 `temporal_v0_5.schema.json` defines a request tied to the SHA-256 digest of exact MotionSpec bytes, a motion ID and ordered frame indices. `temporal.py` validates the existing MotionSpec and samples its declared phase, active contacts, load-bearing support, markers and explicit landmark targets at each requested frame. Half-open intervals preserve exact handoff boundaries; a support gap stays empty. The 49-frame stumble example checks the boundary behavior as semantic test evidence, not as a verified reconstruction of its Blender reference.
 
 The sampler does **not** interpolate missing landmarks, infer physical foot contact, generate poses, keyframes or animation, or claim temporal smoothness. Continuous trajectory construction and transition compatibility require separate geometric evidence and review. Run the focused and existing tests with `python -m unittest discover -s tools/motion_studio -p 'test_*.py'`. This checkpoint is static Python only and requires no Blender run.
+
+## v0.5 arm transition geometry probe
+
+`arm_transition_v0_5.schema.json` embeds two already versioned v0.3 static arm target specifications with identical arm sides and bend planes. `arm_transition.py` interpolates only their declared reach fractions and body-relative offsets using smoothstep, then solves two-link geometry independently at **every integer frame**. A changed bend pole requires separate authored evidence and is rejected. The committed 17-frame example raises both wrist targets modestly; this probe has no choreographic name or approval.
+
+`tools/blender/motion_studio/arm_transition_preview_v0_5.py` imports the final Rig, applies each geometrically solved frame, keys both upper arm and forearm rotations, then re-evaluates all keyed frames and checks wrist/elbow residuals. It saves a `.blend`, a JSON report and front/side PNGs for first, middle and last frames. The Blender file is a local review artifact; it is not exported to Godot or the approved motion library. Run from a Windows checkout with the v0.1 calibration already generated:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\arm_transition_preview_v0_5.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --target .\tools\motion_studio\examples\arm_transition_geometry_probe_v0_5.json --output .\build\motion_studio\arm_transition_v0_5
+```
+
+The Python tests cover synthetic endpoints, monotone wrist motion, pole continuity and invalid requests. A real Blender execution and human review are still required; this arm-only experiment does not establish foot contact, balance, joint limits, or ballet quality. The earlier MotionSpec timeline sampler remains a separate semantic reader and does not claim these geometric targets as MotionSpec evidence.
