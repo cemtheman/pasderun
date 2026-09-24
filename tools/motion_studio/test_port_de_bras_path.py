@@ -5,6 +5,7 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from hand_clearance_candidate import shifted_solution  # noqa: E402
+from first_position_candidate import guide_first_position  # noqa: E402
 from port_de_bras_path import sample_port_de_bras  # noqa: E402
 from second_elbow_line import solve_second_forward_line  # noqa: E402
 from validate import ContractError  # noqa: E402
@@ -36,6 +37,22 @@ def source(pose):
 
 
 class PortDeBrasPathTests(unittest.TestCase):
+    def test_guide_first_waypoint_is_exact_and_all_samples_bend_inward(self):
+        low = shifted_solution(source("bras_bas"), FRAME, .12825477 / 1.44988)
+        high = shifted_solution(source("en_avant"), FRAME,
+                                .09751075 / 1.44988, "body_outward")
+        first = guide_first_position(low, high, FRAME, navel_region_height=.178)
+        second = solve_second_forward_line(source("second"), FRAME)[0]
+        poses = {"bras_bas": low, "first_position": first, "second": second}
+        samples = sample_port_de_bras(poses, FRAME,
+                                      order=("bras_bas", "first_position", "second"))
+        self.assertEqual([sample["frame"] for sample in samples], list(range(1, 50)))
+        for index, name in ((0, "bras_bas"), (24, "first_position"), (48, "second")):
+            self.assertEqual(samples[index]["arms"], poses[name]["arms"])
+        for sample in samples:
+            for side in ("left", "right"):
+                self.assertGreater(sample["inward_flexion"][side]["signed_inward_alignment"], 0)
+
     def test_all_samples_keep_lengths_bend_side_and_exact_waypoints(self):
         poses = {
             "bras_bas": shifted_solution(source("bras_bas"), FRAME, .12825477 / 1.44988),

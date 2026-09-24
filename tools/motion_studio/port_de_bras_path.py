@@ -13,12 +13,14 @@ def _lerp(a, b, t):
     return add(mul(a, 1 - t), mul(b, t))
 
 
-def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24) -> list[dict]:
+def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
+                        order: tuple[str, str, str] = ("bras_bas", "en_avant", "second")) -> list[dict]:
     """Every sample re-solves the arm segments from measured endpoint lengths.
 
     Sample indices are a review grid; they do not encode choreography timing.
     """
-    order = ("bras_bas", "en_avant", "second")
+    require(len(order) == 3 and order[0] == "bras_bas" and order[-1] == "second" and
+            order[1] in ("en_avant", "first_position"), "path", "invalid review waypoint order")
     require(set(poses) == set(order), "path", "requires three candidate poses")
     require(isinstance(frames_per_leg, int) and frames_per_leg >= 2, "path", "invalid sampling grid")
     result = []
