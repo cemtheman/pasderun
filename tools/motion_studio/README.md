@@ -167,3 +167,17 @@ The second-position search now considers only inward-flexing candidates, retains
 ```
 
 Review `second_inward_front.png`, `second_inward_side.png` and `report.json`. This signed body cue establishes the **side of the bend**, not a measured anatomical hinge axis or range. The v0.1 calibration explicitly marks joint limits and bend planes unresolved. Rig-local hinge enforcement needs an independently measured local axis and shoulder/upper-arm orientation; this candidate must not be labeled anatomy approved.
+
+### Three-pose path geometry probe
+
+`reviews/port_de_bras_static_feedback_v0_6.json` pins the final local static report and front/side render digests. The user visually liked the second-position inward candidate; preparatory and en avant feedback is recorded separately without claiming a teacher's approval. These observations are inputs to the next **arm-only path probe**, not an approved ballet motion.
+
+`port_de_bras_path.py` uses 49 review samples with exact static poses at samples 1, 25 and 49. It eases wrist targets between the poses and re-solves every elbow from the measured upper-arm and forearm lengths. A direction-normalized hand vector retains hand-bone length, and each frame must keep an inward signed flexion. The Blender preview keys each sample, checks evaluated elbow, wrist and hand-tip residuals, measures the frontal skinned-hand gap at **every** playback frame, and renders front/side samples at 1, 13, 25, 37 and 49. The grid and preview frame rate are diagnostic choices; they are not observed movement timing.
+
+After generating the three previously described local static reports, run from the Windows checkout:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\port_de_bras_path_preview_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --clearance-report .\build\motion_studio\hand_clearance_candidate_v0_6\report.json --en-avant-report .\build\motion_studio\en_avant_outward_elbow_v0_6\report.json --second-report .\build\motion_studio\second_inward_line_v0_6\report.json --output .\build\motion_studio\port_de_bras_path_probe_v0_6
+```
+
+Inspect `report.json` and the five pairs of preview PNGs. The script reports frontal hand overlap as a failed review gate rather than accepting a numerically accurate pose path. Positive frontal separation alone cannot prove that arms avoid the torso or each other in three dimensions. It exports no GLB and modifies no accepted or production motion.

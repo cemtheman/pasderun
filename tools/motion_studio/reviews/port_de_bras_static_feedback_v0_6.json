@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.6.0-review",
+  "scope": "Three distinct static final-Rig arm candidates, not a motion or approved ballet technique",
+  "source_profile_sha256": "47cb76f9122b3853bf1a0346e57d8552da7d00d26f74a9099585d1ff7c1ecbe1",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "poses": {
+    "bras_bas": {
+      "report_sha256": "3bc5193920f26a46ccad2e1b29d23cd9e098924812a56620cb07a0bc62b47eee",
+      "front_png_sha256": "37bdca0b1472a370b4318ecb3ded948844f6f03335a792fafea93d164c7ed583",
+      "side_png_sha256": "6a884032c63342ec70a1fde41989330ddce34fb4f8aa4eff132a06bcfd79d930",
+      "feedback": "User said the separated preparatory pose looked better; no formal acceptance stated."
+    },
+    "en_avant": {
+      "report_sha256": "dfaab720e5536364624ccc6fa19a1f43168f8d9ea699936bb029b897a3664234",
+      "front_png_sha256": "943300c7e15b442e51a34e19c3f493f3dc59aed1240a7b93c1a6c3e1f128ce73",
+      "side_png_sha256": "309337a92a699cb6fab31507bedd22af1b1d1efc23ddc5ef849ceb73a140726e",
+      "feedback": "Assistant observed the formerly downward side-view elbow kink resolved; no formal acceptance stated."
+    },
+    "second": {
+      "report_sha256": "ae3251e6d654f55ade10cc1d6e5e9790b58be1e408ac066dcd6e62a5349e40f6",
+      "front_png_sha256": "3453647256c558beea3913664005530caa657668dce93606421e2aa2b0e29e3c",
+      "side_png_sha256": "cdc57e815d6677aabbe1641826b6eb8a88cd29696f43fbce1d107c40255cabe9",
+      "feedback": "User visually assessed the inward-flexion candidate as good ('bence güzel').",
+      "hand_projection_gap_armature_units": 1.18089229,
+      "inward_flexion_alignment": 0.811753
+    }
+  },
+  "remaining": [
+    "No complete transition has been rendered or visually evaluated.",
+    "Upper-arm-local elbow hinge axis and physical joint limits remain unmeasured.",
+    "No ballet teacher has approved the poses or movement."
+  ]
+}
