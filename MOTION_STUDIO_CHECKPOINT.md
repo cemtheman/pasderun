@@ -33,6 +33,8 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 | `85e7de2f1854830d1f4f873d5392177f07c54173` | İlk kalıcı Motion Studio günlüğü ve kök `AGENTS.md` | Bu günlüğün oluşturulması; başlangıç parent'ı `550a3fb...`. Sonradan yapılan bu kayıt ayrıca yeni bir commit'te yayımlanır. |
 | `ef1db02af2269ee3a60558151d12ae63a8ebc549` | Günlük oluşturma oturumunun ek kaydı | Önceki `85e7de...` checkpoint'ini belgeleyen güncel günlük. |
 | `a4e43c082bdc5a52c9d5a3376729e68cbcc502d1` | Gerçek iki katalog ZIP incelemesi ve taç arama düzeltmesi | Parent `ef1db02...`; 66 yerel test geçti, yeni taç kodu henüz gerçek Blender'da çalıştırılmadı. |
+| `891fbd88d8acc5660e468cad6feecdfd81550b85` | ZIP inceleme oturumunun günlük güncellemesi | `a4e43c...` parent'ından yayımlandı. |
+| `692af2a2f92004cd8b6fae7783a9a68fb59a98c7` | Gerçek taç kol yeniden çalışmasının ölçüm kaydı | Parent `891fbd...`; `CATALOG_GEOMETRY_RENDERED`, bütün katalogda frontal el çakışması yok. |
 
 ## 2026-09-24 — Poz katalogları ve gerçek sonuç
 
@@ -44,11 +46,10 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 
 ## Sıradaki somut adımlar
 
-1. `a4e43c...` sonrası taç düzeltmesini gerçek final Rig'de **yeni** `--output .\build\motion_studio\guide_arm_catalog_overhead_v0_7` klasörüne çalıştır. Tüm 25 geçiş karesinin raporunu, yeni statik pozu ve önden/yandan görüntüleri incele. Önceki başarısız ZIP/raporu koru.
-2. Ayakların üstten görünüşünü ve zemindeki iki ayak temasını ayrı ölç. İlk gerçek ayak koşusu artık var, ama rapor status'ü turnout, temas, kayma ve dengeyi doğrulamıyor.
-3. İki katalog geçerliyse aynı Rig'de bütün bedenin uyumlu hareketini ve planlı geçişlerini üret; ayak teması, gövde/saç çarpışması, süre ve Godot içe aktarma ayrı kanıt kapılarıdır. Hoca değerlendirmesi sonradan yapılabilir.
+1. Ayakların üstten görünüşünü ve zemindeki iki ayak temasını ayrıca ölç. İlk gerçek ayak koşusu var, ama rapor status'ü turnout, temas, kayma ve dengeyi doğrulamıyor.
+2. Kol ve ayak Action'larını aynı final Rig'de uyumlu bütün beden adayları ve bağlantılı geçişler halinde üret. Kol katalog geometri ekranı geçti; baş/saç ile üç boyutlu temas ayrıca değerlendirilmelidir. Hareket süreleri ve Godot içe aktarma daha sonraki kanıt kapılarıdır. Hoca değerlendirmesi sonradan yapılabilir.
 
-## Windows tekrar çalıştırma
+## Windows checkout eşitleme
 
 PowerShell'de:
 
@@ -59,11 +60,9 @@ git switch motion-studio-v0-6-accepted-arm-visual-probe
 git merge --ff-only origin/motion-studio-v0-6-accepted-arm-visual-probe
 git rev-parse HEAD
 git status --short --branch
-
-& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\guide_foot_catalog_batch_v0_7.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --output .\build\motion_studio\guide_foot_catalog_v0_7
 ```
 
-Kol kataloğu tekrar gerektiğinde önkoşul yerel raporlarıyla birlikte tam komut `tools/motion_studio/README.md` içinde yer alır. Rapor JSON, Blender konsol çıktısı, görseller ve kullanılan tam `git rev-parse HEAD` bir sonraki kayda işlenmelidir.
+Kol ve ayak katalogları Windows'ta çalıştırıldı; betikleri yeniden çalıştırmak gerektiğinde önkoşul yerel raporlarıyla birlikte tam komutlar `tools/motion_studio/README.md` içinde yer alır. Her yeni koşunun rapor JSON'u, Blender konsol çıktısı, görselleri ve kullanılan tam `git rev-parse HEAD` sonraki kayda işlenmelidir.
 
 ## 2026-09-24 — Kullanıcı ZIP'i ve taç yüksekliği düzeltmesi
 
@@ -72,6 +71,13 @@ Kol kataloğu tekrar gerektiğinde önkoşul yerel raporlarıyla birlikte tam ko
 3. Ayak raporu SHA-256 `46e9857d7796d0ebf288c69886b7d718f8028914c816e4358d8135a079fadce6`; 8 poz, 14 klip, 56 rota üretildi. Status `CANDIDATE_GEOMETRY_RENDERED`; raporda `sole_penetration_names` boş. Tüm kliplerdeki maksimum eklem artığı `0.00000151`, izlenen taban konturunun rest durumuna göre minimum yükseklik farkı `−0.0063457` armature birimi. First, second, fifth-left ve first→fifth-left orta kare ön/yan görüntülerinde ayak yerleşimi değişiyor. Üstten görünüş, tam taban teması, kayma, anatomik turnout ve denge **doğrulanmadı**. Pozlar halen adaydır.
 4. Ölçülen sorun için `guide_arm_catalog.py` taç bileğini kafa kemiği üst referansına göre yükseltiyor; Blender betiği baş üstü yüksekliği ve yanal açıklığı ararken bitiş pozunu **ve geçişin 25 karesini** gerçek el mesh izdüşümüyle ölçüyor. İnceleme kanıtı `tools/motion_studio/reviews/guide_catalog_bundle_screen_v0_7.json` dosyasına işlendi. Python testleri: 66 PASS; Blender betiği `py_compile` PASS. Yeni geometri, görsel ve final Rig sonucu **henüz yok**.
 5. Kod/inceleme commit'i: `ef1db02af2269ee3a60558151d12ae63a8ebc549` → `a4e43c082bdc5a52c9d5a3376729e68cbcc502d1`, aynı Motion Studio dalı. Bu günlüğün güncellemesi sonraki commit'te yayımlanır; güncel SHA için dalı sorgula.
+
+## 2026-09-24 — Taç kol yeniden çalışmasının gerçek çıktısı
+
+1. Başlangıç dal checkpoint'i `891fbd88d8acc5660e468cad6feecdfd81550b85`. Kullanıcının `armcatalogue.zip` paketi SHA-256 `16d6d3646ff4db51411039df99557aa0e794fd3c2dcccae4d3dcd5b2574e92c0`; `report.json` SHA-256 `b6a7f0526d6638b9f4b461cf4bb6680ace6aab59c62f788bac8e760077486c93`; kaynak GLB SHA-256 `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`.
+2. Gerçek Blender raporu `CATALOG_GEOMETRY_RENDERED`: 8 kol pozu, 14 yönlü klip, 56 rota, `front_overlap_names: []`. Seçilen taç yüksekliği kol erişiminin `.22` kadarıyla kafa kemiği kuyruğunun üstünde; yanal pay `.44`. Taç statik frontal el aralığı `+0.1487838`, birinci→taç en küçük aralık `+0.01227945` (örnek 10), ters geçiş `+0.01227969` (örnek 16). Bütün poz/klipler içinde en küçük frontal el aralığı Bra Bas'ta `+0.00230336`; en büyük eklem playback artığı `0.00000058`.
+3. `pose_fifth_crown` ön ve yan, `first_to_fifth_crown` orta ön ve yan, `pose_fourth_left_crown` ön ve yan görselleri incelendi. Eller artık gözleri örtmüyor, orta geçişte birbirinden ayrılıyor. Taç elleri saçın üst yanlarına yakın; saç/başla üç boyutlu mesh çarpışması ölçülmedi. Bu **kol geometri ekranının geçmesi** anlamına gelir; balenin teknik kabulü veya saç/baş temasının temizliği anlamına gelmez.
+4. Rapor ve görsel inceleme özeti `tools/motion_studio/reviews/guide_arm_catalog_overhead_screen_v0_7.json` içine kaydedildi; `891fbd88d8acc5660e468cad6feecdfd81550b85` → `692af2a2f92004cd8b6fae7783a9a68fb59a98c7` commit'i aynı çalışma dalına yayımlandı. Bu günlük güncellemesinin SHA'sı dalda `git log -1 --format=%H -- MOTION_STUDIO_CHECKPOINT.md` ile alınmalıdır.
 
 ## Her yeni oturumda eklenecek kayıt şablonu
 
