@@ -13,8 +13,8 @@ def fixture():
     bones, soles = {}, {}
     for side, sign in (("left", 1), ("right", -1)):
         x = sign * .15
-        for name, head in (("upper_leg", [x, .84, 0]),
-                           ("lower_leg", [x, .48, .04]),
+        for name, head in (("thigh", [x, .84, 0]),
+                           ("shin", [x, .48, .04]),
                            ("foot", [x, .11, .02]),
                            ("toes", [x, .09, .17])):
             bones[f"{side}_{name}"] = {"head_local": head, "rig_bone": f"{side}_{name}"}
@@ -35,10 +35,10 @@ class GuideFootCatalogTests(unittest.TestCase):
                     self.assertAlmostEqual(leg["heel"][1], 0)
                     original = calibration["canonical_bones"]
                     self.assertAlmostEqual(math.dist(leg["hip"], leg["knee"]),
-                        math.dist(original[f"{side}_upper_leg"]["head_local"],
-                                  original[f"{side}_lower_leg"]["head_local"]), places=6)
+                        math.dist(original[f"{side}_thigh"]["head_local"],
+                                  original[f"{side}_shin"]["head_local"]), places=6)
                     self.assertAlmostEqual(math.dist(leg["knee"], leg["ankle"]),
-                        math.dist(original[f"{side}_lower_leg"]["head_local"],
+                        math.dist(original[f"{side}_shin"]["head_local"],
                                   original[f"{side}_foot"]["head_local"]), places=6)
 
     def test_degenerate_sole_is_rejected(self):

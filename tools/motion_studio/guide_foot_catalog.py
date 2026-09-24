@@ -45,7 +45,7 @@ def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
     measured = {side: _sole_measurements(soles[side], frame) for side in ("left", "right")}
     width = max(item["width"] for item in measured.values())
     foot_length = sum(item["length"] for item in measured.values()) / 2
-    hips = {side: bones[f"{side}_upper_leg"]["head_local"] for side in ("left", "right")}
+    hips = {side: bones[f"{side}_thigh"]["head_local"] for side in ("left", "right")}
     hip_span = abs(dot(sub(hips["left"], hips["right"]), frame["left"]))
     require(hip_span > width, "feet", "hip span narrower than measured sole width")
     rest_heel_front = sum(dot(measured[side]["heel"], frame["front"])
@@ -71,7 +71,7 @@ def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
     targets = {}
     for side in ("left", "right"):
         hip, knee, ankle, ball = (bones[f"{side}_{key}"]["head_local"]
-                                 for key in ("upper_leg", "lower_leg", "foot", "toes"))
+                                 for key in ("thigh", "shin", "foot", "toes"))
         rest_heel = measured[side]["heel"]
         toe_vector = sub(ball, ankle)
         rest_angle = math.atan2(dot(toe_vector, frame["left"]),
@@ -93,7 +93,7 @@ def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
                          "turnout_deg": outward_sign * 24,
                          "reach": length(sub(knee, hip)) + length(sub(ankle, knee)),
                          "bone_names": [bones[f"{side}_{part}"]["rig_bone"]
-                                        for part in ("upper_leg", "lower_leg", "foot", "toes")]}
+                                        for part in ("thigh", "shin", "foot", "toes")]}
     # Crossed foot targets may need a small common plié. Search only a bounded
     # downward translation of the whole pelvis, leaving both heels planted.
     common_reach = min(target["reach"] for target in targets.values())
