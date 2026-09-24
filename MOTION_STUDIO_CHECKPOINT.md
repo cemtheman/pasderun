@@ -39,6 +39,8 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 | `3c8d31ec676e70437321aef83379c8518913c288` | Eşzamanlı tam beden aday betiği | Parent `56f080...`; 9 poz ve 16 yönlü geçiş kodu; 67 yerel test geçti; gerçek Blender koşusu bekliyor. |
 | `121c4b64fb87bac4da345e2da7a7278d30b2b50f` | Tam beden betiği oturum günlüğü | Parent `3c8d31...`; bu günlük için önceki dal HEAD'i. |
 | `bc8c24f2f865c426569c0c329a8ca6dae3fbfb14` | Tam beden gerçek çıktı geometri incelemesi | Parent `121c4b...`; 9 poz, 16 klip, 72 rota; ölçümler `tools/motion_studio/reviews/guide_full_body_catalog_screen_v0_8.json` içinde. |
+| `591b9b7d82fcc9ef6f27ff0c647497816f767ef2` | Tam beden görüntü incelemesi günlük kaydı | Parent `bc8c24...`; önceki oturumun dal HEAD'i. |
+| `8a28f42c27a84a1b1d4dc5e5ef07329d6cb8b1ff` | Ayrışan ayak adayı ve üstten ayakkabı görüntüleri | Parent `591b9b...`; 45° varyantı ve üstten PNG kodu, 69 yerel test PASS; gerçek Blender sonucu bekliyor. |
 
 ## 2026-09-24 — Poz katalogları ve gerçek sonuç
 
@@ -97,6 +99,13 @@ Kol ve ayak katalogları Windows'ta çalıştırıldı; betikleri yeniden çalı
 3. Birinci, ikinci, dördüncü-sol, beşinci-sol pozlarının ön/yan; birinci→dördüncü-sol ve birinci→beşinci-sol geçişlerinin orta ön/yan PNG'leri incelendi. Beşincide çapraz bacaklar ve ellerin yüzün üstünde olduğu taç, dördüncüde asimetrik kol yerleşimi ve ara karelerde eşzamanlı hareket görünüyor. Bu görüntülerde kaba kopma görülmedi. Baleye uygun turnout, ayakların gerçek basması ve kaymaması, denge, saç/baş teması, süreler ve oyun motorundaki sonuç doğrulanmadı; adaylar teknik kabul değildir.
 4. ZIP'de 34 PNG ve `report.json` var, `.blend` yok. Rapor Blender projesinin yalnızca Windows yerel yolunu bildiriyor. Bu nedenle kaydedilen Action'ları Blender içinden veya Godot export sonucunu bağımsız incelemedik. İnceleme JSON'u `tools/motion_studio/reviews/guide_full_body_catalog_screen_v0_8.json` Git blob SHA `d4c69cea95147fecd56d23ef20527d890645db92`; parent `121c4b64fb87bac4da345e2da7a7278d30b2b50f` → inceleme commit'i `bc8c24f2f865c426569c0c329a8ca6dae3fbfb14`, aynı deneysel dal. Bu günlük için sonraki commit ve Library yedeği ayrıca doğrulanmalıdır.
 5. Sonraki tek teknik kapı: Ayakların üstten görünüşü ve zaman boyunca iki ayak teması/kaymasını gerçek Rig üzerinde ölçen tanılama üret; ardından `.blend` / Godot export doğrulamasına geç. Hoca incelemesi kullanıcı kararı gereği ertelenebilir.
+
+## 2026-09-25 — Kullanıcının ayak pozları benzerliği itirazı ve yeni görsel aday
+
+1. Başlangıç dal HEAD'i `591b9b7d82fcc9ef6f27ff0c647497816f767ef2`. Kullanıcı v0.8 tam beden görüntülerinde ayak pozlarının neredeyse hepsinin aynı göründüğünü belirtti. Önceki “kaba kopma yok” değerlendirmesi bu ayırt edilebilirlik sorununu kaçırmıştı: v0.8 **ayakların görsel ayrışması açısından kabul edilmiş değildir**. Tam beden ayakları küçük gösteren ön/yan kareler ve bütün pozlara uygulanan aynı 24° dönüş, hatanın kaynaklarıdır; ayrıca hedef topuk yerleşiminin bale tekniğini karşıladığı ispatlanmadı.
+2. `guide_foot_catalog.py` için opsiyonel `turnout_degrees` eklendi; varsayılan 24° önceki v0.8 geometri davranışını korur. Tam beden Blender betiğinde `--turnout-degrees 45` ile ayrı v0.9 görsel adayı, `MS09_` Action'ları, `guide_full_body_catalog_v0_9.blend`, her statik poz / ileri geçiş orta karesi için `*_feet_top.png` ve raporda hedef topuk/tarak izdüşümü üretilir. 45° anatomik güvenlik veya bale tekniği kabulü değildir; ayakkabı meshinin gerçek yönü üstten yeni render görülene dek doğrulanamaz. Eski ayak raporu yeni 45° geometrinin ekranı sayılmaz.
+3. Test düzeneğinde 45° adayın sekiz ayak hedefi ve birinciden yedi geçişi hesaplandı; ikinci pozun topuk açıklığı birincinin iki katından büyük, sol dördüncü / beşinci topuk öne taşınmış. 69 Python testi ve Blender betiği `py_compile` PASS. **Yeni final Rig Blender koşusu, gerçek ayak üstten PNG'leri, ayak mesh teması / sürtünmesi ve yeni durum raporu henüz yok.**
+4. Kod/README/test commit'i: `591b9b7d82fcc9ef6f27ff0c647497816f767ef2` → `8a28f42c27a84a1b1d4dc5e5ef07329d6cb8b1ff`, deneysel dal. Tam Windows PowerShell komutu `tools/motion_studio/README.md` içindeki “Distinct foot silhouettes and shoe top views v0.9” bölümüne eklendi. Sonraki ilk işlem Windows'ta dalı `--ff-only` eşitleyip komutu çalıştırmak; `report.json` ile `*_feet_top.png` görüntülerini önceki v0.8 ile karşılaştırmak. Bu günlük commit'i ve Library eşlemesi aşağıdaki kalıcı kaydın ayrıca doğrulanmasını gerektirir.
 
 ## Her yeni oturumda eklenecek kayıt şablonu
 
