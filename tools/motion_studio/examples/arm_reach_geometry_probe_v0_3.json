@@ -3,7 +3,7 @@
   "pose_id": "arm_reach_geometry_probe_v0_3",
   "rig_profile_id": "low_poly_girl_rig_v0",
   "targets": [
-    {"side": "left", "landmark": "left_wrist", "reach_fraction": 0.85, "offset_body_arm_reach": [0, 0, 0.05], "bend_plane": "body_front"},
-    {"side": "right", "landmark": "right_wrist", "reach_fraction": 0.85, "offset_body_arm_reach": [0, 0, 0.05], "bend_plane": "body_front"}
+    {"side": "left", "landmark": "left_wrist", "reach_fraction": 0.95, "offset_body_arm_reach": [0, 0, 0.02], "bend_plane": "body_down"},
+    {"side": "right", "landmark": "right_wrist", "reach_fraction": 0.95, "offset_body_arm_reach": [0, 0, 0.02], "bend_plane": "body_down"}
   ]
 }

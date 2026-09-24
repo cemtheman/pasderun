@@ -27,17 +27,19 @@ class StaticPoseGeometryTests(unittest.TestCase):
             },
         }
 
-    def test_symmetric_arm_targets_keep_lengths_and_front_bend(self):
+    def test_symmetric_arm_targets_keep_lengths_and_downward_bend(self):
         result = solve_static_pose(self.spec, self.calibration)
         left, right = result["arms"]["left"], result["arms"]["right"]
-        self.assertEqual(left["wrist"], [1.7, -0.1, 0.0])
-        self.assertEqual(right["wrist"], [-1.7, -0.1, 0.0])
+        self.assertEqual(left["wrist"], [1.9, -0.04, 0.0])
+        self.assertEqual(right["wrist"], [-1.9, -0.04, 0.0])
         self.assertAlmostEqual(left["upper_length"], 1)
         self.assertAlmostEqual(left["lower_length"], 1)
         self.assertGreater(left["bend_plane_projection"], 0)
         self.assertGreater(right["bend_plane_projection"], 0)
         self.assertAlmostEqual(left["elbow"][0], -right["elbow"][0])
         self.assertAlmostEqual(left["elbow"][1], right["elbow"][1])
+        self.assertLess(left["elbow"][2], 0)
+        self.assertLess(right["elbow"][2], 0)
 
     def test_asymmetric_lengths_are_preserved(self):
         solved = solve_two_link([0, 0, 0], [2, 0, 0], [3, 0, 0], [2, 0.5, 0], [0, 1, 0])

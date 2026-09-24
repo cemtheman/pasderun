@@ -70,7 +70,7 @@ def apply_solution(armature, solution):
     return residuals
 
 
-def render_views(armature, calibration, output):
+def render_views(armature, calibration, output, prefix=""):
     scene = bpy.context.scene
     scene.render.engine = "BLENDER_WORKBENCH"
     scene.render.resolution_x = 600
@@ -87,10 +87,10 @@ def render_views(armature, calibration, output):
     up = Vector(frame["up"])
     height = max((head - foot).dot(up), 0.1)
     center_local = foot + up * height * 0.52
-    camera_data = bpy.data.cameras.new("MotionStudioV03Camera")
+    camera_data = bpy.data.cameras.new(f"MotionStudioV03Camera_{prefix or 'solved'}")
     camera_data.type = "ORTHO"
     camera_data.ortho_scale = height * 1.38
-    camera = bpy.data.objects.new("MotionStudioV03Camera", camera_data)
+    camera = bpy.data.objects.new(f"MotionStudioV03Camera_{prefix or 'solved'}", camera_data)
     scene.collection.objects.link(camera)
     scene.camera = camera
     center_world = armature.matrix_world @ center_local
@@ -99,7 +99,8 @@ def render_views(armature, calibration, output):
         vector = (armature.matrix_world.to_3x3() @ Vector(direction)).normalized()
         camera.location = center_world + vector * height * 3
         camera.rotation_euler = (center_world - camera.location).to_track_quat("-Z", "Y").to_euler()
-        scene.render.filepath = str(output / f"{name}.png")
+        filename = f"{prefix}_{name}.png" if prefix else f"{name}.png"
+        scene.render.filepath = str(output / filename)
         bpy.ops.render.render(write_still=True)
         require(Path(scene.render.filepath).is_file(), f"Missing {name} preview")
         previews[name] = scene.render.filepath
@@ -127,20 +128,23 @@ def main():
     for bone in armature.pose.bones:
         bone.matrix_basis = Matrix.Identity(4)
     bpy.context.view_layer.update()
-    residuals = apply_solution(armature, solution)
     output.mkdir(parents=True, exist_ok=True)
+    rest_previews = render_views(armature, calibration, output, prefix="rest")
+    residuals = apply_solution(armature, solution)
     previews = render_views(armature, calibration, output)
     blend_path = output / "static_pose_v0_3.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
     report = {"status": "GEOMETRY_PASS_VISUAL_REVIEW_REQUIRED", "pose_id": solution["pose_id"],
               "source_glb_sha256": solution["source_glb_sha256"], "residuals": residuals,
-              "previews": previews, "blend": str(blend_path),
+              "rest_previews": rest_previews, "previews": previews, "blend": str(blend_path),
               "limits": "No contact, balance, joint-limit or aesthetic approval in v0.3"}
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print("MOTION_STUDIO_V0_3_GEOMETRY=PASS_VISUAL_REVIEW_REQUIRED")
     print(f"REPORT={output / 'report.json'}")
     print(f"FRONT={previews['front']}")
     print(f"SIDE={previews['side']}")
+    print(f"REST_FRONT={rest_previews['front']}")
+    print(f"REST_SIDE={rest_previews['side']}")
 
 
 if __name__ == "__main__":
