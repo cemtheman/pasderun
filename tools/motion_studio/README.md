@@ -181,3 +181,17 @@ After generating the three previously described local static reports, run from t
 ```
 
 Inspect `report.json` and the five pairs of preview PNGs. The script reports frontal hand overlap as a failed review gate rather than accepting a numerically accurate pose path. Positive frontal separation alone cannot prove that arms avoid the torso or each other in three dimensions. It exports no GLB and modifies no accepted or production motion.
+
+### Guide correction: first position before a new path
+
+The first actual 49-frame Blender run returned `PATH_PROBE_FRONT_HAND_OVERLAP`: 11 frames, numbered 7–17, showed negative projected hand separation, worst −0.01256776 armature units at frame 13. The user-provided *Ballet Positions Catalog & Guide* (PDF SHA-256 `2d6321bf92dd97014fb86555bc30426772e9a34e0527e7bf397339fa3648793d`) also distinguishes **Bra Bas** at hip level, **first arm position** with rounded arms and hands near the navel, and **second arm position** slightly ahead of the shoulders. The existing Phase 10 `en_avant` rendered at chest level and does not meet that first-position description. Frame 37 was merely a diagnostic midpoint and did not yield a readable opening. That path is rejected; its exact endpoint source data remain unchanged.
+
+`first_position_candidate.py` therefore creates a **new unapproved static waypoint**. Its wrist elevation is midway between the reviewed Bra Bas wrist and the previously high en avant wrist, and its forward displacement is midway between them. Its lateral hand clearance begins at the measured en avant wrist location. The elbow is solved from calibrated arm lengths with an outward elbow pole and the inward flexion guard. This arithmetic midpoint is a bounded visual hypothesis for the navel region; no navel landmark exists in v0.1 rig calibration. The candidate does not claim an anatomical measurement or change the previous static renders.
+
+Render it from the Windows checkout, using the existing clearance and en avant reports:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\guide_first_position_preview_v0_6.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --clearance-report .\build\motion_studio\hand_clearance_candidate_v0_6\report.json --en-avant-report .\build\motion_studio\en_avant_outward_elbow_v0_6\report.json --output .\build\motion_studio\guide_first_position_v0_6
+```
+
+Evaluate `guide_first_front.png`, `guide_first_side.png`, and `report.json` as a static waypoint before rebuilding the motion path. The accepted second-position candidate remains intact; foot placement, navel landmark calibration, contact and choreography timing remain separate work.
