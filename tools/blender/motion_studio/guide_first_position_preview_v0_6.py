@@ -77,7 +77,7 @@ def main():
                       "old_high_en_avant_wrist": dot(high["arms"][side]["wrist"], up)}
                for side in ("left", "right")}
     anchors = {name: round(dot(calibration["canonical_bones"][name]["head_local"], up), 8)
-               for name in ("pelvis", "spine", "chest")}
+               for name in ("pelvis", "spine_lower", "spine_mid", "chest")}
     report_path = output / "report.json"
     status = ("FIRST_POSITION_STATIC_VISUAL_REVIEW_REQUIRED" if
               projection["projected_gap_armature_units"] >= 0 else
