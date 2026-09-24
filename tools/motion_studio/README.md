@@ -29,3 +29,17 @@ The output is local measured evidence and is not committed by this checkpoint. I
 Image and video landmarks use normalized `(u, v)` with `u` increasing right and `v` increasing down in the source image. The source records camera side and whether mirroring is known. Unknown mirroring must not be silently resolved into anatomical left/right. Occluded landmarks have no 2D coordinate. The contract permits 3D coordinates only as **source armature local** observations from a Blend action; these values are not canonical body coordinates or final Rig joint rotations. Prompt evidence is textual. A contact is a confidence-scored hypothesis, not a solved load-bearing support interval. Every annotation identifies whether it was stated, observed, inferred, or supplied by a teacher.
 
 To check a JSON evidence file: `python tools/motion_studio/reference_evidence.py PATH`. The committed prompt example can be checked this way. No image analysis, video processing, landmark detector, MotionSpec conversion, or teacher review is claimed by this checkpoint. A future interpreter may build a MotionSpec from these observations, preserving uncertain and conflicting evidence for human review.
+
+## v0.3 — bounded static geometry probe
+
+`static_pose_v0_3.schema.json` defines one or two wrist targets. Each target starts from the measured shoulder-to-rest-wrist direction, scales that displacement by `reach_fraction`, then adds an offset in declared `(left, up, front)` body axes as a fraction of measured two-link arm reach. `bend_plane` is an explicit geometric pole. `static_pose.py` solves shoulder, elbow and wrist joint centers by two-link geometry, preserving measured segment lengths. It rejects unreachable, straight/folded singular and pole-degenerate targets. No language model supplies bone rotations.
+
+The example `arm_reach_geometry_probe_v0_3.json` is a deliberately modest symmetric arm movement for checking geometry. It is **not** a named ballet pose or an accepted animation. The Blender script `tools/blender/motion_studio/static_pose_preview_v0_3.py` reads the previously generated final-Rig calibration, verifies it against the actual GLB, imports only that final Rig, rotates its upper arm and forearm joints toward the solved landmarks, checks elbow/wrist residuals and writes a `.blend`, front/side PNGs and a JSON report. It does not create keyframes or export a runtime asset.
+
+From a Windows checkout on the v0.3 branch with `build/motion_studio/low_poly_girl_calibration_v0_1.json` already generated:
+
+```powershell
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\static_pose_preview_v0_3.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --target .\tools\motion_studio\examples\arm_reach_geometry_probe_v0_3.json --output .\build\motion_studio\static_pose_v0_3
+```
+
+The output reports geometry only; the front and side renders need human inspection. Contact, balance, joint limits, ballet technique, transitions and aesthetics are outside this checkpoint. The static tests use synthetic geometry. Until the actual Blender command and visual gate pass, the v0.3 solver remains a prototype.
