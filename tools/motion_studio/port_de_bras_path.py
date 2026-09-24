@@ -14,7 +14,9 @@ def _lerp(a, b, t):
 
 
 def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
-                        order: tuple[str, str, str] = ("bras_bas", "en_avant", "second")) -> list[dict]:
+                        order: tuple[str, str, str] = ("bras_bas", "en_avant", "second"),
+                        guide_clearance: float = 0.0,
+                        guide_opening_lead: float = 0.0) -> list[dict]:
     """Every sample re-solves the arm segments from measured endpoint lengths.
 
     Sample indices are a review grid; they do not encode choreography timing.
@@ -23,6 +25,12 @@ def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
             order[1] in ("en_avant", "first_position"), "path", "invalid review waypoint order")
     require(set(poses) == set(order), "path", "requires three candidate poses")
     require(isinstance(frames_per_leg, int) and frames_per_leg >= 2, "path", "invalid sampling grid")
+    require(order[1] == "first_position" or
+            (guide_clearance == 0 and guide_opening_lead == 0), "path",
+            "guide adjustments require guide first waypoint")
+    require(math.isfinite(guide_clearance) and 0 <= guide_clearance <= .03 and
+            math.isfinite(guide_opening_lead) and 0 <= guide_opening_lead <= .8,
+            "path", "guide adjustments outside diagnostic bounds")
     result = []
     for leg, (start_name, end_name) in enumerate(zip(order, order[1:])):
         start, end = poses[start_name], poses[end_name]
@@ -31,6 +39,8 @@ def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
                 continue
             t = index / frames_per_leg
             eased = t * t * (3 - 2 * t)
+            if leg == 1:
+                eased += guide_opening_lead * eased * (1 - eased)
             arms, flexion = {}, {}
             require(set(start["arms"]) == set(end["arms"]) == {"left", "right"},
                     "path", "arm sides differ")
@@ -50,6 +60,9 @@ def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
                     arm = b.copy()
                 else:
                     wrist = _lerp(a["wrist"], b["wrist"], eased)
+                    if leg == 0 and guide_clearance:
+                        outward = frame["left"] if side == "left" else mul(frame["left"], -1)
+                        wrist = add(wrist, mul(outward, guide_clearance * math.sin(math.pi * t) ** 2))
                     bend_pole = _lerp(sub(a["elbow"], shoulder),
                                       sub(b["elbow"], shoulder), eased)
                     solved = solve_two_link(shoulder, a["elbow"], a["wrist"],

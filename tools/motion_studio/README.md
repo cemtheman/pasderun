@@ -207,3 +207,5 @@ On the Windows checkout, run:
 ```
 
 Inspect `report.json` for the worst of all 49 evaluated frontal hand gaps and the 1/13/25/37/49 front and side views for silhouette defects. A positive measured frontal gap does not establish torso clearance or choreography approval; these samples do not encode authored movement tempo.
+
+The first guide-path playback still showed projected hand overlap at frames 7 and 8 (worst −0.0001241 armature units), despite separated endpoints. Frame 37 showed forearms dipping visibly downward during the opening. A subsequent **diagnostic variant** adds a temporary 0.01 armature-unit outward wrist displacement per side on the first leg, returning to unchanged endpoints, and advances the second-leg opening by a bounded eased-progress term of 0.8 × progress × (1 − progress). Both arm segments are re-solved and checked for signed inward flexion. This does not establish clearance on the evaluated mesh or approve the visual result; rerun the command above with `--output .\build\motion_studio\guide_port_de_bras_clearance_opening_v0_6` and inspect the new report and front/side frame 37 before accepting any new path.

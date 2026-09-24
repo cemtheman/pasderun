@@ -52,6 +52,18 @@ class PortDeBrasPathTests(unittest.TestCase):
         for sample in samples:
             for side in ("left", "right"):
                 self.assertGreater(sample["inward_flexion"][side]["signed_inward_alignment"], 0)
+        revised = sample_port_de_bras(poses, FRAME,
+                                      order=("bras_bas", "first_position", "second"),
+                                      guide_clearance=.01, guide_opening_lead=.8)
+        for index in (0, 24, 48):
+            self.assertEqual(revised[index]["arms"], samples[index]["arms"])
+        self.assertGreater(revised[6]["arms"]["left"]["wrist"][0],
+                           samples[6]["arms"]["left"]["wrist"][0])
+        self.assertGreater(revised[36]["arms"]["left"]["wrist"][0],
+                           samples[36]["arms"]["left"]["wrist"][0])
+        for sample in revised:
+            for side in ("left", "right"):
+                self.assertGreater(sample["inward_flexion"][side]["signed_inward_alignment"], 0)
 
     def test_all_samples_keep_lengths_bend_side_and_exact_waypoints(self):
         poses = {

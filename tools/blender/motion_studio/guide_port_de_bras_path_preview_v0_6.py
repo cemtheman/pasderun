@@ -76,7 +76,8 @@ def main():
                     reports["second"]["search_diagnostics"][side]["wrist_shift_armature_units"]))
                 for side in ("left", "right")), "Cannot reproduce reviewed second-position candidate")
     samples = sample_port_de_bras({"bras_bas": start, "first_position": middle, "second": end},
-                                  frame, order=("bras_bas", "first_position", "second"))
+                                  frame, order=("bras_bas", "first_position", "second"),
+                                  guide_clearance=.01, guide_opening_lead=.8)
 
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(repo / rig["source_glb"]))
@@ -141,6 +142,8 @@ def main():
         "source_glb_sha256": reference["source_glb_sha256"],
         "frame_grid": "49 integer samples; frames 1, 25, 49 are exact static candidates; not choreography timing",
         "guide_first_wrist_height": torso_height,
+        "guide_clearance_armature_units": .01,
+        "guide_opening_lead": .8,
         "guide_first_report": str(args.first_report.resolve()),
         "worst_projected_hand_gap": worst, "frames": playback, "previews": previews, "blend": str(blend),
         "limits": "Arm-only sampled geometry probe. Positive frontal gap does not establish three-dimensional "
