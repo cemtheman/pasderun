@@ -64,6 +64,23 @@ class PortDeBrasPathTests(unittest.TestCase):
         for sample in revised:
             for side in ("left", "right"):
                 self.assertGreater(sample["inward_flexion"][side]["signed_inward_alignment"], 0)
+        arced = sample_port_de_bras(poses, FRAME,
+                                    order=("bras_bas", "first_position", "second"),
+                                    guide_clearance=.01, guide_opening_lead=.8,
+                                    opening_arc_up_fraction=.19, opening_arc_front_fraction=.26)
+        for index in (0, 24, 48):
+            self.assertEqual(arced[index]["arms"], revised[index]["arms"])
+        for sample in arced:
+            for side in ("left", "right"):
+                arm = sample["arms"][side]
+                self.assertGreater(sample["inward_flexion"][side]["signed_inward_alignment"], 0)
+                for joint_a, joint_b in (("shoulder", "elbow"), ("elbow", "wrist")):
+                    self.assertAlmostEqual(math.dist(arm[joint_a], arm[joint_b]),
+                                           math.dist(low["arms"][side][joint_a],
+                                                     low["arms"][side][joint_b]), places=5)
+                if 34 <= sample["frame"] <= 40:
+                    reach = math.dist(arm["shoulder"], arm["elbow"]) + math.dist(arm["elbow"], arm["wrist"])
+                    self.assertLess((arm["elbow"][1] - arm["wrist"][1]) / reach, .1)
 
     def test_all_samples_keep_lengths_bend_side_and_exact_waypoints(self):
         poses = {

@@ -21,7 +21,7 @@ from hand_clearance_candidate import shifted_solution  # noqa: E402
 from port_de_bras_path import sample_port_de_bras  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
 from second_elbow_line import solve_second_forward_line  # noqa: E402
-from static_pose import dot  # noqa: E402
+from static_pose import dot, sub  # noqa: E402
 from static_pose_preview_v0_3 import apply_solution, render_views, require  # noqa: E402
 
 
@@ -77,7 +77,8 @@ def main():
                 for side in ("left", "right")), "Cannot reproduce reviewed second-position candidate")
     samples = sample_port_de_bras({"bras_bas": start, "first_position": middle, "second": end},
                                   frame, order=("bras_bas", "first_position", "second"),
-                                  guide_clearance=.01, guide_opening_lead=.8)
+                                  guide_clearance=.01, guide_opening_lead=.8,
+                                  opening_arc_up_fraction=.19, opening_arc_front_fraction=.26)
 
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(repo / rig["source_glb"]))
@@ -122,11 +123,18 @@ def main():
             require(all(value <= tolerance for value in errors[side].values()),
                     f"Frame {sample['frame']} {side}: keyed playback joint residual exceeds tolerance")
         projection = measured_hand_mesh_projection(armature, calibration)
+        drops = {side: round(dot(sub(arm["elbow"], arm["wrist"]), frame["up"]) /
+                             (len_u + len_l), 8)
+                 for side, arm in sample["arms"].items()
+                 for len_u, len_l in [(
+                     (Vector(arm["elbow"]) - Vector(arm["shoulder"])).length,
+                     (Vector(arm["wrist"]) - Vector(arm["elbow"])).length)]}
         playback.append({"frame": sample["frame"], "from": sample["from"], "to": sample["to"],
                          "playback_residuals": errors, "inward_flexion": sample["inward_flexion"],
+                         "forearm_drop_over_arm_reach": drops,
                          "hand_projected_gap_armature_units": projection["projected_gap_armature_units"]})
     previews = {}
-    for frame_number in (1, 13, 25, 37, 49):
+    for frame_number in (1, 13, 25, 31, 34, 37, 40, 43, 49):
         scene.frame_set(frame_number)
         previews[str(frame_number)] = render_views(armature, calibration, output,
                                                    prefix=f"port_de_bras_{frame_number:02d}")
@@ -134,18 +142,26 @@ def main():
     blend = output / "guide_port_de_bras_path_probe_v0_6.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend))
     worst = min(playback, key=lambda item: item["hand_projected_gap_armature_units"])
+    opening_drop = max((item for item in playback if 34 <= item["frame"] <= 40),
+                       key=lambda item: max(item["forearm_drop_over_arm_reach"].values()))
+    status = ("PATH_PROBE_FRONT_HAND_OVERLAP" if worst["hand_projected_gap_armature_units"] < 0
+              else "PATH_PROBE_OPENING_FOREARM_DROP" if
+              max(opening_drop["forearm_drop_over_arm_reach"].values()) > .1
+              else "PATH_PROBE_VISUAL_REVIEW_REQUIRED")
     report_path = output / "report.json"
     report_path.write_text(json.dumps({
-        "status": ("PATH_PROBE_VISUAL_REVIEW_REQUIRED" if worst["hand_projected_gap_armature_units"] >= 0
-                   else "PATH_PROBE_FRONT_HAND_OVERLAP"),
+        "status": status,
         "source_profile_sha256": reference["source_profile_sha256"],
         "source_glb_sha256": reference["source_glb_sha256"],
         "frame_grid": "49 integer samples; frames 1, 25, 49 are exact static candidates; not choreography timing",
         "guide_first_wrist_height": torso_height,
         "guide_clearance_armature_units": .01,
         "guide_opening_lead": .8,
+        "opening_arc_arm_reach_fractions": {"up": .19, "front": .26},
+        "opening_forearm_drop_limit_over_arm_reach": .1,
         "guide_first_report": str(args.first_report.resolve()),
-        "worst_projected_hand_gap": worst, "frames": playback, "previews": previews, "blend": str(blend),
+        "worst_projected_hand_gap": worst, "worst_opening_forearm_drop": opening_drop,
+        "frames": playback, "previews": previews, "blend": str(blend),
         "limits": "Arm-only sampled geometry probe. Positive frontal gap does not establish three-dimensional "
                   "collision freedom. No measured hinge axis, ballet review, movement approval or runtime export."
     }, indent=2) + "\n", encoding="utf-8")

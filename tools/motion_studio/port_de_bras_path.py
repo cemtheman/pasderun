@@ -16,7 +16,9 @@ def _lerp(a, b, t):
 def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
                         order: tuple[str, str, str] = ("bras_bas", "en_avant", "second"),
                         guide_clearance: float = 0.0,
-                        guide_opening_lead: float = 0.0) -> list[dict]:
+                        guide_opening_lead: float = 0.0,
+                        opening_arc_up_fraction: float = 0.0,
+                        opening_arc_front_fraction: float = 0.0) -> list[dict]:
     """Every sample re-solves the arm segments from measured endpoint lengths.
 
     Sample indices are a review grid; they do not encode choreography timing.
@@ -26,11 +28,15 @@ def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
     require(set(poses) == set(order), "path", "requires three candidate poses")
     require(isinstance(frames_per_leg, int) and frames_per_leg >= 2, "path", "invalid sampling grid")
     require(order[1] == "first_position" or
-            (guide_clearance == 0 and guide_opening_lead == 0), "path",
+            (guide_clearance == 0 and guide_opening_lead == 0 and
+             opening_arc_up_fraction == 0 and opening_arc_front_fraction == 0), "path",
             "guide adjustments require guide first waypoint")
     require(math.isfinite(guide_clearance) and 0 <= guide_clearance <= .03 and
             math.isfinite(guide_opening_lead) and 0 <= guide_opening_lead <= .8,
             "path", "guide adjustments outside diagnostic bounds")
+    require(all(math.isfinite(value) and 0 <= value <= .3
+                for value in (opening_arc_up_fraction, opening_arc_front_fraction)),
+            "path", "opening arc outside diagnostic bounds")
     result = []
     for leg, (start_name, end_name) in enumerate(zip(order, order[1:])):
         start, end = poses[start_name], poses[end_name]
@@ -63,6 +69,11 @@ def sample_port_de_bras(poses: dict, frame: dict, frames_per_leg: int = 24,
                     if leg == 0 and guide_clearance:
                         outward = frame["left"] if side == "left" else mul(frame["left"], -1)
                         wrist = add(wrist, mul(outward, guide_clearance * math.sin(math.pi * t) ** 2))
+                    if leg == 1 and (opening_arc_up_fraction or opening_arc_front_fraction):
+                        reach = math.dist(a["shoulder"], a["elbow"]) + math.dist(a["elbow"], a["wrist"])
+                        arc = math.sin(math.pi * t) ** 2 * reach
+                        wrist = add(wrist, add(mul(frame["up"], arc * opening_arc_up_fraction),
+                                               mul(frame["front"], arc * opening_arc_front_fraction)))
                     bend_pole = _lerp(sub(a["elbow"], shoulder),
                                       sub(b["elbow"], shoulder), eased)
                     solved = solve_two_link(shoulder, a["elbow"], a["wrist"],
