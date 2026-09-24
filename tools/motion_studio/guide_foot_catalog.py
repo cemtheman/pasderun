@@ -33,13 +33,17 @@ def _sole_measurements(sole, frame):
     return {"heel": heel, "length": foot_length, "width": width}
 
 
-def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
+def guide_foot_position(calibration: dict, soles: dict, name: str,
+                        turnout_degrees: float = 24) -> dict:
     """Propose grounded heels with hip-to-ankle segment lengths intact.
 
     Fixed pelvis and small turnout are explicitly provisional. A crossed
     target that cannot be reached is rejected instead of twisting a knee.
     """
     require(name in FOOT_POSITIONS, "feet", "unknown guide position")
+    require(isinstance(turnout_degrees, (int, float)) and
+            math.isfinite(turnout_degrees) and 0 < turnout_degrees <= 55,
+            "feet", "turnout candidate must be within 0..55 degrees")
     frame = calibration["anatomical_frame"]
     bones = calibration["canonical_bones"]
     measured = {side: _sole_measurements(soles[side], frame) for side in ("left", "right")}
@@ -78,7 +82,7 @@ def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
                                 dot(toe_vector, frame["front"]))
         outward_sign = 1 if side == "left" else -1
         # Modest hip-driven turnout *candidate*. No physiological range is inferred.
-        angle = math.radians(outward_sign * 24) - rest_angle
+        angle = math.radians(outward_sign * turnout_degrees) - rest_angle
         rotated_heel_offset = _rotate_up(sub(rest_heel, ankle), frame, angle)
         x, z = heel_goals[side]
         target_heel = add(add(mul(frame["left"], x), mul(frame["front"], z)),
@@ -90,7 +94,7 @@ def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
         targets[side] = {"hip_rest": hip, "knee_rest": knee, "ankle_rest": ankle,
                          "ankle": target_ankle, "ball": target_ball,
                          "heel": target_heel, "pole": pole,
-                         "turnout_deg": outward_sign * 24,
+                         "turnout_deg": outward_sign * turnout_degrees,
                          "reach": length(sub(knee, hip)) + length(sub(ankle, knee)),
                          "bone_names": [bones[f"{side}_{part}"]["rig_bone"]
                                         for part in ("thigh", "shin", "foot", "toes")]}
@@ -123,7 +127,7 @@ def guide_foot_position(calibration: dict, soles: dict, name: str) -> dict:
     require(legs is not None, name, "both feet cannot be planted within bounded pelvis drop")
     return {"pose_id": name, "legs": legs,
             "pelvis_drop": pelvis_drop,
-            "method": "Measured rest heel, modest hip-origin turnout and length-preserving knee solve; contact needs mesh QA"}
+            "method": "Measured rest heel, hip-origin turnout candidate and length-preserving knee solve; contact needs mesh QA"}
 
 
 def sample_foot_transition(start: dict, end: dict, frame: dict,

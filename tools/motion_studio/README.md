@@ -255,3 +255,19 @@ With both v0.7 reports available locally, run in the Windows checkout:
 ```
 
 Inspect `report.json` and the combined front/side PNGs. The foot contact probe uses a measured rest sole outline as its reference, not a physical floor. A successful candidate report does not certify turnout, stability, no slipping, full mesh collision or timed choreography. Neither original GLB nor accepted motions nor production are modified.
+
+### Distinct foot silhouettes and shoe top views v0.9
+
+The actual v0.8 combined renders showed foot placements that look too similar. Its original 24-degree toe direction and front/side full-body framing make the distinctions hard to see. The same batch can now create a **separate** 45-degree candidate, with shoe-level top PNGs for every static pose and forward midpoint, and explicit heel/ball coordinates in `report.json`. The 45-degree value is a visual exploration parameter, not a demonstrated anatomical safe angle or a ballet-approved turnout. The previous v0.8 output and its 24-degree default remain reproducible. Run after syncing the new code; the existing arm/foot input reports are provenance checks, while the new foot targets are calculated afresh:
+
+```powershell
+cd C:\Users\chodo\Documents\pas-de-run
+git fetch origin motion-studio-v0-6-accepted-arm-visual-probe
+git switch motion-studio-v0-6-accepted-arm-visual-probe
+git merge --ff-only origin/motion-studio-v0-6-accepted-arm-visual-probe
+git rev-parse HEAD
+git status --short --branch
+& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --python .\tools\blender\motion_studio\guide_full_body_catalog_batch_v0_8.py -- --repo . --calibration .\build\motion_studio\low_poly_girl_calibration_v0_1.json --reference .\build\motion_studio\accepted_arm_reference_v0_6.json --source-profile .\build\phase10_6\low_poly_girl_canonical_pose_solver_v1.json --clearance-report .\build\motion_studio\hand_clearance_candidate_v0_6\report.json --en-avant-report .\build\motion_studio\en_avant_outward_elbow_v0_6\report.json --first-report .\build\motion_studio\guide_first_spine_mid_v0_6\report.json --second-report .\build\motion_studio\second_inward_line_v0_6\report.json --arm-report .\build\motion_studio\guide_arm_catalog_overhead_v0_7\report.json --foot-report .\build\motion_studio\guide_foot_catalog_v0_7\report.json --turnout-degrees 45 --output .\build\motion_studio\guide_full_body_catalog_v0_9
+```
+
+Inspect `guide_full_body_catalog_v0_9/report.json` and `pose_*_feet_top.png` along with the front/side images. Keep the `.blend` on disk; share the report and PNGs for visual review. If leg reach, mesh penetration, or playback checks flag a candidate, retain the failed evidence rather than treating the new angle as solved.

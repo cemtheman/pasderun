@@ -71,6 +71,35 @@ class GuideFootCatalogTests(unittest.TestCase):
         self.assertEqual(samples[0]["legs"], start["legs"])
         self.assertEqual(samples[-1]["legs"], end["legs"])
 
+    def test_turnout_variant_keeps_distinct_footprints_and_reachable_paths(self):
+        calibration, soles = fixture()
+        poses = {name: guide_foot_position(calibration, soles, name,
+                                           turnout_degrees=45) for name in FOOT_POSITIONS}
+        first = poses["first"]
+        headings = {side: poses["first"]["legs"][side]["turnout_deg"]
+                    for side in ("left", "right")}
+        self.assertEqual(headings, {"left": 45, "right": -45})
+        for side in ("left", "right"):
+            original = guide_foot_position(calibration, soles, "first")["legs"][side]
+            altered = first["legs"][side]
+            self.assertGreater(math.dist(altered["ball"], original["ball"]), .02)
+        heel_span = lambda pose: abs(pose["legs"]["left"]["heel"][0] -
+                                     pose["legs"]["right"]["heel"][0])
+        self.assertGreater(heel_span(poses["second"]), 2 * heel_span(first))
+        front = lambda pose: pose["legs"]["left"]["heel"][2]
+        self.assertGreater(front(poses["fourth_left_front"]), front(first) + .1)
+        self.assertGreater(front(poses["fifth_left_front"]), front(first) + .15)
+        for name in FOOT_POSITIONS[1:]:
+            with self.subTest(name=name):
+                path = sample_foot_transition(first, poses[name], FRAME)
+                self.assertEqual(len(path), 25)
+
+    def test_invalid_turnout_candidate_rejected(self):
+        calibration, soles = fixture()
+        for angle in (0, float("nan"), 56):
+            with self.subTest(angle=angle), self.assertRaisesRegex(ValueError, "turnout"):
+                guide_foot_position(calibration, soles, "first", turnout_degrees=angle)
+
 
 if __name__ == "__main__":
     unittest.main()

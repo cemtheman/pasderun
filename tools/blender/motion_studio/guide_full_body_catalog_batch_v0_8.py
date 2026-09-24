@@ -48,6 +48,50 @@ def pose_sample(arm, foot):
     return {"arm": arm, "foot": foot}
 
 
+def render_feet_top(armature, calibration, output, prefix, sample):
+    """Look down from below the skirt hem to expose the actual shoe mesh."""
+    from mathutils import Vector
+    frame = calibration["anatomical_frame"]
+    up = Vector(frame["up"])
+    heels = [Vector(leg["heel"]) for leg in sample["foot"]["legs"].values()]
+    balls = [Vector(leg["ball"]) for leg in sample["foot"]["legs"].values()]
+    points = heels + balls
+    center = sum(points, Vector((0, 0, 0))) / len(points)
+    lateral = [p.dot(Vector(frame["left"])) for p in points]
+    forward = [p.dot(Vector(frame["front"])) for p in points]
+    spread = max(max(lateral) - min(lateral), max(forward) - min(forward))
+    scene = bpy.context.scene
+    camera_data = bpy.data.cameras.new("MSFeetTopCamera")
+    camera_data.type = "ORTHO"
+    camera_data.ortho_scale = max(spread * 1.5, .2)
+    camera = bpy.data.objects.new("MSFeetTopCamera", camera_data)
+    scene.collection.objects.link(camera)
+    camera.location = armature.matrix_world @ (center + up * max(spread, .25))
+    camera.rotation_euler = ((armature.matrix_world @ center) - camera.location).to_track_quat(
+        "-Z", "Y").to_euler()
+    camera.data.clip_end = max(spread * 8, 3)
+    scene.camera = camera
+    filename = output / f"{prefix}_feet_top.png"
+    scene.render.filepath = str(filename)
+    bpy.ops.render.render(write_still=True)
+    require(filename.is_file(), f"{prefix}: top shoe view missing")
+    return str(filename)
+
+
+def footprint(sample, frame):
+    """Preserve actual target geometry in the report for comparable poses."""
+    result = {}
+    for side, leg in sample["foot"]["legs"].items():
+        result[side] = {
+            "heel_left_front": [Vector(leg["heel"]).dot(Vector(frame[key]))
+                                for key in ("left", "front")],
+            "ball_left_front": [Vector(leg["ball"]).dot(Vector(frame[key]))
+                                for key in ("left", "front")],
+            "target_toe_heading_degrees": leg["turnout_deg"],
+        }
+    return result
+
+
 def combined_paths(arms, arm_edges, feet, frame):
     first = feet["first"]
     paths = {}
@@ -87,7 +131,7 @@ def apply_both(armature, sample, calibration):
 
 
 def action_for(armature, name, samples, calibration, patches, baseline, output,
-               render=False):
+               render=False, variant="08"):
     scene = bpy.context.scene
     armature.animation_data.action = None
     root = calibration["canonical_bones"]["pelvis"]["rig_bone"]
@@ -107,7 +151,7 @@ def action_for(armature, name, samples, calibration, patches, baseline, output,
             armature.pose.bones[bone].keyframe_insert(data_path="rotation_quaternion", frame=index)
     action = armature.animation_data.action
     require(action is not None, f"{name}: Action missing")
-    action.name, action.use_fake_user = f"MS08_{name}", True
+    action.name, action.use_fake_user = f"MS{variant}_{name}", True
     results = []
     for index, sample in enumerate(samples, 1):
         scene.frame_set(index)
@@ -135,7 +179,11 @@ def action_for(armature, name, samples, calibration, patches, baseline, output,
     if render:
         scene.frame_set(1 if len(samples) == 1 else (len(samples) + 1) // 2)
         previews = render_views(armature, calibration, output, prefix=name)
+        if variant == "09":
+            previews["feet_top"] = render_feet_top(armature, calibration, output,
+                                                   name, samples[(len(samples) - 1) // 2])
     return {"action": action.name, "samples": len(samples),
+            "footprint_first_sample": footprint(samples[0], calibration["anatomical_frame"]),
             "minimum_hand_gap": min(r["hand_gap"] for r in results),
             "maximum_joint_residual": max(r["joint_residual"] for r in results),
             "lowest_sole_delta_from_rest": min(r["lowest_sole_delta"] for r in results),
@@ -149,7 +197,10 @@ def main():
                 "en-avant-report", "first-report", "second-report", "arm-report",
                 "foot-report", "output"):
         parser.add_argument(f"--{key}", type=Path, required=True)
+    parser.add_argument("--turnout-degrees", type=float, default=24)
     args = parser.parse_args(sys.argv[sys.argv.index("--") + 1:])
+    require(args.turnout_degrees in (24, 45), "Use 24 for archived v0.8 or 45 for top-view v0.9")
+    variant = "08" if args.turnout_degrees == 24 else "09"
     repo, calibration, rig, reference, reports = load_input(args)
     arm_report = json.loads(args.arm_report.read_text(encoding="utf-8"))
     foot_report = json.loads(args.foot_report.read_text(encoding="utf-8"))
@@ -180,7 +231,8 @@ def main():
                                   frame, height, side)[0] for side in ("left", "right")}
     baseline = {side: min(Vector(p["position_armature_local"]).dot(up)
                           for p in patches[side]["points"]) for side in patches}
-    feet = {name: guide_foot_position(calibration, patches, name)
+    feet = {name: guide_foot_position(calibration, patches, name,
+                                     turnout_degrees=args.turnout_degrees)
             for _arm, name in PAIRS.values()}
     poses = {name: pose_sample(arms[a], feet[f]) for name, (a, f) in PAIRS.items()}
     paths = combined_paths(arms, arm_edges, feet, frame)
@@ -189,7 +241,7 @@ def main():
     bpy.context.scene.frame_start, bpy.context.scene.frame_end = 1, 49
     bpy.context.scene.render.fps = 24  # Diagnostic sampling rate, not choreography tempo.
     static = {name: action_for(armature, "pose_" + name, [sample], calibration,
-                                patches, baseline, output, render=True)
+                                patches, baseline, output, render=True, variant=variant)
               for name, sample in poses.items()}
     clips = {}
     for (start, end), samples in paths.items():
@@ -197,8 +249,9 @@ def main():
                                      (end, start, samples[::-1], False)):
             name = f"{a}_to_{b}"
             clips[name] = action_for(armature, name, ordered, calibration,
-                                     patches, baseline, output, render=show)
-    blend = output / "guide_full_body_catalog_v0_8.blend"
+                                     patches, baseline, output, render=show,
+                                     variant=variant)
+    blend = output / f"guide_full_body_catalog_v0_{8 if variant == '08' else 9}.blend"
     armature.animation_data.action = None
     bpy.ops.wm.save_as_mainfile(filepath=str(blend))
     all_items = {**static, **clips}
@@ -212,6 +265,7 @@ def main():
         "input_arm_status": arm_report["status"], "input_foot_status": foot_report["status"],
         "selected_crown_lateral_fraction": lateral,
         "selected_crown_overhead_fraction": overhead,
+        "turnout_candidate_degrees_per_foot": args.turnout_degrees,
         "poses": static, "clips": clips,
         "pair_routes": {f"{a}_to_{b}": route_arm_positions(a, b, paths)
                         for a in poses for b in poses if a != b},
