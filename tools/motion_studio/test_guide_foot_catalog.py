@@ -62,6 +62,15 @@ class GuideFootCatalogTests(unittest.TestCase):
                                                math.dist(first["legs"][side]["hip"],
                                                          first["legs"][side]["knee"]), places=5)
 
+    def test_fourth_path_supports_longer_synchronized_arm_grid(self):
+        calibration, soles = fixture()
+        start = guide_foot_position(calibration, soles, "first")
+        end = guide_foot_position(calibration, soles, "fourth_left_front")
+        samples = sample_foot_transition(start, end, FRAME, count=49)
+        self.assertEqual(len(samples), 49)
+        self.assertEqual(samples[0]["legs"], start["legs"])
+        self.assertEqual(samples[-1]["legs"], end["legs"])
+
 
 if __name__ == "__main__":
     unittest.main()
