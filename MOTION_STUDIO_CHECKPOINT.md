@@ -258,6 +258,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 3. Added source migration `tools/blender/motion_studio/repair_ring_vertex_groups_v0_2.py` at commit `99d4ad2c10abf508d05d4eda62b612978634dbd9`. It starts from canonical repaired source SHA `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`, leaves all bones/hierarchy/transforms untouched, confirms the expected wrong-side weighted-centroid signature, swaps ONLY the six ring vertex-group names, exports a separate candidate GLB, reimports it, and requires left ring weights on +X and right ring weights on -X after round-trip.
 4. Do not tune pose or use runtime ring sanitizers further until this source candidate is generated and validated. If candidate PASSes, adopt it as canonical source, update source SHA bindings, regenerate Phase 10.6 + Motion Studio artifacts, then remove runtime sanitizer from v0.7.
 
+
+## 2026-09-26 — Canonical ring vertex-group repair adopted
+
+1. Validated candidate `low_poly_girl_ring_groups_fixed.glb` was adopted by the user as the canonical source and committed/pushed at `0d637d61bd5e6f37ea0cadefedffe09548d36382`.
+2. Canonical source SHA is now `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+3. The v0.2 repair proved the exact wrong-side corruption signature before mutation: `Ring_L*` weighted centroid X `-0.6795949`, `Ring_R*` `+0.67959512`; after vertex-group-only swap: left `+0.67959512`, right `-0.6795949`. Candidate status was `MOTION_STUDIO_RING_VERTEX_GROUP_REPAIR=CANDIDATE_PASS`.
+4. Updated `tools/motion_studio/low_poly_girl_finger_mapping_v0_1.json` to bind to the new canonical SHA at commit `8449938241dda6138709bb17c5c79de77cc8543b`.
+5. Removed runtime ring-weight sanitizer use from `first_position_finger_aware_v0_7.py` at `ece85316e04140ca5f717fa905d7739e05cf9eec` and from `finger_isolation_debug_v0_7.py` at `731558db72e55601b2b6c538fcf4e78cca74a8b5`. The sanitizer files remain only as historical diagnostics and are no longer on the active path.
+6. Next single step: sync Mac to the latest branch, regenerate Phase 10.6 + Motion Studio generated artifacts against canonical source SHA `3627f15a...`, then run isolation once with no sanitizer. Do not run First Position until isolation confirms ring deformation is clean on the repaired source itself.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
