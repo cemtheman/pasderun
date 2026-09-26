@@ -170,6 +170,44 @@ def reset_pose(armature):
     bpy.context.view_layer.update()
 
 
+
+def en_avant_shift_feasible(reference, calibration, shift: float) -> bool:
+    """Check the two-link reach envelope before asking the solver to run."""
+    frame_left = calibration["anatomical_frame"]["left"]
+    high = joint_targets(reference, calibration, "en_avant")
+    for side in ("left", "right"):
+        arm = high["arms"][side]
+        sign = 1.0 if side == "left" else -1.0
+        goal = [
+            arm["wrist"][i] + frame_left[i] * sign * shift
+            for i in range(3)
+        ]
+        upper = math.dist(arm["shoulder"], arm["elbow"])
+        lower = math.dist(arm["elbow"], arm["wrist"])
+        distance = math.dist(arm["shoulder"], goal)
+        margin = max(1e-6, arm["arm_reach"] * 1e-4)
+        if not (abs(upper - lower) + margin < distance < upper + lower - margin):
+            return False
+    return True
+
+
+def minimum_feasible_en_avant_shift(reference, calibration) -> tuple[float, int]:
+    """Find the first symmetric outward shift safely inside the solver envelope."""
+    high = joint_targets(reference, calibration, "en_avant")
+    reach = high["arms"]["left"]["arm_reach"]
+    step = reach * 0.002
+    for index in range(1, 251):
+        shift = step * index
+        if en_avant_shift_feasible(reference, calibration, shift):
+            # Move one additional scan step inside the valid region so the real
+            # Blender solve is not sitting exactly on our numerical screen.
+            candidate = shift + step
+            if en_avant_shift_feasible(reference, calibration, candidate):
+                return candidate, index + 1
+            return shift, index
+    raise RuntimeError("No feasible en-avanti scaffold shift found within 50% arm reach")
+
+
 def build_first_scaffold(reference, calibration, shift: float):
     frame = calibration["anatomical_frame"]
     # Bras-bas is used only as the lower vertical/front boundary for First
@@ -244,9 +282,11 @@ def main():
     # This keeps the provisional First Position arm oval compact.
     base_reach = joint_targets(reference, calibration, "en_avant")["arms"]["left"]["arm_reach"]
     tolerance = base_reach * 0.005
-    # Start from zero separation adjustment. Bras-bas is no longer unnecessarily
-    # re-solved; only the en-avant-derived lateral scaffold is shifted as needed.
-    shift = 0.0
+    # Derive the first valid shift from the actual shoulder/elbow/wrist lengths
+    # instead of guessing a percentage. The previous zero/0.5%/2% seeds all
+    # landed outside or on the real rig's two-link reach envelope.
+    shift, feasibility_steps = minimum_feasible_en_avant_shift(reference, calibration)
+    print(f"FIRST_FINGER_FEASIBILITY_STEPS={feasibility_steps}")
     print(f"FIRST_FINGER_SEARCH_INITIAL_SHIFT={shift:.8f}")
     for search_iteration in range(1, 13):
         _, _, _, _, probe = pose_candidate(
@@ -254,7 +294,12 @@ def main():
         )
         if probe["projected_gap_armature_units"] >= 0.005:
             break
-        shift += max((0.005 - probe["projected_gap_armature_units"]) / 2.0, tolerance)
+        next_shift = shift + max((0.005 - probe["projected_gap_armature_units"]) / 2.0, tolerance)
+        require(
+            en_avant_shift_feasible(reference, calibration, next_shift),
+            "First Position hand-clearance search left the en-avanti two-link reach envelope",
+        )
+        shift = next_shift
     else:
         raise RuntimeError("Could not find bounded First Position hand separation")
 
