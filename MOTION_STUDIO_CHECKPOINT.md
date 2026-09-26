@@ -193,6 +193,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Temporary inverted ring mapping workaround is removed. `tools/motion_studio/low_poly_girl_finger_mapping_v0_1.json` now maps `Ring_L*` to canonical left and `Ring_R*` to canonical right, and binds to the repaired source SHA. Mapping normalization commit: `9cfd38aff760c5834eb9d95059cace13f6455764`.
 5. Next step: regenerate Motion Studio calibration and accepted-arm reference from the new Phase 10.6 artifacts, verify every output binds to `ae03b92...`, then build the first finger-aware static First Position hand-shape candidate under `BALLET_HAND_FORM_CONTRACT.md`.
 
+
+## 2026-09-26 — Finger-aware First Position v0.7 implementation
+
+1. Regenerated Motion Studio calibration/reference files were inspected from the user run and bind to repaired canonical source SHA `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`.
+2. Added `tools/blender/motion_studio/first_position_finger_aware_v0_7.py` at commit `426a17740df7d21e413652d530ce372a77431ae6`.
+3. The new script does not consume stale pre-repair clearance/en-avant reports. It rebuilds the provisional First Position scaffold from the regenerated accepted-arm reference, searches only enough symmetric outward wrist shift to keep frontal hand silhouettes separated, aligns `Hand_L/R` to continue the forearm line, and then shapes Thumb/Index/Middle/Ring/Pinky independently through the canonical finger mapping.
+4. Three static review variants are generated: `soft`, `balanced`, `expressive`. Each writes front/side PNGs, forearm→hand continuity angle, fingertip coordinates, measured frontal hand-mesh gap, arm residuals, report JSON and a Blend. No 49-frame path is authored.
+5. Updated `BALLET_HAND_FORM_CONTRACT.md` at commit `a2e21a252733a7b19f3b2926c4dcad6bc8cbf15c` to record the verified five-finger rig and repaired ring naming. Hand-roll alone is explicitly no longer considered sufficient.
+6. Real Blender run of v0.7 is still PENDING. Next single step: sync Mac to this checkpoint and run `first_position_finger_aware_v0_7.py`; inspect the three front/side variants before any path/catalog continuation.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
