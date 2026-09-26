@@ -340,6 +340,17 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 3. Repository inspection confirms this review is a separate qualitative evidence layer. It checks preparatory wrist-inside-elbow, outward opening toward second, middle/end elbow vertical ordering, and second-position anterior wrist placement; it does not invalidate the accepted reference extraction by itself and does not provide teacher approval.
 4. Do not proceed to finger isolation yet. First inspect the exact failed check names/evidence in `build/motion_studio/accepted_arm_review_v0_6.json`; only then decide whether the failure is inherited known geometry or a new regression from the source repair.
 
+
+## 2026-09-26 — Port-de-bras review failure classified as inherited, not ring-repair regression
+
+1. Exact qualitative review failures are symmetric and limited to second-position elbow vertical ordering:
+   - left: shoulder up `0.402944`, elbow `0.417019`, wrist `0.329970`
+   - right: shoulder up `0.402944`, elbow `0.417019`, wrist `0.329970`
+   The review expects `shoulder_up > elbow_up > wrist_up`, so the elbow being slightly above the shoulder triggers `left_end_elbow_line` and `right_end_elbow_line`.
+2. This is not attributable to the ring source repair. The adopted source repair changed only ring deform vertex-group names/weights; bone transforms, hierarchy and arm landmarks were intentionally unchanged. Phase 10.6.1–10.6.5 all regenerated PASS on the repaired source, and accepted-arm extraction itself returned PASS.
+3. Therefore classify this review result as inherited qualitative arm-geometry debt, not a new source-repair regression. Do not block the ring/finger deformation verification on it.
+4. Next single step: run sanitizer-free `finger_isolation_debug_v0_7.py` against the regenerated calibration/reference and canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`. Acceptance: ring-only deformation remains in normal finger scale with no long spikes.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
