@@ -296,6 +296,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Canonical constraint policy remains stable: `BONES=24`, `TURNOUT_PRIMARY=HIP`, `KNEE_AXIAL=DERIVED_ONLY`, `FOOT_YAW=FORBIDDEN`.
 5. Next single step: regenerate Phase 10.6.4 ballet pose grammar profile. Do not run 10.6.5 until 10.6.4 passes.
 
+
+## 2026-09-26 — Phase 10.6.4 regenerated on final repaired source
+
+1. Mac local rerun after syncing checkpoint `70f337fb09c273dc0e5bc6ad21436d094a470c4d` completed successfully.
+2. `tools/ballet_motion/build_ballet_pose_grammar_profile_v1.py` returned `PHASE10_6_4_BALLET_POSE_GRAMMAR=PASS`.
+3. Generated profile: `build/phase10_6/low_poly_girl_ballet_pose_grammar_profile_v1.json`.
+4. Pose grammar remains stable: `POSES=bras_bas,en_avant,second,fifth,plie,releve`, `ARMS_BEHIND_BACK=BLOCKED`, `GEOMETRY_FAIL_BLOCKS_RENDER=TRUE`.
+5. Next single step: regenerate Phase 10.6.5 canonical pose solver. Do not proceed to Motion Studio regeneration until 10.6.5 passes.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
