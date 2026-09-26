@@ -28,6 +28,7 @@ from accepted_arm_reference import extract_accepted_arm_reference  # noqa: E402
 from accepted_arm_visual import joint_targets  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
 from static_pose_preview_v0_3 import apply_solution, render_views, require  # noqa: E402
+from ring_weight_sanitizer_v0_1 import sanitize_ring_weights  # noqa: E402
 from first_position_finger_aware_v0_7 import (  # noqa: E402
     SHAPE_LEVELS,
     align_hand_to_forearm,
@@ -196,6 +197,9 @@ def main():
     armature.animation_data_clear()
     bpy.context.scene.frame_set(1)
 
+    ring_weight_sanitization = sanitize_ring_weights(armature, mapping)
+    print(f"RING_WEIGHT_SANITIZER_REMOVED={ring_weight_sanitization['removed_total']}")
+
     candidate, shift, steps, residuals, continuity = scaffold_pose(
         armature, calibration, reference
     )
@@ -252,6 +256,7 @@ def main():
             "arm_residuals": residuals,
             "hand_continuity_deg": continuity,
         },
+        "ring_weight_sanitization": ring_weight_sanitization,
         "baseline_previews": baseline_views,
         "results": results,
         "suspects": suspects,
