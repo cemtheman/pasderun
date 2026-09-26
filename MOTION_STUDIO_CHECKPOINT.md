@@ -313,6 +313,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 3. This was a command construction error only; no Phase 10.6.5 output was produced and no generated profile should be treated as valid from that failed run.
 4. Next single step: rerun Phase 10.6.5 with `--intents assets/ballet_motion/foundation_pose_intents_v1.json`.
 
+
+## 2026-09-26 — Phase 10.6.5 regenerated on final repaired source
+
+1. Corrected Mac local rerun after syncing checkpoint `61482dbf3fe8eb3eef06a812ae359fb572f5c5b6` completed successfully.
+2. `tools/ballet_motion/build_canonical_pose_solver_v1.py` returned `PHASE10_6_5_CANONICAL_POSE_SOLVER=PASS`.
+3. Generated profile: `build/phase10_6/low_poly_girl_canonical_pose_solver_v1.json`.
+4. Gates all passed: `FOUNDATION_POSES=6/6`, `PREFERRED_JOINT_ENVELOPE=6/6`, `INVALID_PROBES=4/4_REJECTED`; `RIG_RETARGET=NOT_PERFORMED`, `RENDER=NOT_PERFORMED`.
+5. Phase 10.6 chain is now fully regenerated against canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+6. Next single step: regenerate Motion Studio calibration from this Phase 10.6.5 solver/calibration chain, then regenerate accepted-arm reference before any new isolation/render test.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
