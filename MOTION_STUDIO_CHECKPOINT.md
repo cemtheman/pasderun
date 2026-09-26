@@ -184,6 +184,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Candidate report also showed ring deform groups existed on several imported mesh objects (`eyes`, `girl`, `hair`, `hat`, `mouth`) and were renamed together with bones.
 6. Canonical source GLB is still untouched at this checkpoint. Next step is deliberate adoption: back up the old source outside the tracked path, replace `assets/characters/low_poly_girl/low_poly_girl .glb` with the validated candidate, verify SHA `ae03b92...`, commit the binary change, then regenerate all Phase 10.6 / Motion Studio artifacts tied to the old source SHA. After regeneration, remove the temporary inverted ring mapping exception.
 
+
+## 2026-09-26 — Repaired source accepted by Phase 10.6 foundation
+
+1. Canonical source GLB now has SHA `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8` and is committed on the Motion Studio branch at `3bc1854388ff3b0fbf68b2869cd29320226824bc`.
+2. Phase 10.6.1 regenerated on Blender 5.2.2 LTS and bound to the new source SHA.
+3. Phase 10.6.2–10.6.5 were regenerated from canonical specs. Final 10.6.5 checks: `GEOMETRY=True`, `JOINT_DOFS=True`, `INVALID_PROBES=True`. Therefore the ring-name source repair did not break the canonical foundation pose solver.
+4. Temporary inverted ring mapping workaround is removed. `tools/motion_studio/low_poly_girl_finger_mapping_v0_1.json` now maps `Ring_L*` to canonical left and `Ring_R*` to canonical right, and binds to the repaired source SHA. Mapping normalization commit: `9cfd38aff760c5834eb9d95059cace13f6455764`.
+5. Next step: regenerate Motion Studio calibration and accepted-arm reference from the new Phase 10.6 artifacts, verify every output binds to `ae03b92...`, then build the first finger-aware static First Position hand-shape candidate under `BALLET_HAND_FORM_CONTRACT.md`.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
