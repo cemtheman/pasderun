@@ -332,6 +332,14 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. This calibration now derives from the fully regenerated Phase 10.6 chain bound to canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
 5. Next single step: regenerate `accepted_arm_reference_v0_6.json` (and review evidence) from the new Phase 10.6.5 solver + Motion Studio calibration. Do not run isolation or First Position until the accepted-arm reference passes.
 
+
+## 2026-09-26 — Accepted-arm reference regenerated; geometry review requires inspection
+
+1. Mac local rerun after syncing checkpoint `5fbee78e78bf058ea7fd8b4969e6a7858e179f34` produced `MOTION_STUDIO_ACCEPTED_ARM_REFERENCE=PASS`.
+2. The accompanying qualitative port-de-bras review returned `PORT_DE_BRAS_GEOMETRY_REVIEW=fail`.
+3. Repository inspection confirms this review is a separate qualitative evidence layer. It checks preparatory wrist-inside-elbow, outward opening toward second, middle/end elbow vertical ordering, and second-position anterior wrist placement; it does not invalidate the accepted reference extraction by itself and does not provide teacher approval.
+4. Do not proceed to finger isolation yet. First inspect the exact failed check names/evidence in `build/motion_studio/accepted_arm_review_v0_6.json`; only then decide whether the failure is inherited known geometry or a new regression from the source repair.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
