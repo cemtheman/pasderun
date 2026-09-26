@@ -14,6 +14,7 @@ Bu dosya Motion Studio oturumlarının devam noktasıdır. **Yeni oturumun baş�
 
 ## Değişmez çalışma yöntemi
 
+- **Çalışma yetkisi / araç kuralı:** Kullanıcı açıkça istemedikçe OpenAI Work'a devretme, Work prompt'u önerme veya işi başka bir ajana bırakma. Repo değişikliklerini bu sohbet içindeki GitHub bağlantısı üzerinden doğrudan yap; kullanıcıya elle dosya düzenletme. Kullanıcıya yalnız çalıştıracağı terminal komutlarını ve inceleme için gereken çıktı/dosyaları ver.
 1. `git fetch origin motion-studio-v0-6-accepted-arm-visual-probe`; doğru dalda olduğundan, güncel SHA'dan ve temiz/korunması gereken yerel değişikliklerden emin ol. Kullanıcının yerel commit'lerini veya üretilmiş dosyalarını silme; `reset --hard` ve zorlamalı ref güncellemesi kullanma.
 2. Yalnızca ilgili Motion Studio kaynaklarını ve gerçek raporları oku. Önceki test edilmiş pozların kaynaklarını, kabul edilmiş Phase 10 animasyonlarını, `main` veya üretim paketini değiştirme.
 3. Her düzeltme için dar kapsamlı Python testi çalıştır; Blender veya Godot testi gerektiğinde Windows çalıştırmasının çıktısını ayrıca iste/incele. `report.json` durumunu, sayısal ihlalleri, görüntüleri ve Blender çıkışını kaydet. Betik hatası varsa önce kodu düzelt, yeniden çalıştırma komutunu ver.
@@ -210,6 +211,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 2. Root cause: the exact accepted bras-bas wrist at zero shift sits on the two-link solver singular boundary; `solve_two_link` is designed to reject that boundary. This is not a finger-rig failure.
 3. Fixed the bounded separation search to start at one solver tolerance (`arm_reach * 0.005`) instead of zero, preserving the same search policy while avoiding the degenerate seed. Fix commit: `a95769eaad0fa97f318e18f1e44083734f8ff71c`.
 4. Next step: sync Mac and rerun the same Blender v0.7 command; real render/report remains PENDING.
+
+
+## 2026-09-26 — v0.7 spike render / isolated finger diagnosis
+
+1. Gerçek Blender v0.7 koşusu render üretti; kullanıcı front/side görsellerinde özellikle yan görünüşte elden çok uzağa uzanan bariz skinned-mesh spike gördü. Bu aday **REJECT**; bale estetiği değerlendirmesine geçilmedi.
+2. Aynı koşunun raporu yeni canonical source SHA `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8` üzerinde. Fingertip koordinatları lokal olarak makul görünürken mesh projection çok büyük negatif overlap verdi (balanced yaklaşık `-0.6773`); clearance araması kol reach envelope limitine kadar `0.22075248` shift üretti. Bu, fingertip landmark'ları ile skinned mesh davranışının ayrıştığını gösteriyor.
+3. Spike'ın finger-bone targetından mı, deform vertex-group/skinning etkisinden mi geldiğini ayırmak için yeni gerçek-Rig tanı aracı eklendi: `tools/blender/motion_studio/finger_isolation_debug_v0_7.py`, commit `9c43c91e03709895096dbd6af9fe2a508b7fc082`.
+4. Tanı aracı aynı sabit First Position scaffold üzerinde önce no-finger baseline render/mesh snapshot alır; sonra sol/sağ thumb/index/middle/ring/pinky zincirlerini **tek tek** şekillendirir. Her koşuda front/side PNG, tip koordinatı, evaluated-mesh maksimum vertex displacement, obje AABB değişimi ve ranked `suspects` üretir.
+5. Kullanıcı çalışma yöntemi tekrar teyit edildi: kullanıcı açıkça istemedikçe **OpenAI Work kullanılmayacak / önerilmeyecek**; GitHub değişikliklerini asistan doğrudan yapacak, kullanıcıya elle dosya düzenletilmeyecek. Kullanıcıya yalnız terminalde çalıştıracağı komutlar verilecek.
+6. Sonraki tek somut adım: Mac branch'i bu commit'e ff-only eşitle ve `finger_isolation_debug_v0_7.py` gerçek Blender koşusunu çalıştır. Rapor ile en yüksek displacement/AABB suspect doğrudan düzeltilecek; v0.7 ana hand-shape script'i tanı sonucu gelmeden körlemesine yeniden ayarlanmayacak.
 
 ## Her yeni oturumda eklenecek kayıt şablonu
 
