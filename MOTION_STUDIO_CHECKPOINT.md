@@ -144,6 +144,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 12. Sonraki tek somut adım: Mac checkout'u `13c4975...` commit'ine ff-only eşitle; hand-roll sweep'i gerçek final Rig üzerinde çalıştır; 7 front/side adaydan referanstaki inward hand direction'a en yakın olanı görsel olarak seç. Seçim yapılmadan arm path'e geçme.
 
 
+
+## 2026-09-26 — Ballet hand form contract
+
+1. Kullanıcı bale el/parmak tutuşu için üretim gereksinimlerini açıkça tanımladı: başparmak avuca doğru yumuşakça gizlenir; orta parmak hafif aşağı/içe; işaret parmağı biraz daha yukarı/uzatılmış; yüzük ve serçe doğal kademeli kavsi izler. El hafif oval nesne tutar gibi kavislidir; parmaklar yapışık veya pençe gibi değildir. Bilek önkol çizgisini kesmeden parmak uçlarına devam ettirir.
+2. First Position için ek görsel kontrat: parmak uçları birbirini göstermeli, eller kol ovalini kapatmalı, avuç/el düzlemi seyirciye fazla dönmemeli ve el bilekten kırık görünmemelidir.
+3. Mevcut Motion Studio canonical rig profilinde `Hand_L/R` ve `Middle_L/R` tanımlıdır; başparmak, işaret, yüzük ve serçe ayrı canonical kemikler olarak henüz tanımlı değildir. Bu nedenle yalnız hand-roll sweep ile gerçek bale el formunun sağlandığı iddia edilmeyecek.
+4. Yeni kaynak kontrat dosyası: `tools/motion_studio/BALLET_HAND_FORM_CONTRACT.md`; commit `6b5ddfbe11305c9070733ad6c09737ca554890d1`. Bu dosya kullanıcı tarifini üretim kabul kapısı olarak kaydeder.
+5. Sonraki ilk teknik işlem: final Rig gerçek bone inventory'sini Blender içinde listeleyip thumb/index/ring/pinky için ayrı kemiklerin varlığını doğrulamak. Varsa finger calibration layer eklenecek; yoksa hand-specific rig extension / shape-key / revised character rig seçeneklerinden biri seçilecek. Provisional First Position yalnız geometri scaffolding olarak kalacak; kabul edilmiş bale eli sayılmayacak.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
