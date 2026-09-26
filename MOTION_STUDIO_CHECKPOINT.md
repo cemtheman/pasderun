@@ -287,6 +287,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Canonical skeleton still contains 24 bones and body-frame policy remains `LEFT,UP,FRONT` with `FRONT_POLICY=DECLARED_BY_RIG_CALIBRATION_ONLY`.
 5. Next single step: regenerate Phase 10.6.3 anatomical constraint profile from the new canonical ballet profile. Do not run 10.6.4 or later until 10.6.3 passes.
 
+
+## 2026-09-26 — Phase 10.6.3 regenerated on final repaired source
+
+1. Mac local rerun after syncing checkpoint `a38500c5561bf35259cbafe879de00fe1e706e69` completed successfully.
+2. `tools/ballet_motion/build_anatomical_constraint_profile_v1.py` returned `PHASE10_6_3_ANATOMICAL_CONSTRAINTS=PASS`.
+3. Generated profile: `build/phase10_6/low_poly_girl_anatomical_constraint_profile_v1.json`.
+4. Canonical constraint policy remains stable: `BONES=24`, `TURNOUT_PRIMARY=HIP`, `KNEE_AXIAL=DERIVED_ONLY`, `FOOT_YAW=FORBIDDEN`.
+5. Next single step: regenerate Phase 10.6.4 ballet pose grammar profile. Do not run 10.6.5 until 10.6.4 passes.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
