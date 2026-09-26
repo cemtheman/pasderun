@@ -232,6 +232,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Wired the bounded sanitizer into the isolated finger probe at `f3ff85b0b6f39ece7aaeb7089a5f239c56992d76` and into the First Position v0.7 render at `c06b566286ad630a922c6d267c68a527df80f756`. Both reports print/store the number of removed suspect ring influences.
 6. Next step: rerun isolated finger diagnostic. Acceptance for this treatment: left/right ring displacement should collapse from ~0.7086 to the same order of magnitude as ordinary finger deformation and the long side-view spikes must disappear. Only after that rerun v0.7 First Position. A permanent source-weight migration will be made after this runtime proof, not before.
 
+
+## 2026-09-26 — v0.1 ring sanitizer insufficient; anatomy-aware v0.2
+
+1. First Position v0.7 rerun after v0.1 sanitizer still showed long symmetric horizontal spikes from the hand region. Therefore v0.1 distance-only cleanup was insufficient.
+2. The rerun report confirms v0.1 removed 152 ring influences total (76 per side / 43 vertices per side on `girl`) and restored positive frontal hand separation (~0.042–0.045), but visual mesh corruption remained. This means not all corrupt ring weights are merely "far away"; some implausible assignments are spatially near the hand/finger neighborhood.
+3. Added `tools/blender/motion_studio/ring_weight_sanitizer_v0_2.py`, commit `f53461419b03817f10abfca43eb537b03460cdad`. v0.2 compares every ring-weighted vertex in rest space against the full same-side hand/finger anatomy. Ring weight is kept only when ring is the nearest plausible chain within a bounded radius. Otherwise the removed ring weight is reassigned to the nearest non-ring hand/finger root group rather than discarded.
+4. Isolation probe switched to v0.2 at `8a5c93dda5746a26e3e90513b14cae0ee42dec71`; First Position v0.7 switched at `ee6bbd2d5c97226295fea02a0a57348d96bb9715`.
+5. Next single step: rerun isolated finger diagnostic first. Acceptance: ring-only displacement must fall near ordinary finger displacement and all long spikes must disappear. If PASS, rerun First Position v0.7. If ring-only still spikes, do not tune hand pose; next step is source-weight audit/migration.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
