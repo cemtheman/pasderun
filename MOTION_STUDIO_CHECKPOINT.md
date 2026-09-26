@@ -323,6 +323,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Phase 10.6 chain is now fully regenerated against canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
 6. Next single step: regenerate Motion Studio calibration from this Phase 10.6.5 solver/calibration chain, then regenerate accepted-arm reference before any new isolation/render test.
 
+
+## 2026-09-26 — Motion Studio calibration regenerated on final repaired source
+
+1. Mac local rerun after syncing checkpoint `d90d6e643f025eebda9cee9aa724bb3189e13686` completed successfully.
+2. `tools/motion_studio/rig_calibration.py` returned `MOTION_STUDIO_RIG_CALIBRATION=PASS`.
+3. Generated calibration: `build/motion_studio/low_poly_girl_calibration_v0_1.json`.
+4. This calibration now derives from the fully regenerated Phase 10.6 chain bound to canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+5. Next single step: regenerate `accepted_arm_reference_v0_6.json` (and review evidence) from the new Phase 10.6.5 solver + Motion Studio calibration. Do not run isolation or First Position until the accepted-arm reference passes.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
