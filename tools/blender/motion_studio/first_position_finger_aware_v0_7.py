@@ -32,7 +32,6 @@ from hand_clearance_candidate import shifted_solution  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
 from static_pose import dot  # noqa: E402
 from static_pose_preview_v0_3 import apply_solution, render_views, require  # noqa: E402
-from ring_weight_sanitizer_v0_2 import sanitize_ring_weights_v0_2  # noqa: E402
 
 
 SHAPE_LEVELS = {
@@ -270,8 +269,6 @@ def main():
     armature.animation_data_clear()
     bpy.context.scene.frame_set(1)
 
-    ring_weight_sanitization = sanitize_ring_weights_v0_2(armature, mapping)
-    print(f"RING_WEIGHT_SANITIZER_REMOVED={ring_weight_sanitization['removed_total']}")
 
     for side in ("left", "right"):
         for finger, chain in mapping["hands"][side].items():
@@ -339,7 +336,6 @@ def main():
         "source_profile_sha256": reference["source_profile_sha256"],
         "source_glb_sha256": reference["source_glb_sha256"],
         "finger_mapping_profile_id": mapping["profile_id"],
-        "ring_weight_sanitization": ring_weight_sanitization,
         "contract": "tools/motion_studio/BALLET_HAND_FORM_CONTRACT.md",
         "scaffold": {
             "wrist_height": "calibrated spine_mid head elevation torso proxy",
