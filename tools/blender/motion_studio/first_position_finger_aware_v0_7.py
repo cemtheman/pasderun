@@ -172,8 +172,19 @@ def reset_pose(armature):
 
 def build_first_scaffold(reference, calibration, shift: float):
     frame = calibration["anatomical_frame"]
-    low = shifted_solution(joint_targets(reference, calibration, "bras_bas"), frame, shift)
-    high = shifted_solution(joint_targets(reference, calibration, "en_avant"), frame, shift, "body_outward")
+    # Bras-bas is used only as the lower vertical/front boundary for First
+    # Position. Re-solving that accepted endpoint after a lateral shift is both
+    # unnecessary and, on the repaired real rig, can hit the two-link solver
+    # boundary. Keep the exact accepted bras-bas geometry as the low bound.
+    low = joint_targets(reference, calibration, "bras_bas")
+    # First Position inherits its lateral wrist separation from the high
+    # en-avant scaffold, so only that endpoint needs the bounded outward shift.
+    high = shifted_solution(
+        joint_targets(reference, calibration, "en_avant"),
+        frame,
+        shift,
+        "body_outward",
+    )
     height = dot(calibration["canonical_bones"]["spine_mid"]["head_local"], frame["up"])
     return guide_first_position(low, high, frame, navel_region_height=height)
 
@@ -233,11 +244,9 @@ def main():
     # This keeps the provisional First Position arm oval compact.
     base_reach = joint_targets(reference, calibration, "en_avant")["arms"]["left"]["arm_reach"]
     tolerance = base_reach * 0.005
-    # Avoid the exact accepted bras-bas solver boundary with a materially
-    # non-degenerate seed. One 0.5% solver tolerance was still too close on the
-    # real Blender run, so start at 2% of measured arm reach. This remains tiny
-    # relative to the arm and is only the lower bound of the measured gap search.
-    shift = max(tolerance, base_reach * 0.02)
+    # Start from zero separation adjustment. Bras-bas is no longer unnecessarily
+    # re-solved; only the en-avant-derived lateral scaffold is shifted as needed.
+    shift = 0.0
     print(f"FIRST_FINGER_SEARCH_INITIAL_SHIFT={shift:.8f}")
     for search_iteration in range(1, 13):
         _, _, _, _, probe = pose_candidate(
