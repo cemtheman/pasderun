@@ -241,6 +241,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Isolation probe switched to v0.2 at `8a5c93dda5746a26e3e90513b14cae0ee42dec71`; First Position v0.7 switched at `ee6bbd2d5c97226295fea02a0a57348d96bb9715`.
 5. Next single step: rerun isolated finger diagnostic first. Acceptance: ring-only displacement must fall near ordinary finger displacement and all long spikes must disappear. If PASS, rerun First Position v0.7. If ring-only still spikes, do not tune hand pose; next step is source-weight audit/migration.
 
+
+## 2026-09-26 — Ring sanitizer v0.2 runtime proof PASS
+
+1. Mac real Blender isolation rerun executed at branch HEAD `390dcd957e1591c91c318128eed175f1d7eb3521`, Blender 5.2.2 LTS, repaired source SHA `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`.
+2. Runtime reported `RING_WEIGHT_SANITIZER_REMOVED=152`.
+3. Ranked suspects after v0.2 no longer include either ring chain. Top displacements are now ordinary finger motion: `right_thumb=0.07302934`, `left_thumb=0.07302915`, `left_middle=0.03116748`, `right_middle=0.03116687`. The former ring displacement (~0.7086 each side) is eliminated from the suspect list.
+4. Conclusion: the long spike defect was caused by corrupt/implausible ring deform weights, and anatomy-aware runtime sanitizer v0.2 fixes the isolated deformation sufficiently for First Position visual testing.
+5. Next single step: rerun `first_position_finger_aware_v0_7.py` with v0.2 sanitizer active and visually inspect soft/balanced/expressive front+side renders. Do not yet migrate source weights permanently; first confirm full-hand render is clean.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
