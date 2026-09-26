@@ -139,6 +139,10 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 8. Bu oturumda `build/` altında oluşan yerel JSON, PNG ve Blend kanıtları source-control'a eklenmedi. `main` ve üretim tabanı değiştirilmedi. Mac local checkout'ta `build/motion_studio/` untracked olabilir; bu beklenen yerel kanıt durumudur.
 9. Sonraki tek somut adım: `guide_first_spine_mid_v0_6` statik waypoint'ini Mac'te gerçek final Rig üzerinde üretip ön/yan görsel ve raporunu incelemek. Ardından Bra Bas → guide first → second waypoint zinciri üzerinden arm path/catalog'a devam etmek. En avant outward elbow görsel kusuru açık issue olarak korunacak; sessizce kabul edilmeyecek.
 
+10. `guide_first_spine_mid_v0_6` Mac'te üretildi. Rapor `FIRST_POSITION_STATIC_VISUAL_REVIEW_REQUIRED`; wrist yüksekliği `spine_mid=1.10468304`, frontal hand gap `+0.02838743`. Kullanıcı referans çizimle karşılaştırınca First Position'da ellerin yönünün yanlış okunduğunu belirtti: parmaklar merkeze yeterince yönelmiyor, avuç/el düzlemi karın üstüne yapışmış gibi ve fazla frontal görünüyor. Bu waypoint **kabul edilmedi**; mevcut shoulder/elbow/wrist geometrisi korunup yalnız el yönü düzeltilecek.
+11. Yeni dar kapsamlı araç eklendi: `tools/blender/motion_studio/guide_first_hand_roll_sweep_v0_6.py`. Kod commit'i `13c497599c0a04519b43f673d8b485a7859649a3` (parent: `051e49a0123bde6fb5fa164f29d2488c4b025f15`). Varsayılan sweep `-30,-20,-10,0,+10,+20,+30°`; sol/sağ el kemiklerini önkol ekseni çevresinde simetrik ve ters işaretli döndürür. Shoulder/elbow/wrist hedefleri ve ayaklar sabit tutulur; her aday için front/side PNG, hand direction metric ve frontal hand-mesh gap raporlanır. Bu commit için gerçek Blender koşusu **henüz yapılmadı**.
+12. Sonraki tek somut adım: Mac checkout'u `13c4975...` commit'ine ff-only eşitle; hand-roll sweep'i gerçek final Rig üzerinde çalıştır; 7 front/side adaydan referanstaki inward hand direction'a en yakın olanı görsel olarak seç. Seçim yapılmadan arm path'e geçme.
+
 
 ## Her yeni oturumda eklenecek kayıt şablonu
 
