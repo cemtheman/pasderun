@@ -370,6 +370,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Therefore v0.7 is `REJECT_FOR_POSE_AESTHETICS`, while the underlying finger rig/source repair is `PASS`.
 5. Do not tune finger shape further yet. Next work should replace the current First Position scaffold generation (which inherits shifted en-avant/bras-bas geometry) with an explicit First Position shoulder/elbow/wrist target scaffold that produces the correct rounded arm oval in front of the torso, then reuse the now-clean hand/finger shaping on top.
 
+
+## 2026-09-26 — First Position explicit scaffold v0.8 authored
+
+1. v0.7 was already rejected for pose aesthetics after the ring/source repair passed. The failure was the arm scaffold, not finger skinning.
+2. Added `tools/blender/motion_studio/first_position_explicit_v0_8.py` at commit `5563e84876af985ead24fb610421b3face450ac8`.
+3. v0.8 no longer interpolates bras-bas with shifted en-avant. It authors explicit body-relative First Position wrist targets from pelvis/standing-height and solves the two-link arms directly with an outward+upward elbow pole.
+4. Three scaffold candidates are rendered: `compact`, `classical`, `lifted`. Finger shaping is reused unchanged at balanced strength so the visual comparison isolates arm geometry.
+5. Report includes shoulder/elbow/wrist vertical ordering, elbow/wrist lateral positions, wrist front depth, arm residuals, hand continuity, mesh hand gap and front/side previews.
+6. Next single step: sync Mac and run `first_position_explicit_v0_8.py` against the regenerated calibration/reference. Visual review should choose the best arm scaffold before any further finger tuning.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
