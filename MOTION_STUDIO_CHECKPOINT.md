@@ -361,6 +361,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Conclusion: the canonical ring vertex-group repair is validated without any runtime sanitizer. The spike defect is resolved at source level.
 6. Next single step: run `first_position_finger_aware_v0_7.py` against the regenerated calibration/reference and inspect soft/balanced/expressive front+side renders. Any remaining issue after this point is pose/hand aesthetics, not ring skinning corruption.
 
+
+## 2026-09-26 — First Position v0.7 visual review after source repair
+
+1. Final repaired source render completed cleanly with no ring/deform spikes. Report source SHA is `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+2. Soft/balanced/expressive are geometrically stable: arm residuals are near numerical zero, forearm→hand continuity is ~0–0.014°, and frontal hand projection gap remains positive (~0.042–0.045 armature units).
+3. Visual review: all three variants are effectively too similar at full-body scale. The hands now deform correctly, but the overall pose still does not read as a convincing ballet First Position. Arms are held too low/close to the waist and elbows are too acutely folded; the silhouette reads more like hands placed in front of the lower torso than a rounded First Position oval. Side view also shows forearms dropping too steeply instead of forming a supported rounded port-de-bras shape.
+4. Therefore v0.7 is `REJECT_FOR_POSE_AESTHETICS`, while the underlying finger rig/source repair is `PASS`.
+5. Do not tune finger shape further yet. Next work should replace the current First Position scaffold generation (which inherits shifted en-avant/bras-bas geometry) with an explicit First Position shoulder/elbow/wrist target scaffold that produces the correct rounded arm oval in front of the torso, then reuse the now-clean hand/finger shaping on top.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
