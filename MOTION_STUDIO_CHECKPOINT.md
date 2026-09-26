@@ -203,6 +203,14 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Updated `BALLET_HAND_FORM_CONTRACT.md` at commit `a2e21a252733a7b19f3b2926c4dcad6bc8cbf15c` to record the verified five-finger rig and repaired ring naming. Hand-roll alone is explicitly no longer considered sufficient.
 6. Real Blender run of v0.7 is still PENDING. Next single step: sync Mac to this checkpoint and run `first_position_finger_aware_v0_7.py`; inspect the three front/side variants before any path/catalog continuation.
 
+
+## 2026-09-26 — v0.7 first run singularity fix
+
+1. First real Blender run of `first_position_finger_aware_v0_7.py` failed before rendering at `shift=0.0`: `validate.ContractError: left: target unreachable or straight/folded singularity`.
+2. Root cause: the exact accepted bras-bas wrist at zero shift sits on the two-link solver singular boundary; `solve_two_link` is designed to reject that boundary. This is not a finger-rig failure.
+3. Fixed the bounded separation search to start at one solver tolerance (`arm_reach * 0.005`) instead of zero, preserving the same search policy while avoiding the degenerate seed. Fix commit: `a95769eaad0fa97f318e18f1e44083734f8ff71c`.
+4. Next step: sync Mac and rerun the same Blender v0.7 command; real render/report remains PENDING.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
