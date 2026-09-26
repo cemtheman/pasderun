@@ -351,6 +351,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 3. Therefore classify this review result as inherited qualitative arm-geometry debt, not a new source-repair regression. Do not block the ring/finger deformation verification on it.
 4. Next single step: run sanitizer-free `finger_isolation_debug_v0_7.py` against the regenerated calibration/reference and canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`. Acceptance: ring-only deformation remains in normal finger scale with no long spikes.
 
+
+## 2026-09-26 — Sanitizer-free finger isolation PASS on final repaired source
+
+1. User uploaded the sanitizer-free `finger_isolation_debug_v0_7` output ZIP plus regenerated Motion Studio calibration/reference files.
+2. Isolation report status is `FINGER_ISOLATION_DIAGNOSTIC_COMPLETE` on final canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+3. Ranked deformation is now within normal finger scale with no catastrophic ring spike: `right_thumb=0.07302952`, `left_thumb=0.07302943`, `left_ring=0.03640992`, `right_ring=0.03640980`; ring AABB ratios are only ~`1.00131`.
+4. Visual inspection of `left_ring_only_side.png` confirms the long spike is gone; the ring finger deforms locally at the hand.
+5. Conclusion: the canonical ring vertex-group repair is validated without any runtime sanitizer. The spike defect is resolved at source level.
+6. Next single step: run `first_position_finger_aware_v0_7.py` against the regenerated calibration/reference and inspect soft/balanced/expressive front+side renders. Any remaining issue after this point is pose/hand aesthetics, not ring skinning corruption.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
