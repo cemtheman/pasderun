@@ -250,6 +250,14 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Conclusion: the long spike defect was caused by corrupt/implausible ring deform weights, and anatomy-aware runtime sanitizer v0.2 fixes the isolated deformation sufficiently for First Position visual testing.
 5. Next single step: rerun `first_position_finger_aware_v0_7.py` with v0.2 sanitizer active and visually inspect soft/balanced/expressive front+side renders. Do not yet migrate source weights permanently; first confirm full-hand render is clean.
 
+
+## 2026-09-26 — Root cause corrected: ring vertex groups were double-swapped
+
+1. Full First Position rerun after runtime sanitizer v0.2 still produced long symmetric spikes. The report showed all 43 ring-weighted vertices per side were rejected as ring anatomy and reassigned to `Hand_L/R`; `kept_ring_vertices=0`. This changed the spike direction but did not solve the deformation, proving runtime reweighting was treating the symptom rather than the source.
+2. Root cause identified in `repair_ring_finger_names_v0_1.py`: the migration renamed ring bones and then performed an explicit second rename of matching vertex groups. Blender armature-bound meshes already propagate bone renames to correspondingly named deform vertex groups; therefore the manual vertex-group rename pass swapped the ring groups a second time. Result: bones/hierarchy became correct, but `Ring_L*` weights remained on geometric right and `Ring_R*` weights on geometric left.
+3. Added source migration `tools/blender/motion_studio/repair_ring_vertex_groups_v0_2.py` at commit `99d4ad2c10abf508d05d4eda62b612978634dbd9`. It starts from canonical repaired source SHA `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`, leaves all bones/hierarchy/transforms untouched, confirms the expected wrong-side weighted-centroid signature, swaps ONLY the six ring vertex-group names, exports a separate candidate GLB, reimports it, and requires left ring weights on +X and right ring weights on -X after round-trip.
+4. Do not tune pose or use runtime ring sanitizers further until this source candidate is generated and validated. If candidate PASSes, adopt it as canonical source, update source SHA bindings, regenerate Phase 10.6 + Motion Studio artifacts, then remove runtime sanitizer from v0.7.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
