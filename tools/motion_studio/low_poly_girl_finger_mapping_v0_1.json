@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "profile_id": "low_poly_girl_finger_mapping_v0_1",
-  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "source_glb_sha256": "ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8",
   "coordinate_space": "BLENDER_ARMATURE_LOCAL",
-  "anatomical_side_policy": "Use calibrated body-left (+X) / body-right (-X) and actual Hand_L/Hand_R parentage; do not trust Ring_L/R suffixes.",
+  "anatomical_side_policy": "Use calibrated body-left (+X) / body-right (-X) and canonical L/R suffixes from the repaired source rig.",
   "hands": {
     "left": {
       "hand": "Hand_L",
@@ -23,9 +23,9 @@
         "Middle_2_L"
       ],
       "ring": [
-        "Ring_R",
-        "Ring_1_R",
-        "Ring_2_R"
+        "Ring_L",
+        "Ring_1_L",
+        "Ring_2_L"
       ],
       "pinky": [
         "Pinky_L",
@@ -51,9 +51,9 @@
         "Middle_2_R"
       ],
       "ring": [
-        "Ring_L",
-        "Ring_1_L",
-        "Ring_2_L"
+        "Ring_R",
+        "Ring_1_R",
+        "Ring_2_R"
       ],
       "pinky": [
         "Pinky_R",
@@ -62,29 +62,10 @@
       ]
     }
   },
-  "source_name_anomalies": [
-    {
-      "canonical": "left.ring",
-      "source_chain": [
-        "Ring_R",
-        "Ring_1_R",
-        "Ring_2_R"
-      ],
-      "evidence": "All chain coordinates are on calibrated left (+X) side and Ring_R is parented to Hand_L."
-    },
-    {
-      "canonical": "right.ring",
-      "source_chain": [
-        "Ring_L",
-        "Ring_1_L",
-        "Ring_2_L"
-      ],
-      "evidence": "All chain coordinates are on calibrated right (-X) side and Ring_L is parented to Hand_R."
-    }
-  ],
+  "source_name_anomalies": [],
   "rules": [
-    "Never rename or reparent source rig bones solely to fix the suffix anomaly.",
-    "All Motion Studio finger solvers must address ring fingers through this canonical mapping.",
+    "Canonical finger side must match the repaired source rig L/R suffix.",
+    "Do not reintroduce the historical Ring_L/R inversion workaround.",
     "Finger pose acceptance remains governed by BALLET_HAND_FORM_CONTRACT.md."
   ]
 }
