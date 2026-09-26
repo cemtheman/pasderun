@@ -305,6 +305,14 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Pose grammar remains stable: `POSES=bras_bas,en_avant,second,fifth,plie,releve`, `ARMS_BEHIND_BACK=BLOCKED`, `GEOMETRY_FAIL_BLOCKS_RENDER=TRUE`.
 5. Next single step: regenerate Phase 10.6.5 canonical pose solver. Do not proceed to Motion Studio regeneration until 10.6.5 passes.
 
+
+## 2026-09-26 — Phase 10.6.5 invocation correction
+
+1. First Mac invocation of `build_canonical_pose_solver_v1.py` stopped at argparse before any output because the required `--intents` argument was omitted.
+2. Repository runner `tools/ballet_motion/run_phase10_6_5_canonical_pose_solver.ps1` confirms the correct intents source is `assets/ballet_motion/foundation_pose_intents_v1.json`.
+3. This was a command construction error only; no Phase 10.6.5 output was produced and no generated profile should be treated as valid from that failed run.
+4. Next single step: rerun Phase 10.6.5 with `--intents assets/ballet_motion/foundation_pose_intents_v1.json`.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
