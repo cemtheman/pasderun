@@ -26,15 +26,19 @@ This contract records the user's required ballet hand presentation for Motion St
 - Palm/hand plane should not face the audience too directly.
 - Wrist/hand line should remain a natural continuation of the forearm.
 
-## Current rig limitation / open verification
+## Rig verification and implementation status
 
-The current canonical Motion Studio rig profile exposes Hand_L/Hand_R and Middle_L/Middle_R as canonical hand landmarks. Thumb, index, ring and pinky are not currently canonicalized.
+The final Rig has been verified to contain independent Thumb, Index, Middle, Ring and Pinky chains on both hands, with three bones per finger. The historical Ring_L/R source naming inversion was repaired in the canonical GLB and validated through export round-trip plus Phase 10.6 regeneration.
 
-Before implementation:
-1. Inspect the actual final Rig bone inventory for additional finger bones.
-2. If individual finger bones exist, add an explicit finger calibration/mapping layer and implement this contract per finger.
-3. If they do not exist, do not pretend hand-roll alone satisfies this contract. Evaluate a hand-specific rig extension, shape keys, or a revised character rig.
-4. Preserve the current provisional first-position waypoint only as geometry scaffolding; it is not an accepted ballet hand.
+Canonical finger mapping:
+- `tools/motion_studio/low_poly_girl_finger_mapping_v0_1.json`
+- repaired source GLB SHA-256: `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`
+
+Implementation policy:
+1. Finger-aware tools must use the canonical finger mapping rather than infer finger identity from traversal order.
+2. Wrist continuity is a separate acceptance requirement from finger curl/spread.
+3. Hand-roll alone cannot satisfy this contract.
+4. The provisional First Position arm scaffold is geometry scaffolding only until a finger-aware candidate passes visual review.
 
 ## Acceptance gate
 
