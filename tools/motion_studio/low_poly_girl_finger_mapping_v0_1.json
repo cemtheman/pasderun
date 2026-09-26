@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1.0",
+  "profile_id": "low_poly_girl_finger_mapping_v0_1",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "coordinate_space": "BLENDER_ARMATURE_LOCAL",
+  "anatomical_side_policy": "Use calibrated body-left (+X) / body-right (-X) and actual Hand_L/Hand_R parentage; do not trust Ring_L/R suffixes.",
+  "hands": {
+    "left": {
+      "hand": "Hand_L",
+      "thumb": [
+        "Thumb_L",
+        "Thumb_1_L",
+        "Thumb_2_L"
+      ],
+      "index": [
+        "Index_L",
+        "Index_1_L",
+        "Index_2_L"
+      ],
+      "middle": [
+        "Middle_L",
+        "Middle_1_L",
+        "Middle_2_L"
+      ],
+      "ring": [
+        "Ring_R",
+        "Ring_1_R",
+        "Ring_2_R"
+      ],
+      "pinky": [
+        "Pinky_L",
+        "Pinky_1_L",
+        "Pinky_2_L"
+      ]
+    },
+    "right": {
+      "hand": "Hand_R",
+      "thumb": [
+        "Thumb_R",
+        "Thumb_1_R",
+        "Thumb_2_R"
+      ],
+      "index": [
+        "Index_R",
+        "Index_1_R",
+        "Index_2_R"
+      ],
+      "middle": [
+        "Middle_R",
+        "Middle_1_R",
+        "Middle_2_R"
+      ],
+      "ring": [
+        "Ring_L",
+        "Ring_1_L",
+        "Ring_2_L"
+      ],
+      "pinky": [
+        "Pinky_R",
+        "Pinky_1_R",
+        "Pinky_2_R"
+      ]
+    }
+  },
+  "source_name_anomalies": [
+    {
+      "canonical": "left.ring",
+      "source_chain": [
+        "Ring_R",
+        "Ring_1_R",
+        "Ring_2_R"
+      ],
+      "evidence": "All chain coordinates are on calibrated left (+X) side and Ring_R is parented to Hand_L."
+    },
+    {
+      "canonical": "right.ring",
+      "source_chain": [
+        "Ring_L",
+        "Ring_1_L",
+        "Ring_2_L"
+      ],
+      "evidence": "All chain coordinates are on calibrated right (-X) side and Ring_L is parented to Hand_R."
+    }
+  ],
+  "rules": [
+    "Never rename or reparent source rig bones solely to fix the suffix anomaly.",
+    "All Motion Studio finger solvers must address ring fingers through this canonical mapping.",
+    "Finger pose acceptance remains governed by BALLET_HAND_FORM_CONTRACT.md."
+  ]
+}
