@@ -153,6 +153,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Yeni kaynak kontrat dosyası: `tools/motion_studio/BALLET_HAND_FORM_CONTRACT.md`; commit `6b5ddfbe11305c9070733ad6c09737ca554890d1`. Bu dosya kullanıcı tarifini üretim kabul kapısı olarak kaydeder.
 5. Sonraki ilk teknik işlem: final Rig gerçek bone inventory'sini Blender içinde listeleyip thumb/index/ring/pinky için ayrı kemiklerin varlığını doğrulamak. Varsa finger calibration layer eklenecek; yoksa hand-specific rig extension / shape-key / revised character rig seçeneklerinden biri seçilecek. Provisional First Position yalnız geometri scaffolding olarak kalacak; kabul edilmiş bale eli sayılmayacak.
 
+
+## 2026-09-26 — Finger inventory / ring-name anomaly resolved
+
+1. Final Rig finger inventory captured: 32 hand/finger bones. Both hands have Thumb, Index, Middle, Ring and Pinky chains with three bones per finger.
+2. Source naming anomaly confirmed from actual parentage and calibrated X-side geometry. `Hand_L` is on +X and owns `Ring_R → Ring_1_R → Ring_2_R`; `Hand_R` is on -X and owns `Ring_L → Ring_1_L → Ring_2_L`. This is treated as a source naming inversion, not as a reason to reparent or rename the rig.
+3. New canonical mapping source: `tools/motion_studio/low_poly_girl_finger_mapping_v0_1.json`. Canonical left ring maps to source `Ring_R*`; canonical right ring maps to source `Ring_L*`. All other finger chains map by their apparent L/R suffix. Mapping commit: `1ec7764de8a16338be6e0dfb9ec7c2077a089314`.
+4. Ballet hand acceptance remains governed by `BALLET_HAND_FORM_CONTRACT.md`; current provisional first-position hand-roll is not accepted hand form.
+5. Next technical step: build a finger-aware first-position hand-shape candidate using the canonical finger mapping. Keep shoulder/elbow/wrist scaffold fixed, preserve wrist continuity, and shape thumb/index/middle/ring/pinky independently; render front/side before re-authoring the 49-frame path.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
