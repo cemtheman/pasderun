@@ -171,6 +171,19 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Migration code commit: `d3632949d6339b35304065441e5668ca12d73fd4`.
 5. Next step: run the migration on Mac to produce `build/motion_studio/ring_name_repair_v0_1/low_poly_girl_ring_names_fixed.glb` and `report.json`. If the round-trip report is PASS, inspect the repaired rig inventory; only then replace the canonical source GLB, recompute SHA, update the calibration seed/mapping contract as needed, regenerate Phase 10.6 / Motion Studio generated artifacts, and remove the temporary ring-name mapping exception.
 
+
+## 2026-09-26 — Ring finger migration candidate PASS on Mac
+
+1. Migration executed on Blender 5.2.2 LTS against canonical source SHA `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`.
+2. Candidate output SHA: `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`.
+3. Result: `MOTION_STUDIO_RING_NAME_REPAIR=CANDIDATE_PASS`.
+4. Export round-trip confirmed:
+   - `Ring_L -> Hand_L`, `Ring_1_L -> Ring_L`, `Ring_2_L -> Ring_1_L`, all on calibrated +X left side.
+   - `Ring_R -> Hand_R`, `Ring_1_R -> Ring_R`, `Ring_2_R -> Ring_1_R`, all on calibrated -X right side.
+   - hierarchy preserved, geometry preserved, matching vertex groups renamed, export round-trip passed.
+5. Candidate report also showed ring deform groups existed on several imported mesh objects (`eyes`, `girl`, `hair`, `hat`, `mouth`) and were renamed together with bones.
+6. Canonical source GLB is still untouched at this checkpoint. Next step is deliberate adoption: back up the old source outside the tracked path, replace `assets/characters/low_poly_girl/low_poly_girl .glb` with the validated candidate, verify SHA `ae03b92...`, commit the binary change, then regenerate all Phase 10.6 / Motion Studio artifacts tied to the old source SHA. After regeneration, remove the temporary inverted ring mapping exception.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
