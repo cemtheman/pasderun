@@ -233,7 +233,11 @@ def main():
     # This keeps the provisional First Position arm oval compact.
     base_reach = joint_targets(reference, calibration, "en_avant")["arms"]["left"]["arm_reach"]
     tolerance = base_reach * 0.005
-    shift = 0.0
+    # A zero shift reproduces the exact accepted bras-bas wrist. That reference
+    # is effectively on the two-link straight/folded singular boundary, which
+    # solve_two_link intentionally rejects. Start one solver tolerance inward
+    # from that boundary; this is still a bounded search, not a visual preset.
+    shift = tolerance
     for search_iteration in range(1, 13):
         _, _, _, _, probe = pose_candidate(
             armature, calibration, mapping, reference, shift, SHAPE_LEVELS["balanced"]
