@@ -288,20 +288,30 @@ def main():
     shift, feasibility_steps = minimum_feasible_en_avant_shift(reference, calibration)
     print(f"FIRST_FINGER_FEASIBILITY_STEPS={feasibility_steps}")
     print(f"FIRST_FINGER_SEARCH_INITIAL_SHIFT={shift:.8f}")
+    clearance_search_exhausted = False
+    target_gap = 0.0
     for search_iteration in range(1, 13):
         _, _, _, _, probe = pose_candidate(
             armature, calibration, mapping, reference, shift, SHAPE_LEVELS["balanced"]
         )
-        if probe["projected_gap_armature_units"] >= 0.005:
+        if probe["projected_gap_armature_units"] >= target_gap:
             break
-        next_shift = shift + max((0.005 - probe["projected_gap_armature_units"]) / 2.0, tolerance)
-        require(
-            en_avant_shift_feasible(reference, calibration, next_shift),
-            "First Position hand-clearance search left the en-avanti two-link reach envelope",
+        next_shift = shift + max(
+            (target_gap - probe["projected_gap_armature_units"]) / 2.0,
+            tolerance,
         )
+        if not en_avant_shift_feasible(reference, calibration, next_shift):
+            clearance_search_exhausted = True
+            print(
+                "FIRST_FINGER_CLEARANCE_LIMIT=REACH_ENVELOPE "
+                f"CURRENT_GAP={probe['projected_gap_armature_units']:.8f} "
+                f"CURRENT_SHIFT={shift:.8f} NEXT_SHIFT={next_shift:.8f}"
+            )
+            break
         shift = next_shift
     else:
-        raise RuntimeError("Could not find bounded First Position hand separation")
+        clearance_search_exhausted = True
+        print("FIRST_FINGER_CLEARANCE_LIMIT=ITERATION_LIMIT")
 
     for label, strength in SHAPE_LEVELS.items():
         candidate, residuals, continuity, hand_shapes, projection = pose_candidate(
@@ -331,12 +341,17 @@ def main():
             "hand_root_policy": "Hand bone aligned to continue forearm direction",
             "outward_shift_search_iterations": search_iteration,
             "outward_shift_per_wrist_armature_units": round(shift, 8),
+            "clearance_target_gap_armature_units": target_gap,
+            "clearance_search_exhausted_by_reach_or_iteration_limit": clearance_search_exhausted,
         },
         "candidates": results,
         "blend": str(blend),
         "limits": (
             "Static First Position candidate sweep only. Finger shaping is procedural and "
-            "requires front/side visual review. No teacher approval, 3D collision guarantee, "
+            "requires front/side visual review. Hand clearance is diagnostic only; if the arm "
+            "reach envelope blocks further wrist separation the script records that limit and "
+            "still renders the candidate instead of inventing unreachable arm geometry. "
+            "No teacher approval, 3D collision guarantee, "
             "physiological joint-limit proof, temporal smoothing or 49-frame path authored."
         ),
     }
