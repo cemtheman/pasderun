@@ -162,6 +162,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. Ballet hand acceptance remains governed by `BALLET_HAND_FORM_CONTRACT.md`; current provisional first-position hand-roll is not accepted hand form.
 5. Next technical step: build a finger-aware first-position hand-shape candidate using the canonical finger mapping. Keep shoulder/elbow/wrist scaffold fixed, preserve wrist continuity, and shape thumb/index/middle/ring/pinky independently; render front/side before re-authoring the 49-frame path.
 
+
+## 2026-09-26 — Ring finger source rig repair plan
+
+1. User decision: do not keep the Ring_L/R inversion as a permanent mapping exception; fix the source rig naming now to avoid future confusion.
+2. Repository search found no source-code references to `Ring_L` or `Ring_R`, reducing compatibility risk. Existing generated build artifacts still bind to the old GLB SHA and must be regenerated after adoption.
+3. Added `tools/blender/motion_studio/repair_ring_finger_names_v0_1.py`. The migration verifies the exact old GLB SHA, confirms the known anomaly, performs a collision-safe two-phase rename of all six ring-chain bones, renames matching deform vertex groups, preserves hierarchy and geometry, exports to a separate candidate GLB, re-imports it, and validates parentage plus left/right spatial identity. It refuses to overwrite the canonical source directly.
+4. Migration code commit: `d3632949d6339b35304065441e5668ca12d73fd4`.
+5. Next step: run the migration on Mac to produce `build/motion_studio/ring_name_repair_v0_1/low_poly_girl_ring_names_fixed.glb` and `report.json`. If the round-trip report is PASS, inspect the repaired rig inventory; only then replace the canonical source GLB, recompute SHA, update the calibration seed/mapping contract as needed, regenerate Phase 10.6 / Motion Studio generated artifacts, and remove the temporary ring-name mapping exception.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
