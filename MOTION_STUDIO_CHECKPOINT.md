@@ -222,6 +222,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Kullanıcı çalışma yöntemi tekrar teyit edildi: kullanıcı açıkça istemedikçe **OpenAI Work kullanılmayacak / önerilmeyecek**; GitHub değişikliklerini asistan doğrudan yapacak, kullanıcıya elle dosya düzenletilmeyecek. Kullanıcıya yalnız terminalde çalıştıracağı komutlar verilecek.
 6. Sonraki tek somut adım: Mac branch'i bu commit'e ff-only eşitle ve `finger_isolation_debug_v0_7.py` gerçek Blender koşusunu çalıştır. Rapor ile en yüksek displacement/AABB suspect doğrudan düzeltilecek; v0.7 ana hand-shape script'i tanı sonucu gelmeden körlemesine yeniden ayarlanmayacak.
 
+
+## 2026-09-26 — Isolated finger result: ring deform-weight corruption
+
+1. User supplied `finger_isolation_debug_v0_7.zip`. Report status `FINGER_ISOLATION_DIAGNOSTIC_COMPLETE`; source GLB SHA remains `ae03b92e46f71db3630872f9ba212e6700561164c71ca1f6576c58996ce7bea8`.
+2. Ranked displacement isolates the fault decisively to ring chains: `left_ring max_vertex_displacement=0.70857440`, `right_ring=0.70857310`; next highest thumb displacement is only about `0.07303`. Ring AABB expansion is ~1.032 while other suspect meshes stay ~1.0.
+3. Visual inspection of `left_ring_only_side.png` shows the same huge two-spike deformation while ring fingertip bone coordinates remain local. Evaluated displacement is on the main `girl` mesh; eyes/hair/hat/mouth show zero displacement in that probe. Diagnosis: repaired Ring_L/R bone hierarchy/naming is correct, but main-mesh ring deform weights contain spatially implausible assignments. This is a skinning-weight defect, not a finger target-direction defect.
+4. Added `tools/blender/motion_studio/ring_weight_sanitizer_v0_1.py` at commit `3dd8f7f64a1e33336bcf3d6941d67a330b681f94`. It removes only Ring_* influences from vertices farther than a bounded multiple of the corresponding ring-chain rest geometry; it does not invent replacement ownership or modify the source GLB.
+5. Wired the bounded sanitizer into the isolated finger probe at `f3ff85b0b6f39ece7aaeb7089a5f239c56992d76` and into the First Position v0.7 render at `c06b566286ad630a922c6d267c68a527df80f756`. Both reports print/store the number of removed suspect ring influences.
+6. Next step: rerun isolated finger diagnostic. Acceptance for this treatment: left/right ring displacement should collapse from ~0.7086 to the same order of magnitude as ordinary finger deformation and the long side-view spikes must disappear. Only after that rerun v0.7 First Position. A permanent source-weight migration will be made after this runtime proof, not before.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
