@@ -268,6 +268,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Removed runtime ring-weight sanitizer use from `first_position_finger_aware_v0_7.py` at `ece85316e04140ca5f717fa905d7739e05cf9eec` and from `finger_isolation_debug_v0_7.py` at `731558db72e55601b2b6c538fcf4e78cca74a8b5`. The sanitizer files remain only as historical diagnostics and are no longer on the active path.
 6. Next single step: sync Mac to the latest branch, regenerate Phase 10.6 + Motion Studio generated artifacts against canonical source SHA `3627f15a...`, then run isolation once with no sanitizer. Do not run First Position until isolation confirms ring deformation is clean on the repaired source itself.
 
+
+## 2026-09-26 — Phase 10.6.1 regenerated on final repaired source
+
+1. Mac real Blender run completed on Blender 5.2.2 LTS after syncing to branch checkpoint `fbad3e1c95ab45daac94292dbfb82cb12e1ca0b8`.
+2. `tools/blender/build_ballet_rig_calibration_v1.py` returned `PHASE10_6_1_RIG_CALIBRATION=PASS`.
+3. Generated profile: `build/phase10_6/low_poly_girl_ballet_rig_profile_v1.json`.
+4. Source SHA is the final repaired canonical source: `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+5. Anatomical frame validated unchanged: LEFT `[1,0,0]`, UP `[0,0,1]`, FRONT `[0,-1,0]`.
+6. Next single step: regenerate Phase 10.6.2 canonical ballet profile from this new calibration. Do not run later stages until 10.6.2 passes.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
