@@ -521,6 +521,14 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - No Blender geometry was evaluated and no v1.2 renders/report were produced by the failed run.
 - Next: sync Windows and rerun v1.2 unchanged.
 
+
+## 2026-09-30 — v1.2 missing math import fix
+
+- Second Windows invocation reached geometry code, then stopped with `NameError: name 'math' is not defined` at `math.dist(...)`.
+- Added the missing `import math` in commit `61f6ce9fe9ef549a1d52ea17263b3c07ae198cfb`.
+- No v1.2 renders/report were produced by this failed run.
+- Next: sync Windows and rerun v1.2 unchanged.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
