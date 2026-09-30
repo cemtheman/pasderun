@@ -407,6 +407,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - `BONES=24`, `BODY_FRAME=LEFT,UP,FRONT`, `FRONT_POLICY=DECLARED_BY_RIG_CALIBRATION_ONLY`.
 - Next: regenerate Phase 10.6.3 anatomical constraints on Windows.
 
+
+## 2026-09-30 — Windows Phase 10.6.3 PASS
+
+- Windows local regeneration completed successfully.
+- `build_anatomical_constraint_profile_v1.py` returned `PHASE10_6_3_ANATOMICAL_CONSTRAINTS=PASS`.
+- Output: `build/phase10_6/low_poly_girl_anatomical_constraint_profile_v1.json`.
+- `BONES=24`, `TURNOUT_PRIMARY=HIP`, `KNEE_AXIAL=DERIVED_ONLY`, `FOOT_YAW=FORBIDDEN`.
+- Next: regenerate Phase 10.6.4 ballet pose grammar on Windows.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
