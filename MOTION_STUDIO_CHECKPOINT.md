@@ -575,3 +575,29 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Açık sorunlar ve bir sonraki ilk komut: ...
 - Library yedeği: eşit SHA-256 / farklılık nedeni.
 ```
+
+## 2026-09-30 — Deployment pause and local-first development policy
+
+- Vercel usage review showed that routine development deploys were consuming a
+  disproportionate amount of Build CPU. Historical Pas de Run Vercel usage in
+  the current billing cycle was about 33 h 44 m (37.6% of the shown Build CPU
+  distribution).
+- User decision: Pas de Run is **paused on Vercel for now**. The Vercel project
+  was deleted. The project currently exists only in GitHub and local working
+  copies.
+- New default workflow:
+  - author and validate Motion Studio / Godot / Blender work locally;
+  - run web exports and browser checks locally whenever possible;
+  - keep normal Git commits and pushes as source/checkpoint history;
+  - do not recreate a Vercel project merely for routine development preview.
+- If Pas de Run returns to Vercel later, recreate deployment with cost controls
+  from the start: Basic build machine where compatible, concurrent builds
+  disabled, and explicit/controlled preview deployment rather than every push.
+- Vercel is therefore treated as a publication/preview target, not the normal
+  development runtime.
+- This infrastructure decision does **not** alter accepted Motion Studio pose,
+  rig, geometry, Phase 10/11, or validation contracts. Continue the existing
+  known-SHA / forward-commit / local-CLI workflow.
+- Next Motion Studio work remains local-first. Do not spend Vercel build credit
+  to inspect candidate geometry or generated previews.
+
