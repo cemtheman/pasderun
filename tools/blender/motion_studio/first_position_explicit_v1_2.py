@@ -27,7 +27,7 @@ from accepted_arm_reference import extract_accepted_arm_reference  # noqa: E402
 from accepted_arm_visual import joint_targets  # noqa: E402
 from accepted_arm_visual_v0_6 import measured_hand_mesh_projection  # noqa: E402
 from rig_calibration import validate_calibration  # noqa: E402
-from static_pose import add, dot, mul, sub, unit/  # noqa: E402
+from static_pose import add, dot, mul, sub, unit  # noqa: E402
 from static_pose_preview_v0_3 import apply_solution, render_views, require  # noqa: E402
 from first_position_finger_aware_v0_7 import (  # noqa: E402
     align_hand_to_forearm,
