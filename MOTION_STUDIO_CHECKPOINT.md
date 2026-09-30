@@ -552,6 +552,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Finger shaping remains unchanged.
 - Next: sync Windows and render v1.3 only.
 
+
+## 2026-09-30 — Historical First Position scaffold restored as v1.4
+
+- v1.3 was rejected visually; continued blind scaffold tuning is paused.
+- Earlier checkpoint history records a 2026-09-26 guide-first shoulder/elbow/wrist scaffold that was kept while only hand orientation was rejected. Recorded evidence: wrist height `1.10468304`, frontal hand gap `+0.02838743`.
+- Added `tools/blender/motion_studio/first_position_historical_scaffold_v1_4.py` at commit `4f28ff958db619e6adebb1a2b1141be212340841`.
+- v1.4 reconstructs that scaffold using recorded shifts: bras-bas `0.12825423`, en-avant `0.09751057`, then applies current balanced finger-aware hand shaping.
+- Next: render v1.4 on Windows and compare directly before any more scaffold tuning.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
