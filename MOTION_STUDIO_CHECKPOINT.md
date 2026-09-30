@@ -389,6 +389,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 4. v0.9 responds to the rejected v0.8 silhouette by lowering wrists, moving them further forward, and increasing outward elbow support. It renders three arm-scaffold candidates: `compact`, `classical`, `open`. Finger shaping remains unchanged at balanced strength so the test isolates arm geometry.
 5. Next single step: sync Windows to the new commit and run v0.9 with the known Blender executable `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe`. Review front/side renders only; do not tune fingers until an arm oval is accepted.
 
+
+## 2026-09-30 — Windows Phase 10.6.1 PASS
+
+- Windows Blender 5.2.0 LTS run passed.
+- Output: `build/phase10_6/low_poly_girl_ballet_rig_profile_v1.json`.
+- Canonical source SHA: `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+- Frame: LEFT `[1,0,0]`, UP `[0,0,1]`, FRONT `[0,-1,0]`.
+- Next: regenerate Phase 10.6.2 on Windows.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
