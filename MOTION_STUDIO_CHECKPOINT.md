@@ -461,6 +461,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Qualitative review again returned `PORT_DE_BRAS_GEOMETRY_REVIEW=fail`; this matches the previously classified inherited second-position elbow-line debt and remains non-blocking for the First Position scaffold experiment.
 - Next: rerun `first_position_explicit_v0_9.py` on Windows using the refreshed calibration/reference and inspect compact/classical/open front+side renders.
 
+
+## 2026-09-30 — First Position v0.9 open candidate reach fix
+
+- Windows v0.9 rendered `compact` and `classical` successfully, then stopped on `open` with `left_first_v0_9: target unreachable or straight/folded singularity`.
+- This is a scaffold-target reach issue, not a rig/calibration regression.
+- The `open` candidate front offset was reduced from `0.275` to `0.265` standing-height units, keeping its lateral/up targets unchanged while moving it back inside the two-link reach envelope.
+- Fix commit: `7951088ee64fecec43f3cb199dbd21396a949a2b`.
+- Next: sync Windows and rerun v0.9; expect all six compact/classical/open front+side renders and a completed report.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
