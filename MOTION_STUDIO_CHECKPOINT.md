@@ -470,6 +470,17 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Fix commit: `7951088ee64fecec43f3cb199dbd21396a949a2b`.
 - Next: sync Windows and rerun v0.9; expect all six compact/classical/open front+side renders and a completed report.
 
+
+## 2026-09-30 — First Position v0.9 full render completed on Windows
+
+- Windows rerun completed successfully after the open-candidate reach fix.
+- All six previews rendered: compact/classical/open, each front+side.
+- Status: `MOTION_STUDIO_FIRST_POSITION_V0_9=VISUAL_REVIEW_REQUIRED`.
+- Canonical source SHA: `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+- Report: `build/motion_studio/first_position_explicit_v0_9/report.json`.
+- Left-side scaffold metrics: compact `ELBOW_UP=1.28908286`, `WRIST_UP=1.12308019`, `WRIST_LAT=0.14499221`, `WRIST_FRONT=0.34567561`, gap `0.14953238`; classical `ELBOW_UP=1.29328265`, `WRIST_UP=1.13757941`, `WRIST_LAT=0.16239127`, `WRIST_FRONT=0.36742444`, gap `0.21914387`; open `ELBOW_UP=1.30050367`, `WRIST_UP=1.15207863`, `WRIST_LAT=0.17689049`, `WRIST_FRONT=0.37467405`, gap `0.24987161`.
+- Next: visual review of the six renders. Do not alter finger shaping until the arm scaffold itself is accepted or rejected.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
