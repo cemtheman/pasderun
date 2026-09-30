@@ -55,7 +55,7 @@ CANDIDATES = {
     "open": {
         "wrist_lateral": 0.122,
         "wrist_up": 0.210,
-        "wrist_front": 0.275,
+        "wrist_front": 0.265,
         "elbow_out": 1.10,
         "elbow_up": 0.12,
         "elbow_front": 0.08,
