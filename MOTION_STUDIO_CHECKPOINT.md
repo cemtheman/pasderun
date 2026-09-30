@@ -491,6 +491,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Finger shaping remains unchanged; this isolates arm-scaffold geometry.
 - Next: sync Windows and render v1.0. Review whether elbows stay lifted and the front silhouette forms a real centered oval before any finger tuning.
 
+
+## 2026-09-30 — v1.0 generation bug found; corrected v1.1 authored
+
+- Visuals from the supposed v1.0 were effectively identical to v0.9. Inspection confirmed the generated v1.0 script accidentally retained the v0.9 candidate table (`compact/classical/open`) and stale report identifiers, so the intended geometry change never actually ran.
+- The uploaded report confirms this: status still says `FIRST_POSITION_EXPLICIT_V0_9_VISUAL_REVIEW_REQUIRED` and candidates remain `compact/classical/open` despite v1.0 filenames.
+- Added corrected `tools/blender/motion_studio/first_position_explicit_v1_1.py` at commit `12b6b71589592d60663e4bbc3e70052426d35da0`.
+- v1.1 actually changes the scaffold: wrists are moved closer to center and much less forward, while the elbow pole gets stronger upward+outward support. Candidates are `rounded_low`, `rounded_classical`, `rounded_lifted`.
+- Goal: reduce shoulder→elbow drop and stop the downward elbow collapse before any finger tuning.
+- Next: sync Windows and render v1.1 only.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
