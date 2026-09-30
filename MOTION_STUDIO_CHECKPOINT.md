@@ -512,6 +512,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Candidates: `oval_low`, `oval_classical`, `oval_lifted`. Finger shaping remains unchanged.
 - Next: sync Windows and render v1.2 only; judge whether the shoulder→elbow→wrist silhouette finally forms a supported oval.
 
+
+## 2026-09-30 — v1.2 syntax fix
+
+- First Windows invocation of `first_position_explicit_v1_2.py` stopped immediately with a Python `SyntaxError` in the `static_pose` import line.
+- Cause: accidental trailing `/` after `unit` in the generated import statement.
+- Fixed in commit `6f53e00a6c9b48f0d700fc34637739dc97a6e191`.
+- No Blender geometry was evaluated and no v1.2 renders/report were produced by the failed run.
+- Next: sync Windows and rerun v1.2 unchanged.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
