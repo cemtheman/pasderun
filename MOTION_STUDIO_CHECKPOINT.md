@@ -529,6 +529,18 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - No v1.2 renders/report were produced by this failed run.
 - Next: sync Windows and rerun v1.2 unchanged.
 
+
+## 2026-09-30 — First Position v1.2 full render completed on Windows
+
+- Windows v1.2 rerun completed successfully after the syntax and math-import fixes.
+- All six previews rendered for `oval_low`, `oval_classical`, and `oval_lifted` (front+side).
+- Status: `MOTION_STUDIO_FIRST_POSITION_V1_2=VISUAL_REVIEW_REQUIRED`.
+- Canonical source SHA: `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+- Report: `build/motion_studio/first_position_explicit_v1_2/report.json`.
+- Left-side metrics: `oval_low` elbow_up `1.35445480`, wrist_up `1.22852937`, wrist_lateral `0.17635239`, wrist_front `0.08010856`, gap `0.05011052`; `oval_classical` elbow_up `1.36291724`, wrist_up `1.24677456`, wrist_lateral `0.17341921`, wrist_front `0.08000180`, gap `0.03794873`; `oval_lifted` elbow_up `1.37114381`, wrist_up `1.26435341`, wrist_lateral `0.16966753`, wrist_front `0.07017926`, gap `0.02403980`.
+- v1.2 is the first First Position experiment using direct body-relative upper-arm + forearm segment directions rather than wrist-goal/bend-pole IK.
+- Next: visual review of the six v1.2 renders. No further scaffold or finger changes until front/side silhouettes are inspected.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
