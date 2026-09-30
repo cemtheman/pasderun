@@ -425,6 +425,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - No valid Phase 10.6.4 artifact was produced by the failed invocation.
 - Next: rerun Phase 10.6.4 with the corrected arguments only.
 
+
+## 2026-09-30 — Windows Phase 10.6.4 PASS
+
+- Corrected Windows rerun completed successfully.
+- `build_ballet_pose_grammar_profile_v1.py` returned `PHASE10_6_4_BALLET_POSE_GRAMMAR=PASS`.
+- Output: `build/phase10_6/low_poly_girl_ballet_pose_grammar_profile_v1.json`.
+- `POSES=bras_bas,en_avant,second,fifth,plie,releve`, `ARMS_BEHIND_BACK=BLOCKED`, `GEOMETRY_FAIL_BLOCKS_RENDER=TRUE`.
+- Next: regenerate Phase 10.6.5 canonical pose solver on Windows with the repository runner's exact arguments.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
