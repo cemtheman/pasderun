@@ -481,6 +481,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Left-side scaffold metrics: compact `ELBOW_UP=1.28908286`, `WRIST_UP=1.12308019`, `WRIST_LAT=0.14499221`, `WRIST_FRONT=0.34567561`, gap `0.14953238`; classical `ELBOW_UP=1.29328265`, `WRIST_UP=1.13757941`, `WRIST_LAT=0.16239127`, `WRIST_FRONT=0.36742444`, gap `0.21914387`; open `ELBOW_UP=1.30050367`, `WRIST_UP=1.15207863`, `WRIST_LAT=0.17689049`, `WRIST_FRONT=0.37467405`, gap `0.24987161`.
 - Next: visual review of the six renders. Do not alter finger shaping until the arm scaffold itself is accepted or rejected.
 
+
+## 2026-09-30 — v0.9 visual rejection; rounded scaffold v1.0 authored
+
+- Visual review of all six v0.9 renders confirms the user's observation: the elbow/forearm line still breaks downward instead of sustaining a rounded First Position arc. The hands are also too far lateral, so the silhouette reads as arms beside the waist rather than a centered oval.
+- v0.9 is therefore rejected for arm geometry, not for rig/finger deformation.
+- Added `tools/blender/motion_studio/first_position_explicit_v1_0.py` at commit `5c9dab92162e3b4dae85f77f71440d4815dadade`.
+- v1.0 moves wrists back toward center and reduces front reach while increasing the elbow pole's upward+outward support. Three candidates: `rounded_low`, `rounded_classical`, `rounded_lifted`.
+- Finger shaping remains unchanged; this isolates arm-scaffold geometry.
+- Next: sync Windows and render v1.0. Review whether elbows stay lifted and the front silhouette forms a real centered oval before any finger tuning.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
