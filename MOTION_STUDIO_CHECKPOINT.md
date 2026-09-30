@@ -434,6 +434,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - `POSES=bras_bas,en_avant,second,fifth,plie,releve`, `ARMS_BEHIND_BACK=BLOCKED`, `GEOMETRY_FAIL_BLOCKS_RENDER=TRUE`.
 - Next: regenerate Phase 10.6.5 canonical pose solver on Windows with the repository runner's exact arguments.
 
+
+## 2026-09-30 — Windows Phase 10.6.5 PASS
+
+- Windows local regeneration completed successfully.
+- `build_canonical_pose_solver_v1.py` returned `PHASE10_6_5_CANONICAL_POSE_SOLVER=PASS`.
+- Output: `build/phase10_6/low_poly_girl_canonical_pose_solver_v1.json`.
+- Gates: `FOUNDATION_POSES=6/6`, `PREFERRED_JOINT_ENVELOPE=6/6`, `INVALID_PROBES=4/4_REJECTED`, `RIG_RETARGET=NOT_PERFORMED`, `RENDER=NOT_PERFORMED`.
+- Windows Phase 10.6 chain is now fully regenerated on the repaired canonical source.
+- Next: regenerate Motion Studio calibration from the fresh Phase 10.6.1 profile, then regenerate accepted-arm reference before rerunning First Position v0.9.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
