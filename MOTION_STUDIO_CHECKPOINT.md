@@ -380,6 +380,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 5. Report includes shoulder/elbow/wrist vertical ordering, elbow/wrist lateral positions, wrist front depth, arm residuals, hand continuity, mesh hand gap and front/side previews.
 6. Next single step: sync Mac and run `first_position_explicit_v0_8.py` against the regenerated calibration/reference. Visual review should choose the best arm scaffold before any further finger tuning.
 
+
+## 2026-09-30 — Windows resume; First Position v0.9 committed
+
+1. Windows checkout at `C:\Users\chodo\Documents\pas-de-run` was fast-forwarded cleanly from `121c4b6...` to remote checkpoint `70448e35960fa8e6ab20c700df7d3c5ecf7ab252`.
+2. Local branch now matches origin. Untracked generated/build directories remain: `build/motion_studio/`, `build/phase11_3_authored/`, `build/phase11_3_final_rig/`, and nested `pas-de-run/`; none were staged or modified.
+3. Added `tools/blender/motion_studio/first_position_explicit_v0_9.py` at commit `13b90dec38320c800c181a2e162dac121d8168e1`.
+4. v0.9 responds to the rejected v0.8 silhouette by lowering wrists, moving them further forward, and increasing outward elbow support. It renders three arm-scaffold candidates: `compact`, `classical`, `open`. Finger shaping remains unchanged at balanced strength so the test isolates arm geometry.
+5. Next single step: sync Windows to the new commit and run v0.9 with the known Blender executable `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe`. Review front/side renders only; do not tune fingers until an arm oval is accepted.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
