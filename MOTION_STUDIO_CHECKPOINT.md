@@ -541,6 +541,17 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - v1.2 is the first First Position experiment using direct body-relative upper-arm + forearm segment directions rather than wrist-goal/bend-pole IK.
 - Next: visual review of the six v1.2 renders. No further scaffold or finger changes until front/side silhouettes are inspected.
 
+
+## 2026-09-30 — v1.2 direct segments work, but silhouette is too angular; v1.3 authored
+
+- Visual review: v1.2 successfully removed the previous downward elbow collapse, proving direct segment authoring is the right control model.
+- However, all three v1.2 candidates are too angular/boxy: upper arms are nearly horizontal, elbows sit too far lateral, and forearms close inward too abruptly. The result reads as a hexagonal frame rather than a soft ballet First Position oval.
+- Report confirms the geometry: elbow lateral is ~0.383–0.388 while wrist lateral is only ~0.170–0.176, producing a large lateral corner at the elbow; elbow_up ~1.354–1.371 and wrist_up ~1.229–1.264 keep the hands too high for the intended lower rounded oval.
+- Added `tools/blender/motion_studio/first_position_explicit_v1_3.py` at commit `9516d8d4e20ed3046fdc705d38a58d09fcfb30a3`.
+- v1.3 keeps direct segment authoring but lowers/softens the upper-arm angle, brings elbows closer to the torso, and increases forearm descent before the inward closure. Candidates: `soft_oval`, `classical_oval`, `lifted_oval`.
+- Finger shaping remains unchanged.
+- Next: sync Windows and render v1.3 only.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
