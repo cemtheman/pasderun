@@ -416,6 +416,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - `BONES=24`, `TURNOUT_PRIMARY=HIP`, `KNEE_AXIAL=DERIVED_ONLY`, `FOOT_YAW=FORBIDDEN`.
 - Next: regenerate Phase 10.6.4 ballet pose grammar on Windows.
 
+
+## 2026-09-30 — Windows Phase 10.6.4 invocation correction
+
+- First Windows invocation stopped at argparse before producing output.
+- Cause: command used the wrong option name `--constraints-profile` and omitted required `--fixtures`.
+- Repository runner `tools/ballet_motion/run_phase10_6_4_ballet_pose_grammar.ps1` confirms the correct arguments are `--constraint-profile` and `--fixtures assets/ballet_motion/ballet_pose_fixtures_v1.json`.
+- No valid Phase 10.6.4 artifact was produced by the failed invocation.
+- Next: rerun Phase 10.6.4 with the corrected arguments only.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
