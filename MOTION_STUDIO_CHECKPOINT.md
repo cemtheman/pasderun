@@ -398,6 +398,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Frame: LEFT `[1,0,0]`, UP `[0,0,1]`, FRONT `[0,-1,0]`.
 - Next: regenerate Phase 10.6.2 on Windows.
 
+
+## 2026-09-30 — Windows Phase 10.6.2 PASS
+
+- Windows local regeneration completed successfully.
+- `build_canonical_ballet_profile_v1.py` returned `PHASE10_6_2_CANONICAL_SKELETON=PASS`.
+- Output: `build/phase10_6/low_poly_girl_canonical_ballet_profile_v1.json`.
+- `BONES=24`, `BODY_FRAME=LEFT,UP,FRONT`, `FRONT_POLICY=DECLARED_BY_RIG_CALIBRATION_ONLY`.
+- Next: regenerate Phase 10.6.3 anatomical constraints on Windows.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
