@@ -444,6 +444,15 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Windows Phase 10.6 chain is now fully regenerated on the repaired canonical source.
 - Next: regenerate Motion Studio calibration from the fresh Phase 10.6.1 profile, then regenerate accepted-arm reference before rerunning First Position v0.9.
 
+
+## 2026-09-30 — Windows Motion Studio calibration PASS
+
+- Windows local regeneration completed successfully.
+- `tools/motion_studio/rig_calibration.py` returned `MOTION_STUDIO_RIG_CALIBRATION=PASS`.
+- Output: `build/motion_studio/low_poly_girl_calibration_v0_1.json`.
+- Calibration is now regenerated from the fresh Windows Phase 10.6 chain bound to canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
+- Next: regenerate `accepted_arm_reference_v0_6.json` plus qualitative review evidence from the fresh Phase 10.6.5 solver before rerunning First Position v0.9.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
