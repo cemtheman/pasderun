@@ -501,6 +501,17 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Goal: reduce shoulder→elbow drop and stop the downward elbow collapse before any finger tuning.
 - Next: sync Windows and render v1.1 only.
 
+
+## 2026-09-30 — v1.1 reversed the problem; v1.2 switches to direct segment authoring
+
+- User visual review: v1.1 made the arm shape worse in the opposite direction. The hands moved inward, but the forearms became even steeper and the elbows still did not form the desired supported First Position oval.
+- Report confirms elbow height itself increased only modestly while wrists moved much further inward/closer, so the visual slope worsened despite the numeric elbow-up gain.
+- Root cause: the wrist-goal + bend-pole two-link solve is the wrong control abstraction for this pose; elbow location is still an indirect consequence of the wrist target.
+- Added `tools/blender/motion_studio/first_position_explicit_v1_2.py` at commit `2dc4ca2243150589613e5cb40969540318dcbb23`.
+- v1.2 removes the wrist-goal/bend-pole solve for First Position. It authors upper-arm and forearm directions directly in body-relative axes, preserving exact calibrated segment lengths. This makes elbow height and forearm slope explicit rather than emergent.
+- Candidates: `oval_low`, `oval_classical`, `oval_lifted`. Finger shaping remains unchanged.
+- Next: sync Windows and render v1.2 only; judge whether the shoulder→elbow→wrist silhouette finally forms a supported oval.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
