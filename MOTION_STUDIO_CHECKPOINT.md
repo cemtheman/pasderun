@@ -453,6 +453,14 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Calibration is now regenerated from the fresh Windows Phase 10.6 chain bound to canonical source SHA `3627f15a7d5e94b8821767a3617af6830642c38a229a7577fbf654473c63a446`.
 - Next: regenerate `accepted_arm_reference_v0_6.json` plus qualitative review evidence from the fresh Phase 10.6.5 solver before rerunning First Position v0.9.
 
+
+## 2026-09-30 — Windows accepted-arm reference regenerated
+
+- `accepted_arm_reference.py` returned `MOTION_STUDIO_ACCEPTED_ARM_REFERENCE=PASS` on Windows.
+- Output: `build/motion_studio/accepted_arm_reference_v0_6.json`.
+- Qualitative review again returned `PORT_DE_BRAS_GEOMETRY_REVIEW=fail`; this matches the previously classified inherited second-position elbow-line debt and remains non-blocking for the First Position scaffold experiment.
+- Next: rerun `first_position_explicit_v0_9.py` on Windows using the refreshed calibration/reference and inspect compact/classical/open front+side renders.
+
 ## Her yeni oturumda eklenecek kayıt şablonu
 
 ```markdown
