@@ -601,3 +601,16 @@ shasum -a 256 'assets/characters/low_poly_girl/low_poly_girl .glb'
 - Next Motion Studio work remains local-first. Do not spend Vercel build credit
   to inspect candidate geometry or generated previews.
 
+## 2026-10-01 — Future Vercel deployment gate
+
+- Pas de Run remains off Vercel; current development is GitHub + local only.
+- If Vercel is recreated later, do **not** restore automatic deployment on every push.
+- Use the same explicit gate policy as MSGSÜ İDK:
+  - normal commit: GitHub only, no Vercel build
+  - `[deploy]`: preview build
+  - `[prod]`: production build
+- Production must not be an unconditional exception. A `main` push without
+  `[prod]` must be skipped.
+- Local Godot/Blender/web export validation remains the default development
+  workflow; Vercel is only a publication/preview target.
+
