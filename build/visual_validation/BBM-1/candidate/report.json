@@ -7771,5 +7771,12 @@
   ],
   "root_and_contact_anchors_unchanged": true,
   "active_model": false,
-  "gate_scope": "Implemented BBM-1 arm endpoint, signed flexion, preferred forearm/wrist fit, wrist reconstruction, hand-mesh frontal gap, root/contact-anchor and sampled joint-continuity gates; not complete anatomical or 3D collision certification"
+  "gate_scope": "Implemented BBM-1 arm endpoint, signed flexion, preferred forearm/wrist fit, wrist reconstruction, hand-mesh frontal gap, root/contact-anchor and sampled joint-continuity gates; not complete anatomical or 3D collision certification",
+  "source_checkpoint_sha": "38dd7a3c116ffbd8d34bb90d562d1bab1561d9fd",
+  "published_source_checkpoint_sha": "7ae123916f64486337ff6b3324f50cd8f9f0de21",
+  "source_files_sha256": {
+    "tools/blender/render_bbm1_upper_body_v1.py": "29c13ea447b36ac9fee8b364e51476b66435bd574683f6a51ecc3bf3c7e9de8f",
+    "tools/motion_studio/bbm_upper_body_v1.py": "4a9d63beff620f6256605ebc4bc172bf244535237ae5cdae65eadad71560ed13",
+    "tools/visual_validation/accepted_arm_provenance.json": "d51e097f9d83f06e07f9b8e008e2be278814dc68876f8519b71627f01644b852"
+  }
 }

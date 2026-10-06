@@ -183,3 +183,13 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 - Raw duplicate intermediate images were archived in scratch `bbm1_intermediate_raw`; all intermediate reports and reviewed strips remain in the repo. Primary final/historical raw cells and full 49-frame previews are retained. Truncated Blender-assembled strip is excluded; decoded Pillow strips are authoritative.
 - Unresolved risk: true elbow hinge/forearm axial calibration and palm-plane intent need a coherent coupled solution. A per-frame nearest-orientation search is not yet a reusable accepted body model. Scapular semantics are approximate on this rig; hair/costume limit anatomy review. No source repair required by current evidence.
 - Next action: explicit palm-normal intent through accepted anchors and opening; coupled upper-arm/forearm/wrist solve; unchanged anatomical, length/contact and wrist gates; 29–40-frame visual review before considering BBM-1 promotion.
+
+### Durable checkpoint publication and morning handoff
+
+- BBM-0 local `f5558faaa6c89e420728270f16da7dbd0205336d` → published `5c9751685660348f6509f2d104d4251ce3391e38`; identical Git tree `fcee0ffdaec845bab81962b0aa12bec81a8479ae`.
+- BBM-1 local `38dd7a3c116ffbd8d34bb90d562d1bab1561d9fd` → published `7ae123916f64486337ff6b3324f50cd8f9f0de21`; identical Git tree `82e254463d53b9a74e9809bc387664f8247a95d0`. Commit IDs differ because GitHub connector creates commit metadata; all blob/tree hashes match exactly.
+- Branch: `work/bbm-v1-overnight-20261006`. No main mutation, merge, deploy or GLB change.
+- Large 222-path GitHub tree request timed out once; diagnosed API size/time constraint and recovered via 28-entry incremental trees. Final tree equals the exact local checkpoint. No repeated failed large request.
+- Every one of 173 retained PNGs fully decoded. Candidate report source hashes bind to the committed renderer/model, supplementing the starting Git SHA recorded during development.
+- Morning Handoff: `docs/MORNING_HANDOFF_BBM_V1_2026-10-07.md`, includes exact source/published checkpoint mapping, tests, gate scopes, reviewed visual paths, stop condition 5 and the next palm-plane coupling step.
+- Final metadata/documentation checkpoint does not promote BBM-1. Last accepted active milestone remains BBM-0; BBM-1 REVISE, BBM-2..8 NOT_STARTED.

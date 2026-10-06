@@ -42,7 +42,7 @@
     "opening-hand-line/02_frame_13_front.png": "d56acf47c19f061f50a4664271042ed9f8322674f59eac4e980aafa8372efff0",
     "opening-hand-line/04_frame_37_front.png": "b1cbb44d7353426145e961048fb85b897b720e8442e2a1ae2d4e42202f7195db",
     "opening-hand-line/05_frame_49_front.png": "9640ea81822c67b811ee602af738db24132998d3744c03422e69556328cebc5a",
-    "opening-hand-line/report.json": "8efeadd23eea34a3dd2b5f76459884627677ec7f0b51af67f76c6a65d3cfc129",
+    "opening-hand-line/report.json": "ebe3d66b8bcf585d05cb2b0019a691fa709543debd8f25c6ace98a8c03095c19",
     "opening-hand-line/03_frame_25_front.png": "df1b4259107425190f9e504671e0c7bb2b79530056e4cfe566e98b91a6b63991",
     "opening-hand-line/03_frame_25_three_quarter.png": "318b4e1c0139a3f6585ab2c7ba86a4de08553ef3d770687ff2393f8736ad880f",
     "opening-hand-line/04_frame_37_three_quarter.png": "2e02061a663082ed9337d5176f4c72fba75560420c79c7930bc991d8fd467a05",
@@ -79,7 +79,7 @@
     "candidate/frame_strip.png": "c65bb18961f5b07e94fa99dd640e9d205f64bc37c3f03bbdfc63fa987240e754",
     "candidate/04_frame_37_front.png": "5892cfba411c040b68dc1640fdc0463c11fc59c8434e0d836535e5a8f7a01b63",
     "candidate/05_frame_49_front.png": "0a94212d32da04b67139bc0a8f4f84c9f21bb283e5ac4368a9a2480d847012cd",
-    "candidate/report.json": "091bba4960a94178f1aa41d82323f2056832cf7ad90082c1409e176697fc76ae",
+    "candidate/report.json": "b6a2200f413b569c2ecab4ffe7450fa74e63f69a609e420844ed1d9ef8c2bc99",
     "candidate/runner.log": "d134767735615c658a108a131c412e7ce403f7dec45b8650b8b540a9ebff4419",
     "candidate/03_frame_25_front.png": "2731292601b1372025eb6336d865c94770d5e7a82de44505732ea678b4afe293",
     "candidate/03_frame_25_three_quarter.png": "eff4640b86eca3bd6863f7c5dfc68d19bd4852535a39f315ab9faef9d5a86a71",
@@ -186,5 +186,12 @@
     "candidate/preview_frames/24_frame_24_front.png": "8f6ea2e5fa19d047a21d9d5850033f018c06b758b70619b7998593c8c3545abc",
     "candidate/preview_frames/13_frame_13_front.png": "818dddfac31e141ce5028e481710fb5c92f88acdddf1e327e75c5fa4dfadd2a9",
     "candidate/preview_frames/47_frame_47_front.png": "493ff3925c20642eaf34889da5d67e32b54dcd28dd9e129a3726638cd3157078"
+  },
+  "source_checkpoint_sha": "38dd7a3c116ffbd8d34bb90d562d1bab1561d9fd",
+  "published_source_checkpoint_sha": "7ae123916f64486337ff6b3324f50cd8f9f0de21",
+  "source_files_sha256": {
+    "tools/blender/render_bbm1_upper_body_v1.py": "29c13ea447b36ac9fee8b364e51476b66435bd574683f6a51ecc3bf3c7e9de8f",
+    "tools/motion_studio/bbm_upper_body_v1.py": "4a9d63beff620f6256605ebc4bc172bf244535237ae5cdae65eadad71560ed13",
+    "tools/visual_validation/accepted_arm_provenance.json": "d51e097f9d83f06e07f9b8e008e2be278814dc68876f8519b71627f01644b852"
   }
 }
