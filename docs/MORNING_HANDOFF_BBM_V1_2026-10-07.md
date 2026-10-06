@@ -1,3 +1,5 @@
+> Continuation update: user reopened the earlier stop. BBM-1 now has AI_VISUAL_PASS engineering checkpoint under `BBM-1/elbow-path/` with 349 tests and 49/49 geometric samples PASS. Historical stop details below remain as chronology, superseded by this update. BBM-2 starts next; no gameplay integration yet.
+
 # Pas de Run — Morning Handoff / 7 Ekim 2026
 
 **Sonuç: BBM-0 tamamlandı. BBM-1 geometrik olarak ilerledi, ancak AI_VISUAL_REVISE; BBM-2–8 başlamadı.** Durma nedeni kullanım limiti değil, kullanıcı tarafından tanımlanan **5. koşul**: son iki görsel düzeltme, bilek/avuç kusurlarını kabul edilebilir bir bütün elde edemeden birbirine dönüştürdü.

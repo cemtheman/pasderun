@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--blender',required=True)
-    parser.add_argument('--variant',choices=('historical-diagnostic','candidate','opening-hand-line'),default='candidate')
+    parser.add_argument('--variant',choices=('historical-diagnostic','candidate','opening-hand-line','palm-intent','palm-line','palm-led-line','palm-rest-line','palm-global-line','palm-neutral','elbow-path'),default='candidate')
     args=parser.parse_args()
     repo=Path(__file__).resolve().parents[2]
     out=repo/'build/visual_validation/BBM-1'/args.variant
@@ -23,7 +23,13 @@ def main():
     if args.variant=='historical-diagnostic':command+=['--wrist-mode','historical','--diagnostic-render']
     else:
         command+=['--wrist-mode','coordinated','--hand-shape','--phrase-coordination','--preview']
-        if args.variant=='opening-hand-line':command+=['--hand-line']
+        if args.variant in ('opening-hand-line','palm-line','palm-led-line','palm-rest-line','palm-global-line','palm-neutral','elbow-path'):command+=['--hand-line']
+        if args.variant in ('palm-intent','palm-line','palm-led-line','palm-rest-line','palm-global-line','palm-neutral','elbow-path'):command+=['--palm-intent']
+        if args.variant in ('palm-led-line','palm-rest-line','palm-global-line','palm-neutral','elbow-path'):command+=['--palm-opening-lead','3']
+        if args.variant in ('palm-rest-line','palm-global-line','palm-neutral','elbow-path'):command+=['--forearm-gauge','rig-rest']
+        if args.variant in ('palm-global-line','palm-neutral','elbow-path'):command+=['--global-roll']
+        if args.variant in ('palm-neutral','elbow-path'):command+=['--neutral-wrist-intent']
+        if args.variant=='elbow-path':command+=['--elbow-path']
     with (out/'runner.log').open('w') as log:
         result=subprocess.run(command,cwd=repo,stdout=log,stderr=subprocess.STDOUT)
     report=json.loads((out/'report.json').read_text())

@@ -16,7 +16,7 @@ def lagged_phase(t, lag):
     return t - lag * math.sin(math.pi * t)**2
 
 
-def coordinate_samples(samples, frame, elbow_lag=.035, hand_lag=.06):
+def coordinate_samples(samples, frame, elbow_lag=.035, hand_lag=.06, preserve_elbow_path=False):
     if len(samples)!=49:raise ValueError('BBM v1 requires the locked 49-sample review grid')
     result=copy.deepcopy(samples)
     for i,sample in enumerate(result):
@@ -33,6 +33,10 @@ def coordinate_samples(samples, frame, elbow_lag=.035, hand_lag=.06):
             a,b=start['arms'][side],end['arms'][side]
             p=sample['coordination']['elbow_phase'];p=p*p*(3-2*p)
             pole=add(mul(sub(a['elbow'],a['shoulder']),1-p),mul(sub(b['elbow'],b['shoulder']),p))
+            if preserve_elbow_path:
+                pos=24*sample['coordination']['elbow_phase'];lo=int(pos);hi=min(24,lo+1);weight=pos-lo
+                pa=samples[leg*24+lo]['arms'][side];pb=samples[leg*24+hi]['arms'][side]
+                pole=add(mul(sub(pa['elbow'],pa['shoulder']),1-weight),mul(sub(pb['elbow'],pb['shoulder']),weight))
             solved=solve_two_link(arm['shoulder'],a['elbow'],a['wrist'],arm['wrist'],pole,side)
             arm['elbow']=solved['elbow']
             p=sample['coordination']['hand_phase'];p=p*p*(3-2*p)

@@ -193,3 +193,29 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 - Every one of 173 retained PNGs fully decoded. Candidate report source hashes bind to the committed renderer/model, supplementing the starting Git SHA recorded during development.
 - Morning Handoff: `docs/MORNING_HANDOFF_BBM_V1_2026-10-07.md`, includes exact source/published checkpoint mapping, tests, gate scopes, reviewed visual paths, stop condition 5 and the next palm-plane coupling step.
 - Final metadata/documentation checkpoint does not promote BBM-1. Last accepted active milestone remains BBM-0; BBM-1 REVISE, BBM-2..8 NOT_STARTED.
+
+### BBM-1 continuation explicitly reopened by user
+
+- User instruction: “bence devam edilebilir durumda”; previous stop decision reopened. Starting SHA `a3277e857b937ca48561599bc73a188e1f92b1a2`, clean branch `work/bbm-v1-overnight-20261006`.
+- Next isolated experiment: explicit palm-plane normals interpolated from source-bound historical anchors, projected onto the current hand direction; coupled feasible forearm/wrist fitting remains inside unchanged preferred anatomical envelopes and endpoint/contact gates. No GLB or production changes.
+- Evidence destination: `build/visual_validation/BBM-1/palm-intent/`. Visual verdict pending actual rendering/review; BBM-1 remains REVISE.
+
+- Palm-intent iteration: 49/49 implemented geometric gates PASS; 345 regression tests PASS. Actual three-view strip and opening montage inspected: AI_VISUAL_REVISE, retarget/ballet-technique class; downward wrist break remains at mid-opening. Smallest next layer is opening-only hand-line intent combined with the palm-plane objective; no anchor or gate changes.
+
+- Combined palm/hand-line and early palm lead: both 49/49 geometry PASS; actual opening montages remain REVISE (upward offering palms). Earlier palm rotation changes first opening frames but not the problematic feasible branch. Diagnose forearm gauge: elbow-plane reference is not the source-bound canonical rest transport. Next experiment uses the existing canonical-basis conversion of the historical posed forearm; no pronation/wrist envelope widening.
+
+- Source-bound rig-rest gauge run: 49/49 gates PASS, actual 3-view and 29–40 review REVISE; offered palms persist. This falsifies a gauge-only correction. Next layer: whole-phrase discrete roll path planning across feasible forearm/wrist candidates, squared palm-normal error plus rotation smoothness, each adjacent hand rotation <=20 degrees (existing fitter bound). No envelope or machine gate relaxed. Full second pass rerenders and checks the selected path independently.
+
+- Global discrete roll path: 49/49 gate PASS, reviewed three-view strip + opening montage REVISE; unchanged visible offered palms. Greedy-path diagnosis alone is insufficient. Next smallest layer is intermediate wrist intent: smoothly blend toward the existing neutral wrist relationship only inside opening (sin² window, exact anchor hand targets retained), preserve hand bone length, fit forearm roll to palm intent, and independently recheck original wrist/contact/endpoint gates.
+
+- Neutral wrist + global path: 49/49 gates PASS, 3-view strip, 29–40 montage and enlarged hand detail inspected. Still REVISE. Palm-normal audit shows only 3.1–3.6° target error at frames33/37; palm roll is already following intent. Revised diagnosis: opening wrists rise while endpoint-linear elbow poles stay too low, producing the offering silhouette. Correct smallest elbow coordination layer: lag the historical sampled bend-pole path rather than interpolate only endpoint poles, preserving its opening arc. All anchor targets remain exact.
+
+### BBM-1 continuation accepted engineering checkpoint
+
+- Starting SHA `a3277e857b937ca48561599bc73a188e1f92b1a2`; ending SHA resolves with `git log -1 --format=%H -- tools/motion_studio/palm_roll_path_v1.py`; branch `work/bbm-v1-overnight-20261006`.
+- Changed: isolated upper-body phase model and renderer, evidence runner, reusable palm roll path planner + four meaningful tests, retained continuation reports/strips and final complete evidence pack. No production/gameplay/GLB edits.
+- Tests: Motion Studio45, ballet-motion198, Blender106: 349 PASS. Geometric final49/49 PASS, unchanged wrist reconstruction/endpoint/mesh gap/length/contact envelopes; source hash unchanged.
+- Final evidence: `BBM-1/elbow-path/verified_frame_strip.png`, `opening_continuity_29_40.png`, `preparation_01_24.png`, `opening_25_49.png`, complete49-frame preview + GIF, report/source hashes, review. Actually inspected all49 front frames and three-view keyframes. AI_VISUAL_PASS against accepted v0.6; previous candidates remain REVISE.
+- Root cause correction: historical sampled elbow bend-pole arc retained under phase lag, coordinated neutral intermediate wrist intent, explicit palm normals and globally continuous feasible roll path. No source repair or gate widening.
+- Duplicate intermediate raw cells/previews moved to reproducible scratch archive; all reviewed intermediate strips/reports retained, final raw cells and full preview retained in repo. `continuation_manifest.json` binds retained files.
+- Unresolved risks: costume/hair occlusion, semantic-only scapula, gaze=head, review-grid timing; human artistic review remains morning task. Next action BBM-2 distributed turnout/alignment audit and fixtures; BBM-8 production integration remains gated.
