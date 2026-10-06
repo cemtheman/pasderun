@@ -1,81 +1,48 @@
-> Latest continuation: BBM-1 and BBM-2 engineering AI_VISUAL_PASS. BBM-1 published931ef8b; BBM-2 checkpoint follows. 353 tests PASS; BBM-3 next. Earlier stop record below is historical.
-
-> Continuation update: user reopened the earlier stop. BBM-1 now has AI_VISUAL_PASS engineering checkpoint under `BBM-1/elbow-path/` with 349 tests and 49/49 geometric samples PASS. Historical stop details below remain as chronology, superseded by this update. BBM-2 starts next; no gameplay integration yet.
-
 # Pas de Run — Morning Handoff / 7 Ekim 2026
 
-**Sonuç: BBM-0 tamamlandı. BBM-1 geometrik olarak ilerledi, ancak AI_VISUAL_REVISE; BBM-2–8 başlamadı.** Durma nedeni kullanım limiti değil, kullanıcı tarafından tanımlanan **5. koşul**: son iki görsel düzeltme, bilek/avuç kusurlarını kabul edilebilir bir bütün elde edemeden birbirine dönüştürdü.
+## Güncel sonuç
+Kullanıcı devamı yeniden açtıktan sonra BBM-1, BBM-2 ve BBM-3 mühendislik AI_VISUAL_PASS oldu. BBM-0 baseline kilidi PASS. BBM-4–8 uygulanmadı. Eski BBM-1 duruş kararı tarihsel ve geçersizdir.
 
-## Checkpoint ve kapsam
-
+## Checkpoint ayrımı
 - Branch: `work/bbm-v1-overnight-20261006`.
-- Güvenli ürün SHA: `080d42cb076a0efcc4902bbef7d9e42aae5550e3`.
-- Fiilî ilk checkout: güvenli `main`, temiz ağaç. Metodoloji dosyaları başka branch'te bulundu; çalışma başlangıcı `9a544d5897a3609d2838e30f9ae7d00f44aefc43` (yalnız üç doküman farkı).
-- Son başarılı milestone: BBM-0. İlk yerel checkpoint `f5558faaa6c89e420728270f16da7dbd0205336d`; yayımlanmış eş içerikli checkpoint `5c9751685660348f6509f2d104d4251ce3391e38`.
-- **Son yayımlanmış kod/kanıt HEAD:** `7ae123916f64486337ff6b3324f50cd8f9f0de21`. BBM-1 yerel kaynak checkpoint'i: `38dd7a3c116ffbd8d34bb90d562d1bab1561d9fd`; iki commit aynı Git tree'sine bağlıdır (`82e254463d53b9a74e9809bc387664f8247a95d0`). Son devir/metadata commit'i için `git log -1 --format=%H -- docs/MORNING_HANDOFF_BBM_V1_2026-10-07.md` kullanılır.
-- Kabul edilmiş tarihsel arm v0.6 kaynak checkpoint'i: `978df231acd79394556ff21828ff2da405d4674b`. Sonraki GLB/finger/first-position deneyleri bu çalışmaya alınmadı.
-- GLB SHA256: `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`, değişmedi.
-- BBM-1 prototipi gameplay'e bağlanmadı. Ürün kaynakları, Phase 11 topology/timing, `main` ve web paketi değişmedi; deploy yok.
+- Güvenli ürün/main: `080d42cb076a0efcc4902bbef7d9e42aae5550e3`, değiştirilmedi.
+- BBM-1 yayımlanmış PASS: `931ef8bd9e3353e0e65c4cd087cdc6e56b051796` (yerel `daa264e3f0110441adfccc77507faf680a098e47`, aynı tree).
+- BBM-2 yayımlanmış PASS: `3938f89aff2cab5504a7d070f3f420d04c8fb035` (yerel `4f586cea9f386846b6a8a631feba2f0b33fa1462`, aynı tree).
+- BBM-3 son yerel HEAD: `bbddfeb6ab392c113dd8a26acc94ff3fceb4ad1f`; tree `3c020c327ff6fb9bd607f96ff60fff6fc2fb501d`. Son başarılı terminal kontrolünde working tree temizdi.
+- **BBM-3 henüz yayımlanmadı.** Blob aktarımında SHA doğrulaması başarısız olduğu için uzak branch'e eksik/yanlış tree gönderilmedi. Ardından exec-server bağlantısı koptu; komut ve view_image kurtarma denemeleri yanıt vermedi. Bu dokümanlar GitHub bağlantısı üzerinden BBM-2 tabanına eklenmiştir. Dokümantasyon commit'i BBM-3 kaynak/kanıtlarının yayımlandığı anlamına gelmez.
+- Yerel repo: `/workspace/scratch/bb586e64b8c7/pasderun`.
+- Source GLB SHA256 `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`, değişmedi. Gameplay, topology, ürün timing ve main değişmedi; deploy yok.
 
-## Gerçek doğrulama
+## Testler ve görsel gate'ler
+| Milestone | Testler | Machine/geometric | AI visual |
+|---|---:|---|---|
+| BBM-0 | mevcut regression suite | calibration/retarget/contact/wrist PASS, 18 render | PASS yalnız baseline kilidi |
+| BBM-1 | 349 PASS | 49/49 örnek; değişmeyen wrist/endpoint/contact/length gate'leri | PASS; tüm49 front ve üç görünüm ana kareler incelendi |
+| BBM-2 | 353 PASS | max tracking4.94° <6°, contact/wrist/envelope PASS | PASS; first/fifth/plié ×3 görünüm |
+| BBM-3 | 358 PASS: ballet207 + Blender106 + Motion45 | ankle/toe anatomy, contact, tracking, SO(3), matrix reconstruction ve bone length PASS | PASS; flat/demi/pointe-ready ×3 görünüm ve detay |
+| BBM-4–8 | NOT RUN | NOT IMPLEMENTED | NOT REVIEWED |
 
-| Kontrol | Sonuç |
-|---|---|
-| Ballet-motion testleri | 198/198 PASS |
-| Blender contract/runner testleri | 106/106 PASS |
-| Motion Studio + yeni faz testleri | 41/41 PASS |
-| Toplam | **345/345 PASS** |
-| Syntax ve `git diff --check` | PASS |
-| BBM-0 gerçek render | 6 poz × 3 görünüm = 18/18 |
-| BBM-0 mevcut geometrik gate'ler | PASS |
-| BBM-0 AI görsel inceleme | PASS **yalnız baseline kanıt kilidi kapsamında** |
-| BBM-1 son iki adayın uygulanan geometrik gate'leri | Her biri 49/49 PASS |
-| Son aday maksimum ardışık eklem dönüşü | 19,40584° |
-| Son el çizgisi denemesi maksimum dönüşü | 19,96427° |
-| Kök ve ayak/parmak anchor kayması | Yok |
-| BBM-1 AI görsel inceleme | **REVISE** |
-| Godot gameplay/export build | Çalıştırılmadı; ürün dosyaları değişmedi |
+BBM-3 son kaynak için test/syntax/diff kontrolleri geçti. Son amend yalnız ayak detay crop'unda orantısız büyütmeyi düzeltti:160×140 crop, tekdüze2×, 320×280 hücre; ham renderlar değişmedi. Tam sahne renderları ve önceki büyütülmüş detaylar gerçekten incelendi; bu son crop'u yeniden açma girişimi ortam kopması nedeniyle tamamlanmadı.
 
-Geometrik PASS yalnız raporda listelenen eklem hedefi, kemik uzunluğu, içe dirsek bükülmesi, tercih edilen önkol/bilek aralıkları, iki DOF bilek yeniden kurma, frontal el mesh aralığı, anchor ve örneklenmiş dönüş sürekliliği kontrollerini kapsar. Tam anatomik veya üç boyutlu çarpışma sertifikası değildir.
+## Somut ilerleme
+- BBM-1: historical sampled elbow bend-pole arc faz gecikmesiyle korunarak offering-palms sorunu giderildi. Kaynağa bağlı palm-normal intent, global feasible roll path, neutral intermediate wrist ve küçük clavicle/head/epaulement fazları birleştirildi. Scapula semantik; gaze=head.
+- BBM-2: hip kaynaklı dağıtılmış turnout, flexion'a bağlı sınırlı knee contribution, independent foot yaw0. Gerçek shin/toe-ray ölçümü, mesh heel gap üzerinden bounded hip adduction. First/plié topuk çaprazlığı düzeltildi, konservatif kapalı fifth.
+- BBM-3: FLAT/DEMI_POINTE/POINTE_READY semantiği. Flat-contact canonical ankle neutral ~32.377°/32.392°; anatomik plantar aralıkları bu source-bound nötre göre değerlendirilir. Tercih edilen50° ve hard60° sınırlar değiştirilmedi. Import rest-frame skew için gerçek inverse + normalize rotation, bağımsız world reconstruction ve bone-length kontrolü.
+- Demi: anatomical plantar35°/toe35°, heel~7.8cm; pointe-ready: plantar50°/toe0°, heel~13.6cm. Pointe-ready açık simetrik hazırlık; full en-pointe iddiası yok.
+- Candidate tracking: flat1.795°, demi0.752°, pointe-ready0.065°. Contact hata max~3.1e-5. Matrix errors~2.5e-6 < değişmeyen1e-5. Arch gözlenemez; semantic intent. Pelvis/forefoot centroid yalnız proxy, whole-body COM henüz yok.
 
-## Ne kazanıldı, ne çözülmedi?
+## Sabah öncelikli görseller
+1. `build/visual_validation/BBM-1/historical-diagnostic/verified_frame_strip.png` vs `BBM-1/elbow-path/verified_frame_strip.png`; kabul edilen `elbow-path/opening_25_49.png`, `preparation_01_24.png`, `motion_preview.gif`.
+2. `build/visual_validation/BBM-2/baseline/contact.png` vs `candidate/contact.png`.
+3. **Yerel BBM-3:** `build/visual_validation/BBM-3/baseline/contact.png` vs `candidate/contact.png`; aynı dizinlerde `foot_detail.png`; `report.json`, `review.md`, `manifest.json`.
+4. BBM-1 önceki palm/hand-line denemeleri ve BBM-2/3 intermediate iteration raporları REVISE/superseded olarak korunur; kabul edilmiş checkpoint yerine kullanılmaz.
 
-Mevcut accepted arm solver bağımlılıkları korunarak yeniden üretildi. Dirsek, el ve baş için uçlarda sıfırlanan ayrı fazlar; küçük clavicle carriage; sınırlı chest/head eşgüdümü eklendi. Mesh değişmeden mevcut parmak şekillendirmesi kullanıldı. Önkol ve iki DOF bilek birlikte çözüldü. Sabit üç görünüm, 49 örnek ve kritik 29–40. karelerin görsel incelemesi otomatik üretilebilir durumda.
+Saç/kostüm ve kaynak low-poly ayakkabı/heel-spur silueti incelemeyi sınırlar. AI_PASS mühendislik gate'idir; insan sanatsal kabulü henüz yok. Zorunlu ürün/estetik karar veya mesh değişikliği tespit edilmedi.
 
-Eski arm-only yolu yeni bilek gate'iyle denendiğinde 45/49 örnek reddedildi. Sadece bileği düzeltmek el hedefi/mesh aralığı hataları yarattı. Birlikte çözüm geometrik olarak geçti, fakat tüm örneklerdeki inceleme önce ani yön sıçramalarını, sonra avuç yönü kusurunu ortaya çıkardı. Sıçrama giderilince bitiş avuçları fazla frontal oldu; dirsek düzlemiyle bitiş düzeltildiğinde açılışta avuç dönüşü kaldı; el çizgisi ara karelerde yumuşatıldığında avuçlar yukarı bakarak sunma/kase hareketine dönüştü. Bu görsel sonucu kabul etmedim.
+## Kesin devam adımı
+1. Çalışma ortamını kurtar; yerel `bbddfeb...` commit ve temiz tree'yi doğrula. Bu uzak dokümantasyon commit'ini yerel BBM-3 journal kayıtlarını koruyarak birleştir.
+2. BBM-3 manifest/raw PNG decode/source hash bağlarını doğrula; son uniform crop'u aç. Blob SHA hatasını teşhis et, doğrulanmış exact tree ile BBM-3'ü yayımla. Hatalı blob'u referanslama.
+3. BBM-4: gerçek deformed contact points convex hull/practical support polygon, açıkça sınırlı geometry-based COM proxy, signed balance margin ve support-leg/gesture-leg ayrımı. Flat, demi, one-leg ve geçiş fixture'ları; mevcut anatomik/contact/wrist/tracking gate'lerini koru. Root yatay kaydırarak dengeyi gizleme.
+4. Testler + deterministic üç görünüm baseline/candidate + gerçek AI inceleme PASS olmadan BBM-5'e geçme. Sonra roadmap5→8 sırayla.
 
-**BBM-1'in önünde kalan sorun:** önkol/bilek retarget ve açık palm-plane intent. Parmak curl veya kamera ayarıyla örtülecek bir sorun değil. Scapula bağımsız rig kemiği olmadığı için semantik düzeyde; gaze baş yönüyle sınırlı. Saç/giysi omuz ve gövde incelemesini kısmen örtüyor.
-
-## Sabah önce bunlara bakın
-
-1. `build/visual_validation/BBM-1/historical-diagnostic/verified_frame_strip.png` — tarihsel karşılaştırma; üzerindeki MACHINE_FAIL etiketi korunuyor.
-2. `build/visual_validation/BBM-1/candidate/verified_frame_strip.png` — son dirsek-düzlemi adayı, 0/25/50/75/100% × üç görünüm.
-3. **`build/visual_validation/BBM-1/candidate/opening_continuity_29_40.png`** — beş ana karenin gizlediği avuç dönüşünü gösterir.
-4. **`build/visual_validation/BBM-1/opening-hand-line/opening_continuity_29_40.png`** — el çizgisi düzeltmesinin yarattığı yukarı bakan avuç kusuru.
-5. İki adayın `motion_preview.gif` dosyaları — 49 kare, tanılama amaçlı ~24 fps; müziğe bağlanmış gerçek koreografi süresi değildir.
-6. `build/visual_validation/BBM-1/review.md`, `manifest.json` ve her adayın `report.json` dosyası.
-
-BBM-0 tam baseline sheet: `build/visual_validation/BBM-0/baseline/contact.png`. Onun görsel PASS'i mevcut pozların sanatsal onayı değil, yeniden üretilebilir kanıt kapsamındadır.
-
-## Devam edilecek kesin adım
-
-Yeni milestone açmadan, accepted phrase anchor'larına ve açılış boyunca **kaynağa bağlı palm-normal hedefleri** ekleyin. Upper-arm/forearm/wrist yönelimini bu hedeflerle birlikte çözün. Mevcut bilek, anatomik aralık, kemik uzunluğu ve temas/anchor gate'lerini koruyun. 29–40. kareleri zorunlu görsel gate'e dahil edin; eşdeğer veya daha iyi bütünsel görüntü olmadan BBM-1 PASS vermeyin.
-
-İlk yeniden üretim komutları:
-
-```bash
-python3 tools/visual_validation/run_bbm0_baseline.py --blender /path/to/blender
-python3 tools/motion_studio/rig_calibration.py --repo . --phase10-calibration build/phase10_6/low_poly_girl_ballet_rig_profile_v1.json --output build/visual_validation/BBM-1/calibration.json
-python3 tools/motion_studio/accepted_arm_reference.py --source build/phase10_6/low_poly_girl_canonical_pose_solver_v1.json --calibration build/visual_validation/BBM-1/calibration.json --output build/visual_validation/BBM-1/accepted_reference.json
-python3 tools/visual_validation/run_bbm1_evidence.py --blender /path/to/blender --variant candidate
-```
-
-Bu ortamda gerçek üretim Blender **4.0.2 Workbench** ile yapıldı. Çalışan yerel executable: `/workspace/scratch/bb586e64b8c7/blender-local`. Blender 5.2 çalıştırılmış gibi raporlanmadı. Yeniden üretim eski review kararını otomatik PASS'e çevirmemeli.
-
-Zorunlu bir insan ürün/estetik kararı henüz tespit edilmedi. Sabah incelemesi görsel yönü teyit etmek içindir; mevcut iki adayın kabul edildiği varsayılmamalıdır.
-
-## Kalıcı kayıt doğrulaması
-
-Terminal HTTPS push kimliği bulunmadığından checkpoint'ler GitHub bağlantısı üzerinden eş içerikli ayrı commit'ler olarak kaydedildi. BBM-0 ve BBM-1 için yayımlanmış tree SHA'ları yerel checkpoint tree SHA'larıyla birebir eşleşti. Dolayısıyla kaynak içerik ve kanıt kaybı yok; author/commit oluşturma yöntemi nedeniyle commit SHA'ları farklı. Yerel/yayımlanmış checkpoint eşlemesi yukarıda açıkça verilmiştir.
-
-173 PNG tamamen decode edildi; bozuk dosya bulunmadı. GIF'lerin bütün 49 kaynak karesi korunur. Adaylar hâlâ AI_VISUAL_REVISE'dır. Son metadata commit'i sanatsal onay veya milestone promotion içermez.
+Durma nedeni kullanıcı tercihi veya kullanım limiti olduğuna dair kanıt yok: çalışma ortamı erişimi kaybolduğu için yeni deterministic evidence üretimi/incelemesi sürdürülemedi. Mevcut başarılı checkpoint'ler korunmuştur; eksik BBM-4 kodu aktif checkpoint bırakılmamıştır.
