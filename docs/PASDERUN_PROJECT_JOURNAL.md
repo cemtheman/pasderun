@@ -219,3 +219,22 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 - Root cause correction: historical sampled elbow bend-pole arc retained under phase lag, coordinated neutral intermediate wrist intent, explicit palm normals and globally continuous feasible roll path. No source repair or gate widening.
 - Duplicate intermediate raw cells/previews moved to reproducible scratch archive; all reviewed intermediate strips/reports retained, final raw cells and full preview retained in repo. `continuation_manifest.json` binds retained files.
 - Unresolved risks: costume/hair occlusion, semantic-only scapula, gaze=head, review-grid timing; human artistic review remains morning task. Next action BBM-2 distributed turnout/alignment audit and fixtures; BBM-8 production integration remains gated.
+
+### BBM-2 initial alignment/stance audit
+
+- Starting/published BBM-1 SHA `931ef8bd9e3353e0e65c4cd087cdc6e56b051796`, identical tree to local `daa264e3f0110441adfccc77507faf680a098e47`; clean tracking work branch restored. BBM-1 PASS checkpoint published without main mutation.
+- BBM-2 isolated distributed turnout helper + four tests: hip request authoritative, knee contribution derived within existing flexion cap, independent foot yaw always zero; observed knee anterior/toe-ray proxy instead of authored zero tracking error; arch observation explicitly unavailable on rig.
+- Initial three-view first/fifth/plie baseline/candidate pack: 0 measured tracking failures (<=2.63°, existing preferred6°/hard12° unchanged), contact/wrist gates PASS. Actual images REVISE: first hip adduction=-6° crosses the legs/heels. Minimum correction layer: source-mesh heel inner-gap bounded hip adduction solve; no ankle yaw, GLB change or envelope widening. Evidence retained `BBM-2/iteration-01/`.
+- Current BBM-2 tests202 + Motion45 + Blender106 =353 PASS. BBM-2 remains in progress; BBM-3 not started.
+- One BBM-2 rerun failed before rendering due an edit joining two Python statements. Fixed that line and added pre-run compilation; no geometry/tool retry of unchanged failure.
+
+- Second first-stance iteration: bounded mesh-aware hip adduction resolves first heel gap to +0.000982 (target0.000976 armature units), no independent foot yaw. First front/3Q images inspected: closer plausible first stance. Overall BBM-2 still REVISE: inherited fifth is a spaced V, and inherited plié rear heel centers cross (mesh projected inner gap -0.048). Next smallest lower stance layer: close plié with same bounded contact-aware adduction solve; fifth uses hip-origin 60° turnout and symmetric +/-6° hip flexion/extension with straight knees to place one foot ahead, no foot-yaw authority. All existing contact/envelope/alignment gates retained.
+
+### BBM-2 accepted engineering checkpoint
+
+- Starting SHA `931ef8bd9e3353e0e65c4cd087cdc6e56b051796`; ending SHA resolves via `git log -1 --format=%H -- tools/ballet_motion/distributed_turnout_v1.py`; branch `work/bbm-v1-overnight-20261006`.
+- Changed files: isolated `distributed_turnout_v1.py`, four tests, BBM-2 Blender renderer/evidence runner, retained iteration01/02 plus final fixed 18-cell paired pack/report/hash manifest, journal. Source/main/gameplay unchanged.
+- 353 tests PASS (202+45+106); all final contact/preferred/retarget/wrist/tracking gates PASS. Max observed tracking4.94° < unchanged6° preferred; independent foot yaw0. First/plie heel gap~0.00098 after bounded source-mesh hip adduction search.
+- Actually inspected final baseline/candidate FRONT/3Q/SIDE sheets: AI_VISUAL_PASS. First closure, conservative closed fifth with upstream60° hip and opposing +/-6° hip flexion/extension, plié heel correction; no contact/envelope relaxation.
+- Artifacts: `BBM-2/baseline/contact.png`, `candidate/contact.png`, all18raw cells, `report.json`, `review.md`, `manifest.json`. Earlier REVISE packs retained.
+- Risks: single-toe tracking proxy, unobservable arch/pronation, partial turnout fifth; no production integration. Next BBM-3 semantics + visual proofs.

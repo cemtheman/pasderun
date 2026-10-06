@@ -1,3 +1,5 @@
+> Latest continuation: BBM-1 and BBM-2 engineering AI_VISUAL_PASS. BBM-1 published931ef8b; BBM-2 checkpoint follows. 353 tests PASS; BBM-3 next. Earlier stop record below is historical.
+
 > Continuation update: user reopened the earlier stop. BBM-1 now has AI_VISUAL_PASS engineering checkpoint under `BBM-1/elbow-path/` with 349 tests and 49/49 geometric samples PASS. Historical stop details below remain as chronology, superseded by this update. BBM-2 starts next; no gameplay integration yet.
 
 # Pas de Run — Morning Handoff / 7 Ekim 2026
