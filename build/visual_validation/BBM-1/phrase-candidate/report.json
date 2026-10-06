@@ -1,0 +1,2477 @@
+{
+  "git_sha": "f5558faaa6c89e420728270f16da7dbd0205336d",
+  "historical_reference": {
+    "historical_reference_commit": "978df231acd79394556ff21828ff2da405d4674b",
+    "reviewed_implementation_commit": "c8c669519790a3af7c9425ce9eb2021ccdd8e6ee",
+    "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+    "scope": "Restore only read-only Motion Studio arm solver dependency closure and regression fixtures. Production Phase 10/11 code and source GLB unchanged.",
+    "historic_inputs": {
+      "bras_bas_outward_wrist_shift": 0.12825423,
+      "en_avant_outward_wrist_shift": 0.09751057,
+      "guide_clearance": 0.01,
+      "guide_opening_lead": 0.8,
+      "opening_arc_up_fraction": 0.19,
+      "opening_arc_front_fraction": 0.26
+    }
+  },
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "engine": "BLENDER_WORKBENCH",
+  "blender_version": "4.0.2",
+  "orthographic_scale": 2.1487855911254883,
+  "sample_frames": [
+    1,
+    13,
+    25,
+    37,
+    49
+  ],
+  "samples": [
+    {
+      "frame": 1,
+      "residuals": {
+        "left": {
+          "elbow": 3.6e-07,
+          "wrist": 4.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 3.4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.50252596248943e-07,
+        "right": 6.830195567825937e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01064813,
+        "right_lateral_max": -0.01064801,
+        "projected_gap_armature_units": 0.02129614,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.63464805,
+          "radial_ulnar_deviation_deg": -19.68149801,
+          "wrist_2dof_reconstruction_error": 3.576e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.63466195,
+          "radial_ulnar_deviation_deg": 19.68150834,
+          "wrist_2dof_reconstruction_error": 6.855e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 2,
+      "residuals": {
+        "left": {
+          "elbow": 1.2e-07,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.5e-07,
+          "wrist": 3.8e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 2.862419592186592e-07,
+        "right": 2.928561569308273e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01076043,
+        "right_lateral_max": -0.01076078,
+        "projected_gap_armature_units": 0.02152121,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.72033302,
+          "radial_ulnar_deviation_deg": -19.53339202,
+          "wrist_2dof_reconstruction_error": 3.278e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.72029887,
+          "radial_ulnar_deviation_deg": 19.53338673,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 3,
+      "residuals": {
+        "left": {
+          "elbow": 2.1e-07,
+          "wrist": 3.3e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.1e-07,
+          "wrist": 8e-08,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.734527529744463e-07,
+        "right": 2.3276357876976293e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01117444,
+        "right_lateral_max": -0.0111745,
+        "projected_gap_armature_units": 0.02234894,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 13.26412629,
+          "radial_ulnar_deviation_deg": -18.90356821,
+          "wrist_2dof_reconstruction_error": 2.235e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 13.26410551,
+          "radial_ulnar_deviation_deg": 18.90358113,
+          "wrist_2dof_reconstruction_error": 3.651e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 4,
+      "residuals": {
+        "left": {
+          "elbow": 1.3e-07,
+          "wrist": 2.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 3e-08,
+          "wrist": 2.3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.7145164071191475e-07,
+        "right": 4.040523428605869e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01175308,
+        "right_lateral_max": -0.01175314,
+        "projected_gap_armature_units": 0.02350622,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 13.85145676,
+          "radial_ulnar_deviation_deg": -18.05613064,
+          "wrist_2dof_reconstruction_error": 3.576e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 13.85144763,
+          "radial_ulnar_deviation_deg": 18.05614469,
+          "wrist_2dof_reconstruction_error": 2.906e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 5,
+      "residuals": {
+        "left": {
+          "elbow": 1.2e-07,
+          "wrist": 1.7e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.5e-07,
+          "wrist": 3.7e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 2.2500259981366246e-07,
+        "right": 3.7814907850174666e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01244843,
+        "right_lateral_max": -0.01244831,
+        "projected_gap_armature_units": 0.02489674,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 14.44795289,
+          "radial_ulnar_deviation_deg": -17.02649734,
+          "wrist_2dof_reconstruction_error": 4.768e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 14.44796532,
+          "radial_ulnar_deviation_deg": 17.02654542,
+          "wrist_2dof_reconstruction_error": 3.725e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 6,
+      "residuals": {
+        "left": {
+          "elbow": 2.8e-07,
+          "wrist": 5.1e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.9e-07,
+          "wrist": 2.6e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.773065434314914e-07,
+        "right": 1.8566751173700558e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01284134,
+        "right_lateral_max": -0.01284111,
+        "projected_gap_armature_units": 0.02568245,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 15.31881031,
+          "radial_ulnar_deviation_deg": -15.57559552,
+          "wrist_2dof_reconstruction_error": 4.768e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 15.31878051,
+          "radial_ulnar_deviation_deg": 15.57559717,
+          "wrist_2dof_reconstruction_error": 3.874e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 7,
+      "residuals": {
+        "left": {
+          "elbow": 2.7e-07,
+          "wrist": 5.6e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 6e-08,
+          "wrist": 1.3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.006850114687196e-07,
+        "right": 2.5211161845458495e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01381719,
+        "right_lateral_max": -0.01381683,
+        "projected_gap_armature_units": 0.02763402,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 15.91312585,
+          "radial_ulnar_deviation_deg": -14.22647866,
+          "wrist_2dof_reconstruction_error": 4.172e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 15.91314673,
+          "radial_ulnar_deviation_deg": 14.22651264,
+          "wrist_2dof_reconstruction_error": 7.749e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 8,
+      "residuals": {
+        "left": {
+          "elbow": 3.8e-07,
+          "wrist": 6e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 3e-08,
+          "wrist": 2.2e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.680641106206147e-07,
+        "right": 3.516800320507868e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01404452,
+        "right_lateral_max": -0.01404417,
+        "projected_gap_armature_units": 0.02808869,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 16.98163041,
+          "radial_ulnar_deviation_deg": -12.14651437,
+          "wrist_2dof_reconstruction_error": 4.768e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 16.98159213,
+          "radial_ulnar_deviation_deg": 12.14653071,
+          "wrist_2dof_reconstruction_error": 2.71e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 9,
+      "residuals": {
+        "left": {
+          "elbow": 2.7e-07,
+          "wrist": 3.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.4e-07,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.033417270795862e-07,
+        "right": 3.2098083538618706e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01482356,
+        "right_lateral_max": -0.01482308,
+        "projected_gap_armature_units": 0.02964664,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 17.84025415,
+          "radial_ulnar_deviation_deg": -10.14896004,
+          "wrist_2dof_reconstruction_error": 2.347e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 17.84024823,
+          "radial_ulnar_deviation_deg": 10.14897661,
+          "wrist_2dof_reconstruction_error": 5.662e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 10,
+      "residuals": {
+        "left": {
+          "elbow": 2.6e-07,
+          "wrist": 1.4e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.5000519962732493e-07,
+        "right": 2.8115454709698567e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01529932,
+        "right_lateral_max": -0.01529896,
+        "projected_gap_armature_units": 0.03059828,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 18.90516333,
+          "radial_ulnar_deviation_deg": -7.61244546,
+          "wrist_2dof_reconstruction_error": 1.988e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 18.90515738,
+          "radial_ulnar_deviation_deg": 7.61240563,
+          "wrist_2dof_reconstruction_error": 3.725e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 11,
+      "residuals": {
+        "left": {
+          "elbow": 2.7e-07,
+          "wrist": 3.9e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 4e-08,
+          "wrist": 4e-08,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.455832428465625e-07,
+        "right": 2.430305843099965e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01593554,
+        "right_lateral_max": -0.0159353,
+        "projected_gap_armature_units": 0.03187084,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 20.00019104,
+          "radial_ulnar_deviation_deg": -4.80045772,
+          "wrist_2dof_reconstruction_error": 4.47e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 20.0001782,
+          "radial_ulnar_deviation_deg": 4.80049516,
+          "wrist_2dof_reconstruction_error": 5.662e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 12,
+      "residuals": {
+        "left": {
+          "elbow": 3.9e-07,
+          "wrist": 6.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.6e-07,
+          "wrist": 4.9e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 7.372687385590661e-07,
+        "right": 4.3622497225715063e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01677239,
+        "right_lateral_max": -0.01677203,
+        "projected_gap_armature_units": 0.03354442,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 21.14714341,
+          "radial_ulnar_deviation_deg": -1.69139424,
+          "wrist_2dof_reconstruction_error": 5.16e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 21.14713494,
+          "radial_ulnar_deviation_deg": 1.69143274,
+          "wrist_2dof_reconstruction_error": 6.258e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 13,
+      "residuals": {
+        "left": {
+          "elbow": 2.5e-07,
+          "wrist": 4.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 6e-08,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.167352821402215e-07,
+        "right": 3.207213170831037e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01784945,
+        "right_lateral_max": -0.01784945,
+        "projected_gap_armature_units": 0.03569889,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 22.3494996,
+          "radial_ulnar_deviation_deg": 1.72215192,
+          "wrist_2dof_reconstruction_error": 3.278e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 22.3494996,
+          "radial_ulnar_deviation_deg": -1.72216279,
+          "wrist_2dof_reconstruction_error": 3.725e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 14,
+      "residuals": {
+        "left": {
+          "elbow": 3.1e-07,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.4e-07,
+          "wrist": 4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.6223632601636944e-07,
+        "right": 3.335331273913293e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.0187465,
+        "right_lateral_max": -0.0187465,
+        "projected_gap_armature_units": 0.03749299,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 23.49780136,
+          "radial_ulnar_deviation_deg": 5.82318033,
+          "wrist_2dof_reconstruction_error": 2.049e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 23.49782485,
+          "radial_ulnar_deviation_deg": -5.82314797,
+          "wrist_2dof_reconstruction_error": 4.47e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 15,
+      "residuals": {
+        "left": {
+          "elbow": 2.9e-07,
+          "wrist": 3.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 7e-08,
+          "wrist": 1.3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.933724740488322e-07,
+        "right": 4.202153877080552e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01987302,
+        "right_lateral_max": -0.01987314,
+        "projected_gap_armature_units": 0.03974617,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 24.50374528,
+          "radial_ulnar_deviation_deg": 10.20099766,
+          "wrist_2dof_reconstruction_error": 3.427e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 24.50373921,
+          "radial_ulnar_deviation_deg": -10.20099312,
+          "wrist_2dof_reconstruction_error": 4.172e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 16,
+      "residuals": {
+        "left": {
+          "elbow": 2.6e-07,
+          "wrist": 2.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1e-08,
+          "wrist": 1.8e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.5588787021572457e-07,
+        "right": 1.4845176670827922e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02160311,
+        "right_lateral_max": -0.02160323,
+        "projected_gap_armature_units": 0.04320633,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 25.52115018,
+          "radial_ulnar_deviation_deg": 14.34016387,
+          "wrist_2dof_reconstruction_error": 5.364e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 25.52115795,
+          "radial_ulnar_deviation_deg": -14.3401002,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 17,
+      "residuals": {
+        "left": {
+          "elbow": 2.9e-07,
+          "wrist": 2.9e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.50788926430828e-07,
+        "right": 3.846260755997988e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02270865,
+        "right_lateral_max": -0.02270865,
+        "projected_gap_armature_units": 0.04541731,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 26.06168177,
+          "radial_ulnar_deviation_deg": 18.97149891,
+          "wrist_2dof_reconstruction_error": 2.384e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 26.06168497,
+          "radial_ulnar_deviation_deg": -18.97148761,
+          "wrist_2dof_reconstruction_error": 2.384e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 18,
+      "residuals": {
+        "left": {
+          "elbow": 4e-07,
+          "wrist": 3.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1e-07,
+          "wrist": 1.3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0011956498961258975,
+        "right": 2.3180766680991717e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01856804,
+        "right_lateral_max": -0.02417314,
+        "projected_gap_armature_units": 0.04274118,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 26.94313585,
+          "radial_ulnar_deviation_deg": 20.00000036,
+          "wrist_2dof_reconstruction_error": 3.278e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 26.56648224,
+          "radial_ulnar_deviation_deg": -23.09531014,
+          "wrist_2dof_reconstruction_error": 5.215e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 19,
+      "residuals": {
+        "left": {
+          "elbow": 1.8e-07,
+          "wrist": 3.2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 8e-08,
+          "wrist": 2.1e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.00233243620125312,
+        "right": 0.0009106141697402888
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.0154717,
+        "right_lateral_max": -0.02046716,
+        "projected_gap_armature_units": 0.03593886,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 28.44544803,
+          "radial_ulnar_deviation_deg": 20.00001393,
+          "wrist_2dof_reconstruction_error": 4.321e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 26.70873904,
+          "radial_ulnar_deviation_deg": -25.00000425,
+          "wrist_2dof_reconstruction_error": 2.626e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 20,
+      "residuals": {
+        "left": {
+          "elbow": 2.3e-07,
+          "wrist": 1.2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.7e-07,
+          "wrist": 2.5e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0023794208595388617,
+        "right": 0.0021271397146783587
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.01947391,
+        "right_lateral_max": -0.01579535,
+        "projected_gap_armature_units": 0.03526926,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 31.53243267,
+          "radial_ulnar_deviation_deg": 20.00001875,
+          "wrist_2dof_reconstruction_error": 3.874e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 27.4478137,
+          "radial_ulnar_deviation_deg": -24.99998867,
+          "wrist_2dof_reconstruction_error": 3.576e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 21,
+      "residuals": {
+        "left": {
+          "elbow": 2.6e-07,
+          "wrist": 2.6e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.4e-07,
+          "wrist": 2.6e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.002380365568493313,
+        "right": 0.0025085801514532465
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02296495,
+        "right_lateral_max": -0.0167743,
+        "projected_gap_armature_units": 0.03973925,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 34.05135442,
+          "radial_ulnar_deviation_deg": 20.00002152,
+          "wrist_2dof_reconstruction_error": 3.278e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 29.53712888,
+          "radial_ulnar_deviation_deg": -25.000009,
+          "wrist_2dof_reconstruction_error": 2.831e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 22,
+      "residuals": {
+        "left": {
+          "elbow": 2.5e-07,
+          "wrist": 3.2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 3.3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0023965489515560506,
+        "right": 0.0024125259616036895
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02454156,
+        "right_lateral_max": -0.02021825,
+        "projected_gap_armature_units": 0.04475981,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 35.90046404,
+          "radial_ulnar_deviation_deg": 20.00000839,
+          "wrist_2dof_reconstruction_error": 2.98e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 31.95102647,
+          "radial_ulnar_deviation_deg": -25.00001023,
+          "wrist_2dof_reconstruction_error": 1.639e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 23,
+      "residuals": {
+        "left": {
+          "elbow": 2.2e-07,
+          "wrist": 3e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.2e-07,
+          "wrist": 1.1e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0024840477781769604,
+        "right": 0.002318241853338014
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02443057,
+        "right_lateral_max": -0.0226804,
+        "projected_gap_armature_units": 0.04711097,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 37.04028038,
+          "radial_ulnar_deviation_deg": 20.00002079,
+          "wrist_2dof_reconstruction_error": 4.768e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 33.59071148,
+          "radial_ulnar_deviation_deg": -25.00001353,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 24,
+      "residuals": {
+        "left": {
+          "elbow": 2e-07,
+          "wrist": 2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.2e-07,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0024080760167240396,
+        "right": 0.002539034829830173
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02500975,
+        "right_lateral_max": -0.0218935,
+        "projected_gap_armature_units": 0.04690325,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 37.85068001,
+          "radial_ulnar_deviation_deg": 20.00001233,
+          "wrist_2dof_reconstruction_error": 2.98e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 33.97070952,
+          "radial_ulnar_deviation_deg": -24.99999961,
+          "wrist_2dof_reconstruction_error": 2.356e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 25,
+      "residuals": {
+        "left": {
+          "elbow": 3e-07,
+          "wrist": 5.4e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.4e-07,
+          "wrist": 4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0024701323721367133,
+        "right": 0.0023538653884131056
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.02470869,
+        "right_lateral_max": -0.02361917,
+        "projected_gap_armature_units": 0.04832786,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 37.98562414,
+          "radial_ulnar_deviation_deg": 20.00000678,
+          "wrist_2dof_reconstruction_error": 4.172e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 34.57427405,
+          "radial_ulnar_deviation_deg": -24.99999507,
+          "wrist_2dof_reconstruction_error": 2.086e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 26,
+      "residuals": {
+        "left": {
+          "elbow": 1.9e-07,
+          "wrist": 2.3e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.4e-07,
+          "wrist": 2.8e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.002414852152533754,
+        "right": 0.002508391729816046
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.03025246,
+        "right_lateral_max": -0.02723062,
+        "projected_gap_armature_units": 0.05748308,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 37.220475,
+          "radial_ulnar_deviation_deg": 20.00002312,
+          "wrist_2dof_reconstruction_error": 3.576e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 33.31355635,
+          "radial_ulnar_deviation_deg": -25.0000091,
+          "wrist_2dof_reconstruction_error": 2.915e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 27,
+      "residuals": {
+        "left": {
+          "elbow": 2.4e-07,
+          "wrist": 2.3e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2e-07,
+          "wrist": 1.5e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.002424250819193286,
+        "right": 0.002353827969290477
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.04516834,
+        "right_lateral_max": -0.04185855,
+        "projected_gap_armature_units": 0.08702689,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 34.48086029,
+          "radial_ulnar_deviation_deg": 20.00002196,
+          "wrist_2dof_reconstruction_error": 4.172e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 30.47127989,
+          "radial_ulnar_deviation_deg": -25.00001498,
+          "wrist_2dof_reconstruction_error": 2.98e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 28,
+      "residuals": {
+        "left": {
+          "elbow": 1.9e-07,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 7e-08,
+          "wrist": 1.7e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.002482630122730933,
+        "right": 0.002451476431473108
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.06705129,
+        "right_lateral_max": -0.0605135,
+        "projected_gap_armature_units": 0.12756479,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 29.14413616,
+          "radial_ulnar_deviation_deg": 20.00000795,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 23.90232761,
+          "radial_ulnar_deviation_deg": -24.99999971,
+          "wrist_2dof_reconstruction_error": 2.831e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 29,
+      "residuals": {
+        "left": {
+          "elbow": 2.2e-07,
+          "wrist": 2.1e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.6e-07,
+          "wrist": 3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.002455893238980579,
+        "right": 0.0024589117269519676
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.09170079,
+        "right_lateral_max": -0.08132041,
+        "projected_gap_armature_units": 0.1730212,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 19.99801559,
+          "radial_ulnar_deviation_deg": 20.00001116,
+          "wrist_2dof_reconstruction_error": 3.874e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 10.16766728,
+          "radial_ulnar_deviation_deg": -25.00000291,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 30,
+      "residuals": {
+        "left": {
+          "elbow": 2.1e-07,
+          "wrist": 2.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 1.8e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.0015006253821938501,
+        "right": 2.669762502188819e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.1201725,
+        "right_lateral_max": -0.12763226,
+        "projected_gap_armature_units": 0.24780476,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 3.56760024,
+          "radial_ulnar_deviation_deg": 20.00000022,
+          "wrist_2dof_reconstruction_error": 2.719e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 3.56762985,
+          "radial_ulnar_deviation_deg": -23.31918076,
+          "wrist_2dof_reconstruction_error": 3.874e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 31,
+      "residuals": {
+        "left": {
+          "elbow": 2.1e-07,
+          "wrist": 3.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 7e-08,
+          "wrist": 2.1e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.217553032942136e-07,
+        "right": 2.421152116249788e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.16625851,
+        "right_lateral_max": -0.16625893,
+        "projected_gap_armature_units": 0.33251745,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -2.03670445,
+          "radial_ulnar_deviation_deg": 13.30565326,
+          "wrist_2dof_reconstruction_error": 4.619e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -2.03668358,
+          "radial_ulnar_deviation_deg": -13.30562921,
+          "wrist_2dof_reconstruction_error": 4.582e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 32,
+      "residuals": {
+        "left": {
+          "elbow": 4.4e-07,
+          "wrist": 5.2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 9e-08,
+          "wrist": 3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.251387883246848e-07,
+        "right": 1.7881393432617188e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.2090171,
+        "right_lateral_max": -0.20901716,
+        "projected_gap_armature_units": 0.41803426,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -5.22642984,
+          "radial_ulnar_deviation_deg": 1.61432954,
+          "wrist_2dof_reconstruction_error": 3.353e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -5.22636202,
+          "radial_ulnar_deviation_deg": -1.61426269,
+          "wrist_2dof_reconstruction_error": 1.863e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 33,
+      "residuals": {
+        "left": {
+          "elbow": 3.1e-07,
+          "wrist": 4.6e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 3e-08,
+          "wrist": 2.4e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 7.208220137624636e-07,
+        "right": 2.6656007498500226e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.28131515,
+        "right_lateral_max": -0.25476927,
+        "projected_gap_armature_units": 0.53608441,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -10.90599467,
+          "radial_ulnar_deviation_deg": -0.91088235,
+          "wrist_2dof_reconstruction_error": 2.868e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -5.38814051,
+          "radial_ulnar_deviation_deg": 9.53928867,
+          "wrist_2dof_reconstruction_error": 2.934e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 34,
+      "residuals": {
+        "left": {
+          "elbow": 3.1e-07,
+          "wrist": 2.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 2.6e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.280984981855556e-07,
+        "right": 1.7120130796843852e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.29959863,
+        "right_lateral_max": -0.29959893,
+        "projected_gap_armature_units": 0.59919757,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -3.69288853,
+          "radial_ulnar_deviation_deg": -17.98605911,
+          "wrist_2dof_reconstruction_error": 5.662e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -3.69294669,
+          "radial_ulnar_deviation_deg": 17.98603856,
+          "wrist_2dof_reconstruction_error": 3.539e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 35,
+      "residuals": {
+        "left": {
+          "elbow": 2.4e-07,
+          "wrist": 3.2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 9e-08,
+          "wrist": 1.6e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.127385417844431e-07,
+        "right": 0.0015129907883210483
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.34356099,
+        "right_lateral_max": -0.3459053,
+        "projected_gap_armature_units": 0.6894663,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -1.33199565,
+          "radial_ulnar_deviation_deg": -23.34661723,
+          "wrist_2dof_reconstruction_error": 5.066e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -1.33192147,
+          "radial_ulnar_deviation_deg": 20.00000547,
+          "wrist_2dof_reconstruction_error": 9.164e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 36,
+      "residuals": {
+        "left": {
+          "elbow": 3.7e-07,
+          "wrist": 5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.7e-07,
+          "wrist": 3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.00041417490370295807,
+        "right": 0.0025245277584093353
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.38411933,
+        "right_lateral_max": -0.38514656,
+        "projected_gap_armature_units": 0.76926589,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 1.00136133,
+          "radial_ulnar_deviation_deg": -25.00001167,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 4.37869887,
+          "radial_ulnar_deviation_deg": 19.99999905,
+          "wrist_2dof_reconstruction_error": 1.1474e-06,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 37,
+      "residuals": {
+        "left": {
+          "elbow": 2.2e-07,
+          "wrist": 3.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 5e-08,
+          "wrist": 3.6e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 0.000577018500532845,
+        "right": 0.0025300643732103934
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.42225966,
+        "right_lateral_max": -0.42157716,
+        "projected_gap_armature_units": 0.84383681,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 2.11494679,
+          "radial_ulnar_deviation_deg": -25.00000281,
+          "wrist_2dof_reconstruction_error": 3.278e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 6.48986472,
+          "radial_ulnar_deviation_deg": 20.00000868,
+          "wrist_2dof_reconstruction_error": 7.078e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 38,
+      "residuals": {
+        "left": {
+          "elbow": 4.2e-07,
+          "wrist": 5.6e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.8e-07,
+          "wrist": 3.8e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 1.3738191809196603e-06,
+        "right": 0.002261157354782583
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.45324326,
+        "right_lateral_max": -0.45358154,
+        "projected_gap_armature_units": 0.9068248,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 2.25831108,
+          "radial_ulnar_deviation_deg": -25.00000415,
+          "wrist_2dof_reconstruction_error": 1.77e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 2.25832863,
+          "radial_ulnar_deviation_deg": 20.00001233,
+          "wrist_2dof_reconstruction_error": 9.09e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 39,
+      "residuals": {
+        "left": {
+          "elbow": 3.3e-07,
+          "wrist": 3.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 3e-08,
+          "wrist": 3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.588009213906721e-07,
+        "right": 0.0011869716404893738
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.48158234,
+        "right_lateral_max": -0.4817917,
+        "projected_gap_armature_units": 0.96337405,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 1.17856674,
+          "radial_ulnar_deviation_deg": -22.62554136,
+          "wrist_2dof_reconstruction_error": 4.768e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 1.17836337,
+          "radial_ulnar_deviation_deg": 20.00000153,
+          "wrist_2dof_reconstruction_error": 5.849e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 40,
+      "residuals": {
+        "left": {
+          "elbow": 3.7e-07,
+          "wrist": 4.3e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.6e-07,
+          "wrist": 3.7e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 6.251387883246848e-07,
+        "right": 4.2252084251516537e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.50659901,
+        "right_lateral_max": -0.50659919,
+        "projected_gap_armature_units": 1.0131982,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 0.13274161,
+          "radial_ulnar_deviation_deg": -19.53598124,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 0.13266155,
+          "radial_ulnar_deviation_deg": 19.53594127,
+          "wrist_2dof_reconstruction_error": 5.718e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 41,
+      "residuals": {
+        "left": {
+          "elbow": 3e-07,
+          "wrist": 4.2e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.2e-07,
+          "wrist": 2.9e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.908080220699015e-07,
+        "right": 2.9351883535969567e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.52829283,
+        "right_lateral_max": -0.52829295,
+        "projected_gap_armature_units": 1.05658579,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -1.26379585,
+          "radial_ulnar_deviation_deg": -16.17210657,
+          "wrist_2dof_reconstruction_error": 2.086e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -1.2637058,
+          "radial_ulnar_deviation_deg": 16.17216449,
+          "wrist_2dof_reconstruction_error": 2.012e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 42,
+      "residuals": {
+        "left": {
+          "elbow": 4e-07,
+          "wrist": 4.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.2e-07,
+          "wrist": 2.1e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.626564591008432e-07,
+        "right": 3.7342202920143806e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.54651904,
+        "right_lateral_max": -0.54651904,
+        "projected_gap_armature_units": 1.09303808,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -2.60230461,
+          "radial_ulnar_deviation_deg": -12.87072228,
+          "wrist_2dof_reconstruction_error": 2.272e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -2.60226724,
+          "radial_ulnar_deviation_deg": 12.87071631,
+          "wrist_2dof_reconstruction_error": 5.811e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 43,
+      "residuals": {
+        "left": {
+          "elbow": 2.6e-07,
+          "wrist": 4.5e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.5e-07,
+          "wrist": 2.2e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 3.816559456248789e-07,
+        "right": 2.9200193199910854e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.56116974,
+        "right_lateral_max": -0.5611698,
+        "projected_gap_armature_units": 1.12233955,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -3.80877255,
+          "radial_ulnar_deviation_deg": -10.18449019,
+          "wrist_2dof_reconstruction_error": 7.898e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -3.80868651,
+          "radial_ulnar_deviation_deg": 10.18454914,
+          "wrist_2dof_reconstruction_error": 2.235e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 44,
+      "residuals": {
+        "left": {
+          "elbow": 2.5e-07,
+          "wrist": 3.1e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 9e-08,
+          "wrist": 3e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 3.749056346836425e-07,
+        "right": 4.308471767545033e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.57240397,
+        "right_lateral_max": -0.57240421,
+        "projected_gap_armature_units": 1.14480817,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -5.97479481,
+          "radial_ulnar_deviation_deg": -8.79131541,
+          "wrist_2dof_reconstruction_error": 4.694e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -5.97477224,
+          "radial_ulnar_deviation_deg": 8.7913169,
+          "wrist_2dof_reconstruction_error": 2.682e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 45,
+      "residuals": {
+        "left": {
+          "elbow": 2.4e-07,
+          "wrist": 3.7e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 3e-08,
+          "wrist": 2e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.915124923727108e-07,
+        "right": 3.8656955275156637e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.58050579,
+        "right_lateral_max": -0.58051944,
+        "projected_gap_armature_units": 1.16102523,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -8.32957151,
+          "radial_ulnar_deviation_deg": -7.73783531,
+          "wrist_2dof_reconstruction_error": 5.513e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -8.46274131,
+          "radial_ulnar_deviation_deg": 7.59177571,
+          "wrist_2dof_reconstruction_error": 2.98e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 46,
+      "residuals": {
+        "left": {
+          "elbow": 2.9e-07,
+          "wrist": 4.3e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.4e-07,
+          "wrist": 2.9e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.626564591008432e-07,
+        "right": 3.998401124775034e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.58568639,
+        "right_lateral_max": -0.58572376,
+        "projected_gap_armature_units": 1.17141014,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -10.09640613,
+          "radial_ulnar_deviation_deg": -6.41436179,
+          "wrist_2dof_reconstruction_error": 6.855e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -10.31148714,
+          "radial_ulnar_deviation_deg": 6.06004977,
+          "wrist_2dof_reconstruction_error": 1.714e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 47,
+      "residuals": {
+        "left": {
+          "elbow": 2.8e-07,
+          "wrist": 3.4e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 2.7e-07,
+          "wrist": 2.5e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 4.238326148190466e-07,
+        "right": 3.5762786865234375e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.58899742,
+        "right_lateral_max": -0.58904475,
+        "projected_gap_armature_units": 1.17804217,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -11.26451973,
+          "radial_ulnar_deviation_deg": -4.77368482,
+          "wrist_2dof_reconstruction_error": 8.047e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -11.42149231,
+          "radial_ulnar_deviation_deg": 4.38028032,
+          "wrist_2dof_reconstruction_error": 2.17e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 48,
+      "residuals": {
+        "left": {
+          "elbow": 1.5e-07,
+          "wrist": 2.1e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 1.3e-07,
+          "wrist": 2.8e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 5.101335873789695e-07,
+        "right": 1.6858739404357614e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.59081995,
+        "right_lateral_max": -0.59087366,
+        "projected_gap_armature_units": 1.18169361,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -11.7852554,
+          "radial_ulnar_deviation_deg": -3.45846732,
+          "wrist_2dof_reconstruction_error": 7.004e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -11.8964965,
+          "radial_ulnar_deviation_deg": 3.04802783,
+          "wrist_2dof_reconstruction_error": 2.98e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    },
+    {
+      "frame": 49,
+      "residuals": {
+        "left": {
+          "elbow": 3e-07,
+          "wrist": 3.8e-07,
+          "tolerance": 0.00254047
+        },
+        "right": {
+          "elbow": 3e-08,
+          "wrist": 2.1e-07,
+          "tolerance": 0.00254047
+        }
+      },
+      "hand_residuals": {
+        "left": 3.725290298461914e-07,
+        "right": 3.03925246810483e-07
+      },
+      "hand_gap": {
+        "left_lateral_min": 0.59140509,
+        "right_lateral_max": -0.591461,
+        "projected_gap_armature_units": 1.1828661,
+        "left_vertex_count": 183,
+        "right_vertex_count": 183,
+        "meaning": "Positive separates hand silhouettes laterally; negative overlaps in frontal projection only.",
+        "sampled_mesh_objects": [
+          "girl"
+        ],
+        "selection": "Evaluated mesh vertices whose dominant skin weight >= 0.5 belongs to Hand bone or descendants"
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": -11.90427472,
+          "radial_ulnar_deviation_deg": -2.95922363,
+          "wrist_2dof_reconstruction_error": 6.109e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": -11.99828107,
+          "radial_ulnar_deviation_deg": 2.54506334,
+          "wrist_2dof_reconstruction_error": 2.608e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      }
+    }
+  ],
+  "gate_failures": [],
+  "machine_status": "PASS",
+  "ai_visual_status": "AI_VISUAL_REVISE",
+  "second_diagnostics": {
+    "left": {
+      "inward_steps": 2,
+      "forward_steps": 20,
+      "step_armature_units": 0.00754505,
+      "wrist_shift_armature_units": [
+        -0.0150901,
+        -0.150901,
+        0.0
+      ],
+      "side_turn_deg": 13.991704,
+      "elbow_interior_deg": 167.715508,
+      "inward_flexion": {
+        "signed_inward_alignment": 0.81175293,
+        "bend_from_straight_deg": 12.284492
+      },
+      "upper_length": 0.25150167,
+      "lower_length": 0.25659118
+    },
+    "right": {
+      "inward_steps": 2,
+      "forward_steps": 20,
+      "step_armature_units": 0.00754505,
+      "wrist_shift_armature_units": [
+        0.0150901,
+        -0.150901,
+        0.0
+      ],
+      "side_turn_deg": 13.991704,
+      "elbow_interior_deg": 167.715508,
+      "inward_flexion": {
+        "signed_inward_alignment": 0.81175293,
+        "bend_from_straight_deg": 12.284492
+      },
+      "upper_length": 0.25150167,
+      "lower_length": 0.25659119
+    }
+  },
+  "wrist_mode": "coordinated",
+  "hand_shape": true,
+  "phrase_coordination": true,
+  "diagnostic_only": false,
+  "active_model": false
+}

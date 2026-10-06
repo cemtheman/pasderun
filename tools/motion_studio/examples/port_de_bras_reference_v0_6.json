@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.2.0",
+  "evidence_id": "port_de_bras_preparatory_to_second_reference_v0_6",
+  "motion_id": "port_de_bras_preparatory_to_second_v0",
+  "human_model_id": "canonical_human_v0",
+  "sources": [
+    {"id": "description", "kind": "prompt", "reference": "User description, 2026-09-24: preparatory position to second position; shoulders down, softly rounded arms, elbows supported, arms slightly in front of torso at finish"},
+    {"id": "front_start", "kind": "image", "reference": "User-provided AI-generated composite Gemini_Generated_Image_u14rjeu14rjeu14r.jpg, top panel 1 (front preparation); illustration, not teacher-verified measurement", "sha256": "d0ad2ebfd3594312f64a89739418cc75def157b7e4effe22a6caaf1d3f333f68", "view": {"camera_side": "front", "mirrored": "unknown"}},
+    {"id": "front_middle", "kind": "image", "reference": "Same composite, top panel 2 (front opening); illustration", "sha256": "d0ad2ebfd3594312f64a89739418cc75def157b7e4effe22a6caaf1d3f333f68", "view": {"camera_side": "front", "mirrored": "unknown"}},
+    {"id": "front_end", "kind": "image", "reference": "Same composite, top panel 4 (front second position); illustration", "sha256": "d0ad2ebfd3594312f64a89739418cc75def157b7e4effe22a6caaf1d3f333f68", "view": {"camera_side": "front", "mirrored": "unknown"}},
+    {"id": "side_start", "kind": "image", "reference": "Same composite, bottom panel 1 (side preparation); illustration", "sha256": "d0ad2ebfd3594312f64a89739418cc75def157b7e4effe22a6caaf1d3f333f68", "view": {"camera_side": "left", "mirrored": "unknown"}},
+    {"id": "side_end", "kind": "image", "reference": "Same composite, bottom panel 4 (side second position diagram); illustration", "sha256": "d0ad2ebfd3594312f64a89739418cc75def157b7e4effe22a6caaf1d3f333f68", "view": {"camera_side": "left", "mirrored": "unknown"}}
+  ],
+  "observations": [
+    {"id": "stated_movement", "source_id": "description", "sample": {"static": true}, "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [], "annotations": [
+      {"kind": "phase", "text": "Start: arms form an oval in front of torso, elbows soft and outward", "confidence": 1, "basis": "stated"},
+      {"kind": "motion", "text": "Open to the sides while preserving curved line; elbows do not collapse", "confidence": 1, "basis": "stated"},
+      {"kind": "phase", "text": "End: second position, shoulder above softly lowered elbow and hand line; arms slightly anterior to torso", "confidence": 1, "basis": "stated"}
+    ]},
+    {"id": "illustrated_start_front", "source_id": "front_start", "sample": {"static": true}, "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [], "annotations": [
+      {"kind": "style", "text": "Forearms are curved inward toward the body's center; both hands are low and close in front view", "confidence": 0.7, "basis": "observed"}
+    ]},
+    {"id": "illustrated_middle_front", "source_id": "front_middle", "sample": {"static": true}, "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [], "annotations": [
+      {"kind": "motion", "text": "Hands move outward while elbows retain a soft curve; this still image does not establish movement timing", "confidence": 0.7, "basis": "observed"}
+    ]},
+    {"id": "illustrated_end_front", "source_id": "front_end", "sample": {"static": true}, "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [], "annotations": [
+      {"kind": "style", "text": "Arms open to either side; shoulder-to-elbow-to-wrist line descends gently in front view", "confidence": 0.7, "basis": "observed"}
+    ]},
+    {"id": "illustrated_start_side", "source_id": "side_start", "sample": {"static": true}, "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [], "annotations": [
+      {"kind": "style", "text": "Hands are in front of torso and low in side view", "confidence": 0.7, "basis": "observed"}
+    ]},
+    {"id": "illustrated_end_side", "source_id": "side_end", "sample": {"static": true}, "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [], "annotations": [
+      {"kind": "style", "text": "Diagram shows arm line slightly anterior to torso; it does not measure an anatomical angle", "confidence": 0.6, "basis": "observed"}
+    ]}
+  ]
+}

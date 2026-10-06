@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/temporal-v0.5.schema.json",
+  "title": "Motion Studio v0.5 temporal sampling request",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "motion_id", "motion_spec_sha256", "sample_frames"],
+  "properties": {
+    "schema_version": {"const": "0.5.0"},
+    "motion_id": {"type": "string", "minLength": 1},
+    "motion_spec_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sample_frames": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}}
+  }
+}

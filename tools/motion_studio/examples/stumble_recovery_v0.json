@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1.0",
+  "motion_id": "stumble_recovery_v0",
+  "human_model_id": "canonical_human_v0",
+  "fps": 24,
+  "duration_frames": 49,
+  "provenance": [{"kind": "blend_action", "reference": "local reference: tokezleme_toparlanma.blend / Runner_RIGAction (49 frames); evidence only"}],
+  "phases": [
+    {"id": "run", "start_frame": 0, "end_frame": 6, "action": "run", "support_leg": "right", "gesture_leg": "left"},
+    {"id": "toe_catch", "start_frame": 6, "end_frame": 11, "action": "right toe catches; forward momentum continues", "support_leg": "right", "gesture_leg": "left"},
+    {"id": "peak_stumble", "start_frame": 11, "end_frame": 18, "action": "forward stumble; arms react", "support_leg": "none", "gesture_leg": "both"},
+    {"id": "catch_step", "start_frame": 18, "end_frame": 26, "action": "left emergency catch step", "support_leg": "left", "gesture_leg": "right"},
+    {"id": "recovery", "start_frame": 26, "end_frame": 37, "action": "recover upright; transfer to right support", "support_leg": "right", "gesture_leg": "left"},
+    {"id": "stable_run", "start_frame": 37, "end_frame": 49, "action": "run resumes", "support_leg": "right", "gesture_leg": "left"}
+  ],
+  "markers": [{"id": "toe_catch", "frame": 6}, {"id": "peak", "frame": 14}, {"id": "left_catch", "frame": 18}, {"id": "right_support", "frame": 26}, {"id": "run_resumes", "frame": 37}],
+  "landmark_targets": [],
+  "contacts": [
+    {"id": "right_initial", "start_frame": 0, "end_frame": 11, "landmark": "right_toe", "surface": "ground", "mode": "rolling"},
+    {"id": "left_catch", "start_frame": 18, "end_frame": 26, "landmark": "left_heel", "surface": "ground", "mode": "planted"},
+    {"id": "right_recovery", "start_frame": 26, "end_frame": 49, "landmark": "right_toe", "surface": "ground", "mode": "rolling"}
+  ],
+  "support": [
+    {"start_frame": 0, "end_frame": 11, "contact_ids": ["right_initial"]},
+    {"start_frame": 11, "end_frame": 18, "contact_ids": []},
+    {"start_frame": 18, "end_frame": 26, "contact_ids": ["left_catch"]},
+    {"start_frame": 26, "end_frame": 49, "contact_ids": ["right_recovery"]}
+  ],
+  "constraints": [{"kind": "momentum", "phase_id": "peak_stumble", "intent": "forward momentum remains visible"}, {"kind": "weight_transfer", "phase_id": "recovery", "intent": "load passes from left catch step to right support"}],
+  "transition_in": "run cycle", "transition_out": "run cycle", "tags": ["natural", "benchmark"]
+}

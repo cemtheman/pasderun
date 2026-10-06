@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/arm-transition-v0.5.schema.json",
+  "title": "Motion Studio authored arm transition preview",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "transition_id", "fps", "duration_frames", "interpolation", "start_pose", "end_pose"],
+  "properties": {
+    "schema_version": {"const": "0.5.1"},
+    "transition_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "fps": {"type": "integer", "minimum": 1},
+    "duration_frames": {"type": "integer", "minimum": 3},
+    "interpolation": {"const": "smoothstep"},
+    "start_pose": {"type": "object"},
+    "end_pose": {"type": "object"}
+  }
+}

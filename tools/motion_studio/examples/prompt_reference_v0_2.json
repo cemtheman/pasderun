@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.2.0",
+  "evidence_id": "stumble_prompt_reference_v0_2",
+  "motion_id": "stumble_recovery_v0",
+  "human_model_id": "canonical_human_v0",
+  "sources": [
+    {"id": "prompt_1", "kind": "prompt", "reference": "prompt:runner catches right toe, arms react forward, left leg catches, then returns to run"}
+  ],
+  "observations": [
+    {
+      "id": "prompt_intent", "source_id": "prompt_1", "sample": {"static": true},
+      "landmarks_2d": [], "landmarks_3d": [], "contact_hypotheses": [],
+      "annotations": [
+        {"kind": "motion", "text": "runner catches right toe", "confidence": 1, "basis": "stated"},
+        {"kind": "weight_transfer", "text": "left leg catches the forward stumble", "confidence": 1, "basis": "stated"},
+        {"kind": "motion", "text": "returns to running", "confidence": 1, "basis": "stated"}
+      ]
+    }
+  ]
+}

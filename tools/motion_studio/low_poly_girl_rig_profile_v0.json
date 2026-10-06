@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "profile_id": "low_poly_girl_rig_v0",
+  "human_model_id": "canonical_human_v0",
+  "source_glb": "assets/characters/low_poly_girl/low_poly_girl .glb",
+  "armature": "Rig",
+  "calibration_seed": "assets/characters/low_poly_girl/ballet_rig_calibration_seed_v1.json",
+  "anatomical_frame": {
+    "up": [0, 0, 1],
+    "left": [1, 0, 0],
+    "front": [0, -1, 0]
+  },
+  "landmark_bones": {
+    "pelvis": "Hips", "spine": "Spine", "chest": "Chest", "neck": "Neck", "head": "Head",
+    "left_shoulder": "Upper_Arm_L", "right_shoulder": "Upper_Arm_R",
+    "left_elbow": "Lower_Arm_L", "right_elbow": "Lower_Arm_R",
+    "left_wrist": "Hand_L", "right_wrist": "Hand_R",
+    "left_hand": "Hand_L", "right_hand": "Hand_R",
+    "left_hip": "Upper_Leg_L", "right_hip": "Upper_Leg_R",
+    "left_knee": "Lower_Leg_L", "right_knee": "Lower_Leg_R",
+    "left_ankle": "Foot_L", "right_ankle": "Foot_R",
+    "left_toe": "Toes_L", "right_toe": "Toes_R"
+  }
+}

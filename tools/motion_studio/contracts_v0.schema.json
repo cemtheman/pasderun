@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/contracts-v0.schema.json",
+  "title": "Motion Studio v0 contracts",
+  "$defs": {
+    "side": {"enum": ["left", "right", "both", "none"]},
+    "landmark": {"enum": ["pelvis", "spine", "chest", "neck", "head", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hand", "right_hand", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle", "left_heel", "right_heel", "left_toe", "right_toe"]},
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "reference"],
+      "properties": {
+        "kind": {"enum": ["prompt", "video", "image", "blend_action", "manual_edit", "teacher_refinement", "hybrid"]},
+        "reference": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "notes": {"type": "string"}
+      }
+    },
+    "human_model": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "model_id", "landmarks", "coordinate_space", "axes", "position_unit"],
+      "properties": {
+        "schema_version": {"const": "0.1.0"}, "model_id": {"const": "canonical_human_v0"},
+        "landmarks": {"type": "array", "uniqueItems": true, "minItems": 23, "maxItems": 23, "items": {"$ref": "#/$defs/landmark"}},
+        "coordinate_space": {"const": "body_relative"},
+        "axes": {"type": "array", "prefixItems": [{"const": "left"}, {"const": "up"}, {"const": "front"}], "minItems": 3, "maxItems": 3},
+        "position_unit": {"const": "standing_height"}
+      }
+    },
+    "contact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "start_frame", "end_frame", "landmark", "surface", "mode"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "start_frame": {"type": "integer", "minimum": 0}, "end_frame": {"type": "integer", "minimum": 1},
+        "landmark": {"$ref": "#/$defs/landmark"}, "surface": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["touch", "planted", "rolling", "sliding"]}
+      }
+    },
+    "support": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start_frame", "end_frame", "contact_ids"],
+      "properties": {
+        "start_frame": {"type": "integer", "minimum": 0}, "end_frame": {"type": "integer", "minimum": 1},
+        "contact_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "motion_spec": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "motion_id", "human_model_id", "fps", "duration_frames", "provenance", "phases", "markers", "landmark_targets", "contacts", "support", "constraints"],
+      "properties": {
+        "schema_version": {"const": "0.1.0"}, "motion_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "human_model_id": {"const": "canonical_human_v0"}, "fps": {"type": "integer", "minimum": 1},
+        "duration_frames": {"type": "integer", "minimum": 1},
+        "provenance": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/provenance"}},
+        "phases": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "start_frame", "end_frame", "action", "support_leg", "gesture_leg"], "properties": {
+          "id": {"type": "string", "minLength": 1}, "start_frame": {"type": "integer", "minimum": 0}, "end_frame": {"type": "integer", "minimum": 1},
+          "action": {"type": "string", "minLength": 1}, "support_leg": {"$ref": "#/$defs/side"}, "gesture_leg": {"$ref": "#/$defs/side"}
+        }}},
+        "markers": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "frame"], "properties": {
+          "id": {"type": "string", "minLength": 1}, "frame": {"type": "integer", "minimum": 0}
+        }}},
+        "landmark_targets": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["frame", "landmark", "position"], "properties": {
+          "frame": {"type": "integer", "minimum": 0}, "landmark": {"$ref": "#/$defs/landmark"},
+          "position": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+        }}},
+        "contacts": {"type": "array", "items": {"$ref": "#/$defs/contact"}},
+        "support": {"type": "array", "items": {"$ref": "#/$defs/support"}},
+        "constraints": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["kind", "intent"], "properties": {
+          "kind": {"enum": ["turnout", "knee_tracking", "pelvis_alignment", "epaulement", "port_de_bras", "plie_depth", "releve", "foot_articulation", "head_focus", "balance", "line_extension", "momentum", "weight_transfer", "other"]},
+          "intent": {"type": "string", "minLength": 1}, "phase_id": {"type": "string", "minLength": 1}, "side": {"$ref": "#/$defs/side"}
+        }}},
+        "transition_in": {"type": "string"}, "transition_out": {"type": "string"},
+        "tags": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "rig_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "profile_id", "human_model_id", "source_glb", "armature", "calibration_seed", "anatomical_frame", "landmark_bones"],
+      "properties": {
+        "schema_version": {"const": "0.1.0"}, "profile_id": {"type": "string", "minLength": 1},
+        "human_model_id": {"const": "canonical_human_v0"}, "source_glb": {"type": "string", "minLength": 1},
+        "armature": {"type": "string", "minLength": 1}, "calibration_seed": {"type": "string", "minLength": 1},
+        "anatomical_frame": {"type": "object", "additionalProperties": false, "required": ["up", "left", "front"], "properties": {
+          "up": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+          "left": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+          "front": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+        }},
+        "landmark_bones": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1}}
+      }
+    },
+    "qa_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "motion_id", "status", "checks"],
+      "properties": {
+        "schema_version": {"const": "0.1.0"}, "motion_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["not_run", "pass", "fail"]},
+        "checks": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["name", "status", "evidence"], "properties": {
+          "name": {"type": "string", "minLength": 1}, "status": {"enum": ["pass", "fail", "not_run"]},
+          "evidence": {"type": "string"}
+        }}}
+      }
+    },
+    "asset_metadata": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "motion_id", "spec_sha256", "rig_profile_id", "qa_result_ref", "review_status", "reviewers", "provenance"],
+      "properties": {
+        "schema_version": {"const": "0.1.0"}, "motion_id": {"type": "string", "minLength": 1},
+        "spec_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "rig_profile_id": {"type": "string", "minLength": 1}, "qa_result_ref": {"type": "string", "minLength": 1},
+        "review_status": {"enum": ["draft", "pending_review", "approved", "rejected"]},
+        "reviewers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "provenance": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/provenance"}}
+      }
+    }
+  }
+}

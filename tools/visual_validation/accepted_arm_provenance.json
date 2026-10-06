@@ -1,0 +1,14 @@
+{
+  "historical_reference_commit": "978df231acd79394556ff21828ff2da405d4674b",
+  "reviewed_implementation_commit": "c8c669519790a3af7c9425ce9eb2021ccdd8e6ee",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "scope": "Restore only read-only Motion Studio arm solver dependency closure and regression fixtures. Production Phase 10/11 code and source GLB unchanged.",
+  "historic_inputs": {
+    "bras_bas_outward_wrist_shift": 0.12825423,
+    "en_avant_outward_wrist_shift": 0.09751057,
+    "guide_clearance": 0.01,
+    "guide_opening_lead": 0.8,
+    "opening_arc_up_fraction": 0.19,
+    "opening_arc_front_fraction": 0.26
+  }
+}

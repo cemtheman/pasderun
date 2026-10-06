@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/contact-support-v0-4.schema.json",
+  "title": "Motion Studio v0.4 contact and support geometry",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "pose_id", "rig_profile_id", "source_glb_sha256", "anatomical_frame", "ground_height_up", "max_contact_height_spread", "patches", "active_patch_ids"],
+  "properties": {
+    "schema_version": {"const": "0.4.0"},
+    "pose_id": {"type": "string", "minLength": 1},
+    "rig_profile_id": {"type": "string", "minLength": 1},
+    "source_glb_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "anatomical_frame": {"type": "object", "additionalProperties": false,
+      "required": ["left", "up", "front"], "properties": {
+        "left": {"$ref": "#/$defs/vec3"},
+        "up": {"$ref": "#/$defs/vec3"},
+        "front": {"$ref": "#/$defs/vec3"}
+      }
+    },
+    "ground_height_up": {"type": "number"},
+    "max_contact_height_spread": {"type": "number", "exclusiveMinimum": 0},
+    "patches": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/patch"}},
+    "active_patch_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "center_of_mass": {"type": "object", "additionalProperties": false,
+      "required": ["position_armature_local", "source"],
+      "properties": {
+        "position_armature_local": {"$ref": "#/$defs/vec3"},
+        "source": {"type": "object", "additionalProperties": false,
+          "required": ["kind", "reference"],
+          "properties": {
+            "kind": {"enum": ["measured_mass", "human_estimate"]},
+            "reference": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "point": {"type": "object", "additionalProperties": false,
+      "required": ["position_armature_local", "reference"],
+      "properties": {
+        "position_armature_local": {"$ref": "#/$defs/vec3"},
+        "reference": {"type": "string", "minLength": 1}
+      }
+    },
+    "patch": {"type": "object", "additionalProperties": false,
+      "required": ["id", "side", "source", "points"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "side": {"enum": ["left", "right"]},
+        "source": {"type": "object", "additionalProperties": false,
+          "required": ["kind", "reference"],
+          "properties": {
+            "kind": {"enum": ["measured_mesh", "manual_annotation"]},
+            "reference": {"type": "string", "minLength": 1}
+          }
+        },
+        "points": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/point"}}
+      }
+    }
+  }
+}

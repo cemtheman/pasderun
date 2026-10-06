@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.5.1",
+  "transition_id": "arm_lift_geometry_probe_v0_5",
+  "fps": 24,
+  "duration_frames": 17,
+  "interpolation": "smoothstep",
+  "start_pose": {
+    "schema_version": "0.3.0", "pose_id": "arms_low_probe", "rig_profile_id": "low_poly_girl_rig_v0",
+    "targets": [
+      {"side": "left", "landmark": "left_wrist", "reach_fraction": 0.85, "offset_body_arm_reach": [0, 0, 0.02], "bend_plane": "body_down"},
+      {"side": "right", "landmark": "right_wrist", "reach_fraction": 0.85, "offset_body_arm_reach": [0, 0, 0.02], "bend_plane": "body_down"}
+    ]
+  },
+  "end_pose": {
+    "schema_version": "0.3.0", "pose_id": "arms_raised_probe", "rig_profile_id": "low_poly_girl_rig_v0",
+    "targets": [
+      {"side": "left", "landmark": "left_wrist", "reach_fraction": 0.85, "offset_body_arm_reach": [0, 0.16, 0.02], "bend_plane": "body_down"},
+      {"side": "right", "landmark": "right_wrist", "reach_fraction": 0.85, "offset_body_arm_reach": [0, 0.16, 0.02], "bend_plane": "body_down"}
+    ]
+  }
+}

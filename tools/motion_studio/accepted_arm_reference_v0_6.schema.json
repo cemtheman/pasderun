@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pasderun.local/motion-studio/accepted-arm-reference-v0.6.schema.json",
+  "title": "Read-only normalized arm landmark reference",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "reference_id", "source_profile_sha256", "source_glb_sha256", "coordinate_space", "position_unit", "poses"],
+  "properties": {
+    "schema_version": {"const": "0.6.1"},
+    "reference_id": {"const": "phase10_6_foundation_arm_landmarks"},
+    "source_profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_glb_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "coordinate_space": {"const": "body_relative"},
+    "position_unit": {"const": "standing_height"},
+    "poses": {"type": "object", "additionalProperties": false,
+      "required": ["bras_bas", "en_avant", "second"],
+      "properties": {
+        "bras_bas": {"$ref": "#/$defs/arm_pose"},
+        "en_avant": {"$ref": "#/$defs/arm_pose"},
+        "second": {"$ref": "#/$defs/arm_pose"}
+      }
+    }
+  },
+  "$defs": {
+    "arm_pose": {"type": "object", "minProperties": 8,
+      "additionalProperties": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}}
+  }
+}
