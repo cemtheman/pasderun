@@ -1,0 +1,6 @@
+PHASE10_6_3_ANATOMICAL_CONSTRAINTS=PASS
+PROFILE=/workspace/scratch/bb586e64b8c7/pasderun/build/phase10_6/low_poly_girl_anatomical_constraint_profile_v1.json
+BONES=24
+TURNOUT_PRIMARY=HIP
+KNEE_AXIAL=DERIVED_ONLY
+FOOT_YAW=FORBIDDEN

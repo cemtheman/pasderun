@@ -1,0 +1,88 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+Blender 4.0.2
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/01_bras_bas_front.png'
+Time: 00:01.49 (Saving: 00:00.11)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/01_bras_bas_three_quarter.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/01_bras_bas_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/02_en_avant_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/02_en_avant_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/02_en_avant_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/03_second_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/03_second_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/03_second_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/04_fifth_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/04_fifth_three_quarter.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/04_fifth_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/05_plie_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/05_plie_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/05_plie_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/06_releve_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/06_releve_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/foundation_pose_cells/06_releve_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.53s
+PHASE10_6_8_FOUNDATION_POSE_VISUAL_GATE=READY
+CONTACT_SHEET=/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/contact.png
+REPORT=/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-0/baseline/geometry_report.json
+POSES=6
+VIEWS_PER_POSE=3
+RENDERS=18
+HAND_AXIAL_CONTINUITY=PASS
+MIDDLE_BONE_TIP=DIAGNOSTIC_ONLY
+HAND_MESH_CENTERLINE_SPACING=PASS
+HAND_MESH_RETARGET_WRIST_SEED_PRESERVED=PASS
+HAND_MESH_RUNTIME_CLEARANCE_SOLVER=PASS
+BALLET_HAND_SHAPE=PASS
+STATIC_CONTACT_REALIZATION=PASS
+ANIMATION=NOT_PERFORMED
+GLB_EXPORT=NOT_PERFORMED
+HUMAN_VISUAL_ACCEPTANCE=PENDING
+
+Blender quit

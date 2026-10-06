@@ -1,0 +1,5 @@
+PHASE10_6_2_CANONICAL_SKELETON=PASS
+PROFILE=/workspace/scratch/bb586e64b8c7/pasderun/build/phase10_6/low_poly_girl_canonical_ballet_profile_v1.json
+BONES=24
+BODY_FRAME=LEFT,UP,FRONT
+FRONT_POLICY=DECLARED_BY_RIG_CALIBRATION_ONLY

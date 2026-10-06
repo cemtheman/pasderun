@@ -1,0 +1,16 @@
+{
+  "git_sha": "9a544d5897a3609d2838e30f9ae7d00f44aefc43",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "profiles_sha256": {
+    "calibration": "1471d76410be3f321a632d767180f40e9a63290f883c037060dd5652b1f40a78",
+    "canonical": "b46db331dc6d8ce42bd967dbc2cd6335bf8e6feb20e50f02881ba42412389555",
+    "constraints": "b95023ebb73f5bf1b864062e68d00d2870163ec67ba73b1ee02e2493beca1d08",
+    "grammar": "1c9fd9d303ef1e86694941774b3137a2b43ac709ec347ac8bb9d9ed1a39e2a16",
+    "poses": "a197399a6897eaf8b9bf620a01694813d8ad50bb38cc6fba865aa7424d0e6475",
+    "retarget": "6f5c27d120f57d9c86eaaae32588f6ad4772921b1b35879c89bdcbb2eb91704c"
+  },
+  "render_report_sha256": "d504445981fe148b2c7d5fd917dce2057d008596edabd115e899072662f32253",
+  "machine_status": "PASS",
+  "ai_visual_status": "AI_VISUAL_PASS",
+  "scope": "Baseline evidence reproducibility and framing only; not artistic acceptance of inherited poses"
+}
