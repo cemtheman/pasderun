@@ -40,7 +40,7 @@ User continuation authorization supersedes historical BBM-1 routine stop text be
 | BBM-7 | NOT STARTED | Next reusable phrase/style proof |
 | BBM-8 | NOT STARTED | Integration after model gates |
 
-Evidence paths are relative to build/visual_validation. BBM-6 cloud rerun:374tests,49/49 machine samples and paired landing/sampled-motion review PASS. User requires remaining full jump-chain coverage before general PASS; exact phase boundaries/finer temporal proof still pending. Recovery snapshot9bda23e remains a separate unverified historical reconstruction.
+Evidence paths are relative to build/visual_validation. BBM-6 cloud rerun:374tests,49/49 machine samples and paired landing/sampled-motion review PASS. User requires remaining full jump-chain coverage before general PASS; 118-time phase/boundary machine proof and independent chain audit observed PASS locally; full118 montage review and source/evidence integrity remain pending after repeated cloud transport failure. See journal and latest handoff. Recovery snapshot9bda23e remains a separate unverified historical reconstruction.
 
 ## Milestones
 
