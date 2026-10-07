@@ -1,54 +1,38 @@
 # Pas de Run — Morning Handoff / 7 Ekim 2026
 
-## Güncel sonuç
-Kullanıcı devamı yeniden açtıktan sonra BBM-1, BBM-2 ve BBM-3 mühendislik AI_VISUAL_PASS oldu. BBM-0 baseline kilidi PASS. BBM-4 tamamlandı; BBM-5 in progress, BBM-6–8 uygulanmadı. Eski BBM-1 duruş kararı tarihsel ve geçersizdir.
+## Güncel durum
+BBM-0→BBM-4 tamamlandı: automated/geometric gate’ler, testler ve gerçek görsel inceleme PASS. BBM-5 plié ve destek aktarımı kanıtları PASS; tam milestone checkpoint hazırlanıyor. BBM-6 sıradaki adım, BBM-7–8 başlamadı. Kullanıcı devamı yetkilendirdi; rutin onay beklenmiyor.
 
-## Checkpoint ayrımı
-- Branch: `work/bbm-v1-overnight-20261006`.
-- Güvenli ürün/main: `080d42cb076a0efcc4902bbef7d9e42aae5550e3`, değiştirilmedi.
-- BBM-1 yayımlanmış PASS: `931ef8bd9e3353e0e65c4cd087cdc6e56b051796` (yerel `daa264e3f0110441adfccc77507faf680a098e47`, aynı tree).
-- BBM-2 yayımlanmış PASS: `3938f89aff2cab5504a7d070f3f420d04c8fb035` (yerel `4f586cea9f386846b6a8a631feba2f0b33fa1462`, aynı tree).
-- BBM-3 son yerel HEAD: `bbddfeb6ab392c113dd8a26acc94ff3fceb4ad1f`; tree `3c020c327ff6fb9bd607f96ff60fff6fc2fb501d`. Son başarılı terminal kontrolünde working tree temizdi.
-- **Güncelleme: BBM-3 yayımlandı9516b79a76b9a687dc32b4225df8c85a109cb3d7; BBM-4 yayımlandıd75e1fde9b49f3839302a03392ec2a47622d4da4 (localc2e70ba), exact tree doğrulandı. Ortam geri geldi.** Önceki kesinti kaydı: Blob aktarımında SHA doğrulaması başarısız olduğu için uzak branch'e eksik/yanlış tree gönderilmedi. Ardından exec-server bağlantısı koptu; komut ve view_image kurtarma denemeleri yanıt vermedi. Bu dokümanlar GitHub bağlantısı üzerinden BBM-2 tabanına eklenmiştir. Dokümantasyon commit'i BBM-3 kaynak/kanıtlarının yayımlandığı anlamına gelmez.
-- Yerel repo: `/workspace/scratch/bb586e64b8c7/pasderun`.
-- Source GLB SHA256 `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`, değişmedi. Gameplay, topology, ürün timing ve main değişmedi; deploy yok.
+Branch `work/bbm-v1-overnight-20261006`. Son yayımlanmış ve yerel HEAD `f2b3097a24f18806dcab84ea414c4bffd38292bd` (plié alt kanıtı). Devam çalışmasının dosyaları henüz commit edilmedi. Güvenli main `080d42cb076a0efcc4902bbef7d9e42aae5550e3` korunuyor. Kaynak GLB SHA256 `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2` değişmedi. Gameplay/topology/timing veya deploy değişikliği yok.
 
-## Testler ve görsel gate'ler
-| Milestone | Testler | Machine/geometric | AI visual |
-|---|---:|---|---|
-| BBM-0 | mevcut regression suite | calibration/retarget/contact/wrist PASS, 18 render | PASS yalnız baseline kilidi |
-| BBM-1 | 349 PASS | 49/49 örnek; değişmeyen wrist/endpoint/contact/length gate'leri | PASS; tüm49 front ve üç görünüm ana kareler incelendi |
-| BBM-2 | 353 PASS | max tracking4.94° <6°, contact/wrist/envelope PASS | PASS; first/fifth/plié ×3 görünüm |
-| BBM-3 | 358 PASS: ballet207 + Blender106 + Motion45 | ankle/toe anatomy, contact, tracking, SO(3), matrix reconstruction ve bone length PASS | PASS; flat/demi/pointe-ready ×3 görünüm ve detay |
-| BBM-4 | 362 PASS | all24cells + root drift <=1.9e-9, contact/tracking/foot matrix PASS | AI_VISUAL_PASS |
-| BBM-5 | 365 current tests PASS |49sample render in progress; NOT PROMOTED | NOT REVIEWED |
-| BBM-6–8 | NOT RUN | NOT IMPLEMENTED | NOT REVIEWED |
+## Başarılı checkpoint’ler
+| Milestone | Yayımlanmış SHA | Kanıt |
+|---|---|---|
+| BBM-1 | 931ef8bd9e3353e0e65c4cd087cdc6e56b051796 | 49 örnek üst gövde, üç görünüm, AI_VISUAL_PASS |
+| BBM-2 | 3938f89aff2cab5504a7d070f3f420d04c8fb035 | first/fifth/plié, turnout ve gerçek tracking PASS |
+| BBM-3 | 9516b79a76b9a687dc32b4225df8c85a109cb3d7 | flat/demi/pointe-ready, gerçek ayak/temas PASS |
+| BBM-4 | d75e1fde9b49f3839302a03392ec2a47622d4da4 | dört destek fixture’ı ve COM proxy PASS |
+| BBM-5 plié | f2b3097a24f18806dcab84ea414c4bffd38292bd | 49 kare iniş/dönüş, AI_VISUAL_PASS; aktarım eksik |
 
-BBM-3 son kaynak için test/syntax/diff kontrolleri geçti. Son amend yalnız ayak detay crop'unda orantısız büyütmeyi düzeltti:160×140 crop, tekdüze2×, 320×280 hücre; ham renderlar değişmedi. Tam sahne renderları ve önceki büyütülmüş detaylar gerçekten incelendi; bu son crop'u yeniden açma girişimi ortam kopması nedeniyle tamamlanmadı.
+Yerel commit’ler yayımlanırken exact tree eşitliği doğrulandı; farklı metadata nedeniyle yerel/yayımlanmış SHA ayrımı journal’da kayıtlı. Önceki ortam kopması ve BBM-3 aktarım engeli çözüldü; artık güncel engel değildir.
 
-## Somut ilerleme
-- BBM-1: historical sampled elbow bend-pole arc faz gecikmesiyle korunarak offering-palms sorunu giderildi. Kaynağa bağlı palm-normal intent, global feasible roll path, neutral intermediate wrist ve küçük clavicle/head/epaulement fazları birleştirildi. Scapula semantik; gaze=head.
-- BBM-2: hip kaynaklı dağıtılmış turnout, flexion'a bağlı sınırlı knee contribution, independent foot yaw0. Gerçek shin/toe-ray ölçümü, mesh heel gap üzerinden bounded hip adduction. First/plié topuk çaprazlığı düzeltildi, konservatif kapalı fifth.
-- BBM-3: FLAT/DEMI_POINTE/POINTE_READY semantiği. Flat-contact canonical ankle neutral ~32.377°/32.392°; anatomik plantar aralıkları bu source-bound nötre göre değerlendirilir. Tercih edilen50° ve hard60° sınırlar değiştirilmedi. Import rest-frame skew için gerçek inverse + normalize rotation, bağımsız world reconstruction ve bone-length kontrolü.
-- Demi: anatomical plantar35°/toe35°, heel~7.8cm; pointe-ready: plantar50°/toe0°, heel~13.6cm. Pointe-ready açık simetrik hazırlık; full en-pointe iddiası yok.
-- Candidate tracking: flat1.795°, demi0.752°, pointe-ready0.065°. Contact hata max~3.1e-5. Matrix errors~2.5e-6 < değişmeyen1e-5. Arch gözlenemez; semantic intent. Pelvis/forefoot centroid yalnız proxy, whole-body COM henüz yok.
+## Test ve gate durumu
+Son odaklı suite: ballet218 + Blender106 + Motion Studio45 =369 test PASS; diff check PASS. BBM-5 plié49/49 geometric PASS, min destek marjı .059567, arka ayak centroid drift .00011165. Bağımsız ön/arka tüm footprint audit max drift .0069795 < değişmeyen .0097621 sınır PASS. Son değer whole-foot drift, ilk değer yalnız rear-anchor drift’tir.
 
-## Sabah öncelikli görseller
-1. `build/visual_validation/BBM-1/historical-diagnostic/verified_frame_strip.png` vs `BBM-1/elbow-path/verified_frame_strip.png`; kabul edilen `elbow-path/opening_25_49.png`, `preparation_01_24.png`, `motion_preview.gif`.
-2. `build/visual_validation/BBM-2/baseline/contact.png` vs `candidate/contact.png`.
-3. **Yerel BBM-3:** `build/visual_validation/BBM-3/baseline/contact.png` vs `candidate/contact.png`; aynı dizinlerde `foot_detail.png`; `report.json`, `review.md`, `manifest.json`.
-4. BBM-1 önceki palm/hand-line denemeleri ve BBM-2/3 intermediate iteration raporları REVISE/superseded olarak korunur; kabul edilmiş checkpoint yerine kullanılmaz.
+Destek aktarımı25 örnek, pelvis sola8cm; iki ayak FULL_FOOT. Bitişte sağ TOUCH, temas sürer fakat sol destek poligonuna eklenmez. Transfer04 bitiş COM proxy marjı−.015871: AI_VISUAL_REVISE, support/anatomy. Transfer05 küçük gövde taşımasıyla−.00030708: machine FAIL; ham quaternion süreklilik ölçümü de beş kareyi reddetti. Transfer06 kısa SO(3) mesafesini ayrı raw açıyla kaydeder, gerçek30° gate değişmez;31° regresyon testi reddedilir. Gövde taşıması5.75°/2.5° mevcut10° sınırına bağlı; ön/arka ayak sabitliği birlikte kontrol edilir. Fresh render/verdict henüz bekleniyor. Eski REVISE denemeleri iteration-04/05 altında korunur.
 
-Saç/kostüm ve kaynak low-poly ayakkabı/heel-spur silueti incelemeyi sınırlar. AI_PASS mühendislik gate'idir; insan sanatsal kabulü henüz yok. Zorunlu ürün/estetik karar veya mesh değişikliği tespit edilmedi.
+## Öncelikli baseline/candidate görselleri
+- Üst gövde: `build/visual_validation/BBM-1/historical-diagnostic/verified_frame_strip.png` ve `BBM-1/elbow-path/verified_frame_strip.png`; all49 ve GIF aynı evidence paketinde.
+- Turnout: `build/visual_validation/BBM-2/{baseline,candidate}/contact.png`.
+- Ayak: `build/visual_validation/BBM-3/{baseline,candidate}/contact.png`, `foot_detail.png`.
+- Destek: `build/visual_validation/BBM-4/{baseline,candidate}/contact.png`, `support_proxy.png`.
+- Plié: `build/visual_validation/BBM-5/{baseline,candidate}/frame_strip.png`, `all_frames.png`, `motion_preview.gif`.
+- Aktarım: `build/visual_validation/BBM-5/weight-transfer/{baseline,candidate}/review_strip.png`, `all_frames.png`, `report.json`. Henüz kabul edilmiş kanıt olarak kullanılmaz.
 
-## Kesin devam adımı
-1. Çalışma ortamını kurtar; yerel `bbddfeb...` commit ve temiz tree'yi doğrula. Bu uzak dokümantasyon commit'ini yerel BBM-3 journal kayıtlarını koruyarak birleştir.
-2. BBM-3 manifest/raw PNG decode/source hash bağlarını doğrula; son uniform crop'u aç. Blob SHA hatasını teşhis et, doğrulanmış exact tree ile BBM-3'ü yayımla. Hatalı blob'u referanslama.
-3. BBM-4: gerçek deformed contact points convex hull/practical support polygon, açıkça sınırlı geometry-based COM proxy, signed balance margin ve support-leg/gesture-leg ayrımı. Flat, demi, one-leg ve geçiş fixture'ları; mevcut anatomik/contact/wrist/tracking gate'lerini koru. Root yatay kaydırarak dengeyi gizleme.
-4. Testler + deterministic üç görünüm baseline/candidate + gerçek AI inceleme PASS olmadan BBM-5'e geçme. Sonra roadmap5→8 sırayla.
+## Sınırlamalar ve kesin sonraki adım
+COM, costume/hair dahil uniform surface-density geometrik proxy; gerçek tissue COM veya force plate değildir. Arch/scapula kaynak rig’de kısmen semantik, gaze=head; kaynak ayakkabı/saç görünürlüğü sınırlar. AI_VISUAL_PASS mühendislik kararı; insan sanatsal kabulü sabah toplu review’a bırakıldı. Şu ana kadar zorunlu mesh değişikliği, invariant gevşetme veya kullanıcı ürünü/estetik kararı gerekmiyor.
 
-Durma nedeni kullanıcı tercihi veya kullanım limiti olduğuna dair kanıt yok: çalışma ortamı erişimi kaybolduğu için yeni deterministic evidence üretimi/incelemesi sürdürülemedi. Mevcut başarılı checkpoint'ler korunmuştur; eksik BBM-4 kodu aktif checkpoint bırakılmamıştır.
+Transfer06 raporunu tamamla; raw/shortest quaternion açıları ve tüm temas/footprint/denge gate’lerini incele. Gerekirse yalnız en küçük katmanı düzeltip yeniden render et. Machine PASS ardından baseline/candidate üç görünüm ana kareleri ve tüm25 kareyi gerçekten incele; AI_VISUAL_PASS olursa BBM-5 tam checkpoint’ini commit/yayımla. Ardından BBM-6 take-off/flight/landing zincirine geç. Journal ayrıntılı chronology ve source hash bağlarını taşır.
 
-## 08:45 devam turu / BBM-4 son başarılı checkpoint
-
-BBM-3 transferi50000-character blob reads ile düzeltildi; kaynak ve PNG hash/decode doğrulandı. BBM-4 actual24cells review PASS: flat/demi upright, one-leg support beneath trunk, transitional swing clearance~.0396. Surface-density COM proxy not tissue-mass. Support polygon excludesSWING geometry; minimum candidate margin .00997. Primary evidence `build/visual_validation/BBM-4/baseline/contact.png`, `candidate/contact.png`, `support_proxy.png`, `report.json`, `review.md`. Source GLB unchanged. Shared physical runtime replay all4fixtures exactly0 metric difference. BBM-5 next: paired49sample plié descent-return, contact-aware hip IK, plant drift + root monotonic + anatomical/tracking gates, actual full motion review before promotion. Earlier restore instructions above superseded by this continuation.
+## Son güncelleme — BBM-5 tam PASS
+Transfer09 ALL25 geometric PASS; gerçek paired3view ve all25 review AI_VISUAL_PASS. Ön/arka drift.000503/.000509, temas9.76e−5, bitiş yalnız-sol destek marjı+.001489. Actual trunk3.137°<10°, shortest joint step.912°. Plié49 ve bağımsız footprint audit PASS.369test PASS. Tam milestone source SHA git log -- build/visual_validation/BBM-5/milestone_report.json üzerinden bulunur. Kesin sonraki adım BBM-6 dört durumlu jump zinciri; eski aktarım REVISE satırları tarihsel.

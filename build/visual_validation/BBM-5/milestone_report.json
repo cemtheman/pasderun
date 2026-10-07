@@ -1,0 +1,20 @@
+{
+  "milestone": "BBM-5",
+  "machine_status": "PASS",
+  "ai_visual_status": "AI_VISUAL_PASS",
+  "tests": {
+    "ballet_motion": 218,
+    "blender": 106,
+    "motion_studio": 45,
+    "total": 369,
+    "status": "PASS"
+  },
+  "proof_sha256": {
+    "report.json": "f3dde9e52efd94cbbb994af5a2b9ae7cba96d894ef39050681579bfe460a7237",
+    "footprint_audit.json": "31d18933fa4da11475fb2966f454aaa34c627ceb039d9721bdf66f0b02a7a6b9",
+    "weight-transfer/report.json": "1b8f865769425b18cf1a38993e7670e3d0164d4a6294a88fede3e0963da7c214",
+    "weight-transfer/manifest.json": "a348c738e649e8e230edbbf93be7030b3eb36cebc41e00800341c8644f7328ea"
+  },
+  "scope": "plie descent-return and planted quasistatic supported transfer",
+  "next": "BBM-6"
+}

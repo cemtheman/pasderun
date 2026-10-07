@@ -1,0 +1,5 @@
+{
+  "machine_status": "FAIL",
+  "ai_visual_status": "NOT_REVIEWED",
+  "fatal_error": "No improving transfer step inside unchanged preferred envelopes"
+}
