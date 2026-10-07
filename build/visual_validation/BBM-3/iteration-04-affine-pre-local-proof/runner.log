@@ -1,0 +1,68 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+Blender 4.0.2
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/01_flat_front.png'
+Time: 00:00.33 (Saving: 00:00.11)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/01_flat_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/01_flat_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/02_demi_pointe_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/02_demi_pointe_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/02_demi_pointe_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/03_pointe_ready_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/03_pointe_ready_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/baseline/03_pointe_ready_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/candidate/01_flat_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/candidate/01_flat_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-3/candidate/01_flat_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Traceback (most recent call last):
+  File "/workspace/scratch/bb586e64b8c7/pasderun/tools/blender/render_bbm3_foot_v1.py", line 156, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/workspace/scratch/bb586e64b8c7/pasderun/tools/blender/render_bbm3_foot_v1.py", line 131, in main
+    realization=realize();balance_intent={}
+                ^^^^^^^^^
+  File "/workspace/scratch/bb586e64b8c7/pasderun/tools/blender/render_bbm3_foot_v1.py", line 102, in realize
+    apply_calibrated_basis(rig,foot['rig_bone'],gate.static_core.rig_basis_from_canonical_pose(foot,desired))
+  File "/workspace/scratch/bb586e64b8c7/pasderun/tools/blender/render_bbm3_foot_v1.py", line 35, in apply_calibrated_basis
+    raise RuntimeError(f'{name}: local rotation contract failed: orthogonality={orthogonality}, determinant={delta.determinant()}')
+RuntimeError: Foot_R: local rotation contract failed: orthogonality=2.086162567138672e-05, determinant=0.9999874830245972
+
+Error: script failed, file: '/workspace/scratch/bb586e64b8c7/pasderun/tools/blender/render_bbm3_foot_v1.py', exiting.
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.55s
+
+Blender quit

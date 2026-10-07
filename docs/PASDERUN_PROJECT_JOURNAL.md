@@ -239,6 +239,37 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 - Artifacts: `BBM-2/baseline/contact.png`, `candidate/contact.png`, all18raw cells, `report.json`, `review.md`, `manifest.json`. Earlier REVISE packs retained.
 - Risks: single-toe tracking proxy, unobservable arch/pronation, partial turnout fifth; no production integration. Next BBM-3 semantics + visual proofs.
 
+### BBM-3 foot semantics / evidence run in progress
+
+- BBM-2 local4f586cea9f386846b6a8a631feba2f0b33fa1462 → published3938f89aff2cab5504a7d070f3f420d04c8fb035, identical tree; tracking work branch restored, no main mutation.
+- Starting BBM-3 commit3938f89. Isolated foot semantic states + four tests distinguish FULL_FOOT, FOREFOOT and TOE_REGION_PROXY support; arch/hindfoot without separate bones stay semantic; no full-en-pointe claim. Ankle preferred50°/hard60° unchanged; pointe-ready cannot expand these.
+- Render fixture uses accepted first-position turnout/closure and BBM-1 carriage, existing ankle/toe retarget and deformed-mesh contact solver. Candidate adds bounded hip flexion adjustment to bring pelvis projection toward observed low forefoot support centroid (limited proxy, whole-body COM remains BBM-4). Fixed18-cell paired pack in BBM-3.
+- Tests206 ballet-motion +45Motion+106Blender =357 PASS for current pure helpers; actual BBM-3 geometry/visual verdict pending complete render. One diagnostic read used a wrong toe joint class key; corrected to existing mtp_hinge, no code/constraint change.
+
+- BBM-3 iteration01: machine PASS, actual18-cell and enlarged foot-detail review REVISE (retarget): flat/demi/pointe-ready insufficiently distinct. Pelvis support proxy improves to<0.0003; geometric PASS is not visual PASS.
+- Diagnosis: canonical foot BODY_FRONT neutral differs from physical source-mesh flat-contact neutral. Locked BBM-0 realization requires32.377°left/32.392°right canonical plantar. Isolated next candidate introduces explicit source-bound neutral calibration; anatomical requested0..50° remains inside original preferred envelope, encoded canonical angle includes measured neutral offset. No anatomical limit file changed; boundary tests verify51°SOFT and61°HARD still reject. Post-application matrix roundtrip, decoded anatomical angle and unchanged deformed forefoot contact enforced. Legacy production/static path unchanged.
+- A patch command had an unterminated replacement string; no edit executed. Its unintended old-script render was interrupted, then the patch rebuilt using multiline literals and compilation before any new run.
+
+- Calibrated foot iteration02 renders all18 cells and enlarged details: visibly distinguishes demi and elongated pointe-ready. Contact and decoded anatomical envelopes/matrix proof PASS, but pointe-ready planar toe-ray tracking fails36.1° under inherited closed-first hip adduction; no gate loosened. AI_VISUAL_REVISE. Minimal next stance correction: pointe-ready uses an open symmetric preparation (hip adduction0, same upstream45° turnout), while flat/demi retain accepted closed first. This removes the closed-stance toe projection conflict without free foot yaw or changing12°hard/6°preferred tracking.
+- Corrected one input-loader call accidentally affected by a metadata string replacement, before successful iteration02 rendering.
+
+- Open pointe-ready stance passes observed tracking (0.064°), anatomical/contact gates and visually separates pointed foot preparation from flat/demi. Before promotion, added independent toe matrix/DOF proof; this exposed1.06096e-5 reconstruction error vs unchanged1e-5 threshold in inherited transpose-based application. No threshold changed. Diagnosis: imported affine rest-frame skew accumulates into child toe frame. Isolated foot/toe application now solves rest/parent relations with exact matrix inverses and a proper rotation target; joint translations preserved. Final rerender pending; BBM-3 still unaccepted.
+
+- Added unchanged local rotation orthogonality/determinant and bone-length checks before BBM-3 promotion. This catches Foot_R local orthogonality2.086e-5 >1e-5, while world reconstruction previously passed. No threshold widened. Imported/serialized parent matrix rounding accumulates small affine error; isolate correction by projecting local rotation payloads onto SO(3) before calibrated foot/toe application. Contact/angle/matrix/length gates remain exact. Failed-run output now deletes stale prior reports/cells and writes fatal MACHINE_FAIL report, preventing mixed or stale evidence.
+
+- Rotation diagnostic (scratch bbm3_rotation_diagnostic.log): source Foot_R rest orthogonality9.54e-6, accumulated parent23.0e-6. Proper local rotation projection realizes world column error3.25e-6, orientation error2.06e-6 and shaft length relative error7.82e-7, all below existing1e-5 bounds. Select this representation: exact inverse relation followed by SO(3) local rotation projection, independently enforce realized matrix/DOF and unchanged length/contact gates. Diagnostic run explicitly nonpromotable; no source or threshold change.
+
+### BBM-3 accepted engineering checkpoint
+
+- Starting SHA3938f89aff2cab5504a7d070f3f420d04c8fb035; ending source SHA resolves via `git log -1 --format=%H -- tools/ballet_motion/foot_semantics_v1.py`; branch work/bbm-v1-overnight-20261006.
+- Changed: isolated foot semantics + five meaningful tests, Blender foot proof, decoded evidence runner, iteration reports/strips plus final18raw cells, enlarged details, report/hash manifest/review; journal. Source GLB/production/main unchanged.
+- 358 tests PASS (207+106+45). All final source-bound anatomical/local/world rotation, length, toe-ray tracking, contact and wrist gates PASS. Max candidate tracking1.80°; demi heel~0.078, pointe-ready~0.136 armature units. No thresholds or hard limits widened.
+- Actually inspected final paired3views and enlarged foot sheets: AI_VISUAL_PASS for conservative flat/demi/pointe-ready preparation. Pointe-ready accepted in open symmetric support; full en-pointe not claimed. Earlier failed closed stance and incomplete matrix proofs remain REVISE diagnostics.
+- Key artifacts: BBM-3/baseline/contact.png +foot_detail.png, candidate/contact.png +foot_detail.png, report.json,review.md,manifest.json. Intermediate duplicate raw cells archived reproducibly in scratch; reviewed strips/reports retained.
+- Reference correction is explicit: raw canonical ankle angle includes source-neutral32.377°L/32.392°R; anatomical angle remains relative neutral and capped by existing preferred50°/hard60°. Numerical local SO(3) projection resolves imported parent error while preserving independent1e-5 world/length gates.
+- Risks: source footwear silhouette, semantic-only arch/hindfoot, no full en-pointe, pelvis proxy not whole-body mass COM. Next BBM-4 measured support polygon + declared COM proxy, asymmetry and one-leg support fixtures.
+- Final supplementary foot-detail crop uses uniform2× enlargement (160×140→320×280); corrected earlier nonuniform square enlargement. Primary420×420 raw cells/3-view sheets and all pose geometry unchanged; use primary evidence or final aspect-preserving detail for review.
+
 ### BBM-3 accepted locally; execution environment interrupted before publication
 
 - Starting SHA3938f89aff2cab5504a7d070f3f420d04c8fb035; branch work/bbm-v1-overnight-20261006. Ending local HEAD bbddfeb6ab392c113dd8a26acc94ff3fceb4ad1f; exact tree3c020c327ff6fb9bd607f96ff60fff6fc2fb501d. Last terminal git status clean.
@@ -249,3 +280,7 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 - Publication failed strict Git blob SHA check for baseline/01_flat_three_quarter.png (expected acb52c2e9fc23b9cdcf7cfb5036896fa0544fe58; isolated API attempt returned9a5f157f0c2f602bddf853fd5ef315d8aedd6920). No mismatched tree/ref was published. Subsequent command failed exec-server transport/recovery timeout; separate minimal command, non-login command, and view_image recovery attempts did not respond. No repeated unverified branch update.
 - Remote last verified code/evidence checkpoint remains BBM-2 at3938f89aff2cab5504a7d070f3f420d04c8fb035. This documentation is saved directly through connector while terminal unavailable, and cannot imply local/remote code parity.
 - BBM-4 not implemented. Next: restore execution, verify/publish exact local BBM-3 tree and preserve local full journal, then implement observed support polygon/COM proxy/balance margin/support roles. Morning handoff rewritten to disambiguate current PASS from historical REVISE. No human preference question pending.
+
+### 2026-10-07 — environment recovered and continuation
+
+- Execution and Blender files survived maintenance. Starting local SHA bbddfeb6ab392c113dd8a26acc94ff3fceb4ad1f, clean tree verified before edits; remote docs-only9ba5f31 reconciled while preserving complete local BBM-3 chronology. No BBM-4 changes yet. Reverify evidence and publish, then BBM-4.

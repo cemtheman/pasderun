@@ -1,0 +1,1989 @@
+{
+  "git_sha": "3938f89aff2cab5504a7d070f3f420d04c8fb035",
+  "source_glb_sha256": "a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2",
+  "ankle_neutral_offset_deg": {
+    "left": 32.377,
+    "right": 32.392
+  },
+  "ankle_reference": "source-bound flat-contact neutral; unchanged anatomical envelopes evaluated relative to neutral",
+  "fixtures": {
+    "baseline/flat": {
+      "semantic_intent": {
+        "state": "FLAT",
+        "ankle_plantar_dorsiflexion_deg": 0,
+        "mtp_toe_flexion_extension_deg": 0,
+        "hindfoot_inversion_eversion_intent_deg": 0,
+        "midfoot_arch_intent": "NEUTRAL",
+        "independent_arch_bone": false,
+        "support_region": "FULL_FOOT",
+        "independent_foot_yaw_deg": 0,
+        "full_en_pointe_claim": false,
+        "retarget_policy": "existing ankle/toe bones only; semantic arch/hindfoot fields never invent bone motion"
+      },
+      "realization": {
+        "root_up_shift": 0.01255279,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 3.1e-05,
+          "errors": {
+            "left": {
+              "rear": 3.02e-05,
+              "fore": 2.964e-05
+            },
+            "right": {
+              "rear": -2.963e-05,
+              "fore": -3.1e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 28.875,
+            "inversion_eversion_deg": 3.124,
+            "up_alignment_dot": 0.8463580012,
+            "tilt_error": 0.1536419988,
+            "heading_error": 0.000489831,
+            "mesh_flatness_error": 5.667e-07,
+            "rear_required_shift": 0.0125225928,
+            "fore_required_shift": 0.0125231596,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -3.344,
+              "inversion_eversion": 3.124,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 4.768e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 28.895,
+            "inversion_eversion_deg": 3.12,
+            "up_alignment_dot": 0.8461725116,
+            "tilt_error": 0.1538274884,
+            "heading_error": 0.0004906058,
+            "mesh_flatness_error": 1.3756e-06,
+            "rear_required_shift": 0.0125824264,
+            "fore_required_shift": 0.012583802,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -3.345,
+              "inversion_eversion": 3.12,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.7551e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "alignment": {
+        "left": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 1.7933489441116923,
+          "observed_foot_progression_abs_deg": 44.989606578039165,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        },
+        "right": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 1.7948968270988064,
+          "observed_foot_progression_abs_deg": 44.98762757358299,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        }
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.71298507,
+          "radial_ulnar_deviation_deg": -19.63209652,
+          "wrist_2dof_reconstruction_error": 8.941e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.71296999,
+          "radial_ulnar_deviation_deg": 19.63222195,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "balance_intent": {},
+      "pelvis_support_front_offset": 0.08400941640138626,
+      "low_forefoot_support_points": [
+        [
+          0.16435343027114868,
+          -0.09183098375797272,
+          -0.00011786632239818573
+        ],
+        [
+          0.16435343027114868,
+          -0.09183098375797272,
+          -0.00011786632239818573
+        ],
+        [
+          0.188553124666214,
+          -0.0397363156080246,
+          0.0003612041473388672
+        ],
+        [
+          -0.16431891918182373,
+          -0.09180715680122375,
+          -0.00018075481057167053
+        ],
+        [
+          -0.16431891918182373,
+          -0.09180715680122375,
+          -0.00018075481057167053
+        ],
+        [
+          -0.1885179728269577,
+          -0.03971199691295624,
+          0.0003010611981153488
+        ]
+      ],
+      "canonical_state": {
+        "pose": "flat",
+        "landmarks": {
+          "left_shoulder": {
+            "left": 0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "left_elbow": {
+            "left": 0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "left_wrist": {
+            "left": 0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "left_hand": {
+            "left": 3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          },
+          "right_shoulder": {
+            "left": -0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "right_elbow": {
+            "left": -0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "right_wrist": {
+            "left": -0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "right_hand": {
+            "left": -3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          }
+        },
+        "joint_dofs": {
+          "left_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "left_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "left_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "right_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "right_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "right_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "left_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "left_shin": {
+            "flexion_extension": 0
+          },
+          "left_foot": {
+            "plantar_dorsiflexion": 0,
+            "inversion_eversion": 0
+          },
+          "left_toes": {
+            "toe_flexion_extension": 0
+          },
+          "right_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "right_shin": {
+            "flexion_extension": 0
+          },
+          "right_foot": {
+            "plantar_dorsiflexion": 0,
+            "inversion_eversion": 0
+          },
+          "right_toes": {
+            "toe_flexion_extension": 0
+          }
+        },
+        "hand_mesh_spacing_contract": {
+          "scale_basis": "average_hand_plus_middle_chain_length",
+          "scale_length": 0.06628449,
+          "minimum_fraction": 0.03,
+          "maximum_fraction": 0.1,
+          "minimum_gap": 0.0019885347,
+          "maximum_gap": 0.006628449000000001,
+          "hand_landmark_clearance_fraction_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "hand_landmark_target_side_offset_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          }
+        },
+        "turnout": {
+          "left": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          }
+        },
+        "contacts": {
+          "left": "FULL_FOOT",
+          "right": "FULL_FOOT"
+        }
+      }
+    },
+    "baseline/demi_pointe": {
+      "semantic_intent": {
+        "state": "DEMI_POINTE",
+        "ankle_plantar_dorsiflexion_deg": 35,
+        "mtp_toe_flexion_extension_deg": 35,
+        "hindfoot_inversion_eversion_intent_deg": 0,
+        "midfoot_arch_intent": "ELONGATED",
+        "independent_arch_bone": false,
+        "support_region": "FOREFOOT",
+        "independent_foot_yaw_deg": 0,
+        "full_en_pointe_claim": false,
+        "retarget_policy": "existing ankle/toe bones only; semantic arch/hindfoot fields never invent bone motion"
+      },
+      "realization": {
+        "root_up_shift": 0.05453885,
+        "contact_mode": "SOLVE_FOREFOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 3.5e-07,
+          "errors": {
+            "left": {
+              "fore": -3.5e-07
+            },
+            "right": {
+              "fore": 3.3e-07
+            }
+          }
+        },
+        "full_foot_orientation": {},
+        "releve_realization": {
+          "plantar_dorsiflexion_deg": 43.5,
+          "toe_flexion_extension_deg": -1.9500000000000002,
+          "application": {
+            "left": {
+              "foot_rig_bone": "Foot_L",
+              "toe_rig_bone": "Toes_L",
+              "plantar_dorsiflexion_deg": 43.5,
+              "inversion_eversion_deg": 0.0,
+              "toe_flexion_extension_deg": -1.95
+            },
+            "right": {
+              "foot_rig_bone": "Foot_R",
+              "toe_rig_bone": "Toes_R",
+              "plantar_dorsiflexion_deg": 43.5,
+              "inversion_eversion_deg": -0.0,
+              "toe_flexion_extension_deg": -1.95
+            }
+          },
+          "geometry": {
+            "root_shift": 0.05453885155438912,
+            "heel_lifts": {
+              "left": 0.050014774090959696,
+              "right": 0.04998552459001076
+            },
+            "fore_errors": {
+              "left": -3.451888915095684e-07,
+              "right": 3.4518889152068146e-07
+            },
+            "max_fore_error": 3.4518889152068146e-07
+          },
+          "heel_errors": {
+            "left": 1.4774090959693287e-05,
+            "right": 1.4475409989243848e-05
+          },
+          "preferred_envelope": {
+            "plantar_dorsiflexion": {
+              "min": -20.0,
+              "max": 50.0
+            },
+            "toe_flexion_extension": {
+              "min": -15.0,
+              "max": 90.0
+            }
+          },
+          "semantic_targets": {
+            "plantar_dorsiflexion_deg": 35.00000097901322,
+            "toe_flexion_extension_deg": 35.00000097901322
+          }
+        },
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "alignment": {
+        "left": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 3.395973747436613,
+          "observed_foot_progression_abs_deg": 43.386981774714435,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        },
+        "right": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 3.3961285785033435,
+          "observed_foot_progression_abs_deg": 43.38639582217831,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        }
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.71298507,
+          "radial_ulnar_deviation_deg": -19.63209652,
+          "wrist_2dof_reconstruction_error": 8.941e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.71296999,
+          "radial_ulnar_deviation_deg": 19.63222195,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "balance_intent": {},
+      "pelvis_support_front_offset": 0.05856137350201607,
+      "low_forefoot_support_points": [
+        [
+          0.13297121226787567,
+          -0.0664156973361969,
+          -0.0025651976466178894
+        ],
+        [
+          0.13297121226787567,
+          -0.0664156973361969,
+          -0.0025651976466178894
+        ],
+        [
+          0.15662087500095367,
+          -0.014184042811393738,
+          0.0009355507791042328
+        ],
+        [
+          -0.13297025859355927,
+          -0.06641756743192673,
+          -0.0025642141699790955
+        ],
+        [
+          -0.13297025859355927,
+          -0.06641756743192673,
+          -0.0025642141699790955
+        ],
+        [
+          -0.1566201150417328,
+          -0.01418573409318924,
+          0.0009360872209072113
+        ]
+      ],
+      "canonical_state": {
+        "pose": "releve",
+        "landmarks": {
+          "left_shoulder": {
+            "left": 0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "left_elbow": {
+            "left": 0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "left_wrist": {
+            "left": 0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "left_hand": {
+            "left": 3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          },
+          "right_shoulder": {
+            "left": -0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "right_elbow": {
+            "left": -0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "right_wrist": {
+            "left": -0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "right_hand": {
+            "left": -3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          }
+        },
+        "joint_dofs": {
+          "left_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "left_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "left_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "right_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "right_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "right_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "left_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "left_shin": {
+            "flexion_extension": 0
+          },
+          "left_foot": {
+            "plantar_dorsiflexion": 35,
+            "inversion_eversion": 0
+          },
+          "left_toes": {
+            "toe_flexion_extension": 35
+          },
+          "right_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "right_shin": {
+            "flexion_extension": 0
+          },
+          "right_foot": {
+            "plantar_dorsiflexion": 35,
+            "inversion_eversion": 0
+          },
+          "right_toes": {
+            "toe_flexion_extension": 35
+          }
+        },
+        "hand_mesh_spacing_contract": {
+          "scale_basis": "average_hand_plus_middle_chain_length",
+          "scale_length": 0.06628449,
+          "minimum_fraction": 0.03,
+          "maximum_fraction": 0.1,
+          "minimum_gap": 0.0019885347,
+          "maximum_gap": 0.006628449000000001,
+          "hand_landmark_clearance_fraction_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "hand_landmark_target_side_offset_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          }
+        },
+        "turnout": {
+          "left": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          }
+        },
+        "contacts": {
+          "left": "FOREFOOT",
+          "right": "FOREFOOT"
+        },
+        "scalars": {
+          "left_heel_height": 0.05,
+          "right_heel_height": 0.05
+        }
+      }
+    },
+    "baseline/pointe_ready": {
+      "semantic_intent": {
+        "state": "POINTE_READY",
+        "ankle_plantar_dorsiflexion_deg": 50,
+        "mtp_toe_flexion_extension_deg": 0,
+        "hindfoot_inversion_eversion_intent_deg": 0,
+        "midfoot_arch_intent": "ELONGATED",
+        "independent_arch_bone": false,
+        "support_region": "TOE_REGION_PROXY",
+        "independent_foot_yaw_deg": 0,
+        "full_en_pointe_claim": false,
+        "retarget_policy": "existing ankle/toe bones only; semantic arch/hindfoot fields never invent bone motion"
+      },
+      "realization": {
+        "root_up_shift": 0.06610777,
+        "contact_mode": "SOLVE_FOREFOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 4.1e-07,
+          "errors": {
+            "left": {
+              "fore": 4.1e-07
+            },
+            "right": {
+              "fore": -3.9e-07
+            }
+          }
+        },
+        "full_foot_orientation": {},
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "alignment": {
+        "left": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 4.026219436233811,
+          "observed_foot_progression_abs_deg": 42.756736085917225,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        },
+        "right": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 4.026288317555365,
+          "observed_foot_progression_abs_deg": 42.75623608312609,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        }
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.71298507,
+          "radial_ulnar_deviation_deg": -19.63209652,
+          "wrist_2dof_reconstruction_error": 8.941e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.71296999,
+          "radial_ulnar_deviation_deg": 19.63222195,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "balance_intent": {},
+      "pelvis_support_front_offset": 0.047990623861551285,
+      "low_forefoot_support_points": [
+        [
+          0.12050823122262955,
+          -0.05573428422212601,
+          -0.0037114322185516357
+        ],
+        [
+          0.12050823122262955,
+          -0.05573428422212601,
+          -0.0037114322185516357
+        ],
+        [
+          0.14462897181510925,
+          -0.0038348883390426636,
+          0.001223057508468628
+        ],
+        [
+          -0.12050749361515045,
+          -0.05573596805334091,
+          -0.0037121623754501343
+        ],
+        [
+          -0.12050749361515045,
+          -0.05573596805334091,
+          -0.0037121623754501343
+        ],
+        [
+          -0.1446283608675003,
+          -0.003836408257484436,
+          0.001222170889377594
+        ]
+      ],
+      "canonical_state": {
+        "pose": "pointe_ready",
+        "landmarks": {
+          "left_shoulder": {
+            "left": 0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "left_elbow": {
+            "left": 0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "left_wrist": {
+            "left": 0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "left_hand": {
+            "left": 3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          },
+          "right_shoulder": {
+            "left": -0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "right_elbow": {
+            "left": -0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "right_wrist": {
+            "left": -0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "right_hand": {
+            "left": -3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          }
+        },
+        "joint_dofs": {
+          "left_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "left_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "left_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "right_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "right_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "right_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "left_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "left_shin": {
+            "flexion_extension": 0
+          },
+          "left_foot": {
+            "plantar_dorsiflexion": 50,
+            "inversion_eversion": 0
+          },
+          "left_toes": {
+            "toe_flexion_extension": 0
+          },
+          "right_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "right_shin": {
+            "flexion_extension": 0
+          },
+          "right_foot": {
+            "plantar_dorsiflexion": 50,
+            "inversion_eversion": 0
+          },
+          "right_toes": {
+            "toe_flexion_extension": 0
+          }
+        },
+        "hand_mesh_spacing_contract": {
+          "scale_basis": "average_hand_plus_middle_chain_length",
+          "scale_length": 0.06628449,
+          "minimum_fraction": 0.03,
+          "maximum_fraction": 0.1,
+          "minimum_gap": 0.0019885347,
+          "maximum_gap": 0.006628449000000001,
+          "hand_landmark_clearance_fraction_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "hand_landmark_target_side_offset_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          }
+        },
+        "turnout": {
+          "left": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          }
+        },
+        "contacts": {
+          "left": "FOREFOOT",
+          "right": "FOREFOOT"
+        }
+      }
+    },
+    "candidate/flat": {
+      "semantic_intent": {
+        "state": "FLAT",
+        "ankle_plantar_dorsiflexion_deg": 0,
+        "mtp_toe_flexion_extension_deg": 0,
+        "hindfoot_inversion_eversion_intent_deg": 0,
+        "midfoot_arch_intent": "NEUTRAL",
+        "independent_arch_bone": false,
+        "support_region": "FULL_FOOT",
+        "independent_foot_yaw_deg": 0,
+        "full_en_pointe_claim": false,
+        "retarget_policy": "existing ankle/toe bones only; semantic arch/hindfoot fields never invent bone motion"
+      },
+      "realization": {
+        "root_up_shift": 0.01255279,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 3.1e-05,
+          "errors": {
+            "left": {
+              "rear": 3.02e-05,
+              "fore": 2.964e-05
+            },
+            "right": {
+              "rear": -2.963e-05,
+              "fore": -3.1e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 28.875,
+            "inversion_eversion_deg": 3.124,
+            "up_alignment_dot": 0.8463580012,
+            "tilt_error": 0.1536419988,
+            "heading_error": 0.000489831,
+            "mesh_flatness_error": 5.667e-07,
+            "rear_required_shift": 0.0125225928,
+            "fore_required_shift": 0.0125231596,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -3.344,
+              "inversion_eversion": 3.124,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 4.768e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 28.895,
+            "inversion_eversion_deg": 3.12,
+            "up_alignment_dot": 0.8461725116,
+            "tilt_error": 0.1538274884,
+            "heading_error": 0.0004906058,
+            "mesh_flatness_error": 1.3756e-06,
+            "rear_required_shift": 0.0125824264,
+            "fore_required_shift": 0.012583802,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -3.345,
+              "inversion_eversion": 3.12,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.7551e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "alignment": {
+        "left": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 1.7933489441116923,
+          "observed_foot_progression_abs_deg": 44.989606578039165,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        },
+        "right": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 1.7948968270988064,
+          "observed_foot_progression_abs_deg": 44.98762757358299,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        }
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.71298507,
+          "radial_ulnar_deviation_deg": -19.63209652,
+          "wrist_2dof_reconstruction_error": 8.941e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.71296999,
+          "radial_ulnar_deviation_deg": 19.63222195,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "balance_intent": {},
+      "pelvis_support_front_offset": 0.08400941640138626,
+      "low_forefoot_support_points": [
+        [
+          0.16435343027114868,
+          -0.09183098375797272,
+          -0.00011786632239818573
+        ],
+        [
+          0.16435343027114868,
+          -0.09183098375797272,
+          -0.00011786632239818573
+        ],
+        [
+          0.188553124666214,
+          -0.0397363156080246,
+          0.0003612041473388672
+        ],
+        [
+          -0.16431891918182373,
+          -0.09180715680122375,
+          -0.00018075481057167053
+        ],
+        [
+          -0.16431891918182373,
+          -0.09180715680122375,
+          -0.00018075481057167053
+        ],
+        [
+          -0.1885179728269577,
+          -0.03971199691295624,
+          0.0003010611981153488
+        ]
+      ],
+      "canonical_state": {
+        "pose": "flat",
+        "landmarks": {
+          "left_shoulder": {
+            "left": 0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "left_elbow": {
+            "left": 0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "left_wrist": {
+            "left": 0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "left_hand": {
+            "left": 3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          },
+          "right_shoulder": {
+            "left": -0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "right_elbow": {
+            "left": -0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "right_wrist": {
+            "left": -0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "right_hand": {
+            "left": -3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          }
+        },
+        "joint_dofs": {
+          "left_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "left_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "left_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "right_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "right_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "right_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "left_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "left_shin": {
+            "flexion_extension": 0
+          },
+          "left_foot": {
+            "plantar_dorsiflexion": 0,
+            "inversion_eversion": 0
+          },
+          "left_toes": {
+            "toe_flexion_extension": 0
+          },
+          "right_thigh": {
+            "flexion_extension": 0,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "right_shin": {
+            "flexion_extension": 0
+          },
+          "right_foot": {
+            "plantar_dorsiflexion": 0,
+            "inversion_eversion": 0
+          },
+          "right_toes": {
+            "toe_flexion_extension": 0
+          }
+        },
+        "hand_mesh_spacing_contract": {
+          "scale_basis": "average_hand_plus_middle_chain_length",
+          "scale_length": 0.06628449,
+          "minimum_fraction": 0.03,
+          "maximum_fraction": 0.1,
+          "minimum_gap": 0.0019885347,
+          "maximum_gap": 0.006628449000000001,
+          "hand_landmark_clearance_fraction_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "hand_landmark_target_side_offset_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          }
+        },
+        "turnout": {
+          "left": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          }
+        },
+        "contacts": {
+          "left": "FULL_FOOT",
+          "right": "FULL_FOOT"
+        }
+      }
+    },
+    "candidate/demi_pointe": {
+      "semantic_intent": {
+        "state": "DEMI_POINTE",
+        "ankle_plantar_dorsiflexion_deg": 35,
+        "mtp_toe_flexion_extension_deg": 35,
+        "hindfoot_inversion_eversion_intent_deg": 0,
+        "midfoot_arch_intent": "ELONGATED",
+        "independent_arch_bone": false,
+        "support_region": "FOREFOOT",
+        "independent_foot_yaw_deg": 0,
+        "full_en_pointe_claim": false,
+        "retarget_policy": "existing ankle/toe bones only; semantic arch/hindfoot fields never invent bone motion"
+      },
+      "realization": {
+        "contact": {
+          "required": true,
+          "max_abs_error": 1.353e-05,
+          "errors": {
+            "left": {
+              "fore": 1.353e-05
+            },
+            "right": {
+              "fore": -1.353e-05
+            }
+          }
+        },
+        "root_up_shift": 0.060812563399667854,
+        "heel_lifts": {
+          "left": 0.07817728511290625,
+          "right": 0.07871620347723365
+        },
+        "calibrated_anatomical_angles": {
+          "left": {
+            "anatomical_plantar_deg": 34.99999999999999,
+            "canonical_angle_deg": 67.377,
+            "neutral_offset_deg": 32.377,
+            "status": "PASS",
+            "matrix_roundtrip_error": 3.5762786865234375e-07,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "anatomical_plantar_deg": 34.99999999999999,
+            "canonical_angle_deg": 67.392,
+            "neutral_offset_deg": 32.392,
+            "status": "PASS",
+            "matrix_roundtrip_error": 4.157423973083496e-06,
+            "independent_foot_yaw_deg": 0
+          }
+        }
+      },
+      "alignment": {
+        "left": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 0.7518687328602645,
+          "observed_foot_progression_abs_deg": 46.18352644098513,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        },
+        "right": {
+          "status": "PASS",
+          "observed_knee_toe_error_deg": 0.7524560793536754,
+          "observed_foot_progression_abs_deg": 46.182497011187586,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        }
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.71298507,
+          "radial_ulnar_deviation_deg": -19.63209652,
+          "wrist_2dof_reconstruction_error": 8.941e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.71296999,
+          "radial_ulnar_deviation_deg": 19.63222195,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "balance_intent": {
+        "hip_flexion_extension_deg": -2.77734375,
+        "pelvis_to_low_forefoot_centroid_front_offset": -0.00016672350466251373,
+        "scope": "pelvis support proxy only; whole-body COM belongs to BBM-4"
+      },
+      "pelvis_support_front_offset": -0.00016672350466251373,
+      "low_forefoot_support_points": [
+        [
+          0.12223375588655472,
+          -0.007861927151679993,
+          -0.0011455230414867401
+        ],
+        [
+          0.12223375588655472,
+          -0.007861927151679993,
+          -0.0011455230414867401
+        ],
+        [
+          0.14500007033348083,
+          0.04484828561544418,
+          0.0005979724228382111
+        ],
+        [
+          -0.12219991534948349,
+          -0.007834084331989288,
+          -0.0011764728697016835
+        ],
+        [
+          -0.12219991534948349,
+          -0.007834084331989288,
+          -0.0011764728697016835
+        ],
+        [
+          -0.14496690034866333,
+          0.04487600177526474,
+          0.0005718320608139038
+        ]
+      ],
+      "canonical_state": {
+        "pose": "releve",
+        "landmarks": {
+          "left_shoulder": {
+            "left": 0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "left_elbow": {
+            "left": 0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "left_wrist": {
+            "left": 0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "left_hand": {
+            "left": 3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          },
+          "right_shoulder": {
+            "left": -0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "right_elbow": {
+            "left": -0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "right_wrist": {
+            "left": -0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "right_hand": {
+            "left": -3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          }
+        },
+        "joint_dofs": {
+          "left_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "left_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "left_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "right_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "right_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "right_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "left_thigh": {
+            "flexion_extension": -2.77734375,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "left_shin": {
+            "flexion_extension": 0
+          },
+          "left_foot": {
+            "plantar_dorsiflexion": 35,
+            "inversion_eversion": 0
+          },
+          "left_toes": {
+            "toe_flexion_extension": 35
+          },
+          "right_thigh": {
+            "flexion_extension": -2.77734375,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "right_shin": {
+            "flexion_extension": 0
+          },
+          "right_foot": {
+            "plantar_dorsiflexion": 35,
+            "inversion_eversion": 0
+          },
+          "right_toes": {
+            "toe_flexion_extension": 35
+          }
+        },
+        "hand_mesh_spacing_contract": {
+          "scale_basis": "average_hand_plus_middle_chain_length",
+          "scale_length": 0.06628449,
+          "minimum_fraction": 0.03,
+          "maximum_fraction": 0.1,
+          "minimum_gap": 0.0019885347,
+          "maximum_gap": 0.006628449000000001,
+          "hand_landmark_clearance_fraction_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "hand_landmark_target_side_offset_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          }
+        },
+        "turnout": {
+          "left": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          }
+        },
+        "contacts": {
+          "left": "FOREFOOT",
+          "right": "FOREFOOT"
+        },
+        "scalars": {
+          "left_heel_height": 0.05,
+          "right_heel_height": 0.05
+        }
+      }
+    },
+    "candidate/pointe_ready": {
+      "semantic_intent": {
+        "state": "POINTE_READY",
+        "ankle_plantar_dorsiflexion_deg": 50,
+        "mtp_toe_flexion_extension_deg": 0,
+        "hindfoot_inversion_eversion_intent_deg": 0,
+        "midfoot_arch_intent": "ELONGATED",
+        "independent_arch_bone": false,
+        "support_region": "TOE_REGION_PROXY",
+        "independent_foot_yaw_deg": 0,
+        "full_en_pointe_claim": false,
+        "retarget_policy": "existing ankle/toe bones only; semantic arch/hindfoot fields never invent bone motion"
+      },
+      "realization": {
+        "contact": {
+          "required": true,
+          "max_abs_error": 2.35e-06,
+          "errors": {
+            "left": {
+              "fore": 2.35e-06
+            },
+            "right": {
+              "fore": -2.28e-06
+            }
+          }
+        },
+        "root_up_shift": 0.10240291314839851,
+        "heel_lifts": {
+          "left": 0.14348075083689762,
+          "right": 0.1443361713550985
+        },
+        "calibrated_anatomical_angles": {
+          "left": {
+            "anatomical_plantar_deg": 49.99999999999999,
+            "canonical_angle_deg": 82.377,
+            "neutral_offset_deg": 32.377,
+            "status": "PASS",
+            "matrix_roundtrip_error": 2.2351741790771484e-07,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "anatomical_plantar_deg": 49.99999999999999,
+            "canonical_angle_deg": 82.392,
+            "neutral_offset_deg": 32.392,
+            "status": "PASS",
+            "matrix_roundtrip_error": 3.0249357223510742e-06,
+            "independent_foot_yaw_deg": 0
+          }
+        }
+      },
+      "alignment": {
+        "left": {
+          "status": "HARD_LIMIT",
+          "observed_knee_toe_error_deg": 36.072944218567564,
+          "observed_foot_progression_abs_deg": 10.710502742580651,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        },
+        "right": {
+          "status": "HARD_LIMIT",
+          "observed_knee_toe_error_deg": 36.17058154146287,
+          "observed_foot_progression_abs_deg": 10.612434294578057,
+          "pelvis_yaw_deg": 0,
+          "trunk_tilt_deg": 0,
+          "arch_collapse": null,
+          "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+          "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+        }
+      },
+      "wrist": {
+        "left": {
+          "flexion_extension_deg": 12.71298507,
+          "radial_ulnar_deviation_deg": -19.63209652,
+          "wrist_2dof_reconstruction_error": 8.941e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 12.71296999,
+          "radial_ulnar_deviation_deg": 19.63222195,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "balance_intent": {
+        "hip_flexion_extension_deg": -0.01171875,
+        "pelvis_to_low_forefoot_centroid_front_offset": -0.009736843407154083,
+        "scope": "pelvis support proxy only; whole-body COM belongs to BBM-4"
+      },
+      "pelvis_support_front_offset": -0.009736843407154083,
+      "low_forefoot_support_points": [
+        [
+          0.03410811722278595,
+          0.02222362905740738,
+          -0.006336338818073273
+        ],
+        [
+          0.03410811722278595,
+          0.02222362905740738,
+          -0.006336338818073273
+        ],
+        [
+          0.04621779918670654,
+          0.013373129069805145,
+          0.0018817037343978882
+        ],
+        [
+          -0.03406515717506409,
+          0.02226164937019348,
+          -0.006337858736515045
+        ],
+        [
+          -0.03406515717506409,
+          0.02226164937019348,
+          -0.006337858736515045
+        ],
+        [
+          -0.04617646336555481,
+          0.013409309089183807,
+          0.001876242458820343
+        ]
+      ],
+      "canonical_state": {
+        "pose": "pointe_ready",
+        "landmarks": {
+          "left_shoulder": {
+            "left": 0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "left_elbow": {
+            "left": 0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "left_wrist": {
+            "left": 0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "left_hand": {
+            "left": 3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          },
+          "right_shoulder": {
+            "left": -0.14557741,
+            "up": 0.58423793,
+            "front": -0.026916665
+          },
+          "right_elbow": {
+            "left": -0.19407410033958056,
+            "up": 0.3419712342541616,
+            "front": 0.020072766325271434
+          },
+          "right_wrist": {
+            "left": -0.01926031713810486,
+            "up": 0.16785695100413817,
+            "front": 0.09052412394755074
+          },
+          "right_hand": {
+            "left": -3.469446951953614e-18,
+            "up": 0.1556003855526169,
+            "front": 0.102780689399072
+          }
+        },
+        "joint_dofs": {
+          "left_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "left_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "left_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "right_upper_arm": {
+            "flexion_extension": 20,
+            "abduction_adduction": 30,
+            "internal_external_rotation": 10
+          },
+          "right_forearm": {
+            "flexion_extension": 55,
+            "pronation_supination": 15
+          },
+          "right_hand": {
+            "flexion_extension": 0,
+            "radial_ulnar_deviation": 0
+          },
+          "left_thigh": {
+            "flexion_extension": -0.01171875,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "left_shin": {
+            "flexion_extension": 0
+          },
+          "left_foot": {
+            "plantar_dorsiflexion": 50,
+            "inversion_eversion": 0
+          },
+          "left_toes": {
+            "toe_flexion_extension": 0
+          },
+          "right_thigh": {
+            "flexion_extension": -0.01171875,
+            "abduction_adduction": -4.594482421875,
+            "internal_external_rotation": 45
+          },
+          "right_shin": {
+            "flexion_extension": 0
+          },
+          "right_foot": {
+            "plantar_dorsiflexion": 50,
+            "inversion_eversion": 0
+          },
+          "right_toes": {
+            "toe_flexion_extension": 0
+          }
+        },
+        "hand_mesh_spacing_contract": {
+          "scale_basis": "average_hand_plus_middle_chain_length",
+          "scale_length": 0.06628449,
+          "minimum_fraction": 0.03,
+          "maximum_fraction": 0.1,
+          "minimum_gap": 0.0019885347,
+          "maximum_gap": 0.006628449000000001,
+          "hand_landmark_clearance_fraction_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "hand_landmark_target_side_offset_by_side": {
+            "left": 0.0,
+            "right": 0.0
+          }
+        },
+        "turnout": {
+          "left": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          },
+          "right": {
+            "hip_external_rotation_deg": 45,
+            "knee_external_rotation_deg": 1.875,
+            "knee_flexion_deg": 0,
+            "independent_foot_yaw_deg": 0
+          }
+        },
+        "contacts": {
+          "left": "FOREFOOT",
+          "right": "FOREFOOT"
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "pose": "pointe_ready",
+      "side": "left",
+      "gate": "observed_alignment",
+      "status": "HARD_LIMIT",
+      "observed_knee_toe_error_deg": 36.072944218567564,
+      "observed_foot_progression_abs_deg": 10.710502742580651,
+      "pelvis_yaw_deg": 0,
+      "trunk_tilt_deg": 0,
+      "arch_collapse": null,
+      "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+      "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+    },
+    {
+      "pose": "pointe_ready",
+      "side": "right",
+      "gate": "observed_alignment",
+      "status": "HARD_LIMIT",
+      "observed_knee_toe_error_deg": 36.17058154146287,
+      "observed_foot_progression_abs_deg": 10.612434294578057,
+      "pelvis_yaw_deg": 0,
+      "trunk_tilt_deg": 0,
+      "arch_collapse": null,
+      "arch_observation": "NOT_MEASURABLE_ON_CURRENT_RIG",
+      "tracking_reference": "canonical shin anterior axis versus toe-bone longitudinal ray; second-toe proxy, not separate digit measurement"
+    }
+  ],
+  "machine_status": "FAIL",
+  "ai_visual_status": "AI_VISUAL_REVISE",
+  "camera_scale": 2.1487855911254883,
+  "source_sha256": {
+    "tools/blender/render_bbm3_foot_v1.py": "2de11ceff9b1d81431d813940fbb08e19ae317c8577149a3dd5f5392dd2aea1b",
+    "tools/ballet_motion/foot_semantics_v1.py": "5c5231b701895e246d800cb1e828f4007fcb861121d96a5dc3268ef10546b956",
+    "build/visual_validation/BBM-2/report.json": "f40ca48731b3e3d6fb42231f37e27421f889911231b6bd8520c1982b967800c4",
+    "build/visual_validation/BBM-0/baseline/geometry_report.json": "d504445981fe148b2c7d5fd917dce2057d008596edabd115e899072662f32253",
+    "assets/ballet_motion/anatomical_constraints_v1.json": "8463b32fe5f3e96821f2c96acdb703e4f4b4a2e2c05358c8cb7cdd965a0745b4"
+  },
+  "superseded_by": "BBM-3 final pack; later independent local/toe proofs required before acceptance"
+}
