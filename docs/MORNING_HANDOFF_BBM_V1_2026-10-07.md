@@ -1,7 +1,7 @@
 # Pas de Run — Morning Handoff / 7 Ekim 2026
 
 ## Güncel sonuç
-Kullanıcı devamı yeniden açtıktan sonra BBM-1, BBM-2 ve BBM-3 mühendislik AI_VISUAL_PASS oldu. BBM-0 baseline kilidi PASS. BBM-4–8 uygulanmadı. Eski BBM-1 duruş kararı tarihsel ve geçersizdir.
+Kullanıcı devamı yeniden açtıktan sonra BBM-1, BBM-2 ve BBM-3 mühendislik AI_VISUAL_PASS oldu. BBM-0 baseline kilidi PASS. BBM-4 tamamlandı; BBM-5 in progress, BBM-6–8 uygulanmadı. Eski BBM-1 duruş kararı tarihsel ve geçersizdir.
 
 ## Checkpoint ayrımı
 - Branch: `work/bbm-v1-overnight-20261006`.
@@ -9,7 +9,7 @@ Kullanıcı devamı yeniden açtıktan sonra BBM-1, BBM-2 ve BBM-3 mühendislik 
 - BBM-1 yayımlanmış PASS: `931ef8bd9e3353e0e65c4cd087cdc6e56b051796` (yerel `daa264e3f0110441adfccc77507faf680a098e47`, aynı tree).
 - BBM-2 yayımlanmış PASS: `3938f89aff2cab5504a7d070f3f420d04c8fb035` (yerel `4f586cea9f386846b6a8a631feba2f0b33fa1462`, aynı tree).
 - BBM-3 son yerel HEAD: `bbddfeb6ab392c113dd8a26acc94ff3fceb4ad1f`; tree `3c020c327ff6fb9bd607f96ff60fff6fc2fb501d`. Son başarılı terminal kontrolünde working tree temizdi.
-- **BBM-3 henüz yayımlanmadı.** Blob aktarımında SHA doğrulaması başarısız olduğu için uzak branch'e eksik/yanlış tree gönderilmedi. Ardından exec-server bağlantısı koptu; komut ve view_image kurtarma denemeleri yanıt vermedi. Bu dokümanlar GitHub bağlantısı üzerinden BBM-2 tabanına eklenmiştir. Dokümantasyon commit'i BBM-3 kaynak/kanıtlarının yayımlandığı anlamına gelmez.
+- **Güncelleme: BBM-3 yayımlandı9516b79a76b9a687dc32b4225df8c85a109cb3d7; BBM-4 yayımlandıd75e1fde9b49f3839302a03392ec2a47622d4da4 (localc2e70ba), exact tree doğrulandı. Ortam geri geldi.** Önceki kesinti kaydı: Blob aktarımında SHA doğrulaması başarısız olduğu için uzak branch'e eksik/yanlış tree gönderilmedi. Ardından exec-server bağlantısı koptu; komut ve view_image kurtarma denemeleri yanıt vermedi. Bu dokümanlar GitHub bağlantısı üzerinden BBM-2 tabanına eklenmiştir. Dokümantasyon commit'i BBM-3 kaynak/kanıtlarının yayımlandığı anlamına gelmez.
 - Yerel repo: `/workspace/scratch/bb586e64b8c7/pasderun`.
 - Source GLB SHA256 `a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2`, değişmedi. Gameplay, topology, ürün timing ve main değişmedi; deploy yok.
 
@@ -20,7 +20,9 @@ Kullanıcı devamı yeniden açtıktan sonra BBM-1, BBM-2 ve BBM-3 mühendislik 
 | BBM-1 | 349 PASS | 49/49 örnek; değişmeyen wrist/endpoint/contact/length gate'leri | PASS; tüm49 front ve üç görünüm ana kareler incelendi |
 | BBM-2 | 353 PASS | max tracking4.94° <6°, contact/wrist/envelope PASS | PASS; first/fifth/plié ×3 görünüm |
 | BBM-3 | 358 PASS: ballet207 + Blender106 + Motion45 | ankle/toe anatomy, contact, tracking, SO(3), matrix reconstruction ve bone length PASS | PASS; flat/demi/pointe-ready ×3 görünüm ve detay |
-| BBM-4–8 | NOT RUN | NOT IMPLEMENTED | NOT REVIEWED |
+| BBM-4 | 362 PASS | all24cells + root drift <=1.9e-9, contact/tracking/foot matrix PASS | AI_VISUAL_PASS |
+| BBM-5 | 365 current tests PASS |49sample render in progress; NOT PROMOTED | NOT REVIEWED |
+| BBM-6–8 | NOT RUN | NOT IMPLEMENTED | NOT REVIEWED |
 
 BBM-3 son kaynak için test/syntax/diff kontrolleri geçti. Son amend yalnız ayak detay crop'unda orantısız büyütmeyi düzeltti:160×140 crop, tekdüze2×, 320×280 hücre; ham renderlar değişmedi. Tam sahne renderları ve önceki büyütülmüş detaylar gerçekten incelendi; bu son crop'u yeniden açma girişimi ortam kopması nedeniyle tamamlanmadı.
 
@@ -46,3 +48,7 @@ Saç/kostüm ve kaynak low-poly ayakkabı/heel-spur silueti incelemeyi sınırla
 4. Testler + deterministic üç görünüm baseline/candidate + gerçek AI inceleme PASS olmadan BBM-5'e geçme. Sonra roadmap5→8 sırayla.
 
 Durma nedeni kullanıcı tercihi veya kullanım limiti olduğuna dair kanıt yok: çalışma ortamı erişimi kaybolduğu için yeni deterministic evidence üretimi/incelemesi sürdürülemedi. Mevcut başarılı checkpoint'ler korunmuştur; eksik BBM-4 kodu aktif checkpoint bırakılmamıştır.
+
+## 08:45 devam turu / BBM-4 son başarılı checkpoint
+
+BBM-3 transferi50000-character blob reads ile düzeltildi; kaynak ve PNG hash/decode doğrulandı. BBM-4 actual24cells review PASS: flat/demi upright, one-leg support beneath trunk, transitional swing clearance~.0396. Surface-density COM proxy not tissue-mass. Support polygon excludesSWING geometry; minimum candidate margin .00997. Primary evidence `build/visual_validation/BBM-4/baseline/contact.png`, `candidate/contact.png`, `support_proxy.png`, `report.json`, `review.md`. Source GLB unchanged. Shared physical runtime replay all4fixtures exactly0 metric difference. BBM-5 next: paired49sample plié descent-return, contact-aware hip IK, plant drift + root monotonic + anatomical/tracking gates, actual full motion review before promotion. Earlier restore instructions above superseded by this continuation.

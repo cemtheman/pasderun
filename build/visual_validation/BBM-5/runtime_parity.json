@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "fixtures": {
+    "flat": {
+      "status": "PASS",
+      "max_metric_difference": 0.0
+    },
+    "demi_pointe": {
+      "status": "PASS",
+      "max_metric_difference": 0.0
+    },
+    "one_leg": {
+      "status": "PASS",
+      "max_metric_difference": 0.0
+    },
+    "transitional": {
+      "status": "PASS",
+      "max_metric_difference": 0.0
+    }
+  },
+  "runtime_sha256": "94680ad84b70470dc1c303de8e900c4e695ca9789375b1bb359a627be5592e63"
+}

@@ -298,3 +298,16 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 - 362 tests PASS (211/106/45), all final geometric gates PASS. Observed root lateral <=1.9e-9; support margins .00997..05962 positive. One-leg clearance .1505; transitional .0396. Source/machine hashes verified. Contact/wrist/foot/6°tracking/1e-5 local/world/length tolerances unchanged.
 - Actually inspected all24 paired cells and final candidate/support chart: AI_VISUAL_PASS. Geometry-based surface-density COM proxy explicitly limited by costume/hair; static practical support only, no dynamic/clinical claim. Previous swing penetration REVISE corrected only gesture leg. No GLB/gameplay changes.
 - Paths BBM-4/baseline/contact.png, candidate/contact.png, support_proxy.png, report/review/manifest. Unresolved: geometric proxy versus actual tissue COM; next BBM-5 deterministic plié/weight-transfer chain.
+
+### BBM-5 deterministic plié chain in progress
+
+- BBM-4 local c2e70ba → published d75e1fde9b49f3839302a03392ec2a47622d4da4, exact tree verified; branch restored. BBM-5 starting d75e1fd.
+- Shared isolated physical runtime exposes accepted BBM-4 contact/anatomical/retarget/support checks without changing prior renderer. New bounded minimum-jerk descent-return with small hip/closure phase offsets;49samples, paired baseline/candidate three-view keyframes and all-front preview. Hip45°turnout maintained, knee axial contribution derived each sample, independent foot yaw0.
+- Candidate contact-aware hip IK targets initial rear-anchor horizontal position; root remains vertical-only. New stricter practical foot drift gate foot-chain*.05, existing root monotonic1e-4,30°sampled joint gate, observed6°tracking and contact/wrist/rotation gates. No original contract weakened. New3phase/bounds tests PASS. Motion/visual evidence pending; BBM-5 not accepted.
+
+- Shared runtime independently replays all4accepted BBM-4 fixtures with exactly0 metric difference. Initial BBM-5 independent-axis9-bisection solve costs~13s/sample; interrupted before promotion and replaced by measured bounded2x2Jacobian hip IK (<=3steps, every trial full invariant checked), same final foot-drift gate. No rejected geometry hidden or gate loosened; rerender both variants from final source.
+
+### BBM-5 plié subproof checkpoint (weight transfer pending)
+
+- Startingd75e1fd, branch unchanged; ending source SHA git log -- tools/ballet_motion/plie_chain_v1.py. Shared physical runtime+exact4fixture parity, bounded phase helper+3tests, contact-aware2x2hip IK, paired49sample render+all-front GIF+3view key strips.365tests PASS; all49candidate geometric gates PASS. Maxfootdrift .00011165 vsbaseline .11310; minmargin .059567 vsbaseline -.02537.
+- Actual paired3view keyframes and full49candidate montage reviewed AI_VISUAL_PASS for plié subproof only. Phase intent constrained by physical foot planting, not asserted as exact realized offsets. Source GLB unchanged; old constraints unmodified. BBM-5 not complete until supported weight-transfer proof; BBM-6 not started. Artifacts BBM-5/{baseline,candidate}/frame_strip.png,all_frames.png,motion_preview.gif,report/runtime_parity/review/manifest.

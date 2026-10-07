@@ -1,0 +1,510 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.71s
+Shared physical replay PASS
+Blender 4.0.2
+
+Blender quit
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+Blender 4.0.2
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/00.png'
+Time: 00:00.47 (Saving: 00:00.18)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/01_frame_00_front.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/01_frame_00_three_quarter.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/01_frame_00_side.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.74s
+BBM-5 baseline sample0/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/01.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample1/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/02.png'
+Time: 00:00.21 (Saving: 00:00.02)
+
+BBM-5 baseline sample2/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/03.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample3/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/04.png'
+Time: 00:00.24 (Saving: 00:00.01)
+
+BBM-5 baseline sample4/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/05.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample5/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/06.png'
+Time: 00:00.24 (Saving: 00:00.02)
+
+BBM-5 baseline sample6/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/07.png'
+Time: 00:00.27 (Saving: 00:00.02)
+
+BBM-5 baseline sample7/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/08.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample8/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/09.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 baseline sample9/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/10.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample10/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/11.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 baseline sample11/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/12.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/02_frame_12_front.png'
+Time: 00:00.33 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/02_frame_12_three_quarter.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/02_frame_12_side.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample12/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/13.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample13/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/14.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample14/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/15.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+BBM-5 baseline sample15/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/16.png'
+Time: 00:00.36 (Saving: 00:00.02)
+
+BBM-5 baseline sample16/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/17.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+BBM-5 baseline sample17/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/18.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+BBM-5 baseline sample18/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/19.png'
+Time: 00:00.23 (Saving: 00:00.01)
+
+BBM-5 baseline sample19/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/20.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample20/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/21.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample21/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/22.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample22/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/23.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 baseline sample23/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/24.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/03_frame_24_front.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/03_frame_24_three_quarter.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/03_frame_24_side.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+BBM-5 baseline sample24/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/25.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample25/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/26.png'
+Time: 00:00.46 (Saving: 00:00.03)
+
+BBM-5 baseline sample26/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/27.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 baseline sample27/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/28.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample28/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/29.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample29/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/30.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample30/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/31.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample31/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/32.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 baseline sample32/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/33.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 baseline sample33/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/34.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample34/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/35.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 baseline sample35/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/36.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/04_frame_36_front.png'
+Time: 00:00.16 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/04_frame_36_three_quarter.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/04_frame_36_side.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample36/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/37.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 baseline sample37/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/38.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+BBM-5 baseline sample38/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/39.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+BBM-5 baseline sample39/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/40.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 baseline sample40/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/41.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 baseline sample41/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/42.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 baseline sample42/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/43.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 baseline sample43/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/44.png'
+Time: 00:00.22 (Saving: 00:00.02)
+
+BBM-5 baseline sample44/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/45.png'
+Time: 00:00.24 (Saving: 00:00.02)
+
+BBM-5 baseline sample45/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/46.png'
+Time: 00:00.31 (Saving: 00:00.02)
+
+BBM-5 baseline sample46/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/47.png'
+Time: 00:00.23 (Saving: 00:00.02)
+
+BBM-5 baseline sample47/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/preview/48.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/05_frame_48_front.png'
+Time: 00:00.44 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/05_frame_48_three_quarter.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/baseline/05_frame_48_side.png'
+Time: 00:00.23 (Saving: 00:00.01)
+
+BBM-5 baseline sample48/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/00.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/01_frame_00_front.png'
+Time: 00:00.21 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/01_frame_00_three_quarter.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/01_frame_00_side.png'
+Time: 00:00.31 (Saving: 00:00.03)
+
+BBM-5 candidate sample0/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/01.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 candidate sample1/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/02.png'
+Time: 00:00.27 (Saving: 00:00.01)
+
+BBM-5 candidate sample2/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/03.png'
+Time: 00:00.25 (Saving: 00:00.02)
+
+BBM-5 candidate sample3/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/04.png'
+Time: 00:00.37 (Saving: 00:00.01)
+
+BBM-5 candidate sample4/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/05.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 candidate sample5/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/06.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 candidate sample6/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/07.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+BBM-5 candidate sample7/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/08.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 candidate sample8/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/09.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 candidate sample9/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/10.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 candidate sample10/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/11.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 candidate sample11/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/12.png'
+Time: 00:00.26 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/02_frame_12_front.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/02_frame_12_three_quarter.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/02_frame_12_side.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+BBM-5 candidate sample12/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/13.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 candidate sample13/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/14.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 candidate sample14/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/15.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 candidate sample15/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/16.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+BBM-5 candidate sample16/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/17.png'
+Time: 00:00.28 (Saving: 00:00.03)
+
+BBM-5 candidate sample17/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/18.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM-5 candidate sample18/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/19.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+BBM-5 candidate sample19/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/20.png'
+Time: 00:00.25 (Saving: 00:00.02)
+
+BBM-5 candidate sample20/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/21.png'
+Time: 00:00.23 (Saving: 00:00.01)
+
+BBM-5 candidate sample21/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/22.png'
+Time: 00:00.22 (Saving: 00:00.03)
+
+BBM-5 candidate sample22/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/23.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+BBM-5 candidate sample23/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/24.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/03_frame_24_front.png'
+Time: 00:00.21 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/03_frame_24_three_quarter.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/03_frame_24_side.png'
+Time: 00:00.21 (Saving: 00:00.01)
+
+BBM-5 candidate sample24/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/25.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 candidate sample25/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/26.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+BBM-5 candidate sample26/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/27.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM-5 candidate sample27/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/28.png'
+Time: 00:00.25 (Saving: 00:00.02)
+
+BBM-5 candidate sample28/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/29.png'
+Time: 00:00.22 (Saving: 00:00.02)
+
+BBM-5 candidate sample29/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/30.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+BBM-5 candidate sample30/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/31.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+BBM-5 candidate sample31/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/32.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 candidate sample32/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/33.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+BBM-5 candidate sample33/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/34.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 candidate sample34/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/35.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+BBM-5 candidate sample35/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/36.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/04_frame_36_front.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/04_frame_36_three_quarter.png'
+Time: 00:00.36 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/04_frame_36_side.png'
+Time: 00:00.26 (Saving: 00:00.01)
+
+BBM-5 candidate sample36/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/37.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 candidate sample37/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/38.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 candidate sample38/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/39.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+BBM-5 candidate sample39/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/40.png'
+Time: 00:00.29 (Saving: 00:00.02)
+
+BBM-5 candidate sample40/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/41.png'
+Time: 00:00.25 (Saving: 00:00.02)
+
+BBM-5 candidate sample41/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/42.png'
+Time: 00:00.34 (Saving: 00:00.02)
+
+BBM-5 candidate sample42/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/43.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+BBM-5 candidate sample43/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/44.png'
+Time: 00:00.21 (Saving: 00:00.02)
+
+BBM-5 candidate sample44/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/45.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM-5 candidate sample45/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/46.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+BBM-5 candidate sample46/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/47.png'
+Time: 00:00.23 (Saving: 00:00.02)
+
+BBM-5 candidate sample47/48
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/preview/48.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/05_frame_48_front.png'
+Time: 00:00.28 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/05_frame_48_three_quarter.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-5/candidate/05_frame_48_side.png'
+Time: 00:00.23 (Saving: 00:00.01)
+
+BBM-5 candidate sample48/48
+
+Blender quit
