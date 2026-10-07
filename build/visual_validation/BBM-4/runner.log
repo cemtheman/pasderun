@@ -1,0 +1,90 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+Blender 4.0.2
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/01_flat_front.png'
+Time: 00:00.51 (Saving: 00:00.19)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/01_flat_three_quarter.png'
+Time: 00:00.24 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/01_flat_side.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/02_demi_pointe_front.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/02_demi_pointe_three_quarter.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/02_demi_pointe_side.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/03_one_leg_front.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/03_one_leg_three_quarter.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/03_one_leg_side.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/04_transitional_front.png'
+Time: 00:00.16 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/04_transitional_three_quarter.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/baseline/04_transitional_side.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/01_flat_front.png'
+Time: 00:00.18 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/01_flat_three_quarter.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/01_flat_side.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/02_demi_pointe_front.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/02_demi_pointe_three_quarter.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/02_demi_pointe_side.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/03_one_leg_front.png'
+Time: 00:00.19 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/03_one_leg_three_quarter.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/03_one_leg_side.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/04_transitional_front.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/04_transitional_three_quarter.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/bb586e64b8c7/pasderun/build/visual_validation/BBM-4/candidate/04_transitional_side.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.80s
+
+Blender quit

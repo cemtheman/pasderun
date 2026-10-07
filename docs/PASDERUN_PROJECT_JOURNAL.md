@@ -284,3 +284,17 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 ### 2026-10-07 — environment recovered and continuation
 
 - Execution and Blender files survived maintenance. Starting local SHA bbddfeb6ab392c113dd8a26acc94ff3fceb4ad1f, clean tree verified before edits; remote docs-only9ba5f31 reconciled while preserving complete local BBM-3 chronology. No BBM-4 changes yet. Reverify evidence and publish, then BBM-4.
+
+### 2026-10-07 — BBM-3 publication recovered; BBM-4 starts
+
+- Published recovered local ab70a7a as9516b79a76b9a687dc32b4225df8c85a109cb3d7, identical tree d0f244255d5c577000cf5ebc1f977bc0a6d73ee8. All52changed blobs SHA-verified. Smaller50000-character base64 reads recover transfer; previous mismatched blob never referenced. BBM-3 source bindings and all retained PNG decode PASS; actual final aspect-preserving foot detail inspected PASS. Tracking work branch restored.
+- BBM-4 starting9516b79. Proposed practical balance diagnostic: observed deformed contact polygon, area-weighted surface centroid proxy (not tissue-mass COM), signed margin, declared SUPPORT/SWING roles, unchanged contact/ankle/toe/length/wrist/tracking checks. No source mesh change; flat/demi/one-leg and transitional static fixtures first. Visual verdict pending.
+
+- BBM-4 iteration01: baseline/candidate 24cells inspected. Candidate balance margins positive (~.01–.06), but transitional SWING foot penetrates~.05; MACHINE_FAIL/AI_VISUAL_REVISE anatomy/contact. Smallest correction only gesture leg18°hip/55°knee instead12°/30°. Support sampling now explicitly uses unchanged contact low quantile0.1 rather20% (more conservative proxy); contact tolerance unchanged. Initial evidence retained iteration-01.
+
+### BBM-4 accepted engineering checkpoint
+
+- Starting9516b79; ending source SHA resolves via git log -- tools/ballet_motion/support_balance_v1.py. Branch work/bbm-v1-overnight-20261006. Changed new support helper+4tests, isolated renderer/runner, paired24raw cells +support_proxy +report/review/manifest, retained failed iteration, journal.
+- 362 tests PASS (211/106/45), all final geometric gates PASS. Observed root lateral <=1.9e-9; support margins .00997..05962 positive. One-leg clearance .1505; transitional .0396. Source/machine hashes verified. Contact/wrist/foot/6°tracking/1e-5 local/world/length tolerances unchanged.
+- Actually inspected all24 paired cells and final candidate/support chart: AI_VISUAL_PASS. Geometry-based surface-density COM proxy explicitly limited by costume/hair; static practical support only, no dynamic/clinical claim. Previous swing penetration REVISE corrected only gesture leg. No GLB/gameplay changes.
+- Paths BBM-4/baseline/contact.png, candidate/contact.png, support_proxy.png, report/review/manifest. Unresolved: geometric proxy versus actual tissue COM; next BBM-5 deterministic plié/weight-transfer chain.
