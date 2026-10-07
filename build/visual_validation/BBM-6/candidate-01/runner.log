@@ -1,0 +1,570 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+Blender 4.0.2
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/00.png'
+Time: 00:00.34 (Saving: 00:00.12)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/01_frame_00_front.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/01_frame_00_three_quarter.png'
+Time: 00:00.22 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/01_frame_00_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.53s
+JUMP baseline 0/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/01.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+JUMP baseline 1/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/02.png'
+Time: 00:00.23 (Saving: 00:00.01)
+
+JUMP baseline 2/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/03.png'
+Time: 00:00.15 (Saving: 00:00.02)
+
+JUMP baseline 3/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/04.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 4/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/05.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 5/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/06.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 6/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/07.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 7/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/08.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 8/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/09.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 9/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/10.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 10/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/11.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 11/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/12.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/02_frame_12_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/02_frame_12_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/02_frame_12_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 12/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/13.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+JUMP baseline 13/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/14.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 14/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/15.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 15/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/16.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/03_frame_16_front.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/03_frame_16_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/03_frame_16_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 16/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/17.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/04_frame_17_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/04_frame_17_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/04_frame_17_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 17/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/18.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 18/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/19.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 19/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/20.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 20/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/21.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 21/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/22.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 22/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/23.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 23/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/24.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/05_frame_24_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/05_frame_24_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/05_frame_24_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 24/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/25.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 25/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/26.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/06_frame_26_front.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/06_frame_26_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/06_frame_26_side.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+JUMP baseline 26/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/27.png'
+Time: 00:00.23 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/07_frame_27_front.png'
+Time: 00:00.20 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/07_frame_27_three_quarter.png'
+Time: 00:00.17 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/07_frame_27_side.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+JUMP baseline 27/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/28.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+JUMP baseline 28/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/29.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 29/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/30.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 30/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/31.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP baseline 31/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/32.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 32/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/33.png'
+Time: 00:00.23 (Saving: 00:00.01)
+
+JUMP baseline 33/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/34.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 34/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/35.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+JUMP baseline 35/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/36.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/08_frame_36_front.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/08_frame_36_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/08_frame_36_side.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+JUMP baseline 36/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/37.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 37/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/38.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 38/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/39.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 39/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/40.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 40/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/41.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 41/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/42.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 42/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/43.png'
+Time: 00:00.24 (Saving: 00:00.01)
+
+JUMP baseline 43/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/44.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP baseline 44/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/45.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP baseline 45/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/46.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 46/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/47.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP baseline 47/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/preview/48.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/09_frame_48_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/09_frame_48_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/baseline/09_frame_48_side.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP baseline 48/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/00.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/01_frame_00_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/01_frame_00_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/01_frame_00_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 0/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/01.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 1/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/02.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 2/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/03.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 3/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/04.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 4/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/05.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 5/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/06.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 6/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/07.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 7/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/08.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 8/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/09.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 9/48 PREPARATION
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/10.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 10/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/11.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+JUMP candidate 11/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/12.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/02_frame_12_front.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/02_frame_12_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/02_frame_12_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 12/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/13.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 13/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/14.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 14/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/15.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+JUMP candidate 15/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/16.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/03_frame_16_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/03_frame_16_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/03_frame_16_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 16/48 TAKEOFF
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/17.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/04_frame_17_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/04_frame_17_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/04_frame_17_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 17/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/18.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 18/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/19.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP candidate 19/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/20.png'
+Time: 00:00.29 (Saving: 00:00.03)
+
+JUMP candidate 20/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/21.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 21/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/22.png'
+Time: 00:00.39 (Saving: 00:00.01)
+
+JUMP candidate 22/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/23.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+JUMP candidate 23/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/24.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/05_frame_24_front.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/05_frame_24_three_quarter.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/05_frame_24_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 24/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/25.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 25/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/26.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/06_frame_26_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/06_frame_26_three_quarter.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/06_frame_26_side.png'
+Time: 00:00.15 (Saving: 00:00.02)
+
+JUMP candidate 26/48 FLIGHT
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/27.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/07_frame_27_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/07_frame_27_three_quarter.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/07_frame_27_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 27/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/28.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+JUMP candidate 28/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/29.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 29/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/30.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 30/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/31.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+JUMP candidate 31/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/32.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 32/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/33.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 33/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/34.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+JUMP candidate 34/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/35.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP candidate 35/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/36.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/08_frame_36_front.png'
+Time: 00:00.28 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/08_frame_36_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/08_frame_36_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 36/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/37.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 37/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/38.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP candidate 38/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/39.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+JUMP candidate 39/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/40.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 40/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/41.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 41/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/42.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 42/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/43.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 43/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/44.png'
+Time: 00:00.14 (Saving: 00:00.03)
+
+JUMP candidate 44/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/45.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 45/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/46.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+JUMP candidate 46/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/47.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 47/48 LANDING
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/preview/48.png'
+Time: 00:00.15 (Saving: 00:00.03)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/09_frame_48_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/09_frame_48_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-6/candidate-01/candidate/09_frame_48_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+JUMP candidate 48/48 LANDING

@@ -378,3 +378,25 @@ Roadmap created. Work handoff prompt prepared. No production/gameplay source cha
 7. Execution/render engeli sürerse exact blocker, denenen çözümler, güvenli SHA ve sıradaki komutu handoff'a yaz; varsayımsal PASS veya temiz tree iddiası bırakma.
 
 - Bu güncellemenin kapsamı yalnız `docs/PASDERUN_PROJECT_JOURNAL.md`; resulting SHA bu dokümantasyon commit'inin GitHub sonucudur ve `git log -1 --format=%H -- docs/PASDERUN_PROJECT_JOURNAL.md` ile bulunur. Recovery snapshot değiştirilmez. Ürün kodu, source GLB, main, merge veya deploy işlemi bu kayıt kapsamında yapılmadı.
+
+### 2026-10-07 — Cloud execution restored / BBM-6 revalidation in progress
+
+- User explicitly requested continuation in cloud. Fresh cloud clone: work/bbm-v1-overnight-20261006, HEAD 6363f0ea83135525f3be0ec0b8a4e0e2740bf909, clean before importing only the five recovery files. No old uncommitted BBM-6 evidence exists in this fresh clone; regeneration is required. Commit chain matches the documented checkpoints.
+- Recovery sources inspected against BBM-5. Initial tests: 221 ballet-motion +106 Blender +45 Motion Studio =372 PASS. Added two failure/preservation runner tests; Blender now108 PASS. Syntax/diff PASS. Source GLB SHA256 a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2 unchanged; BBM-5 proof_sha256 entries verified unchanged.
+- Ubuntu Blender4.0.2 packages extracted under scratch without system installation. Recovered library/script/data/Python paths; baseline calibration and Phase10 profiles regenerated, 18-cell baseline MACHINE_PASS and actual contact sheet viewed. Output BBM-0/cloud-reproduction-20261007 is separate from accepted evidence. Baseline reproduction retains inherited artistic defects, not new artistic acceptance.
+- Jump renderer/runner now accept separate candidate output. Runner refuses existing directories, aborts before assembly on failed execution, fully decodes GIF frames and records an evidence hash manifest. Two tests prove stale PASS reports cannot promote a failed render and existing evidence is preserved. No acceptance threshold changed.
+- Fresh paired49sample jump render running under build/visual_validation/BBM-6/candidate-01. BBM-6 remains NOT_REVIEWED until actual paired evidence inspection.
+- HTTPS push dry-run failed due missing terminal credential; GitHub connector remains available for exact blob/tree publication. No main merge or deploy.
+
+### BBM-6 cloud recovery verified / engineering PASS
+
+- Fresh paired49sample proof completed with exactly the previously reported local metrics: zero machine failures; margin+.0009878794; chest9.8088876deg<10; shortest joint step20.0707544deg<30; min sampled flight clearance+.0136573836. This is a new reproducible cloud proof, not assumed equality to lost scratch files.
+- Actual paired3view primary/boundary strips and both all49montages reviewed; original-size candidate takeoff/apex/contact cells inspected. AI_VISUAL_PASS for conservative vertical two-foot jump: coordinated push, articulated flight, preflexed first landing and absorption/recovery, retained upper carriage. Static arms/kinematic flight/geometry-COM scope recorded; human artistic acceptance remains pending.
+- 374tests PASS (221/108/45), syntax/diff PASS. All162PNG and2GIF files decoded including49frames each; report source SHA and manifest verified. Evidence: build/visual_validation/BBM-6/candidate-01/{baseline,candidate}/{frame_strip_review.png,contact_boundaries_review.png,all_frames.png,motion_preview.gif}, report.json,review.md,manifest.json.
+- Changed isolated recovery jump sources, renderer/runner robustness+2 tests, documentation and fresh evidence. Previous accepted BBM0–5 evidence preserved. Ending source/evidence SHA resolves via git log -- build/visual_validation/BBM-6/candidate-01/review.md; connector/local tree mapping will be recorded after publication.
+- Next BBM-7 reusable phrase/style controls on established physical foundation; no routine acceptance pause.
+
+### 2026-10-07 — User scope clarification / BBM-6 full jump gate reopened
+
+- User explicitly instructed preserving the current landing visual assessment and completing remaining jump-chain scope before a general BBM-6 PASS. Candidate-01 measurements/images remain immutable evidence of the recovered sampled jump/landing proof. Prior blanket BBM-6 PASS wording is superseded: BBM-6 is PARTIAL PASS / IN PROGRESS until full preparation/takeoff/flight/landing boundary and temporal coverage is complete. BBM-7 does not start yet.
+- Next: validate exact state boundaries and finer temporal samples (including release/first-contact) rather than only the49uniform grid; review additional preparation/push/apex/landing transitions in three views. Keep accepted landing trajectory and hard gates unchanged.

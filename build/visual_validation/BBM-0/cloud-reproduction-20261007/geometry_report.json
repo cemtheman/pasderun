@@ -1,0 +1,1157 @@
+{
+  "phase": "10.6.8",
+  "schema_version": 1,
+  "visual_gate_id": "foundation_pose_visual_gate_v1",
+  "contact_sheet": "/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-0/cloud-reproduction-20261007/contact.png",
+  "render_engine": "BLENDER_WORKBENCH",
+  "row_order": [
+    "bras_bas",
+    "en_avant",
+    "second",
+    "fifth",
+    "plie",
+    "releve"
+  ],
+  "column_order": [
+    "FRONT",
+    "THREE_QUARTER",
+    "SIDE"
+  ],
+  "pose_count": 6,
+  "view_count": 3,
+  "render_count": 18,
+  "poses": {
+    "bras_bas": {
+      "realization": {
+        "root_up_shift": 0.0154394,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 2.264e-05,
+          "errors": {
+            "left": {
+              "rear": 2.114e-05,
+              "fore": 2.183e-05
+            },
+            "right": {
+              "rear": -2.264e-05,
+              "fore": -2.115e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 32.377,
+            "inversion_eversion_deg": 0.0,
+            "up_alignment_dot": 0.8445430994,
+            "tilt_error": 0.1554569006,
+            "heading_error": 5.96e-08,
+            "mesh_flatness_error": 6.919e-07,
+            "rear_required_shift": 0.0154182526,
+            "fore_required_shift": 0.0154175607,
+            "canonical_seed": {
+              "plantar_dorsiflexion": 0.0,
+              "inversion_eversion": 0.0,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.576e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 32.392,
+            "inversion_eversion_deg": 0.0,
+            "up_alignment_dot": 0.844403863,
+            "tilt_error": 0.155596137,
+            "heading_error": 0.0,
+            "mesh_flatness_error": 1.4888e-06,
+            "rear_required_shift": 0.0154620293,
+            "fore_required_shift": 0.0154605405,
+            "canonical_seed": {
+              "plantar_dorsiflexion": 0.0,
+              "inversion_eversion": 0.0,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.9339e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {
+          "required": true,
+          "status": "DIAGNOSTIC_ONLY",
+          "left_middle_rig_bone": "Middle_L",
+          "right_middle_rig_bone": "Middle_R",
+          "left_middle_tip_body": {
+            "left": 0.03643375,
+            "up": 0.94726634,
+            "front": 0.14375904
+          },
+          "right_middle_tip_body": {
+            "left": -0.04291716,
+            "up": 0.94593179,
+            "front": 0.14928146
+          },
+          "fingertip_gap": 0.07935091,
+          "fingertips_crossed": false,
+          "minimum_allowed_gap": 0.00198853,
+          "maximum_allowed_gap": 0.00662845,
+          "scale_basis": "average_hand_plus_middle_chain_length"
+        },
+        "hand_mesh_spacing": {
+          "required": true,
+          "status": "PASS",
+          "left_inner_edge": 0.00215423,
+          "right_inner_edge": -0.00215417,
+          "mesh_centerline_gap": 0.0043084,
+          "mesh_centerline_overlap": 0.0,
+          "minimum_allowed_gap": 0.00198853,
+          "maximum_allowed_gap": 0.00662845,
+          "inner_edge_quantile": 0.0,
+          "left_sample_count": 190,
+          "right_sample_count": 190,
+          "authority": "DEFORMED_HAND_MESH"
+        },
+        "hand_mesh_wrist_solution": {
+          "status": "PASS",
+          "source": "PHASE_10_6_6_LOCAL_CHAIN_PRESERVED",
+          "preferred_envelope_pass": true,
+          "secondary_wrist_trim_applied": false,
+          "independent_axial_roll": "BLOCKED"
+        },
+        "hand_mesh_runtime_clearance_solution": {
+          "method": "INDEPENDENT_PRIMARY_SHOULDER_SWEEP_BISECTION",
+          "primary_joint": "SHOULDER",
+          "elbow_local_bend_preserved": true,
+          "wrist_local_bend_preserved": true,
+          "shoulder_axis": "BODY_FRONT",
+          "shoulder_sweep_limit_deg": 50.0,
+          "target_side_offset": 0.00215425,
+          "solved_shoulder_sweep_deg": {
+            "left": 13.45829964,
+            "right": -13.58057261
+          },
+          "final_mesh_side_offsets": {
+            "left": 0.00215423,
+            "right": 0.00215417
+          },
+          "final_mesh_spacing": {
+            "required": true,
+            "status": "PASS",
+            "left_inner_edge": 0.00215423,
+            "right_inner_edge": -0.00215417,
+            "mesh_centerline_gap": 0.0043084,
+            "mesh_centerline_overlap": 0.0,
+            "minimum_allowed_gap": 0.00198853,
+            "maximum_allowed_gap": 0.00662845,
+            "inner_edge_quantile": 0.0,
+            "left_sample_count": 190,
+            "right_sample_count": 190,
+            "authority": "DEFORMED_HAND_MESH"
+          }
+        },
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "hand_axial_continuity": {
+        "left": {
+          "flexion_extension_deg": 15.20426169,
+          "radial_ulnar_deviation_deg": -7.26016043,
+          "wrist_2dof_reconstruction_error": 3.427e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 9.6120756,
+          "radial_ulnar_deviation_deg": 13.85836545,
+          "wrist_2dof_reconstruction_error": 9.835e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "renders": [
+        {
+          "view": "FRONT",
+          "cell_file": "01_bras_bas_front.png"
+        },
+        {
+          "view": "THREE_QUARTER",
+          "cell_file": "01_bras_bas_three_quarter.png"
+        },
+        {
+          "view": "SIDE",
+          "cell_file": "01_bras_bas_side.png"
+        }
+      ]
+    },
+    "en_avant": {
+      "realization": {
+        "root_up_shift": 0.0154394,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 2.264e-05,
+          "errors": {
+            "left": {
+              "rear": 2.114e-05,
+              "fore": 2.183e-05
+            },
+            "right": {
+              "rear": -2.264e-05,
+              "fore": -2.115e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 32.377,
+            "inversion_eversion_deg": 0.0,
+            "up_alignment_dot": 0.8445430994,
+            "tilt_error": 0.1554569006,
+            "heading_error": 5.96e-08,
+            "mesh_flatness_error": 6.919e-07,
+            "rear_required_shift": 0.0154182526,
+            "fore_required_shift": 0.0154175607,
+            "canonical_seed": {
+              "plantar_dorsiflexion": 0.0,
+              "inversion_eversion": 0.0,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.576e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 32.392,
+            "inversion_eversion_deg": 0.0,
+            "up_alignment_dot": 0.844403863,
+            "tilt_error": 0.155596137,
+            "heading_error": 0.0,
+            "mesh_flatness_error": 1.4888e-06,
+            "rear_required_shift": 0.0154620293,
+            "fore_required_shift": 0.0154605405,
+            "canonical_seed": {
+              "plantar_dorsiflexion": 0.0,
+              "inversion_eversion": 0.0,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.9339e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {
+          "required": true,
+          "status": "DIAGNOSTIC_ONLY",
+          "left_middle_rig_bone": "Middle_L",
+          "right_middle_rig_bone": "Middle_R",
+          "left_middle_tip_body": {
+            "left": 0.04227419,
+            "up": 1.35587132,
+            "front": 0.51865482
+          },
+          "right_middle_tip_body": {
+            "left": -0.02961808,
+            "up": 1.36594701,
+            "front": 0.51812738
+          },
+          "fingertip_gap": 0.07189227,
+          "fingertips_crossed": false,
+          "minimum_allowed_gap": 0.00198853,
+          "maximum_allowed_gap": 0.00662845,
+          "scale_basis": "average_hand_plus_middle_chain_length"
+        },
+        "hand_mesh_spacing": {
+          "required": true,
+          "status": "PASS",
+          "left_inner_edge": 0.00215423,
+          "right_inner_edge": -0.00215423,
+          "mesh_centerline_gap": 0.00430846,
+          "mesh_centerline_overlap": 0.0,
+          "minimum_allowed_gap": 0.00198853,
+          "maximum_allowed_gap": 0.00662845,
+          "inner_edge_quantile": 0.0,
+          "left_sample_count": 190,
+          "right_sample_count": 190,
+          "authority": "DEFORMED_HAND_MESH"
+        },
+        "hand_mesh_wrist_solution": {
+          "status": "PASS",
+          "source": "PHASE_10_6_6_LOCAL_CHAIN_PRESERVED",
+          "preferred_envelope_pass": true,
+          "secondary_wrist_trim_applied": false,
+          "independent_axial_roll": "BLOCKED"
+        },
+        "hand_mesh_runtime_clearance_solution": {
+          "method": "INDEPENDENT_PRIMARY_SHOULDER_SWEEP_BISECTION",
+          "primary_joint": "SHOULDER",
+          "elbow_local_bend_preserved": true,
+          "wrist_local_bend_preserved": true,
+          "shoulder_axis": "BODY_UP",
+          "shoulder_sweep_limit_deg": 55.0,
+          "target_side_offset": 0.00215425,
+          "solved_shoulder_sweep_deg": {
+            "left": 9.80652094,
+            "right": -6.54188991
+          },
+          "final_mesh_side_offsets": {
+            "left": 0.00215423,
+            "right": 0.00215423
+          },
+          "final_mesh_spacing": {
+            "required": true,
+            "status": "PASS",
+            "left_inner_edge": 0.00215423,
+            "right_inner_edge": -0.00215423,
+            "mesh_centerline_gap": 0.00430846,
+            "mesh_centerline_overlap": 0.0,
+            "minimum_allowed_gap": 0.00198853,
+            "maximum_allowed_gap": 0.00662845,
+            "inner_edge_quantile": 0.0,
+            "left_sample_count": 190,
+            "right_sample_count": 190,
+            "authority": "DEFORMED_HAND_MESH"
+          }
+        },
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "hand_axial_continuity": {
+        "left": {
+          "flexion_extension_deg": -4.49941836,
+          "radial_ulnar_deviation_deg": 20.00002954,
+          "wrist_2dof_reconstruction_error": 1.0133e-06,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 11.96553464,
+          "radial_ulnar_deviation_deg": -24.99999971,
+          "wrist_2dof_reconstruction_error": 2.384e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "renders": [
+        {
+          "view": "FRONT",
+          "cell_file": "02_en_avant_front.png"
+        },
+        {
+          "view": "THREE_QUARTER",
+          "cell_file": "02_en_avant_three_quarter.png"
+        },
+        {
+          "view": "SIDE",
+          "cell_file": "02_en_avant_side.png"
+        }
+      ]
+    },
+    "second": {
+      "realization": {
+        "root_up_shift": 0.01543941,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 2.265e-05,
+          "errors": {
+            "left": {
+              "rear": 2.111e-05,
+              "fore": 2.181e-05
+            },
+            "right": {
+              "rear": -2.265e-05,
+              "fore": -2.115e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 32.377,
+            "inversion_eversion_deg": 0.0,
+            "up_alignment_dot": 0.8445429802,
+            "tilt_error": 0.1554570198,
+            "heading_error": 0.0,
+            "mesh_flatness_error": 6.984e-07,
+            "rear_required_shift": 0.0154182852,
+            "fore_required_shift": 0.0154175868,
+            "canonical_seed": {
+              "plantar_dorsiflexion": 0.0,
+              "inversion_eversion": 0.0,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.576e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 32.392,
+            "inversion_eversion_deg": 0.0,
+            "up_alignment_dot": 0.844403863,
+            "tilt_error": 0.155596137,
+            "heading_error": 0.0,
+            "mesh_flatness_error": 1.502e-06,
+            "rear_required_shift": 0.0154620358,
+            "fore_required_shift": 0.0154605337,
+            "canonical_seed": {
+              "plantar_dorsiflexion": 0.0,
+              "inversion_eversion": 0.0,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.9339e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "hand_axial_continuity": {
+        "left": {
+          "flexion_extension_deg": 13.99415514,
+          "radial_ulnar_deviation_deg": 14.64884755,
+          "wrist_2dof_reconstruction_error": 4.619e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        },
+        "right": {
+          "flexion_extension_deg": 18.07282642,
+          "radial_ulnar_deviation_deg": -9.06895788,
+          "wrist_2dof_reconstruction_error": 4.023e-07,
+          "preferred_envelope": "PASS",
+          "preferred_envelope_numeric_tolerance_deg": 0.001,
+          "independent_axial_wrist_rotation": "BLOCKED"
+        }
+      },
+      "renders": [
+        {
+          "view": "FRONT",
+          "cell_file": "03_second_front.png"
+        },
+        {
+          "view": "THREE_QUARTER",
+          "cell_file": "03_second_three_quarter.png"
+        },
+        {
+          "view": "SIDE",
+          "cell_file": "03_second_side.png"
+        }
+      ]
+    },
+    "fifth": {
+      "realization": {
+        "root_up_shift": 0.01353354,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 2.841e-05,
+          "errors": {
+            "left": {
+              "rear": 2.841e-05,
+              "fore": 2.797e-05
+            },
+            "right": {
+              "rear": -2.83e-05,
+              "fore": -2.794e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 27.346,
+            "inversion_eversion_deg": -0.33,
+            "up_alignment_dot": 0.8449511528,
+            "tilt_error": 0.1550488472,
+            "heading_error": 5.3942e-06,
+            "mesh_flatness_error": 4.356e-07,
+            "rear_required_shift": 0.0135051177,
+            "fore_required_shift": 0.0135055533,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -4.982,
+              "inversion_eversion": -0.33,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 4.172e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 27.365,
+            "inversion_eversion_deg": -0.332,
+            "up_alignment_dot": 0.8447740674,
+            "tilt_error": 0.1552259326,
+            "heading_error": 5.5432e-06,
+            "mesh_flatness_error": 3.669e-07,
+            "rear_required_shift": 0.0135618965,
+            "fore_required_shift": 0.0135615296,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -4.97,
+              "inversion_eversion": -0.332,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 3.3379e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "hand_axial_continuity": {},
+      "renders": [
+        {
+          "view": "FRONT",
+          "cell_file": "04_fifth_front.png"
+        },
+        {
+          "view": "THREE_QUARTER",
+          "cell_file": "04_fifth_three_quarter.png"
+        },
+        {
+          "view": "SIDE",
+          "cell_file": "04_fifth_side.png"
+        }
+      ]
+    },
+    "plie": {
+      "realization": {
+        "root_up_shift": -0.02667562,
+        "contact_mode": "SOLVE_FULL_FOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 6.571e-05,
+          "errors": {
+            "left": {
+              "rear": 6.571e-05,
+              "fore": 6.458e-05
+            },
+            "right": {
+              "rear": -6.544e-05,
+              "fore": -6.458e-05
+            }
+          }
+        },
+        "full_foot_orientation": {
+          "left": {
+            "rig_bone": "Foot_L",
+            "plantar_dorsiflexion_deg": 16.337,
+            "inversion_eversion_deg": 7.195,
+            "up_alignment_dot": 0.8502172232,
+            "tilt_error": 0.1497827768,
+            "heading_error": 0.000925988,
+            "mesh_flatness_error": 1.1106e-06,
+            "rear_required_shift": -0.0267412889,
+            "fore_required_shift": -0.0267401783,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -15.663,
+              "inversion_eversion": 7.195,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 2.384e-07,
+            "preferred_envelope": "PASS"
+          },
+          "right": {
+            "rig_bone": "Foot_R",
+            "plantar_dorsiflexion_deg": 16.379,
+            "inversion_eversion_deg": 7.201,
+            "up_alignment_dot": 0.8498364687,
+            "tilt_error": 0.1501635313,
+            "heading_error": 0.0009313226,
+            "mesh_flatness_error": 8.654e-07,
+            "rear_required_shift": -0.0266102008,
+            "fore_required_shift": -0.0266110661,
+            "canonical_seed": {
+              "plantar_dorsiflexion": -15.663,
+              "inversion_eversion": 7.201,
+              "up_alignment_dot": 1.0
+            },
+            "contact_frame_application_error": 2.7418e-06,
+            "preferred_envelope": "PASS"
+          }
+        },
+        "releve_realization": {},
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "hand_axial_continuity": {},
+      "renders": [
+        {
+          "view": "FRONT",
+          "cell_file": "05_plie_front.png"
+        },
+        {
+          "view": "THREE_QUARTER",
+          "cell_file": "05_plie_three_quarter.png"
+        },
+        {
+          "view": "SIDE",
+          "cell_file": "05_plie_side.png"
+        }
+      ]
+    },
+    "releve": {
+      "realization": {
+        "root_up_shift": 0.07577501,
+        "contact_mode": "SOLVE_FOREFOOT_CONTACT",
+        "contact": {
+          "required": true,
+          "max_abs_error": 7.7e-07,
+          "errors": {
+            "left": {
+              "fore": -7.7e-07
+            },
+            "right": {
+              "fore": 7.4e-07
+            }
+          }
+        },
+        "full_foot_orientation": {},
+        "releve_realization": {
+          "plantar_dorsiflexion_deg": 50.0,
+          "toe_flexion_extension_deg": -15.0,
+          "application": {
+            "left": {
+              "foot_rig_bone": "Foot_L",
+              "toe_rig_bone": "Toes_L",
+              "plantar_dorsiflexion_deg": 50.0,
+              "inversion_eversion_deg": 0.0,
+              "toe_flexion_extension_deg": -15.0
+            },
+            "right": {
+              "foot_rig_bone": "Foot_R",
+              "toe_rig_bone": "Toes_R",
+              "plantar_dorsiflexion_deg": 50.0,
+              "inversion_eversion_deg": -0.0,
+              "toe_flexion_extension_deg": -15.0
+            }
+          },
+          "geometry": {
+            "root_shift": 0.07577500971674453,
+            "heel_lifts": {
+              "left": 0.07520656684355344,
+              "right": 0.07529396053578238
+            },
+            "fore_errors": {
+              "left": -7.385795470326976e-07,
+              "right": 7.385795470299329e-07
+            },
+            "max_fore_error": 7.385795470326976e-07
+          },
+          "heel_errors": {
+            "left": 0.03217680265644657,
+            "right": 0.03208940896421762
+          },
+          "preferred_envelope": {
+            "plantar_dorsiflexion": {
+              "min": -20.0,
+              "max": 50.0
+            },
+            "toe_flexion_extension": {
+              "min": -15.0,
+              "max": 90.0
+            }
+          },
+          "semantic_targets": {
+            "plantar_dorsiflexion_deg": 35.00000097901322,
+            "toe_flexion_extension_deg": 49.99999953348735
+          }
+        },
+        "fingertip_spacing_diagnostic": {},
+        "hand_mesh_spacing": {},
+        "hand_mesh_wrist_solution": {},
+        "hand_mesh_runtime_clearance_solution": {},
+        "ballet_hand_shape": {
+          "status": "PASS",
+          "style": "RELAXED_CLASSICAL_BALLET_HAND",
+          "finger_bones_only": true,
+          "wrist_mutated": false,
+          "arm_chain_mutated": false,
+          "sides": {
+            "left": {
+              "hand_rig_bone": "Hand_L",
+              "digit_chains": {
+                "index": [
+                  "Index_L",
+                  "Index_1_L",
+                  "Index_2_L"
+                ],
+                "middle": [
+                  "Middle_L",
+                  "Middle_1_L",
+                  "Middle_2_L"
+                ],
+                "ring": [
+                  "Ring_R",
+                  "Ring_1_R",
+                  "Ring_2_R"
+                ],
+                "pinky": [
+                  "Pinky_L",
+                  "Pinky_1_L",
+                  "Pinky_2_L"
+                ],
+                "thumb": [
+                  "Thumb_L",
+                  "Thumb_1_L",
+                  "Thumb_2_L"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            },
+            "right": {
+              "hand_rig_bone": "Hand_R",
+              "digit_chains": {
+                "index": [
+                  "Index_R",
+                  "Index_1_R",
+                  "Index_2_R"
+                ],
+                "middle": [
+                  "Middle_R",
+                  "Middle_1_R",
+                  "Middle_2_R"
+                ],
+                "ring": [
+                  "Ring_L",
+                  "Ring_1_L",
+                  "Ring_2_L"
+                ],
+                "pinky": [
+                  "Pinky_R",
+                  "Pinky_1_R",
+                  "Pinky_2_R"
+                ],
+                "thumb": [
+                  "Thumb_R",
+                  "Thumb_1_R",
+                  "Thumb_2_R"
+                ]
+              },
+              "hierarchy_over_name_suffix": true
+            }
+          }
+        }
+      },
+      "hand_axial_continuity": {},
+      "renders": [
+        {
+          "view": "FRONT",
+          "cell_file": "06_releve_front.png"
+        },
+        {
+          "view": "THREE_QUARTER",
+          "cell_file": "06_releve_three_quarter.png"
+        },
+        {
+          "view": "SIDE",
+          "cell_file": "06_releve_side.png"
+        }
+      ]
+    }
+  },
+  "automated_gate": {
+    "static_realization_pass": true,
+    "mesh_contact_pass": true,
+    "upper_body_hand_axial_continuity_pass": true,
+    "middle_bone_tip_diagnostic_recorded": true,
+    "hand_mesh_centerline_spacing_pass": true,
+    "hand_mesh_retarget_wrist_seed_preserved_pass": true,
+    "hand_mesh_runtime_clearance_solver_pass": true,
+    "ballet_hand_shape_applied": true,
+    "render_count_pass": true,
+    "animation_rendered": false,
+    "glb_exported": false
+  },
+  "human_visual_gate": {
+    "required": true,
+    "status": "PENDING_REVIEW",
+    "review_contract": {
+      "upper_body": [
+        "arms remain anterior where grammar requires",
+        "elbow line reads rounded rather than locked",
+        "hand and forearm read continuous without flipped palm/axial break",
+        "shoulders remain down and neck visually free",
+        "bras bas and en avant: wrist and hand endpoints may approach the centerline but must not cross or interpenetrate",
+        "bras bas and en avant: deformed hand/finger mesh silhouettes keep a small positive centerline gap without overlap; Middle_L/Middle_R bone tips are diagnostic only"
+      ],
+      "lower_body": [
+        "fifth reads as crossed/closed rather than parallel stance",
+        "plie reads as coordinated turnout and descent rather than squat/frog",
+        "releve reads on forefoot with both heels lifted and turnout preserved",
+        "standing arm poses: heels and forefoot should read as full-foot contact, not toes lifted",
+        "plie: feet must remain visually distinct without ankle/foot interpenetration"
+      ],
+      "verdict_values": [
+        "ACCEPT",
+        "REVISE"
+      ],
+      "machine_may_not_choose_verdict": true
+    }
+  }
+}

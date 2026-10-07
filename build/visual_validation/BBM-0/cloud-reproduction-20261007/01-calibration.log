@@ -1,0 +1,13 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.57s
+PHASE10_6_1_RIG_CALIBRATION=PASS
+PROFILE=/workspace/scratch/c6d02bfb87a4/pasderun/build/phase10_6/low_poly_girl_ballet_rig_profile_v1.json
+SOURCE_SHA256=a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2
+FRAME=LEFT[1.0, 0.0, 0.0] UP[0.0, 0.0, 1.0] FRONT[0.0, -1.0, 0.0]
+Blender 4.0.2
+
+Blender quit

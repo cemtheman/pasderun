@@ -1,0 +1,5 @@
+PHASE10_6_4_BALLET_POSE_GRAMMAR=PASS
+PROFILE=/workspace/scratch/c6d02bfb87a4/pasderun/build/phase10_6/low_poly_girl_ballet_pose_grammar_profile_v1.json
+POSES=bras_bas,en_avant,second,fifth,plie,releve
+ARMS_BEHIND_BACK=BLOCKED
+GEOMETRY_FAIL_BLOCKS_RENDER=TRUE

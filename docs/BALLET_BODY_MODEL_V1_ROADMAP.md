@@ -24,6 +24,24 @@ Canonical rig semantics
   -> human milestone acceptance
 ```
 
+## Current engineering status — 2026-10-07
+
+User continuation authorization supersedes historical BBM-1 routine stop text below. AI PASS remains provisional; final artistic acceptance is human.
+
+| Milestone | Status | Published reference / evidence |
+|---|---|---|
+| BBM-0 | PASS | 5c975168; BBM-0/baseline |
+| BBM-1 | PASS | 931ef8bd; BBM-1/elbow-path |
+| BBM-2 | PASS | 3938f89a; BBM-2 |
+| BBM-3 | PASS | 9516b79a; BBM-3 |
+| BBM-4 | PASS | d75e1fde; BBM-4 |
+| BBM-5 | PASS | 6cb569f5; BBM-5/milestone_report.json |
+| BBM-6 | PARTIAL PASS / IN PROGRESS | BBM-6/candidate-01/review.md; exact checkpoint via git log on that path |
+| BBM-7 | NOT STARTED | Next reusable phrase/style proof |
+| BBM-8 | NOT STARTED | Integration after model gates |
+
+Evidence paths are relative to build/visual_validation. BBM-6 cloud rerun:374tests,49/49 machine samples and paired landing/sampled-motion review PASS. User requires remaining full jump-chain coverage before general PASS; exact phase boundaries/finer temporal proof still pending. Recovery snapshot9bda23e remains a separate unverified historical reconstruction.
+
 ## Milestones
 
 ### BBM-0 — Baseline audit and evidence lock
