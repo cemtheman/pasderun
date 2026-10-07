@@ -6,7 +6,7 @@ import bpy
 REPO=Path(__file__).resolve().parents[2];sys.path[:0]=[str(REPO/'tools/blender'),str(REPO/'tools/ballet_motion')]
 from bbm_body_runtime_v1 import BodyRuntime,gate,surface_centroid
 from render_bbm3_foot_v1 import apply_calibrated_basis
-from jump_chain_v1 import jump_intent
+from jump_chain_v1 import jump_intent,jump_review_times
 from lower_body_foundation_motion import minimum_jerk
 from distributed_turnout_v1 import derive_turnout,alignment_diagnostics
 from support_balance_v1 import balance_diagnostics
@@ -15,16 +15,18 @@ from foot_semantics_v1 import foot_state
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=REPO/'build/visual_validation/BBM-6/candidate-01')
+    parser.add_argument('--dense',action='store_true');parser.add_argument('--geometry-only',action='store_true')
     args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
     out=args.output;out.mkdir(parents=True,exist_ok=True);(out/'report.json').unlink(missing_ok=True)
     proof=REPO/'build/visual_validation/BBM-5/milestone_report.json'
     if json.loads(proof.read_text())['ai_visual_status']!='AI_VISUAL_PASS':raise RuntimeError('Full BBM-5 required')
     plie_path=REPO/'build/visual_validation/BBM-5/report.json';plie=json.loads(plie_path.read_text());approved=[plie['samples'][f'candidate/{i:02d}']['canonical_state'] for i in range(25)]
-    body=BodyRuntime();body.scale*=1.12;records={};failures=[];keyframes=(0,12,16,17,24,26,27,36,48)
+    body=BodyRuntime();body.scale*=1.12;records={};failures=[];times=jump_review_times(args.dense)
+    keyframes=tuple(sorted(set(min(range(len(times)),key=lambda i:abs(times[i]-t)) for t in ((0,.1,.2,.25,.32,.35,.4,.45,.5,.55,.63,.73,1) if args.dense else (0,12/48,16/48,17/48,24/48,26/48,27/48,36/48,1)))))
     for variant in ('baseline','candidate'):
         cells=out/variant;cells.mkdir(exist_ok=True);preview=cells/'preview';preview.mkdir(exist_ok=True);previous=None;floor=None
-        for i in range(49):
-            intent=jump_intent(i/48,variant=='candidate');knee=intent['knee_flexion_deg'];state=copy.deepcopy(approved[0]);state['pose']='jump_chain'
+        for i,t in enumerate(times):
+            intent=jump_intent(t,variant=='candidate');knee=intent['knee_flexion_deg'];state=copy.deepcopy(approved[0]);state['pose']='jump_chain'
             a,b=next((a,b) for a,b in zip(approved,approved[1:]) if a['joint_dofs']['left_shin']['flexion_extension']<=knee<=b['joint_dofs']['left_shin']['flexion_extension']);lo=a['joint_dofs']['left_shin']['flexion_extension'];hi=b['joint_dofs']['left_shin']['flexion_extension'];p=(knee-lo)/(hi-lo)
             for side in ('left','right'):
                 for dof in ('flexion_extension','abduction_adduction'):state['joint_dofs'][f'{side}_thigh'][dof]=a['joint_dofs'][f'{side}_thigh'][dof]+p*(b['joint_dofs'][f'{side}_thigh'][dof]-a['joint_dofs'][f'{side}_thigh'][dof])
@@ -32,15 +34,17 @@ def main():
             # The unchanged flat solver is a legal seed, never the final jump proof.
             seed=body.realize(state,{'left':'SUPPORT','right':'SUPPORT'});rise=intent['foot_rise_progress'];feet={};matrix_errors={}
             for side in ('left','right'):
-                angle=intent['flight_ankle_plantar_deg'] if intent['state']=='FLIGHT' else (1-rise)*seed['foot_proof'][side]['anatomical']['anatomical_plantar_deg']+rise*35
-                feet[side]=foot_state(body.constraints,'DEMI_POINTE' if rise>0 else 'FLAT',angle,intent['toe_flexion_deg'],0)
+                angle=intent['flight_ankle_plantar_deg'] if intent['state']=='FLIGHT' else (1-rise)*seed['foot_proof'][side]['anatomical']['anatomical_plantar_deg']+rise*intent['ground_push_plantar_deg']
+                inversion=(1-rise)*seed['foot_proof'][side]['inversion_eversion_deg'] if variant=='candidate' else 0
+                feet[side]=foot_state(body.constraints,'DEMI_POINTE' if rise>0 else 'FLAT',angle,intent['toe_flexion_deg'],inversion)
                 for key,rotation in ((f'{side}_foot',-(body.neutral[side]+angle)),(f'{side}_toes',intent['toe_flexion_deg'])):
-                    bone=body.canonical['canonical_bones'][key];parent,rest=gate.static_core.canonical_parent_and_rest_local(body.rig,body.canonical,key);desired=(parent@rest@Matrix.Rotation(math.radians(rotation),3,'X')).to_quaternion().normalized().to_matrix();apply_calibrated_basis(body.rig,bone['rig_bone'],gate.static_core.rig_basis_from_canonical_pose(bone,desired));error=gate.matrix_max_error(gate.static_core.canonical_basis_from_rig_pose(body.rig.pose.bones[bone['rig_bone']],bone),desired);matrix_errors[key]=error
+                    bone=body.canonical['canonical_bones'][key];parent,rest=gate.static_core.canonical_parent_and_rest_local(body.rig,body.canonical,key)
+                    delta=gate.static_core.ankle_delta_matrix(-rotation,inversion,side) if key.endswith('_foot') else Matrix.Rotation(math.radians(rotation),3,'X')
+                    desired=(parent@rest@delta).to_quaternion().normalized().to_matrix();apply_calibrated_basis(body.rig,bone['rig_bone'],gate.static_core.rig_basis_from_canonical_pose(bone,desired));error=gate.matrix_max_error(gate.static_core.canonical_basis_from_rig_pose(body.rig.pose.bones[bone['rig_bone']],bone),desired);matrix_errors[key]=error
                     if error>body.axis['thresholds']['hierarchy_reconstruction_max_error']:raise RuntimeError('Unchanged foot/toe reconstruction failed')
             regions=('fore',) if rise>0 else ('rear','fore');heights=gate.static_core.contact_heights(body.rig,body.runtime['anchors'],body.up,body.q);shift=statistics.median(body.runtime['rest_heights'][s][r]-heights[s][r] for s in ('left','right') for r in regions);translation=Vector(seed['root_translation'])+body.up*(shift+intent['flight_clearance']);gate.static_core.set_root_translation_armature_space(body.rig,body.canonical['canonical_bones']['pelvis']['rig_bone'],translation)
             trunk={}
             if variant=='candidate':
-                t=i/48
                 push=minimum_jerk((t-.16)/.08)*(1-minimum_jerk((t-.29)/.06))
                 landing=minimum_jerk((t-.49)/.07)*(1-minimum_jerk((t-.64)/.08))
                 angle=4.6*max(push,landing)
@@ -79,12 +83,15 @@ def main():
                     if balance['status']!='PASS':failures.append({'frame':i,'gate':'support_balance','margin':balance['signed_balance_margin']})
                     for side,a in alignment.items():
                         if a['status']!='PASS':failures.append({'frame':i,'gate':'tracking','side':side,**a})
-                    if intent['state']=='LANDING' and i==27 and knee<8:failures.append({'frame':i,'gate':'straight_knee_impact'})
+                    if intent['state']=='LANDING' and .55<=t<=.5625 and knee<8:failures.append({'frame':i,'gate':'straight_knee_impact'})
             records[f'{variant}/{i:02d}']=record
+            record['time_normalized']=t
+            if args.geometry_only:continue
             gate.set_view(body.camera,body.center,body.rig,body.canonical,'FRONT',body.scale);body.scene.render.filepath=str(preview/f'{i:02d}.png');bpy.ops.render.render(write_still=True)
             if i in keyframes:
                 for col,view in enumerate(('FRONT','THREE_QUARTER','SIDE')):gate.set_view(body.camera,body.center,body.rig,body.canonical,view,body.scale);gate.render_cell(body.scene,cells,keyframes.index(i),col,f'frame_{i:02d}',view,420)
-            print(f'JUMP {variant} {i}/48 {intent["state"]}',flush=True)
+            print(f'JUMP {variant} {i}/{len(times)-1} {intent["state"]}',flush=True)
     report={'git_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),'machine_status':'FAIL' if failures else 'PASS','ai_visual_status':'NOT_REVIEWED','failures':failures,'samples':records,'camera_scale':body.scale,'source_glb_sha256':body.canonical['source']['sha256'],'scope':'four-state kinematic vertical jump; ground support invariant only during contact; no force simulation','source_sha256':{str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),REPO/'tools/ballet_motion/jump_chain_v1.py',REPO/'tools/blender/bbm_body_runtime_v1.py',plie_path,proof)}};(out/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+    report.update({'sample_times':times,'keyframe_indices':keyframes,'geometry_only':args.geometry_only});(out/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     if failures:raise RuntimeError(str(failures))
 if __name__=='__main__':main()
