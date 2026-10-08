@@ -1,0 +1,21 @@
+13:43:06 | INFO: Data are loaded, start creating Blender stuff
+13:43:06 | INFO: Blender create Mesh node Sphere
+13:43:06 | INFO: Blender create Mesh node Plane.002
+13:43:06 | INFO: Blender create Mesh node Plane.004
+13:43:06 | INFO: Blender create Mesh node Plane.000
+13:43:06 | INFO: Blender create Mesh node Plane.003
+13:43:07 | INFO: glTF import finished in 1.50s
+BBM8_AUDIT 60 ENTRY failures 0
+BBM8_AUDIT 120 ENTRY failures 0
+BBM8_AUDIT 180 ACTIVE failures 0
+BBM8_AUDIT 240 ACTIVE failures 0
+BBM8_AUDIT 300 ACTIVE failures 0
+BBM8_AUDIT 360 ACTIVE failures 0
+BBM8_AUDIT 420 ACTIVE failures 0
+BBM8_AUDIT 480 ACTIVE failures 0
+BBM8_AUDIT 540 EXIT failures 0
+BBM8_AUDIT 600 EXIT failures 0
+BBM8_GEOMETRY RUNTIME_GEOMETRY_PASS_REQUIRES_VISUAL_AND_REGRESSION_REVIEW {"ENTRY": {"samples": 144, "contact_max": 0.002871923556085676, "plant_drift_max": 0.0028563212240096075, "support_margin_min": 0.0018686429808352982, "trunk_max": 8.888803063212716, "tracking_max": 3.3170897318869033, "joint_step_max": 3.999473030092889, "replay_error_max": 7.450580596923828e-06}, "ACTIVE": {"samples": 360, "contact_max": 0.0001386909862048924, "plant_drift_max": 0.0029442045834884253, "support_margin_min": 0.0012432696539689291, "trunk_max": 5.2143990657063375, "tracking_max": 1.275829951032127, "joint_step_max": 3.029488393610437, "replay_error_max": 7.033348083496094e-06}, "EXIT": {"samples": 143, "contact_max": 0.002703849400859326, "plant_drift_max": 0.0035512240153557123, "support_margin_min": 0.001699655927933715, "trunk_max": 5.603325831859319, "tracking_max": 4.7201829194664064, "joint_step_max": 4.768680618379179, "replay_error_max": 6.556510925292969e-06}} 0
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+
+Blender quit

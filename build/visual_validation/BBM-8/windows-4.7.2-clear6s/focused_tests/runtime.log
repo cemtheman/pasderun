@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7084 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+BBM8_TEST real_main_scene_ready_grounded PASS
+BBM8_TEST default_off_request_rejected PASS
+BBM8_TEST stumble_precondition_rejected PASS
+BBM8_TEST low_transition_precondition_rejected PASS
+BBM8_TEST balance_precondition_rejected PASS
+BBM8_TEST closing_precondition_rejected PASS
+BBM8_TEST moving_precondition_rejected PASS
+BBM8_TEST entry_request_accepted PASS
+BBM8_TEST duplicate_request_rejected PASS
+BBM8_TEST pause_freezes_phrase_clock PASS
+BBM8_TEST cancel_preserves_orderly_closure PASS
+BBM8_TEST cancel_completion_exactly_once PASS
+BBM8_CANCEL_DEBUG 2 started=false active=0 audio=false queued=false
+BBM8_TEST cancel_restores_ready_silent PASS
+BBM8_TEST second_request_new_token PASS
+BBM8_TEST start_gesture_queues_and_unlocks_paused_audio PASS
+BBM8_TEST reset_invalidates_pending_start_and_token PASS
+BBM8_TEST request_after_reset PASS
+BBM8_TEST fall_observable_abort_releases_authority PASS
+BBM8_TEST request_after_abort PASS
+BBM8_TEST actual_ground_loss_observable_abort PASS
+BBM8_TEST physics_regains_ground_after_fault PASS
+BBM8_TEST request_after_ground_recovery PASS
+BBM8_TEST stage_change_explicit_abort PASS
+BBM8_TEST final_request PASS
+SECTION: OPENING
+BBM8_TEST queued_start_resumes_original_locomotion PASS
+BBM8_TEST original_music_release_after_exit_turn PASS
+BBM8_HARNESS_DONE CONTROL_TEST_PASS

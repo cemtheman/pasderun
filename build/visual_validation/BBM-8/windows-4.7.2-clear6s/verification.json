@@ -1,0 +1,33 @@
+{
+  "canonical_parent": "ee6da0dd58c026fdc0b2d5433192e36e2f4c0704",
+  "branch": "work/bbm8-clear6s-windows-20261008",
+  "source_sha256": {
+    "scenes/characters/bbm8_pose_math.gd": "84dae236af99d7544680cc69d1132229377cb3eaea17e589e7794f5e28617253",
+    "scenes/characters/humanoid_motion_controller.gd": "01409ef7757ce68d09e01994e8e43d9e9779228cfe64731f2e470941a99b51d5",
+    "scenes/gameplay/runtime_start_gate.gd": "dfa2555d4455b6fdf784fd97336c6a371d58755eaf8db667733321145b3b66c1",
+    "tools/godot/bbm8_integration_harness.gd": "e5ac76d965d5af2db4d24f6729f2964365738a978fd57618202ebc1e873e4455",
+    "tools/godot/audit_bbm8_runtime_geometry.py": "e5196804e563f4af4f122592d7c97bae636af754885c268ed41a5d602ec0d305",
+    "tools/godot/build_bbm8_runtime_payload.py": "51cda5e51d7d19655322de702dec17c7d9ebe29a3fbbef8bf9c6e791bcc13c12",
+    "assets/bbm8/clear6s_runtime_candidate.json": "e012e9a7ed975f0eb60316f641fe707e1cafcb581df63e117d8e35435681c55e"
+  },
+  "executable_sha256": "c8f0a6bc45a19b33541501e57f6f7cd972ab18453743266339d495cbbe846643",
+  "executable": "C:\\Users\\chodo\\OneDrive\\Belgeler\\Godot_v4.7.2\\Godot_v4.7.2-stable_win64_console.exe",
+  "protected_tracked_paths_unchanged": true,
+  "gameplay_capture_size": [
+    1152,
+    648
+  ],
+  "capture_manifest_sha256": "14d7ddab399c6a5eba93faa3288321e407a85dac736e61591b01a9ff2f0f20fb",
+  "geometry_report_sha256": "7979b7d1a2c38606aac109acab1abc9caee21370ae99e843555a29c2344984ad",
+  "runtime_trace_sha256": "cc798103c20efdddc127e80f33ccd526e19ab94bb53778bb750cd831bb53bb24",
+  "focused_tests_sha256": "e63046324c4b9e1d4b4edbab6846f2c83af6467ba052c802e0e078be0e0249c6",
+  "timing": "fixed-fps 60 deterministic runtime; PNG sampling 10 fps; not a wall-clock performance certification",
+  "status": "BBM8_SCOPED_ENGINEERING_PASS",
+  "visual_review_sha256": "ffabd153a420798b556a46407ab63647241f8858146149b9024bae594143059e",
+  "original_checkout_preserved": {
+    "path": "C:\\Users\\chodo\\Documents\\pas-de-run",
+    "branch": "motion-studio-v0-6-accepted-arm-visual-probe",
+    "head": "2adb48ec586496d3faa40cec5203798c2df06748",
+    "status": "?? build/motion_studio/\n?? build/phase11_3_authored/\n?? build/phase11_3_final_rig/\n?? pas-de-run/"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "Feature OFF; real original main scene; original controller/gate bytes from canonical SHA loaded before entering tree versus modified implementation; 120 frames of original EXIT_TURN and locomotion/music release. No full 140s course certification.",
+  "canonical_sha": "ee6da0dd58c026fdc0b2d5433192e36e2f4c0704",
+  "samples": 120,
+  "body_max_abs_error": 0.0,
+  "bone_max_abs_component_error": 0.0,
+  "state_audio_flags_equal": true,
+  "status": "PASS",
+  "baseline_sha256": "06a04d1433a1b02c3cd60284afe0f2fbdeda55bb9767c77e5bca35cdf649410d",
+  "modified_sha256": "35efaab71af14e4b1f2f014d246f37f2d1fc360a3657e413ae0f6e181ddaba7e"
+}

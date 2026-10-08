@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7084 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+BBM8_TEST real_main_scene_ready_grounded PASS
+BBM8_TEST default_feature_off PASS
+SECTION: OPENING
+BBM8_TEST default_original_start_and_music PASS
+BBM8_HARNESS_DONE CONTROL_TEST_PASS
