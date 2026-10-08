@@ -24,7 +24,7 @@ Canonical rig semantics
   -> human milestone acceptance
 ```
 
-## Current engineering status — 2026-10-07
+## Current engineering status — 2026-10-08
 
 User continuation authorization supersedes historical BBM-1 routine stop text below. AI PASS remains provisional; final artistic acceptance is human.
 
@@ -36,11 +36,11 @@ User continuation authorization supersedes historical BBM-1 routine stop text be
 | BBM-3 | PASS | 9516b79a; BBM-3 |
 | BBM-4 | PASS | d75e1fde; BBM-4 |
 | BBM-5 | PASS | 6cb569f5; BBM-5/milestone_report.json |
-| BBM-6 | PARTIAL PASS / IN PROGRESS | BBM-6/candidate-01/review.md; exact checkpoint via git log on that path |
+| BBM-6 | PASS | BBM-6/full-chain-candidate-02/review.md; exact checkpoint via git log on that path |
 | BBM-7 | NOT STARTED | Next reusable phrase/style proof |
 | BBM-8 | NOT STARTED | Integration after model gates |
 
-Evidence paths are relative to build/visual_validation. BBM-6 cloud rerun:374tests,49/49 machine samples and paired landing/sampled-motion review PASS. User requires remaining full jump-chain coverage before general PASS; 118-time phase/boundary machine proof and independent chain audit observed PASS locally; full118 montage review and source/evidence integrity remain pending after repeated cloud transport failure. See journal and latest handoff. Recovery snapshot9bda23e remains a separate unverified historical reconstruction.
+Evidence paths are relative to build/visual_validation. BBM-6:383 tests PASS;118-time preparation/takeoff/flight/landing machine proof and independent boundary audit PASS; source/manifest integrity and330 image decodes verified; paired three-view strips and BOTH complete118-frame montages actually inspected AI_VISUAL_PASS. Existing candidate-01 landing decision and BBM-0–5 are preserved. Scope: bilateral vertical kinematic jump; human artistic acceptance remains pending. Historical recovery reconstructions are not evidence authority.
 
 ## Milestones
 
@@ -235,3 +235,5 @@ Stop and ask for human review when:
 - a tool/environment blocker prevents deterministic evidence generation.
 
 Otherwise continue iterating.
+
+Publication status: full verified118-time source/evidence is LOCAL at e8474f7b86996976219a054a22adb9b0770656ce (tree a4aec5de4475c3ea6f4bcf3272b5c22f6dd27adb). Remote full pack publication stopped on first blob hash mismatch; see journal/handoff. Remote landing checkpoint remains8d508da.
