@@ -71,3 +71,8 @@ BBM v1 does **not** claim full biomechanical force simulation, complete ballet v
 
 Review [the human pack](BBM_V1_HUMAN_REVIEW_2026-10-08.md), then choose HUMAN_ACCEPT or REVISE. [Post-BBM v1 roadmap](POST_BBM_V1_ROADMAP.md) is design only. No BBM-9, new mechanics or next implementation phase starts here.
 Before main integration: human artistic acceptance, explicit merge decision, defined integration scope, and rollback point are all required. Main merge: NO. Deploy: NO.
+
+
+## Closure documentation publication stop
+
+Initial closure documentation commit `1a2f7ba35c2b9aafca42dee1af9eeda221958c22` passed diff --check, docs-only/path/link checks and was clean locally. Native Git push was blocked by the restricted Windows credential context (MSYS shell access failure; direct Credential Manager enumeration Access denied). Remote remains `214f412...`, with BBM-8 source/evidence already published. Final closure documentation publication is PENDING; no API/blob transfer fallback, main merge or deploy. This follow-up records the blocker without changing accepted evidence. The latest local documentation HEAD is the commit containing this paragraph; resolve via git log on this file. Verify the exact remote work/main refs after a successful native push outside that credential restriction.
