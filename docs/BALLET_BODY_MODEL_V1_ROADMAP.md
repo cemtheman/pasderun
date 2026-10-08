@@ -260,3 +260,5 @@ Canonical start f3168d630032ae584e455ad3051819c19b6aba4a. Existing runtime autho
 ### 2026-10-08 — BBM-8 runtime capture blocker
 
 User authorization resolved; portable official Godot4.6.1 SHA512 match. Real main scene headless360frame prelude/grounding diagnostic and88bone import/97input-pose bridge candidate archived in `build/visual_validation/BBM-8/environment-probe`. Xvfb cannot open permitted sockets; headless supports dummy renderer only. No real capture/visual proof; lifecycle not implemented/tested. BBM-8 BLOCKED, no PASS. Resume on a rendering-capable permitted environment; authorization persists and accepted BBM-0–7 remain immutable.
+
+BBM-8 BLOCKED diagnostic/source handoff exact remote checkpoint `c000700c1a9e4e171c6fc2aa0e7b444f4cff0e89`, exact tree `6e1302507bdf09621b7f0c6dffd6fc6f7034e2ca` (local `ec8b94aee1776e99192030540591e2e8201f3376`). All17 Git blob SHAs and final tree matched before expected-head update. Publication complete, integration PASS withheld; evidence `build/visual_validation/BBM-8/environment-probe`.
