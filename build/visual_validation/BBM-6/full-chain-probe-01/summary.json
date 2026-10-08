@@ -1,0 +1,25 @@
+{
+  "machine_status": "FAIL",
+  "ai_visual_status": "NOT_REVIEWED",
+  "sample_count": 118,
+  "failures": [
+    {
+      "frame": 43,
+      "gate": "flight_clearance",
+      "error": -0.0003257395001128316
+    },
+    {
+      "frame": 65,
+      "gate": "flight_clearance",
+      "error": -0.0014212430687621236
+    }
+  ],
+  "uncompressed_sha256": "1027d26957936fab6447f8b79981af9ba9627d115431e9cefd518548012a8943",
+  "source_sha256": {
+    "tools/blender/render_bbm6_jump_v1.py": "7e8d31f0c2686084dc27e0c5d53327100923c04e8c6b3319cb62596a710cd7f6",
+    "tools/ballet_motion/jump_chain_v1.py": "47063778bf78d1407cef7c4b80dc73b0778e716e8f0e018919131955631b250a",
+    "tools/blender/bbm_body_runtime_v1.py": "94680ad84b70470dc1c303de8e900c4e695ca9789375b1bb359a627be5592e63",
+    "build/visual_validation/BBM-5/report.json": "f3dde9e52efd94cbbb994af5a2b9ae7cba96d894ef39050681579bfe460a7237",
+    "build/visual_validation/BBM-5/milestone_report.json": "67132a8eb3130bdeacd9c8c955c916eae5a55c419f1b1dd40470b22f12e134d9"
+  }
+}

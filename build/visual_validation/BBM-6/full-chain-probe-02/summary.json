@@ -1,0 +1,14 @@
+{
+  "machine_status": "PASS",
+  "ai_visual_status": "NOT_REVIEWED",
+  "sample_count": 118,
+  "failures": [],
+  "uncompressed_sha256": "8f7de058761c9d3d8bfeffdb78dfc6f0898f4924a1c8ee71a63451f3b7599bd2",
+  "source_sha256": {
+    "tools/blender/render_bbm6_jump_v1.py": "3f35fd0cc2ba3dbf943d8bc6874a85d39d46a9b24134f304b6cfb40de70c8afa",
+    "tools/ballet_motion/jump_chain_v1.py": "d0f326e6c247293c1944dc5dc1ac70234d1679b719cb2beedd3779190ec8c28e",
+    "tools/blender/bbm_body_runtime_v1.py": "94680ad84b70470dc1c303de8e900c4e695ca9789375b1bb359a627be5592e63",
+    "build/visual_validation/BBM-5/report.json": "f3dde9e52efd94cbbb994af5a2b9ae7cba96d894ef39050681579bfe460a7237",
+    "build/visual_validation/BBM-5/milestone_report.json": "67132a8eb3130bdeacd9c8c955c916eae5a55c419f1b1dd40470b22f12e134d9"
+  }
+}

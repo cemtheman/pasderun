@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "sample_count": 118,
+  "maximum_boundary_root_step": 4.548579454421997e-06,
+  "root_continuity_limit": 0.0001,
+  "scope": "measured four-state kinematic continuity, release/push/flight/landing coverage"
+}

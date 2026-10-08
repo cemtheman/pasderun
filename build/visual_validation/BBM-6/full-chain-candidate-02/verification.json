@@ -1,0 +1,23 @@
+{
+  "machine_status": "PASS",
+  "ai_visual_status": "AI_VISUAL_PASS",
+  "milestone_status": "PASS",
+  "tests": {
+    "ballet_motion": 230,
+    "blender": 108,
+    "motion_studio": 45,
+    "total": 383
+  },
+  "decoded_images": 330,
+  "candidate_samples": 118,
+  "source_hashes_verified": true,
+  "manifest_verified": true,
+  "reviewed_both_full_montages": true,
+  "human_artistic_status": "PENDING",
+  "bindings": {
+    "report.json": "b02a40c7795d9384ec55f425d290f34dbf33b9dcbbee376dac6622abb02b4e2b",
+    "manifest.json": "aed82e0183a051e80881ad69611e191e2bdf6a2657a0ba3b7ff9957f57e8ecf5",
+    "chain_audit.json": "b44ce99afb01bdd3b29b7b46af20709b3139ffd49b94797e24c260dde6bee97e",
+    "review.md": "35f7b3dc0cd11d273764e2f66d4dc907bbcb455960b9357f59e113e2778b231b"
+  }
+}

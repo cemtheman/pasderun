@@ -235,5 +235,3 @@ Stop and ask for human review when:
 - a tool/environment blocker prevents deterministic evidence generation.
 
 Otherwise continue iterating.
-
-Publication status: full verified118-time source/evidence is LOCAL at e8474f7b86996976219a054a22adb9b0770656ce (tree a4aec5de4475c3ea6f4bcf3272b5c22f6dd27adb). Remote full pack publication stopped on first blob hash mismatch; see journal/handoff. Remote landing checkpoint remains8d508da.
