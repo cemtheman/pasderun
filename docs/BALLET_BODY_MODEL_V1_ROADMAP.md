@@ -37,7 +37,7 @@ User continuation authorization supersedes historical BBM-1 routine stop text be
 | BBM-4 | PASS | d75e1fde; BBM-4 |
 | BBM-5 | PASS | 6cb569f5; BBM-5/milestone_report.json |
 | BBM-6 | PASS | BBM-6/full-chain-candidate-02/review.md; exact checkpoint via git log on that path |
-| BBM-7 | NOT STARTED | Next reusable phrase/style proof |
+| BBM-7 | PASS | Scoped planted phrase; two styles; build/visual_validation/BBM-7/candidate-01/review.md + verification.json |
 | BBM-8 | NOT STARTED | Integration after model gates |
 
 Evidence paths are relative to build/visual_validation. BBM-6:383 tests PASS;118-time preparation/takeoff/flight/landing machine proof and independent boundary audit PASS; source/manifest integrity and330 image decodes verified; paired three-view strips and BOTH complete118-frame montages actually inspected AI_VISUAL_PASS. Existing candidate-01 landing decision and BBM-0–5 are preserved. Scope: bilateral vertical kinematic jump; human artistic acceptance remains pending. Historical recovery reconstructions are not evidence authority.
@@ -149,6 +149,8 @@ Add phrase-level timing:
 - style modifiers that do not violate anatomical or technique constraints.
 
 Exit: multiple phrases can share the same physical foundation without bespoke per-motion hacks.
+
+2026-10-08 scoped engineering PASS: one meaningful planted phrase with clear6s/soft7.2s reusable timing variants; A temporal contract, B support continuity, C coordination and D actual complete temporal/three-view review PASS.194 new samples,12 focused tests, source/evidence integrity. Evidence `build/visual_validation/BBM-7/candidate-01`; render/evidence checkpoint `4204b96fcd537b3cd50edc3f4191e4b2e6a77d88`. Final verification/docs checkpoint resolves via git log on verification.json. Arbitrary distinct choreography and human artistic acceptance are not claimed. BBM-8 remains NOT STARTED.
 
 ### BBM-8 — Pas de Run gameplay integration
 Integrate only after model gates pass.

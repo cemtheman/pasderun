@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "ai_visual_status": "AI_VISUAL_PASS",
+  "scope": "one planted reusable phrase; two timing/style variants",
+  "source_checkpoint": "0b69edfef0e15863f5e7327667b57cab02f01b81",
+  "evidence_checkpoint": "4204b96fcd537b3cd50edc3f4191e4b2e6a77d88",
+  "focused_tests": 12,
+  "new_measured_samples": 194,
+  "decoded_images": 280,
+  "source_sha256": {
+    "tools/blender/render_bbm7_phrase_v1.py": "6a7db723da259e963ff396b131c1c3b8e506e890cc609e42646f54a12bdd10c1",
+    "tools/blender/bbm_phrase_runtime_v1.py": "7d64b8a62b0856141088313f4b92bfaa7ab0d10b7e9a3c885a1df9121df8dfaa",
+    "tools/ballet_motion/phrase_v1.py": "25f42e19ac67ffcd641dcb93f301292de8014630cfdeaed1d25cddde69cab5c3",
+    "tools/blender/bbm_body_runtime_v1.py": "94680ad84b70470dc1c303de8e900c4e695ca9789375b1bb359a627be5592e63",
+    "build/visual_validation/BBM-5/report.json": "f3dde9e52efd94cbbb994af5a2b9ae7cba96d894ef39050681579bfe460a7237",
+    "build/visual_validation/BBM-5/weight-transfer/report.json": "1b8f865769425b18cf1a38993e7670e3d0164d4a6294a88fede3e0963da7c214",
+    "build/visual_validation/BBM-1/elbow-path/report.json": "794bb1208359ce8a3bd5d85eb1c66547ed089a4b1e1ed44e85949582e15e80b4"
+  },
+  "runner_sha256": "f36107d5f7b6ca423b5887b16ad37b6bddbc0b3a0695f0bc07b5177c2f34d668",
+  "bindings_sha256": {
+    "report.json": "cfbadc8843f242805b54b311cb3a93efc8af9d86eee435d56c642f27134a1905",
+    "manifest.json": "810dbeb2446b8c372d941fd2d6a3600e6ec9d5d8988bceaefe55ddf2fb38e714",
+    "chain_audit.json": "4b8aca054af49b924647b59d4fefb40c93711fe372d17b44f2e025a5be22d995",
+    "review.md": "5f54be3685900d56104070f954cd295a5082fe2aaf7b324f8f14774a60f4ee06"
+  },
+  "audit": {
+    "status": "PASS",
+    "errors": [],
+    "metrics": {
+      "clear": {
+        "sample_count": 97,
+        "max_boundary_root_step": 1.1324882507324219e-06,
+        "closure_root_error": 0.0,
+        "min_support_margin": 0.0012428333732108809,
+        "max_plant_drift": 0.002944389059877016,
+        "max_joint_step_deg": 14.860555720020077
+      },
+      "soft": {
+        "sample_count": 97,
+        "max_boundary_root_step": 1.1324882507324219e-06,
+        "closure_root_error": 0.0,
+        "min_support_margin": 0.001216208898136213,
+        "max_plant_drift": 0.002944389059877016,
+        "max_joint_step_deg": 15.36182492266766
+      }
+    },
+    "scope": "new complete phrase; exact boundaries and closure, not isolated pose approval"
+  },
+  "max_contact_error": 9.564655192662028e-05,
+  "max_chest_tilt_deg": 5.2143990657063375,
+  "minimum_frontal_hand_projection_gap": 0.02011395,
+  "limitations": [
+    "Human artistic acceptance pending",
+    "FULL_FOOT planted kinematic phrase; TOUCH is not measured unloading",
+    "Frontal hand separation is not a general 3D hand-body collision proof",
+    "One phrase with two styles; arbitrary distinct choreography not certified"
+  ],
+  "bbm8": "NOT STARTED"
+}

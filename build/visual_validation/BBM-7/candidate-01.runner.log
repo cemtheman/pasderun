@@ -1,0 +1,1011 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3001): EGL_NOT_INITIALIZED: EGL is not initialized, or could not be initialized, for the specified EGL display connection.
+
+Managed to successfully fallback to surfaceless EGL rendering!
+
+Blender 4.0.2
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/000.png'
+Time: 00:01.86 (Saving: 00:00.12)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/01_frame_000_front.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/01_frame_000_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/01_frame_000_side.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.56s
+BBM7 clear 0 97 0.0
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/001.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 1 97 0.013888888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/002.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+BBM7 clear 2 97 0.027777777777777776
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/003.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 3 97 0.041666666666666664
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/004.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 4 97 0.05555555555555555
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/005.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 5 97 0.06944444444444445
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/006.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 6 97 0.08333333333333333
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/007.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/02_frame_007_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/02_frame_007_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/02_frame_007_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 7 97 0.09722222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/008.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 8 97 0.1111111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/009.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 9 97 0.125
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/010.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 10 97 0.1388888888888889
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/011.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 11 97 0.1527777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/012.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM7 clear 12 97 0.16666666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/013.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM7 clear 13 97 0.18055555555555555
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/014.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 14 97 0.19444444444444445
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/015.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 15 97 0.199999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/016.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/03_frame_016_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/03_frame_016_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/03_frame_016_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 16 97 0.2
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/017.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+BBM7 clear 17 97 0.200001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/018.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 18 97 0.20833333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/019.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 19 97 0.2222222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/020.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 20 97 0.2361111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/021.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 clear 21 97 0.25
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/022.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 22 97 0.2638888888888889
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/023.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 23 97 0.2777777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/024.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 24 97 0.27999900000000005
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/025.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/04_frame_025_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/04_frame_025_three_quarter.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/04_frame_025_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 25 97 0.28
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/026.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 26 97 0.280001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/027.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 clear 27 97 0.2916666666666667
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/028.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 28 97 0.3055555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/029.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 29 97 0.3194444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/030.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 30 97 0.3333333333333333
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/031.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 31 97 0.3472222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/032.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 32 97 0.3611111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/033.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 33 97 0.375
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/034.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 34 97 0.3888888888888889
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/035.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/05_frame_035_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/05_frame_035_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/05_frame_035_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 35 97 0.4027777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/036.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 36 97 0.4166666666666667
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/037.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 37 97 0.4305555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/038.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 38 97 0.4444444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/039.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 39 97 0.4583333333333333
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/040.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 40 97 0.45999900000000005
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/041.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 41 97 0.46
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/042.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 42 97 0.460001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/043.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 43 97 0.4722222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/044.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 44 97 0.479999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/045.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/06_frame_045_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/06_frame_045_three_quarter.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/06_frame_045_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 45 97 0.48
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/046.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 46 97 0.48000099999999996
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/047.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 47 97 0.4861111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/048.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 48 97 0.5
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/049.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/07_frame_049_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/07_frame_049_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/07_frame_049_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 49 97 0.5138888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/050.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 clear 50 97 0.5277777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/051.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 51 97 0.5416666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/052.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 52 97 0.5555555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/053.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+BBM7 clear 53 97 0.559999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/054.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/08_frame_054_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/08_frame_054_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/08_frame_054_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 54 97 0.56
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/055.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 55 97 0.5600010000000001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/056.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 56 97 0.5694444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/057.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM7 clear 57 97 0.5833333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/058.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 58 97 0.5972222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/059.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 59 97 0.599999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/060.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 60 97 0.6
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/061.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 61 97 0.600001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/062.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM7 clear 62 97 0.6111111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/063.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 63 97 0.625
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/064.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 64 97 0.6388888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/065.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 65 97 0.6527777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/066.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 66 97 0.6666666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/067.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/09_frame_067_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/09_frame_067_three_quarter.png'
+Time: 00:00.20 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/09_frame_067_side.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 clear 67 97 0.6805555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/068.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+BBM7 clear 68 97 0.6944444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/069.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 69 97 0.7083333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/070.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 70 97 0.7222222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/071.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 clear 71 97 0.7361111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/072.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 72 97 0.75
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/073.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 73 97 0.7638888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/074.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 74 97 0.7777777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/075.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 75 97 0.7916666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/076.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 76 97 0.799999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/077.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/10_frame_077_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/10_frame_077_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/10_frame_077_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 77 97 0.8
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/078.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 78 97 0.8000010000000001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/079.png'
+Time: 00:00.21 (Saving: 00:00.01)
+
+BBM7 clear 79 97 0.8055555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/080.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 80 97 0.8194444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/081.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 81 97 0.8199989999999999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/082.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 82 97 0.82
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/083.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 83 97 0.820001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/084.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 84 97 0.8333333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/085.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+BBM7 clear 85 97 0.8472222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/086.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 86 97 0.8611111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/087.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+BBM7 clear 87 97 0.875
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/088.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 88 97 0.8888888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/089.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/11_frame_089_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/11_frame_089_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/11_frame_089_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 89 97 0.9027777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/090.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 clear 90 97 0.9166666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/091.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 91 97 0.9305555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/092.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 92 97 0.9444444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/093.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 93 97 0.9583333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/094.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 clear 94 97 0.9722222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/095.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 95 97 0.9861111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/preview/096.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/12_frame_096_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/12_frame_096_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/clear/12_frame_096_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 clear 96 97 1.0
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/000.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/01_frame_000_front.png'
+Time: 00:00.29 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/01_frame_000_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/01_frame_000_side.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+BBM7 soft 0 97 0.0
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/001.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 1 97 0.013888888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/002.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 2 97 0.027777777777777776
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/003.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 3 97 0.041666666666666664
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/004.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 4 97 0.05555555555555555
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/005.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 5 97 0.06944444444444445
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/006.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 6 97 0.08333333333333333
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/007.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/02_frame_007_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/02_frame_007_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/02_frame_007_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 7 97 0.09722222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/008.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 soft 8 97 0.1111111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/009.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 9 97 0.125
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/010.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 10 97 0.1388888888888889
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/011.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 soft 11 97 0.1527777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/012.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 12 97 0.16666666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/013.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 13 97 0.18055555555555555
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/014.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 14 97 0.19444444444444445
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/015.png'
+Time: 00:00.10 (Saving: 00:00.01)
+
+BBM7 soft 15 97 0.199999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/016.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/03_frame_016_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/03_frame_016_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/03_frame_016_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 16 97 0.2
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/017.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 17 97 0.200001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/018.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 18 97 0.20833333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/019.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 19 97 0.2222222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/020.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 20 97 0.2361111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/021.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 21 97 0.25
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/022.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 22 97 0.2638888888888889
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/023.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 23 97 0.2777777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/024.png'
+Time: 00:00.15 (Saving: 00:00.04)
+
+BBM7 soft 24 97 0.27999900000000005
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/025.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/04_frame_025_front.png'
+Time: 00:00.13 (Saving: 00:00.02)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/04_frame_025_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/04_frame_025_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 25 97 0.28
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/026.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 26 97 0.280001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/027.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 27 97 0.2916666666666667
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/028.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+BBM7 soft 28 97 0.3055555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/029.png'
+Time: 00:00.15 (Saving: 00:00.01)
+
+BBM7 soft 29 97 0.3194444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/030.png'
+Time: 00:00.18 (Saving: 00:00.04)
+
+BBM7 soft 30 97 0.3333333333333333
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/031.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 31 97 0.3472222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/032.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 32 97 0.3611111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/033.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 33 97 0.375
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/034.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 34 97 0.3888888888888889
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/035.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/05_frame_035_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/05_frame_035_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/05_frame_035_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 35 97 0.4027777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/036.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 soft 36 97 0.4166666666666667
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/037.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 37 97 0.4305555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/038.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 38 97 0.4444444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/039.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 39 97 0.4583333333333333
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/040.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 40 97 0.45999900000000005
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/041.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 41 97 0.46
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/042.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 42 97 0.460001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/043.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 43 97 0.4722222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/044.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 44 97 0.479999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/045.png'
+Time: 00:00.28 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/06_frame_045_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/06_frame_045_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/06_frame_045_side.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 45 97 0.48
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/046.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 46 97 0.48000099999999996
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/047.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 47 97 0.4861111111111111
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/048.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 48 97 0.5
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/049.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/07_frame_049_front.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/07_frame_049_three_quarter.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/07_frame_049_side.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 49 97 0.5138888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/050.png'
+Time: 00:00.17 (Saving: 00:00.01)
+
+BBM7 soft 50 97 0.5277777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/051.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 51 97 0.5416666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/052.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 52 97 0.5555555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/053.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 53 97 0.559999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/054.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/08_frame_054_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/08_frame_054_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/08_frame_054_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 54 97 0.56
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/055.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 55 97 0.5600010000000001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/056.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 56 97 0.5694444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/057.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 57 97 0.5833333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/058.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 58 97 0.5972222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/059.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 59 97 0.599999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/060.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 60 97 0.6
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/061.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 61 97 0.600001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/062.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 62 97 0.6111111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/063.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 63 97 0.625
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/064.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 64 97 0.6388888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/065.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 65 97 0.6527777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/066.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 66 97 0.6666666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/067.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/09_frame_067_front.png'
+Time: 00:00.48 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/09_frame_067_three_quarter.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/09_frame_067_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 67 97 0.6805555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/068.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 68 97 0.6944444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/069.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 69 97 0.7083333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/070.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 70 97 0.7222222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/071.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 71 97 0.7361111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/072.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 72 97 0.75
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/073.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 73 97 0.7638888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/074.png'
+Time: 00:00.19 (Saving: 00:00.01)
+
+BBM7 soft 74 97 0.7777777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/075.png'
+Time: 00:00.18 (Saving: 00:00.01)
+
+BBM7 soft 75 97 0.7916666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/076.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 76 97 0.799999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/077.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/10_frame_077_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/10_frame_077_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/10_frame_077_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 77 97 0.8
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/078.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 78 97 0.8000010000000001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/079.png'
+Time: 00:00.16 (Saving: 00:00.01)
+
+BBM7 soft 79 97 0.8055555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/080.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 80 97 0.8194444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/081.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 81 97 0.8199989999999999
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/082.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 82 97 0.82
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/083.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 83 97 0.820001
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/084.png'
+Time: 00:00.13 (Saving: 00:00.01)
+
+BBM7 soft 84 97 0.8333333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/085.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 85 97 0.8472222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/086.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 86 97 0.8611111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/087.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 87 97 0.875
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/088.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 88 97 0.8888888888888888
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/089.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/11_frame_089_front.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/11_frame_089_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/11_frame_089_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 89 97 0.9027777777777778
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/090.png'
+Time: 00:00.14 (Saving: 00:00.01)
+
+BBM7 soft 90 97 0.9166666666666666
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/091.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 91 97 0.9305555555555556
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/092.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 92 97 0.9444444444444444
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/093.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 93 97 0.9583333333333334
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/094.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 94 97 0.9722222222222222
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/095.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+BBM7 soft 95 97 0.9861111111111112
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/preview/096.png'
+Time: 00:00.12 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/12_frame_096_front.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/12_frame_096_three_quarter.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+Saved: '/workspace/scratch/c6d02bfb87a4/pasderun/build/visual_validation/BBM-7/candidate-01/soft/12_frame_096_side.png'
+Time: 00:00.11 (Saving: 00:00.01)
+
+BBM7 soft 96 97 1.0
+BBM7 MACHINE PASS 0
+
+Blender quit

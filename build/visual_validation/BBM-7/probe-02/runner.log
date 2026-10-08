@@ -1,0 +1,49 @@
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+socket(): Operation not permitted
+Data are loaded, start creating Blender stuff
+glTF import finished in 0.58s
+BBM7 clear 0 97 0.0
+BBM7 clear 1 97 0.013888888888888888
+BBM7 clear 2 97 0.027777777777777776
+BBM7 clear 3 97 0.041666666666666664
+BBM7 clear 4 97 0.05555555555555555
+BBM7 clear 5 97 0.06944444444444445
+BBM7 clear 6 97 0.08333333333333333
+BBM7 clear 7 97 0.09722222222222222
+BBM7 clear 8 97 0.1111111111111111
+BBM7 clear 9 97 0.125
+BBM7 clear 10 97 0.1388888888888889
+BBM7 clear 11 97 0.1527777777777778
+BBM7 clear 12 97 0.16666666666666666
+BBM7 clear 13 97 0.18055555555555555
+BBM7 clear 14 97 0.19444444444444445
+BBM7 clear 15 97 0.199999
+BBM7 clear 16 97 0.2
+BBM7 clear 17 97 0.200001
+BBM7 clear 18 97 0.20833333333333334
+BBM7 clear 19 97 0.2222222222222222
+Blender 4.0.2
+Traceback (most recent call last):
+  File "/workspace/scratch/c6d02bfb87a4/pasderun/tools/blender/render_bbm7_phrase_v1.py", line 110, in <module>
+    try:main()
+        ^^^^^^
+  File "/workspace/scratch/c6d02bfb87a4/pasderun/tools/blender/render_bbm7_phrase_v1.py", line 70, in main
+    record=realize_transfer(body,state,.08*coord,intent['roles'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c6d02bfb87a4/pasderun/tools/blender/bbm_phrase_runtime_v1.py", line 20, in realize_transfer
+    try:result=body.realize(state,{'left':'SUPPORT','right':'SWING'})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c6d02bfb87a4/pasderun/tools/blender/bbm_body_runtime_v1.py", line 88, in realize
+    result.update({'alignment':alignment,'observed_root_horizontal_offset':horizontal,'wrist':gate.validate_hand_axial_continuity(rig,canonical,constraints,self.visual)})
+                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c6d02bfb87a4/pasderun/tools/blender/render_foundation_pose_visual_gate_v1.py", line 195, in validate_hand_axial_continuity
+    require(
+  File "/workspace/scratch/c6d02bfb87a4/pasderun/tools/blender/render_foundation_pose_visual_gate_v1.py", line 47, in require
+    raise RuntimeError(message)
+RuntimeError: left_hand: radial_ulnar_deviation=20.009045 outside preferred [-25.0, 20.0] beyond numeric tolerance 0.001 deg.
+
+Error: script failed, file: 'tools/blender/render_bbm7_phrase_v1.py', exiting.
+
+Blender quit

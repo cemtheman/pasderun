@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "metrics": {
+    "clear": {
+      "sample_count": 97,
+      "max_boundary_root_step": 1.1324882507324219e-06,
+      "closure_root_error": 0.0,
+      "min_support_margin": 0.0012428333732108809,
+      "max_plant_drift": 0.002944389059877016,
+      "max_joint_step_deg": 14.860555720020077
+    },
+    "soft": {
+      "sample_count": 97,
+      "max_boundary_root_step": 1.1324882507324219e-06,
+      "closure_root_error": 0.0,
+      "min_support_margin": 0.001216208898136213,
+      "max_plant_drift": 0.002944389059877016,
+      "max_joint_step_deg": 15.36182492266766
+    }
+  },
+  "scope": "new complete phrase; exact boundaries and closure, not isolated pose approval"
+}
