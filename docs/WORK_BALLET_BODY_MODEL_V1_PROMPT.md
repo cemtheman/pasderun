@@ -1,5 +1,9 @@
 # ChatGPT Work Prompt — Pas de Run / Ballet Body Model v1
 
+## Current handoff — 2026-10-08 closure
+
+BBM-0–8 scoped engineering PASS. Human artistic acceptance PENDING. Native BBM-8 publication is complete; starting canonical remote HEAD `214f41204d07292230e9ffc79db89ee9adbc860f`, source/evidence `bd26acd4ea7c113c253278fa696db4bd0ba57ced`, source tree `cadaa0ead53d6d5c64ff7bc47ad032120a05aaf4`. The historical execution prompt below is retained as chronology, not an instruction to restart BBM or begin a new phase. Read `docs/BBM_V1_CLOSURE_2026-10-08.md`, `docs/BBM_V1_HUMAN_REVIEW_2026-10-08.md`, and the design-only `docs/POST_BBM_V1_ROADMAP.md`. Stop for the user’s artistic decision and chosen next scope; no main merge/deploy/next implementation.
+
 Work autonomously on repository `cemtheman/pasderun` following the repository journal and roadmap.
 
 ## Read first

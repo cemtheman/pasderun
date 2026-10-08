@@ -26,7 +26,7 @@ Canonical rig semantics
 
 ## Current engineering status — 2026-10-08
 
-User continuation authorization supersedes historical BBM-1 routine stop text below. AI PASS remains provisional; final artistic acceptance is human.
+BBM v1 engineering closure is complete within the verified scopes. ENGINEERING PASS != HUMAN ARTISTIC ACCEPTANCE; human artistic acceptance is PENDING. The former Linux Godot4.6.1/Xvfb blocker is superseded by genuine Windows Godot4.7.2 runtime evidence. Earlier stop/blocked/publication notes below are chronology. The current task ends at the human review gate; no next implementation, main merge or deploy. See [closure matrix](BBM_V1_CLOSURE_2026-10-08.md), [human review](BBM_V1_HUMAN_REVIEW_2026-10-08.md), and [design-only roadmap](POST_BBM_V1_ROADMAP.md).
 
 | Milestone | Status | Published reference / evidence |
 |---|---|---|
@@ -36,9 +36,9 @@ User continuation authorization supersedes historical BBM-1 routine stop text be
 | BBM-3 | PASS | 9516b79a; BBM-3 |
 | BBM-4 | PASS | d75e1fde; BBM-4 |
 | BBM-5 | PASS | 6cb569f5; BBM-5/milestone_report.json |
-| BBM-6 | PASS | BBM-6/full-chain-candidate-02/review.md; exact checkpoint via git log on that path |
-| BBM-7 | PASS | Scoped planted phrase; two styles; build/visual_validation/BBM-7/candidate-01/review.md + verification.json |
-| BBM-8 | BLOCKED | Portable engine verified; actual main headless diagnostic; no rendering display/capture; environment-probe/handoff.md |
+| BBM-6 | PASS | c32a933e; BBM-6/full-chain-candidate-02/review.md + verification.json |
+| BBM-7 | PASS | fb43761f; scoped planted phrase / two styles; BBM-7/candidate-01/review.md + verification.json |
+| BBM-8 | PASS | bd26acd4; genuine Windows Godot4.7.2 lifecycle; BBM-8/windows-4.7.2-clear6s/review.md + verification.json |
 
 Evidence paths are relative to build/visual_validation. BBM-6:383 tests PASS;118-time preparation/takeoff/flight/landing machine proof and independent boundary audit PASS; source/manifest integrity and330 image decodes verified; paired three-view strips and BOTH complete118-frame montages actually inspected AI_VISUAL_PASS. Existing candidate-01 landing decision and BBM-0–5 are preserved. Scope: bilateral vertical kinematic jump; human artistic acceptance remains pending. Historical recovery reconstructions are not evidence authority.
 
@@ -284,3 +284,15 @@ Earlier rejected probes (sliding, contact/support, reach, ankle) retained separa
 ### BBM-8 exact local runtime/source checkpoint
 
 Scoped engineering PASS checkpoint: `bd26acd4ea7c113c253278fa696db4bd0ba57ced`, exact parent `ee6da0dd58c026fdc0b2d5433192e36e2f4c0704`, branch `work/bbm8-clear6s-windows-20261008`. Genuine Windows Godot4.7.2 lifecycle, numeric audit,26 focused tests,488 PNG/28-panel visual inspection and scoped default regression are archived at `build/visual_validation/BBM-8/windows-4.7.2-clear6s`. This subsequent documentation marker records the independently addressable source/evidence commit. No remote update, main merge or deploy.
+
+
+### 2026-10-08 — BBM v1 engineering closure / human artistic gate
+
+- BBM-0–8 scoped ENGINEERING PASS. ENGINEERING PASS != HUMAN ARTISTIC ACCEPTANCE; human artistic acceptance remains PENDING. Final closure matrix and claims/limits: `docs/BBM_V1_CLOSURE_2026-10-08.md`.
+- Native remote work branch `work/bbm-v1-overnight-20261006` verified at `214f41204d07292230e9ffc79db89ee9adbc860f`. Direct parent/source checkpoint `bd26acd4ea7c113c253278fa696db4bd0ba57ced`, exact source tree `cadaa0ead53d6d5c64ff7bc47ad032120a05aaf4`. Native Git publication is COMPLETE and supersedes failed API/blob-transfer and pending-publication notes. No repeat source/evidence publication.
+- Historical Linux Godot4.6.1/Xvfb blocker superseded by genuine Windows Godot4.7.2 Compatibility/Intel UHD proof: entry→clear6s active→exit→gameplay/music recovery, one HumanoidMotionController authority,26/26 runtime tests,647 geometry samples,488 PNG/four-view actual engineering review, scoped default regression difference0. No full140s course claim.
+- Read-only history/manifest audit: exact milestone references resolve as ancestors; accepted binary evidence hashes match; GLB remains baseline SHA256 a162d8730238a76ba1d6b31910c98fb1f5640c46917983e0bbad04095e81b7b2. Existing hard gates and BBM-0–7 preserved. Ten BBM-8 raw-text binding differences in fresh clones are fully explained by CRLF/mixed-line-ending clean normalization: all12 original Windows verification hashes match exactly, and all12 original/committed files match after CRLF→LF. Additional provenance mapping is in the closure; accepted verification/evidence stays unchanged.
+- No rerender/retest or new mechanics/gameplay. Separate local closure branch/worktree preserves the original Motion Studio branch/HEAD/untracked files and original BBM-8 worktree. Main remote verified `080d42cb076a0efcc4902bbef7d9e42aae5550e3`; no main merge, deploy or next implementation.
+- Human pack: `docs/BBM_V1_HUMAN_REVIEW_2026-10-08.md`; practical accepted GIF/strip/keyframe links only. Design-only next roadmap: `docs/POST_BBM_V1_ROADMAP.md`, prioritizing human acceptance→distinct vocabulary→cross-family transitions→existing musical composition→selective Phase11 course integration→production validation. No invented BBM-9.
+- Publish only the documentation-only descendant of starting HEAD with native Git and exact expected-head safety, after diff/allowed-path checks; verify final remote HEAD. Resulting closure documentation SHA resolves via `git log -1 --format=%H -- docs/BBM_V1_CLOSURE_2026-10-08.md`. Independent BBM-8 source/evidence checkpoint is unchanged.
+- Stop at human review. Main integration requires human artistic acceptance, explicit merge decision, defined integration scope and rollback point. Main merge NO; deploy NO.
