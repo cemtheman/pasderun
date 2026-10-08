@@ -235,3 +235,14 @@ Stop and ask for human review when:
 - a tool/environment blocker prevents deterministic evidence generation.
 
 Otherwise continue iterating.
+
+Publication status: full verified118-time source/evidence is LOCAL at e8474f7b86996976219a054a22adb9b0770656ce (tree a4aec5de4475c3ea6f4bcf3272b5c22f6dd27adb). Remote full pack publication stopped on first blob hash mismatch; see journal/handoff. Remote landing checkpoint remains8d508da.
+
+### 2026-10-08 — Exact source/evidence publication complete
+
+- Local start: work/bbm-v1-overnight-20261006, HEAD6566e44b8a53b99fdf4787402901ad4552e3cc66, CLEAN. Remote expected head b987df04684abb5930dff39bc90c18457624ddef confirmed before publication.
+- Authoritative verified source/evidence checkpoint e8474f7b86996976219a054a22adb9b0770656ce; exact tree a4aec5de4475c3ea6f4bcf3272b5c22f6dd27adb.
+- All357 intended changed paths (59,454,451 bytes) uploaded from immutable Git blob bytes using32766-byte chunks with explicit per-chunk and total byte/base64 length checks. Every GitHub stored blob SHA matched local expected SHA. No shell/base64 pipe or unverified truncated output was used. No hash/tool/stream error occurred in this run.
+- Incremental24-entry Git trees assembled; FINAL remote tree exactly a4aec5de4475c3ea6f4bcf3272b5c22f6dd27adb before commit/ref update. Exact remote source/evidence commit: c32a933e0799242d7b5d7ce396a959bd2164d0ec, parent b987df04684abb5930dff39bc90c18457624ddef. Work branch advanced with expected-head lease, fast-forward only.
+- Publication COMPLETE. Existing BBM-6 engineering PASS preserved; no tests/render/visual evidence regenerated. BBM-0–5, accepted landing, GLB, hard gates, main and deploy untouched. Earlier transfer-stop notes are historical and resolved by this publication.
+- This subsequent documentation-only checkpoint records completion separately so the exact source/evidence tree remains independently addressable at c32a933e0799242d7b5d7ce396a959bd2164d0ec. Its SHA resolves via git log on journal/roadmap after publication. BBM-7/8 remain NOT_STARTED.
