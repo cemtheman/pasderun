@@ -1,0 +1,49 @@
+{
+  "status": "BLOCKED",
+  "reason": "No permitted real rendering display: portable Xvfb cannot create listening sockets; headless display only supports dummy driver",
+  "authorization": "Explicit direct user BBM-8 authorization on 2026-10-08; earlier approval blocker resolved",
+  "engine_version": "4.6.1.stable.official.14d19694e",
+  "official_asset_url": "https://github.com/godotengine/godot-builds/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip",
+  "official_checksum_url": "https://github.com/godotengine/godot-builds/releases/download/4.6.1-stable/SHA512-SUMS.txt",
+  "official_zip_sha512": "a76fd0fe1d44a2dd6c065b6f7b434ad75f5593c07bda3d3017f8304f2d069acbcf0f39cb5d0976f0434b56e9ea852032ddbcbdb7e0ce1c75a47e1dacb6794bd7",
+  "official_sha512_match": true,
+  "engine_binary_sha256": "1d732a7b56ff8d2951f2bf43698a91c46ff80014b065672c6af2f7ffd0e6545e",
+  "engine_installation": "portable scratch only; no system install",
+  "display_driver_help": "headless (dummy); x11/wayland required for real renderer",
+  "headless_main_scene_frames": 360,
+  "last_trace": {
+    "frame": 360,
+    "grounded": true,
+    "position": [
+      0.0,
+      1.00093483924866,
+      0.0
+    ],
+    "prelude": 2,
+    "visual": "STAGE_READY"
+  },
+  "bridge_candidate_bones": 88,
+  "bridge_input_samples": 97,
+  "max_import_rest_head_difference": 9.924945232084006e-07,
+  "bridge_runtime_readback": "NOT_TESTED",
+  "integration_lifecycle": "NOT_IMPLEMENTED",
+  "focused_integration_tests": "NOT_RUN",
+  "actual_visual_inspection": "NOT_AVAILABLE",
+  "old_milestone_validation": "NOT_RERUN",
+  "source_sha256": {
+    "tools/blender/export_bbm8_bridge.py": "fd5cc74219c0de4ab33829c9f597d1c0d4f60f6ef7f8323b8d2e7a0d41d79fed",
+    "tools/godot/bbm8_dump_import.gd": "f85f3e6c84f7158846c8dd54a2696126074d3e834bec803b59b486bb68b852be",
+    "tools/godot/bbm8_runtime_environment_probe.gd": "1ac87e4e0b49e3c0dce66939e25b407b6c6308ad2740bf4702c31396ba606f6a"
+  },
+  "files_sha256": {
+    "runtime.json": "cc9fc66751e162a29615d431c29c682217be150aea37294313bec9d2e432aa6f",
+    "xvfb.log": "bf2ea16104f559e027f98fb11e080a1086aba9459ca7169bc62d01a1e2673eb6",
+    "packages.log": "7bccfe30f4199031559ee334a458db0fd18ba9f0560db2bda0f9eeca4da580d6",
+    "import_rest.json": "f2a6e32cc417c8900f301b8719471df0f3f05e240518f303b5544c54306d8fc2",
+    "SHA512-SUMS.txt": "d7132a6588b1063dbd1ea828af069aec1b10fd5b4224a4f1946984a9b046d763",
+    "export.log": "c387757fcf99d7eb16f364bf0fb0069cd2a5df309a7cae8f3fe6d3899c3346e4",
+    "import.log": "f4c12d2bacb9c3dc42732906e2c8ca54d21c793344083599a8429b044159ebc4",
+    "runtime.log": "f4c12d2bacb9c3dc42732906e2c8ca54d21c793344083599a8429b044159ebc4",
+    "bridge_candidate.json": "d5191cf26f7298b2bca56d5f6b1f08e53e7f56a522bb7029be791776c8b878e5"
+  }
+}

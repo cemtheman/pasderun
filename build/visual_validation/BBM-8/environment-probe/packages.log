@@ -1,0 +1,5 @@
+Get:1 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/main amd64 libxfont2 amd64 1:2.0.6-1+deb13u1build0.24.04.2 [94.0 kB]
+Get:2 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/main amd64 xkb-data all 2.41-2ubuntu1.1 [397 kB]
+Get:3 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/main amd64 xserver-common all 2:21.1.12-1ubuntu1.6 [34.7 kB]
+Get:4 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/universe amd64 xvfb amd64 2:21.1.12-1ubuntu1.6 [877 kB]
+Fetched 1403 kB in 8s (169 kB/s)

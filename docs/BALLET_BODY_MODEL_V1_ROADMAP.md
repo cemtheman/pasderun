@@ -38,7 +38,7 @@ User continuation authorization supersedes historical BBM-1 routine stop text be
 | BBM-5 | PASS | 6cb569f5; BBM-5/milestone_report.json |
 | BBM-6 | PASS | BBM-6/full-chain-candidate-02/review.md; exact checkpoint via git log on that path |
 | BBM-7 | PASS | Scoped planted phrase; two styles; build/visual_validation/BBM-7/candidate-01/review.md + verification.json |
-| BBM-8 | NOT STARTED | Integration after model gates |
+| BBM-8 | BLOCKED | Portable engine verified; actual main headless diagnostic; no rendering display/capture; environment-probe/handoff.md |
 
 Evidence paths are relative to build/visual_validation. BBM-6:383 tests PASS;118-time preparation/takeoff/flight/landing machine proof and independent boundary audit PASS; source/manifest integrity and330 image decodes verified; paired three-view strips and BOTH complete118-frame montages actually inspected AI_VISUAL_PASS. Existing candidate-01 landing decision and BBM-0–5 are preserved. Scope: bilateral vertical kinematic jump; human artistic acceptance remains pending. Historical recovery reconstructions are not evidence authority.
 
@@ -252,3 +252,11 @@ Publication status: full verified118-time source/evidence is LOCAL at e8474f7b86
 ### 2026-10-08 — BBM-7 publication complete
 
 BBM-7 scoped engineering PASS exact remote source/evidence checkpoint: `fb43761fd7fa9cf6e27f17565206500bc9bec3d9`; exact verified tree `0622c06b6564e0b138f29bcaa0ac140c76535b86` (same as local `df605f9676a294f9dc3c69f397eee8e926d4c6d8`). All307 changed Git blob SHAs and final tree matched before expected-head branch update. Evidence `build/visual_validation/BBM-7/candidate-01`; actual complete two-style temporal and three-angle AI review recorded in review.md/verification.json. Human artistic acceptance pending; BBM-8 NOT STARTED. BBM-0–6 preserved; no main/deploy/GLB changes.
+
+### 2026-10-08 — BBM-8 blocked before runtime implementation
+
+Canonical start f3168d630032ae584e455ad3051819c19b6aba4a. Existing runtime authorities mapped; draft minimal READY-window accepted phrase lifecycle in docs/BBM8_INTEGRATION_CONTRACT.md. Godot setup automatically rejected because uploaded BBM-8 scope was not treated as explicit authorization superseding prior no-BBM-8 boundary. No bypass. No integration implementation/tests/capture or PASS; BBM-0–7 remain preserved. Resume requires explicit conversational BBM-8 authorization. Documentation-only checkpoint currently local; publication pending.
+
+### 2026-10-08 — BBM-8 runtime capture blocker
+
+User authorization resolved; portable official Godot4.6.1 SHA512 match. Real main scene headless360frame prelude/grounding diagnostic and88bone import/97input-pose bridge candidate archived in `build/visual_validation/BBM-8/environment-probe`. Xvfb cannot open permitted sockets; headless supports dummy renderer only. No real capture/visual proof; lifecycle not implemented/tested. BBM-8 BLOCKED, no PASS. Resume on a rendering-capable permitted environment; authorization persists and accepted BBM-0–7 remain immutable.

@@ -1,0 +1,13 @@
+# BBM-8 environment handoff — BLOCKED, no integration PASS
+
+Explicit user authorization resolved the earlier approval blocker. Portable official Godot4.6.1 runs and ZIP matches official SHA512-SUMS. Portable Ubuntu Xvfb/dependencies were downloaded into scratch; no machine-wide installation. Xvfb reports socket-open/transport/listener failure. No alternate listener or sandbox bypass attempted. Engine help confirms headless display supports only dummy rendering; no credible runtime screenshot/video can be produced in this environment.
+
+The actual Phase11 main scene ran360frames at fixed60fps in headless mode, recorded physical WALK_IN/BOW/READY with grounding and final parked x=0. This is an environment diagnostic, not accepted BBM integration. Runtime gameplay scripts remain unchanged. No phrase trigger, enter/active/exit, gameplay resume, wrist/contact interpolation or full BBM regression proof is implemented or tested.
+
+Godot import88bone rest dump and source-bound candidate transform bridge exported from immutable accepted BBM-7 clear97samples, without solving/rendering/validating old proof. Blender/Godot frame conversion and per-bone rest bind are explicit; source hat bone becomes Godot hat_2 due source name collision. Import rest-head maximum difference9.924945e-7. This is only a candidate bridge, not verified skinning/runtime playback. Initial name-alias and path-parenthesis exporter defects corrected; no hard gate relaxed.
+
+Native READY versus BBM start bone-origin offsets: Hips0.00746244, left/right Foot0.09433773/0.08138799, left/right Hand0.18142035/0.13050649. These are bone-origin differences, NOT measured mesh/contact error. A blind global-pose blend is unsupported; entry/exit require new actual contact/wrist/support measurement and rendered review.
+
+Sources: tools/godot/bbm8_dump_import.gd, bbm8_runtime_environment_probe.gd, tools/blender/export_bbm8_bridge.py. These are diagnostic tools only. environment_report.json binds logs/results and source hashes. No visual evidence is claimed. SourceGLB and BBM-0–7 accepted evidence remain unchanged.
+
+Resume in an execution environment supporting a real Godot rendering display; verify official portable engine provenance, preserve this checkpoint, then implement the drafted single-controller ownership contract. Use real main scene READY trigger, measured import/entry bridge, deterministic clock, active contact/role semantics, closure/exit and original start/music release. Capture whole lifecycle in gameplay view and diagnostic angles; focused tests and actual geometry/visual gates remain required. Do not call the exported candidate an accepted runtime animation.
